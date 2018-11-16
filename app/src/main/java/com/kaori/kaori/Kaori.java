@@ -54,11 +54,13 @@ public class Kaori extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if(checkLoginStatus()) {
             setContentView(R.layout.activity_main);
-            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         }
-        else
+        else {
+            getSupportActionBar().hide();
             setContentView(R.layout.login1);
+        }
     }
 
     /**

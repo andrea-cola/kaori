@@ -4,4 +4,7 @@
     <string name="title_hub">Material</string>
     <string name="title_my_profile">Profile</string>
     <string name="title_study_with_me">Finder</string>
+
+    <string name="title_login">Sign In</string>
+    <string name="title_register">Create Account</string>
 </resources>
