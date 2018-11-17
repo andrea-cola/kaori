@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kaori.kaori.Constants;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
 
@@ -18,8 +19,11 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.login2, container, false);
 
-        if(getActivity() != null && isAdded())
-            ((Kaori)getActivity()).getSupportActionBar().show();
+        // show the bar
+        if(getActivity() != null && isAdded()) {
+            ((Kaori) getActivity()).getSupportActionBar().show();
+            ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.title_signin);
+        }
 
         return view;
     }
