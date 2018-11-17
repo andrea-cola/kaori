@@ -20,9 +20,8 @@ public class CreateAccount2 extends Fragment {
         View view = inflater.inflate(R.layout.reg2, container, false);
 
         // show the title bar
-        if(getActivity() != null && isAdded()) {
+        if(getActivity() != null && isAdded())
             ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.titleRegistrationForm);
-        }
 
         return view;
     }

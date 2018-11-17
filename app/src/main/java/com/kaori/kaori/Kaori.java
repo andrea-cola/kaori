@@ -39,16 +39,12 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_hub:
-                    mTextMessage.setText(R.string.title_hub);
                     return true;
                 case R.id.navigation_study_with_me:
-                    mTextMessage.setText(R.string.title_study_with_me);
                     return true;
                 case R.id.navigation_my_profile:
-                    mTextMessage.setText(R.string.title_my_profile);
                     return true;
             }
             return false;
@@ -62,7 +58,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(checkLoginStatus()) {
+        if(!checkLoginStatus()) {
             setContentView(R.layout.activity_main);
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
