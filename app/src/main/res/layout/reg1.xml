@@ -21,18 +21,14 @@
     <Button
         android:id="@+id/button_create_new_account"
         style="@style/KaoriButton"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="@dimen/button_default_height"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:text="@string/title_register"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_default"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintWidth_max="@dimen/default_max_width"
-        app:layout_constraintWidth_min="@dimen/default_min_width"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
@@ -42,64 +38,45 @@
         android:layout_height="wrap_content"
         android:text="or"
         android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_with_twitter"
+        app:layout_constraintBottom_toTopOf="@+id/button_fake_google"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_create_new_account" />
 
     <Button
-        android:id="@+id/button_create_with_facebook"
+        android:id="@+id/button_fake_facebook"
         style="@style/KaoriButton"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="@dimen/button_default_height"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/title_twitter"
+        android:text="@string/title_register_facebook"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintWidth_max="@dimen/default_max_width"
-        app:layout_constraintWidth_min="@dimen/default_min_width"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_create_with_google" />
+        app:layout_constraintTop_toBottomOf="@+id/button_fake_google" />
 
     <Button
-        android:id="@+id/button_create_with_google"
+        android:id="@+id/button_fake_google"
         style="@style/KaoriButton"
-        android:layout_width="0dp"
+        android:layout_width="300dp"
         android:layout_height="@dimen/button_default_height"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/title_google"
+        android:padding="10dp"
+        android:text="@string/title_register_google"
         android:textColor="@android:color/white"
         android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_with_facebook"
+        app:layout_constraintBottom_toTopOf="@+id/button_fake_facebook"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintWidth_max="@dimen/default_max_width"
-        app:layout_constraintWidth_min="@dimen/default_min_width"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_create_with_twitter" />
-
-    <Button
-        android:id="@+id/button_create_with_twitter"
-        style="@style/KaoriButton"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/button_default_height"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/title_facebook"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_with_google"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintWidth_max="@dimen/default_max_width"
-        app:layout_constraintWidth_min="@dimen/default_min_width"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/button_facebook"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </android.support.constraint.ConstraintLayout>

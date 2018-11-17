@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "431943790469",
+    "firebase_url": "https://kaori-c5a43.firebaseio.com",
+    "project_id": "kaori-c5a43",
+    "storage_bucket": "kaori-c5a43.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:431943790469:android:6bff6907533bb5a5",
+        "android_client_info": {
+          "package_name": "com.kaori.kaori"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "431943790469-cvmfnitcl9fvin126mussjlvhnbpqnlr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kaori.kaori",
+            "certificate_hash": "6774820a3d2a889c2385db5a2e2d75711681929e"
+          }
+        },
+        {
+          "client_id": "431943790469-o8m249v3db5akkcgpkkfmk659lfskdtf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmxvjQm2VlsZ6l7mf5ICDnudRF-1r8oMI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "431943790469-o8m249v3db5akkcgpkkfmk659lfskdtf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

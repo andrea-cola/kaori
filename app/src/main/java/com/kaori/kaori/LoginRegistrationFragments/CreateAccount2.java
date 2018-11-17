@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
 
 public class CreateAccount2 extends Fragment {
+
+    private User user;
 
     @Nullable
     @Override
@@ -24,5 +27,9 @@ public class CreateAccount2 extends Fragment {
             ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.titleRegistrationForm);
 
         return view;
+    }
+
+    /*package-private*/ void setUser(User user){
+        this.user = user;
     }
 }

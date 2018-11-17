@@ -7,7 +7,9 @@
 
     <string name="title_login">Sign In</string>
     <string name="title_register">Create Account</string>
-    <string name="title_facebook">Continue with Facebook</string>
-    <string name="title_google">Continue with Google</string>
-    <string name="title_twitter">Continue with Twitter</string>
+    <string name="title_register_extended">Create Kaori Account</string>
+    <string name="title_register_facebook">Create with Facebook</string>
+    <string name="title_register_google">Create with Google</string>
+    <string name="title_others">Continue with other methods</string>
+
 </resources>
