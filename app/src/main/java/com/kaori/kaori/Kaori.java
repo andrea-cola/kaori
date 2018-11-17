@@ -58,7 +58,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(!checkLoginStatus()) {
+        if(checkLoginStatus()) {
             setContentView(R.layout.activity_main);
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
