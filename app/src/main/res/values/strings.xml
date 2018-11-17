@@ -7,4 +7,7 @@
 
     <string name="title_login">Sign In</string>
     <string name="title_register">Create Account</string>
+    <string name="title_facebook">Continue with Facebook</string>
+    <string name="title_google">Continue with Google</string>
+    <string name="title_twitter">Continue with Twitter</string>
 </resources>

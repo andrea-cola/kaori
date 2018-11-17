@@ -30,6 +30,7 @@ public class LoginRegistrationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.login1, container, false);
 
+        // hide the title bar
         if(getActivity() != null && isAdded())
             ((Kaori)getActivity()).getSupportActionBar().hide();
 
@@ -37,6 +38,7 @@ public class LoginRegistrationFragment extends Fragment {
         loginButton = view.findViewById(R.id.button_login);
         registrationButton = view.findViewById(R.id.button_registration);
 
+        // login button listener
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,10 +46,11 @@ public class LoginRegistrationFragment extends Fragment {
             }
         });
 
+        // register button listener
         registrationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: va chiamato il fragment della registrazione
+                invokeTheNextFragment(new CreateAccount1());
             }
         });
 
@@ -61,10 +64,10 @@ public class LoginRegistrationFragment extends Fragment {
     private void invokeTheNextFragment(Fragment fragment){
         if(getActivity() != null && isAdded())
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
+                .replace(R.id.container, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                .addToBackStack(BACK_STATE_NAME)
+                .commit();
     }
 
 }
