@@ -18,4 +18,9 @@ public class Constants {
      */
     public static final String TAG = "KaoriDebug";
 
+    /**
+     * Camera constants.
+     */
+    public static final int MY_CAMERA_PERMISSION_CODE = 100;
+
 }
