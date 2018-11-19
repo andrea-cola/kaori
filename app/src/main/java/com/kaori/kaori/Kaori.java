@@ -8,10 +8,18 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.graphics.Color;
 
+import com.kaori.kaori.BottomBarActivities.BookFragment;
+import com.kaori.kaori.BottomBarActivities.FeedFragment;
+import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
+import static android.support.constraint.Constraints.TAG;
 
 /**
  * Entry point of the app.
@@ -59,13 +67,17 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(checkLoginStatus()) {
+        if(! checkLoginStatus()) {
 
             setContentView(R.layout.activity_main);
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-            // TODO: settare il primo fragment
+            // First fragment sets
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, new FeedFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
         }
         else {
             getSupportActionBar().hide();

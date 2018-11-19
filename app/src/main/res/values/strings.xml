@@ -12,4 +12,7 @@
     <string name="title_register_google">Create with Google</string>
     <string name="title_others">Continue with other methods</string>
 
+    <string name="profile_about_me">About Me</string>
+    <string name="profile_my_courses">My Courses</string>
+
 </resources>
