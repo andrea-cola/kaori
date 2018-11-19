@@ -11,7 +11,6 @@ public class User {
     private Uri photosUrl;
 
     public User(){
-
     }
 
     public String getBirthday() {
