@@ -1,11 +1,14 @@
 package com.kaori.kaori.DBObjects;
 
+import android.net.Uri;
+
 public class User {
 
     private String email;
     private String name;
     private String surname;
     private String birthday;
+    private Uri photosUrl;
 
     public User(){
 
@@ -43,4 +46,11 @@ public class User {
         this.surname = surname;
     }
 
+    public Uri getPhotosUrl() {
+        return photosUrl;
+    }
+
+    public void setPhotosUrl(Uri photosUrl) {
+        this.photosUrl = photosUrl;
+    }
 }

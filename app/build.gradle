@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.kaori.kaori"
         minSdkVersion 19
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -34,9 +34,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
-    implementation 'com.facebook.android:facebook-login:4.36.1'
+    implementation 'com.facebook.android:facebook-login:4.38.1'
     implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
