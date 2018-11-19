@@ -15,9 +15,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.graphics.Color;
 
+<<<<<<< HEAD
 import com.kaori.kaori.BottomBarActivities.BookFragment;
 import com.kaori.kaori.BottomBarActivities.FeedFragment;
 import com.kaori.kaori.DBObjects.Book;
+=======
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+>>>>>>> 4724c100effa5bde91cc3cd14f76c551bc35b1bc
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 import static android.support.constraint.Constraints.TAG;
 
@@ -67,7 +72,14 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+<<<<<<< HEAD
         if(! checkLoginStatus()) {
+=======
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
+        if(checkLoginStatus()) {
+>>>>>>> 4724c100effa5bde91cc3cd14f76c551bc35b1bc
 
             setContentView(R.layout.activity_main);
             BottomNavigationView navigation = findViewById(R.id.navigation);
