@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 
 /**
@@ -58,6 +60,9 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
 
         if(checkLoginStatus()) {
 
