@@ -6,15 +6,14 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kaori.kaori.BottomBarActivities.FeedFragment;
-import com.kaori.kaori.BottomBarActivities.ProfileFragment;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 
 /**
@@ -28,11 +27,6 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
-     * Variables.
-     */
-    private TextView mTextMessage;
-
-    /**
      * Listener used to handle selections in the bottom bar.
      * Each branch of the switch handle the selection of one icon in the bar.
      */
@@ -43,6 +37,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    bottomBarCallFragment(new FeedFragment());
                     return true;
                 case R.id.navigation_hub:
                     return true;
@@ -114,6 +109,10 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
     }
 
+    /**
+     * This method overrides the default one, letting the user get
+     * back to the previous fragment by clicking on the arrow on the top of the screen.
+     */
     @Override
     public boolean onSupportNavigateUp() {
         //This method is called when the up button is pressed. Just the pop back stack.
@@ -124,6 +123,17 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     public void onBackStackChanged() {
         shouldDisplayHomeUp();
+    }
+
+    /**
+     *  TODO
+     */
+    private void bottomBarCallFragment(Fragment fragment){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(BACK_STATE_NAME)
+                .commit();
     }
 
 }
