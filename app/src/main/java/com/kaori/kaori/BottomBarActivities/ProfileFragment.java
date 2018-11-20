@@ -34,7 +34,6 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-
     private void getCurrentUser(){
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
