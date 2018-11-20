@@ -26,14 +26,17 @@ public class BookFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.book_layout, container, false);
-
-        //Book book = (Book) getArguments().getSerializable("key");
-        // TextView tTitle = view.findViewById(R.id.bookTitle);
-        // tTitle.setText(book.getTitle());
-        // TextView tAuthor = view.findViewById(R.id.bookAuthor);
-        // tAuthor.setText(book.getAuthor());
-
+        TextView bookTitle = view.findViewById(R.id.bookTitle);
+        TextView bookAuthor = view.findViewById(R.id.bookAuthor);
+        bookTitle.setText(this.title);
+        bookAuthor.setText(this.author);
         return view;
     }
+
+    public void setParameters(String author, String title){
+        this.author = author;
+        this.title = title;
+    }
+
 
 }

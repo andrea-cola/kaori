@@ -52,7 +52,8 @@ public class FeedFragment extends Fragment {
     /**
      * Constructor
      */
-    public FeedFragment(){}
+    public FeedFragment() {
+    }
 
     @Nullable
     @Override
@@ -66,14 +67,14 @@ public class FeedFragment extends Fragment {
         db.collection("books").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         String title = document.getString("title");
                         String author = document.getString("author");
                         mBookList.add(new Book(title, author));
                     }
-                }else{
-                        Log.d(TAG, "Error getting documents: ", task.getException());
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
                 }
 
                 recyclerView = (RecyclerView) getView().findViewById(R.id.my_recicler_view);
@@ -84,31 +85,17 @@ public class FeedFragment extends Fragment {
 
                 mAdapter = new MyAdapter(mBookList);
                 recyclerView.setAdapter(mAdapter);
-
             }
         });
 
         return view;
     }
 
-
     /**
      * Private Adapter for ReciclerView
      */
     private class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         ArrayList<Book> books;
-
-        public class MyViewHolder extends RecyclerView.ViewHolder {
-            public TextView title, author;
-            //public ImageView image;
-
-            public MyViewHolder(View view) {
-                super(view);
-                title = view.findViewById(R.id.cardTitle);
-                author = view.findViewById(R.id.cardAuthor);
-                //image = (ImageView) view.findViewById(R.id.thumbnail);
-            }
-        }
 
         public MyAdapter(ArrayList<Book> bookList){
             this.books = bookList;
@@ -123,9 +110,16 @@ public class FeedFragment extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
+        public void onBindViewHolder(@NonNull final MyViewHolder holder, int i) {
             holder.author.setText(books.get(i).getAuthor());
             holder.title.setText(books.get(i).getTitle());
+
+            holder.cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    invokeFragmentWithParams(holder.author.getText().toString(),holder.title.getText().toString(), "ok");
+                }
+            });
         }
 
         @Override
@@ -133,5 +127,29 @@ public class FeedFragment extends Fragment {
             return books.size();
         }
 
+        // Holder private class
+        public class MyViewHolder extends RecyclerView.ViewHolder {
+            public TextView title, author;
+            public CardView cardView;
+            //public ImageView image;
+
+            public MyViewHolder(View view) {
+                super(view);
+                title = view.findViewById(R.id.cardTitle);
+                author = view.findViewById(R.id.cardAuthor);
+                cardView = view.findViewById(R.id.card_view);
+                //image = (ImageView) view.findViewById(R.id.thumbnail);
+            }
+        }
+
+        private void invokeFragmentWithParams(String author, String title, String updateDate) {
+            Fragment bookFragment = new BookFragment();
+            ((BookFragment) bookFragment).setParameters(author, title);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, bookFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
+        }
     }
 }

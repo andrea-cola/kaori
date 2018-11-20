@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kaori.kaori.BottomBarActivities.FeedFragment;
+import com.kaori.kaori.BottomBarActivities.ProfileFragment;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 
 /**
