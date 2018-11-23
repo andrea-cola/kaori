@@ -282,6 +282,7 @@ public class CreateAccount1 extends Fragment {
         user.setEmail(firebaseUser.getEmail());
 
         String[] names = firebaseUser.getDisplayName().split(" ");
+        user.setUid(firebaseUser.getUid());
         user.setName(names[0]);
         user.setSurname(names[1]);
 

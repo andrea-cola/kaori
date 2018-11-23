@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    android:weightSum="1">
+
+    <include
+        layout="@layout/wait_layout" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <TextView
+                android:id="@+id/reg_university_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/spinner_title_uni"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/reg_ac_uni"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <AutoCompleteTextView
+                android:id="@+id/reg_ac_uni"
+                style="@android:style/Widget.Material.Light.AutoCompleteTextView"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_default_height"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:completionThreshold="1"
+                android:hint="@string/spinner_title_uni"
+                app:layout_constraintBottom_toTopOf="@+id/reg_course_type_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reg_university_text"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width" />
+
+            <TextView
+                android:id="@+id/reg_course_type_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/spinner_title_uni"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width"
+                app:layout_constraintBottom_toTopOf="@+id/reg_ac_course_type"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reg_ac_uni"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <AutoCompleteTextView
+                android:id="@+id/reg_ac_course_type"
+                style="@android:style/Widget.Material.Light.AutoCompleteTextView"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_default_height"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="@string/spinner_title_course_type"
+                android:enabled="false"
+                android:alpha="0.5"
+                app:layout_constraintBottom_toTopOf="@+id/spinner_courses_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reg_course_type_text"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width" />
+
+            <TextView
+                android:id="@+id/spinner_courses_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/spinner_title_courses"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/spinner_space"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reg_ac_course_type"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width" />
+
+            <LinearLayout
+                android:id="@+id/spinner_space"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/button_add_spinner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_courses_title"
+                app:layout_constraintVertical_chainStyle="packed">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_add_spinner"
+                style="@style/KaoriButton"
+                android:layout_width="300dp"
+                android:layout_height="@dimen/button_default_height"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/button_add_spinner"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_size_default"
+                android:alpha="0.5"
+                android:enabled="false"
+                app:layout_constraintBottom_toTopOf="@+id/button_create_new_account"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/spinner_space"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width" />
+
+            <Button
+                android:id="@+id/button_create_new_account"
+                style="@style/KaoriButton"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/button_default_height"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/title_register"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_size_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/button_add_spinner"
+                app:layout_constraintVertical_chainStyle="packed"
+                app:layout_constraintWidth_max="@dimen/default_max_width"
+                app:layout_constraintWidth_min="@dimen/default_min_width" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
+</LinearLayout>

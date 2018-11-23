@@ -7,15 +7,25 @@
 
     <string name="title_login">Sign In</string>
     <string name="title_register">Create Account</string>
-    <string name="title_register_extended">Create Kaori Account</string>
     <string name="title_register_facebook">Create with Facebook</string>
     <string name="title_register_google">Create with Google</string>
-    <string name="title_others">Continue with other methods</string>
 
     <string name="profile_about_me">About Me</string>
     <string name="profile_my_courses">My Courses</string>
 
     <string name="firebase_web_host" translatable="false">kaori-c5a43.firebaseapp.com</string>
-    <string name="facebook_app_id">1537422876359009</string>
-    <string name="fb_login_protocol_scheme">fb1537422876359009</string>
+    <string name="facebook_app_id" translatable="false">1537422876359009</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1537422876359009</string>
+
+    <string name="camera_popup_title">Choose an option:</string>
+    <string name="camera_popup_option1">From camera</string>
+    <string name="camera_popup_option2">From gallery</string>
+
+    <string name="button_cancel">Cancel</string>
+    <string name="button_add_spinner">Add course</string>
+    <string name="spinner_title_courses">Your exams</string>
+    <string name="spinner_title_course_type">Your course type</string>
+    <string name="spinner_title_uni">Your university</string>
+    <string name="spinner_title_new_exam">Add the exam</string>
+
 </resources>

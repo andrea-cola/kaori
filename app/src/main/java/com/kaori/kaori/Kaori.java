@@ -32,12 +32,11 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
      */
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    bottomBarCallFragment(new FeedFragment());
+                    bottomBarFragmentCall(new FeedFragment());
                     return true;
                 case R.id.navigation_hub:
                     return true;
@@ -61,16 +60,12 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        if(!checkLoginStatus()) {
+        if(checkLoginStatus()) {
             setContentView(R.layout.activity_main);
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-            // First fragment sets
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new FeedFragment())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit();
+            entryPointFragmentCall(new FeedFragment());
         }
         else {
             getSupportActionBar().hide();
@@ -79,14 +74,9 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
             getSupportFragmentManager().addOnBackStackChangedListener(this);
             //Handle when activity is recreated like on orientation Change
             shouldDisplayHomeUp();
-
             setContentView(R.layout.activity_empty_main);
 
-            // go to the first phase of the login/registration
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new LoginRegistrationFragment())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .commit();
+            entryPointFragmentCall(new LoginRegistrationFragment());
         }
     }
 
@@ -120,19 +110,34 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         return true;
     }
 
+    /**
+     * Handles the changes in the back stack.
+     */
     @Override
     public void onBackStackChanged() {
         shouldDisplayHomeUp();
     }
 
     /**
-     *  TODO
+     * This method handles the invocation of a new fragment
+     * when the user clicks on the bottom bar.
      */
-    private void bottomBarCallFragment(Fragment fragment){
+    private void bottomBarFragmentCall(Fragment fragment){
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(BACK_STATE_NAME)
+                .commit();
+    }
+
+    /**
+     * This methods is called by the application when it is opened.
+     * It invokes the first fragment.
+     */
+    private void entryPointFragmentCall(Fragment fragment){
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
 

@@ -41,6 +41,9 @@ dependencies {
     implementation 'com.twitter.sdk.android:twitter-core:3.1.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation ('com.weiwangcn.betterspinner:library-material:1.1.0') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+    }
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

@@ -2,6 +2,8 @@ package com.kaori.kaori.DBObjects;
 
 import android.net.Uri;
 
+import java.util.List;
+
 public class User {
 
     private String email;
@@ -9,9 +11,12 @@ public class User {
     private String surname;
     private String birthday;
     private Uri photosUrl;
+    private String university;
+    private String courseType;
+    private List<String> exams;
+    private String uid;
 
-    public User(){
-    }
+    public User(){ }
 
     public String getBirthday() {
         return birthday;
@@ -51,5 +56,37 @@ public class User {
 
     public void setPhotosUrl(Uri photosUrl) {
         this.photosUrl = photosUrl;
+    }
+
+    public List<String> getExams() {
+        return exams;
+    }
+
+    public void setExams(List<String> exams) {
+        this.exams = exams;
+    }
+
+    public String getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(String university) {
+        this.university = university;
+    }
+
+    public String getCourseType() {
+        return courseType;
+    }
+
+    public void setCourseType(String courseType) {
+        this.courseType = courseType;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

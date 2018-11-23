@@ -23,4 +23,11 @@ public class Constants {
      */
     public static final int MY_CAMERA_PERMISSION_CODE = 100;
 
+    /**
+     * Database constants.
+     */
+    public static final String DB_COLL_UNIVERSITIES = "universities";
+    public static final String DB_COLL_COURSE_TYPES = "course_types";
+    public static final String DB_COLL_COURSES = "exams";
+
 }

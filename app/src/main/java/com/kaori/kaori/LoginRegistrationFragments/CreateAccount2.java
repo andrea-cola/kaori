@@ -2,6 +2,7 @@ package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -23,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kaori.kaori.Constants;
@@ -40,6 +40,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.kaori.kaori.Constants.MY_CAMERA_PERMISSION_CODE;
 
+/**
+ * This class is responsible for the second step of account creation.
+ */
 public class CreateAccount2 extends Fragment {
 
     /**
@@ -47,6 +50,7 @@ public class CreateAccount2 extends Fragment {
      */
     private final int PICK_IMAGE = 0;
     private final int CAMERA_REQUEST = 1;
+    private final String BACK_STATE_NAME = getClass().getName();
 
     /**
      * Variables.
@@ -56,8 +60,10 @@ public class CreateAccount2 extends Fragment {
     private EditText name, surname, password, mail;
     private Button createNewAccount;
     private boolean[] validFields = new boolean[4];
-    private String mCurrentPhotoPath;
 
+    /**
+     * Override of the inherited method.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -77,10 +83,6 @@ public class CreateAccount2 extends Fragment {
         if (getActivity() != null && isAdded())
             ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.titleRegistrationForm);
 
-        // disable the button
-        createNewAccount.setEnabled(false);
-        createNewAccount.setAlpha(0.5f);
-
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
@@ -95,11 +97,33 @@ public class CreateAccount2 extends Fragment {
             }
         });
 
+        createNewAccount.setEnabled(true);
+
         createNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 updateUser();
-                // go the next fragment
+
+
+
+
+
+
+                // todo: login con firebase
+
+
+
+
+
+
+
+                CreateAccount3 createAccount3 = new CreateAccount3();
+                createAccount3.setUser(user);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, createAccount3)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
             }
         });
 
@@ -240,49 +264,46 @@ public class CreateAccount2 extends Fragment {
         });
     }
 
+    /**
+     * This method creates a popup letting the user either choose from
+     * the gallery or take a photo with the camera.
+     */
     private void buildChoicePopup() {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        View view = getActivity().getLayoutInflater().inflate(R.layout.popup_menu, null);
-        ((TextView) view.findViewById(R.id.popup_title)).setText("Choose an option:");
-        ((Button) view.findViewById(R.id.popup_voice1)).setText("From camera");
-        ((Button) view.findViewById(R.id.popup_voice2)).setText("From gallery");
+        View view = getActivity().getLayoutInflater().inflate(R.layout.camera_popup_menu, null);
 
         builderSingle.setView(view);
         final AlertDialog alert = builderSingle.create();
 
-        Button cancel = view.findViewById(R.id.popup_cancel_button);
-        cancel.setOnClickListener(new View.OnClickListener() {
+        ((Button)view.findViewById(R.id.popup_cancel_button)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alert.dismiss();
             }
         });
 
-        Button choice1 = view.findViewById(R.id.popup_voice1);
-        choice1.setOnClickListener(new View.OnClickListener() {
+        ((Button)view.findViewById(R.id.popup_voice1)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                } else {
+                else {
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                     // Ensure that there's a camera activity to handle the intent
                     if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        // Create the File where the photo should go
-                        File photoFile = null;
                         try {
-                            photoFile = createImageFile();
+                            File photoFile = createImageFile();
+                            if (photoFile != null) {
+                                Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
+                                Log.d(Constants.TAG, photoURI.toString());
+                                user.setPhotosUrl(photoURI);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+                            }
+
                         } catch (IOException ex) {
-                            // Error occurred while creating the File
-                        }
-                        // Continue only if the File was successfully created
-                        if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
-                            Log.d(Constants.TAG, photoURI.toString());
-                            user.setPhotosUrl(photoURI);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(takePictureIntent, CAMERA_REQUEST);
+                            //TODO: Error occurred while creating the File
                         }
                     }
                 }
@@ -290,8 +311,7 @@ public class CreateAccount2 extends Fragment {
             }
         });
 
-        Button choice2 = view.findViewById(R.id.popup_voice2);
-        choice2.setOnClickListener(new View.OnClickListener() {
+        ((Button)view.findViewById(R.id.popup_voice2)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getImageFromLibrary();
@@ -307,65 +327,52 @@ public class CreateAccount2 extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICK_IMAGE) {
-            if (data != null) {
-                Uri selectedImage = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), selectedImage);
-                    profileImage.setImageBitmap(bitmap);
-                    user.setPhotosUrl(selectedImage);
-                } catch (IOException e) {
-                    Toast.makeText(getContext(), "Caricamento fallito", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(getContext(), "Nessuna immagine selezionata", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == CAMERA_REQUEST) {
-            Bitmap bitmap = null;
+        if(data != null){
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), user.getPhotosUrl());
-                Matrix matrix = new Matrix();
+                if(requestCode == PICK_IMAGE)
+                    user.setPhotosUrl(data.getData());
 
-                matrix.postRotate(90);
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), user.getPhotosUrl());
 
-                Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
+                if(requestCode == CAMERA_REQUEST) {
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(90);
+                    bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                }
 
-                Bitmap rotatedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
-                profileImage.setImageBitmap(rotatedBitmap);
+                profileImage.setImageBitmap(bitmap);
             } catch (IOException e) {
-                e.printStackTrace();
+                Toast.makeText(getContext(), "Loading failed", Toast.LENGTH_SHORT).show();
             }
-        }
+        } else
+            Toast.makeText(getContext(), "No image selected", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Handle the camera permissions.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_CAMERA_PERMISSION_CODE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), "camera permission granted", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Camera permission granted", Toast.LENGTH_LONG).show();
                 Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(cameraIntent, CAMERA_REQUEST);
             } else {
-                Toast.makeText(getActivity(), "camera permission denied", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Camera permission denied", Toast.LENGTH_LONG).show();
             }
         }
     }
 
+    /**
+     * Create a new image file.
+     */
     private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPEG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
 }
