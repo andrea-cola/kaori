@@ -275,6 +275,7 @@ public class CreateAccount1 extends Fragment {
 
     /**
      * It takes in input a FirebaseUser and return a User to pass
+     * It takes in input a FirebaseUser and return a User to pass
      * to the next fragment.
      */
     private User createNewUser(FirebaseUser firebaseUser){

@@ -1,20 +1,28 @@
 package com.kaori.kaori.BottomBarActivities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +55,7 @@ public class FeedFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Book> mBookList;
+    private FloatingActionButton fab;
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
@@ -62,7 +71,17 @@ public class FeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
         mBookList = new ArrayList<Book>();
 
-        //put all books in the list
+        //Floating Action Button managment for upload pdf files
+        fab = view.findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UploadPDFDialog uploadFragment = UploadPDFDialog.newInstance();
+                uploadFragment.show(getFragmentManager(), "Dialog Fragment");
+            }
+        });
+
+        //put all books in the list, querying the database
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("books").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -101,7 +120,9 @@ public class FeedFragment extends Fragment {
             this.books = bookList;
         }
 
-        // inflate CardView into ReciclerView
+        /**
+         * This method inflates the CardView in the ReciclerView
+         */
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
@@ -120,6 +141,7 @@ public class FeedFragment extends Fragment {
                     invokeFragmentWithParams(holder.author.getText().toString(),holder.title.getText().toString(), "ok");
                 }
             });
+            //
         }
 
         @Override
@@ -127,7 +149,10 @@ public class FeedFragment extends Fragment {
             return books.size();
         }
 
-        // Holder private class
+        /**
+         * Holder class contains the infos of the card and the book element selected or
+         * the next book element in the recycler view
+         */
         public class MyViewHolder extends RecyclerView.ViewHolder {
             public TextView title, author;
             public CardView cardView;
@@ -142,6 +167,9 @@ public class FeedFragment extends Fragment {
             }
         }
 
+        /**
+         * This method invokes the book fragment when the card is cliked
+         */
         private void invokeFragmentWithParams(String author, String title, String updateDate) {
             Fragment bookFragment = new BookFragment();
             ((BookFragment) bookFragment).setParameters(author, title);

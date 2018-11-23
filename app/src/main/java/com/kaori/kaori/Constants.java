@@ -30,4 +30,10 @@ public class Constants {
     public static final String DB_COLL_COURSE_TYPES = "course_types";
     public static final String DB_COLL_COURSES = "exams";
 
+    /**
+     * Storage constants.
+     */
+    public static final String STORAGE_PATH_UPLOADS = "uploads/";
+    public static final String DATABASE_PATH_UPLOADS = "uploads";
+
 }
