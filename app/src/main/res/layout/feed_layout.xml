@@ -8,30 +8,34 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton"
-        android:layout_width="40dp"
-        android:layout_height="41dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="64dp"
         android:clickable="true"
+        android:focusable="true"
+        android:scaleType="center"
         android:tint="@color/WHITE"
+        app:backgroundTint="@color/colorAccent"
+        app:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.975"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        tools:ignore="KeyboardInaccessibleWidget" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recicler_view"
+        android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingTop="5dp"
         android:clipToPadding="false"
+        android:paddingTop="5dp"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
-
+        app:layout_constraintTop_toTopOf="parent">
     </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.BottomNavigationView
@@ -39,6 +43,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:layout_gravity="bottom"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
         app:labelVisibilityMode="labeled"

@@ -18,4 +18,6 @@
     <string name="firebase_web_host" translatable="false">kaori-c5a43.firebaseapp.com</string>
     <string name="facebook_app_id">1537422876359009</string>
     <string name="fb_login_protocol_scheme">fb1537422876359009</string>
+
+    <string name="search_hint">Search</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarActivities;
+package com.kaori.kaori.BottomBarFragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,6 +33,7 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    // TODO: fare l'autenticazione
     private void getCurrentUser(){
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
