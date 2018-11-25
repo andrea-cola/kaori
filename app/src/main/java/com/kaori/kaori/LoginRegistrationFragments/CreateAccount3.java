@@ -2,7 +2,9 @@ package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -30,29 +32,36 @@ import com.kaori.kaori.R;
 
 import java.util.ArrayList;
 
+/**
+ * This class represents the last phase of the
+ */
 public class CreateAccount3 extends Fragment {
 
     /**
      * Variables.
      */
     private ArrayList<String> universities, courseTypes, exams;
-    private LinearLayout linearLayout;
+    private LinearLayout spinnerSpace;
     private FirebaseFirestore db;
     private View waitLayout;
     private ArrayList<AutoCompleteTextView> autoCompleteTextViewArrayList;
-    private User user;
     private AutoCompleteTextView acUni, acCourseType;
-    private Button buttonAddSpinner;
+    private User user;
+    private Button addSpinnerButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reg3, container, false);
-        linearLayout = view.findViewById(R.id.spinner_space);
+        View tmp = inflater.inflate(R.layout.registration_spinner, null, false);
+
+        // get views from layout
+        spinnerSpace = view.findViewById(R.id.spinner_space);
         acUni = view.findViewById(R.id.reg_ac_uni);
         acCourseType = view.findViewById(R.id.reg_ac_course_type);
         waitLayout = view.findViewById(R.id.wait_layout);
 
+        // instantiate variables
         db = FirebaseFirestore.getInstance();
         autoCompleteTextViewArrayList = new ArrayList<>();
         exams = new ArrayList<>();
@@ -63,18 +72,17 @@ public class CreateAccount3 extends Fragment {
         acCourseType.setAlpha(0.5f);
 
         // add the first spinner
-        View tmp = inflater.inflate(R.layout.registration_spinner, null, false);
         autoCompleteTextViewArrayList.add((AutoCompleteTextView) tmp.findViewById(R.id.reg_ac));
         autoCompleteTextViewArrayList.get(0).setEnabled(false);
         autoCompleteTextViewArrayList.get(0).setAlpha(0.5f);
-        linearLayout.addView(tmp);
+        spinnerSpace.addView(tmp);
 
         // listener of the first button
-        buttonAddSpinner = view.findViewById(R.id.button_add_spinner);
-        buttonAddSpinner.setOnClickListener(new View.OnClickListener() {
+        addSpinnerButton = view.findViewById(R.id.button_add_spinner);
+        addSpinnerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addSpinner(inflater, linearLayout);
+                addSpinner(inflater, spinnerSpace);
            }
         });
 
@@ -99,12 +107,12 @@ public class CreateAccount3 extends Fragment {
         this.user = user;
     }
 
-    private void closeKeyboard(){
+    private void closeKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
-    private void addListenerUniversitiesSpinner(){
+    private void addListenerUniversitiesSpinner() {
         acUni.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -115,20 +123,20 @@ public class CreateAccount3 extends Fragment {
         });
     }
 
-    private void addListenerCourseTypesSpinner(){
+    private void addListenerCourseTypesSpinner() {
         acCourseType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 autoCompleteTextViewArrayList.get(0).setEnabled(true);
                 autoCompleteTextViewArrayList.get(0).setAlpha(1f);
-                buttonAddSpinner.setEnabled(true);
-                buttonAddSpinner.setAlpha(1f);
+                addSpinnerButton.setEnabled(true);
+                addSpinnerButton.setAlpha(1f);
                 closeKeyboard();
             }
         });
     }
 
-    private void addSpinner(LayoutInflater inflater, LinearLayout linearLayout){
+    private void addSpinner(LayoutInflater inflater, LinearLayout linearLayout) {
         if(autoCompleteTextViewArrayList.size() < exams.size()) {
             View tmp = inflater.inflate(R.layout.registration_spinner, null, false);
             AutoCompleteTextView tmpS = tmp.findViewById(R.id.reg_ac);
@@ -138,24 +146,24 @@ public class CreateAccount3 extends Fragment {
         }
     }
 
-    private void getUniversitiesListFromDatabase(){
+    private void getUniversitiesListFromDatabase() {
         db.collection(Constants.DB_COLL_UNIVERSITIES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult())
-                            universities.add(document.getString("name"));
-                    }
-                    else
-                        //TODO
-                        Log.d(Constants.TAG, "Error getting documents: ", task.getException());
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult())
+                        universities.add(document.getString("name"));
+                }
+                else
+                    //TODO
+                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
 
-                    getCourseTypesFromDatabase();
+                getCourseTypesFromDatabase();
                 }
             });
     }
 
-    private void getCourseTypesFromDatabase(){
+    private void getCourseTypesFromDatabase() {
         db.collection(Constants.DB_COLL_COURSE_TYPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -172,7 +180,7 @@ public class CreateAccount3 extends Fragment {
         });
     }
 
-    private void getCoursesFromDatabase(){
+    private void getCoursesFromDatabase() {
         db.collection(Constants.DB_COLL_COURSES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -188,7 +196,7 @@ public class CreateAccount3 extends Fragment {
         });
     }
 
-    private void setSpinnerAdapters(){
+    private void setSpinnerAdapters() {
         Context context = getContext();
         if(context != null) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, universities);
@@ -204,14 +212,13 @@ public class CreateAccount3 extends Fragment {
         }
     }
 
-    private void updateUser(){
+    private void updateUser() {
         try {
             ArrayList<String> chosenExams = new ArrayList<>();
-            for (AutoCompleteTextView spinner : autoCompleteTextViewArrayList) {
-                chosenExams.add(spinner.getText().toString());
-            }
-            user.setExams(chosenExams);
+            for (AutoCompleteTextView actw : autoCompleteTextViewArrayList)
+                chosenExams.add(actw.getText().toString());
 
+            user.setExams(chosenExams);
             user.setUniversity(acUni.getText().toString());
             user.setCourseType(acCourseType.getText().toString());
         } finally {
@@ -220,22 +227,30 @@ public class CreateAccount3 extends Fragment {
     }
 
     private void uploadNewUserOnTheServer(){
-        db.collection("users").document()
-                .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // TODO: vanno settate le preferenze come utente loggato.
-                        Log.d(Constants.TAG, "DocumentSnapshot successfully written!");
+        db.collection("users")
+            .document()
+            .set(user)
+            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // TODO: vanno settate le preferenze come utente loggato.
+                    Log.d(Constants.TAG, "DocumentSnapshot successfully written!");
+                    if(getContext() != null) {
+                        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                        SharedPreferences.Editor editor = app_preferences.edit();
+                        editor.putBoolean(String.valueOf(R.string.preferences_master_login), true);
+                        editor.putString(String.valueOf(R.string.preferences_master_login_uid), user.getUid());
+                        editor.putString(String.valueOf(R.string.preferences_master_login_username), user.getEmail());
                     }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // TODO: fare riprovare l'utente.
-                        Log.w(Constants.TAG, "Error writing document", e);
-                    }
-                });
+                }
+            })
+            .addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    // TODO: fare riprovare l'utente.
+                    Log.w(Constants.TAG, "Error writing document", e);
+                }
+            });
     }
 
 }

@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">Kaori</string>
     <string name="title_home">Feed</string>
     <string name="title_hub">Material</string>
@@ -27,5 +28,9 @@
     <string name="spinner_title_course_type">Your course type</string>
     <string name="spinner_title_uni">Your university</string>
     <string name="spinner_title_new_exam">Add the exam</string>
+
+    <string name="preferences_master_login">master_login</string>
+    <string name="preferences_master_login_uid">master_login_uid</string>
+    <string name="preferences_master_login_username">master_login_username</string>
 
 </resources>

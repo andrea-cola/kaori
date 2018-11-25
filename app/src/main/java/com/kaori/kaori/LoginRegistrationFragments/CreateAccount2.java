@@ -26,6 +26,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.Kaori;
@@ -56,10 +61,11 @@ public class CreateAccount2 extends Fragment {
      * Variables.
      */
     private User user;
+    private boolean[] validFields = new boolean[4];
     private CircleImageView profileImage;
     private EditText name, surname, password, mail;
     private Button createNewAccount;
-    private boolean[] validFields = new boolean[4];
+    private FirebaseAuth auth;
 
     /**
      * Override of the inherited method.
@@ -78,6 +84,7 @@ public class CreateAccount2 extends Fragment {
         profileImage = view.findViewById(R.id.reg_image_profile);
 
         user = new User();
+        auth = FirebaseAuth.getInstance();
 
         // show the title bar
         if (getActivity() != null && isAdded())
@@ -87,43 +94,49 @@ public class CreateAccount2 extends Fragment {
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
 
+        // add listener to changes in edittext.
         setEditTextWatchers();
 
+        // add the action to the FAB.
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //getImageFromLibrary();
                 buildChoicePopup();
             }
         });
 
-        createNewAccount.setEnabled(true);
-
+        createNewAccount.setEnabled(false);
         createNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateUser();
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(mail.getText().toString(), password.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success, update UI with the signed-in user's information
+                                Log.d(Constants.TAG, "createUserWithEmail:success");
+                                updateUser(auth.getCurrentUser());
+
+                                CreateAccount3 createAccount3 = new CreateAccount3();
+                                createAccount3.setUser(user);
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.container, createAccount3)
+                                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                                        .addToBackStack(BACK_STATE_NAME)
+                                        .commit();
+
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(Constants.TAG, "createUserWithEmail:failure", task.getException());
+                                Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        }
+                    });
 
 
-
-
-
-
-                // todo: login con firebase
-
-
-
-
-
-
-
-                CreateAccount3 createAccount3 = new CreateAccount3();
-                createAccount3.setUser(user);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, createAccount3)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
             }
         });
 
@@ -131,20 +144,14 @@ public class CreateAccount2 extends Fragment {
     }
 
     /**
-     * Let the previous fragment to pass the user.
-     */
-    /*package-private*/ void setUser(User user) {
-        this.user = user;
-    }
-
-    /**
      * Update the user information before passing to the next
      * fragment.
      */
-    private void updateUser() {
+    private void updateUser(FirebaseUser u) {
         user.setName(name.getText().toString());
         user.setSurname(surname.getText().toString());
         user.setEmail(mail.getText().toString());
+        user.setUid(u.getUid());
         // TODO: gestire la mancanza del photoURI
     }
 
@@ -167,6 +174,7 @@ public class CreateAccount2 extends Fragment {
         boolean flag = true;
         for (boolean validField : validFields) flag = flag && validField;
         createNewAccount.setAlpha(flag ? 1 : 0.5f);
+        createNewAccount.setEnabled(flag);
     }
 
     /**
@@ -183,7 +191,7 @@ public class CreateAccount2 extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                // do nothing.
             }
 
             @Override
@@ -275,14 +283,14 @@ public class CreateAccount2 extends Fragment {
         builderSingle.setView(view);
         final AlertDialog alert = builderSingle.create();
 
-        ((Button)view.findViewById(R.id.popup_cancel_button)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.popup_cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 alert.dismiss();
             }
         });
 
-        ((Button)view.findViewById(R.id.popup_voice1)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.popup_voice1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
@@ -303,7 +311,7 @@ public class CreateAccount2 extends Fragment {
                             }
 
                         } catch (IOException ex) {
-                            //TODO: Error occurred while creating the File
+                            //TODO: errore quanto crei il file
                         }
                     }
                 }
@@ -311,7 +319,7 @@ public class CreateAccount2 extends Fragment {
             }
         });
 
-        ((Button)view.findViewById(R.id.popup_voice2)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.popup_voice2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getImageFromLibrary();
@@ -332,7 +340,7 @@ public class CreateAccount2 extends Fragment {
                 if(requestCode == PICK_IMAGE)
                     user.setPhotosUrl(data.getData());
 
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), user.getPhotosUrl());
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(user.getPhotosUrl()));
 
                 if(requestCode == CAMERA_REQUEST) {
                     Matrix matrix = new Matrix();

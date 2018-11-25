@@ -10,7 +10,7 @@ public class User {
     private String name;
     private String surname;
     private String birthday;
-    private Uri photosUrl;
+    private String photosUrl;
     private String university;
     private String courseType;
     private List<String> exams;
@@ -50,12 +50,12 @@ public class User {
         this.surname = surname;
     }
 
-    public Uri getPhotosUrl() {
+    public String getPhotosUrl() {
         return photosUrl;
     }
 
     public void setPhotosUrl(Uri photosUrl) {
-        this.photosUrl = photosUrl;
+        this.photosUrl = photosUrl.toString();
     }
 
     public List<String> getExams() {

@@ -263,10 +263,10 @@ public class CreateAccount1 extends Fragment {
      */
     private void invokeNextFragmentWithParams(User user){
         if(getActivity() != null && isAdded()) {
-            CreateAccount2 createAccount2 = new CreateAccount2();
-            createAccount2.setUser(user);
+            CreateAccount3 createAccount3 = new CreateAccount3();
+            createAccount3.setUser(user);
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, createAccount2)
+                    .replace(R.id.container, createAccount3)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
