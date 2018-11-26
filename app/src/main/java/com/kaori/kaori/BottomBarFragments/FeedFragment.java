@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarActivities;
+package com.kaori.kaori.BottomBarFragments;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -45,38 +45,41 @@ public class FeedFragment extends Fragment {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
         mBookList = new ArrayList<Book>();
 
-        //Floating Action Button managment for upload pdf files
+        // Floating Action Button management for upload pdf files
         fab = view.findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UploadPDFDialog uploadFragment = UploadPDFDialog.newInstance();
+                UploadBookDialog uploadFragment = UploadBookDialog.newInstance();
                 uploadFragment.show(getFragmentManager(), "Dialog Fragment");
             }
         });
 
-        //put all books in the list, querying the database
+        // put all books in the list, querying the database
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("books").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("books")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         String title = document.getString("title");
                         String author = document.getString("author");
-                        mBookList.add(new Book(title, author));
+                        String url = document.getString("url");
+                        mBookList.add(new Book(title, author, url));
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
 
-                recyclerView = (RecyclerView) getView().findViewById(R.id.my_recicler_view);
+                recyclerView = (RecyclerView) getView().findViewById(R.id.my_recycler_view);
                 recyclerView.setHasFixedSize(true);
 
                 layoutManager = new LinearLayoutManager(getContext());
                 recyclerView.setLayoutManager(layoutManager);
 
-                mAdapter = new MyAdapter(mBookList);
+                mAdapter = new recyclerAdapter(mBookList);
                 recyclerView.setAdapter(mAdapter);
             }
         });
@@ -85,12 +88,13 @@ public class FeedFragment extends Fragment {
     }
 
     /**
-     * Private Adapter for ReciclerView
+     * Private Adapter for RecyclerView
      */
-    private class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+    private class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.recyclerHolder> {
+
         ArrayList<Book> books;
 
-        public MyAdapter(ArrayList<Book> bookList){
+        public recyclerAdapter(ArrayList<Book> bookList){
             this.books = bookList;
         }
 
@@ -99,13 +103,13 @@ public class FeedFragment extends Fragment {
          */
         @NonNull
         @Override
-        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card, parent, false));
+        public recyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+            recyclerHolder holder = new recyclerHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card, parent, false));
             return holder;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final MyViewHolder holder, int i) {
+        public void onBindViewHolder(@NonNull final recyclerHolder holder, int i) {
             holder.author.setText(books.get(i).getAuthor());
             holder.title.setText(books.get(i).getTitle());
 
@@ -115,7 +119,6 @@ public class FeedFragment extends Fragment {
                     invokeFragmentWithParams(holder.author.getText().toString(),holder.title.getText().toString(), "ok");
                 }
             });
-            //
         }
 
         @Override
@@ -127,12 +130,12 @@ public class FeedFragment extends Fragment {
          * Holder class contains the infos of the card and the book element selected or
          * the next book element in the recycler view
          */
-        public class MyViewHolder extends RecyclerView.ViewHolder {
+        public class recyclerHolder extends RecyclerView.ViewHolder {
             public TextView title, author;
             public CardView cardView;
             //public ImageView image;
 
-            public MyViewHolder(View view) {
+            public recyclerHolder(View view) {
                 super(view);
                 title = view.findViewById(R.id.cardTitle);
                 author = view.findViewById(R.id.cardAuthor);
