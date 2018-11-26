@@ -1,20 +1,19 @@
 package com.kaori.kaori;
 
 import android.app.FragmentTransaction;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
-import com.kaori.kaori.BottomBarFragments.SeachFragment;
+import com.kaori.kaori.BottomBarFragments.SearchFragment;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 
 /**
@@ -40,7 +39,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
                     bottomBarFragmentCall(new FeedFragment());
                     return true;
                 case R.id.navigation_hub:
-                    bottomBarCallFragment(new SeachFragment());
+                    bottomBarFragmentCall(new SearchFragment());
                     return true;
                 case R.id.navigation_study_with_me:
                     return true;
@@ -61,6 +60,8 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        Log.w(Constants.TAG, getSharedPreferences(Constants.KAORI_SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(String.valueOf(R.string.preferences_master_login), false) + "");
 
         if(checkLoginStatus()) {
             setContentView(R.layout.activity_main);
@@ -87,9 +88,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
      * If yes returns true, otherwise false.
      */
     private boolean checkLoginStatus(){
-        SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = app_preferences.edit();
-        return app_preferences.getBoolean("master_login", false);
+        return getSharedPreferences(Constants.KAORI_SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(String.valueOf(R.string.preferences_master_login), false);
     }
 
     /**

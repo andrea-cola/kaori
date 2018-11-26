@@ -1,16 +1,25 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
@@ -24,6 +33,8 @@ import com.kaori.kaori.R;
  */
 public class LoginFragment extends Fragment {
 
+    private FirebaseAuth auth;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -31,7 +42,11 @@ public class LoginFragment extends Fragment {
 
         Button loginButton = view.findViewById(R.id.login_button);
         TextView forgottenPassowrd = view.findViewById(R.id.password_forgotten);
+        final EditText mUsername, mPassword;
+        mUsername = view.findViewById(R.id.login_username);
+        mPassword = view.findViewById(R.id.login_password);
 
+        auth = FirebaseAuth.getInstance();
         //TODO: inizializzare le immagini dei social
 
         // show the title bar
@@ -43,10 +58,6 @@ public class LoginFragment extends Fragment {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText mUsername, mPassword;
-                mUsername = view.findViewById(R.id.login_username);
-                mPassword = view.findViewById(R.id.login_password);
-
                 nativeLogin(mUsername.getText().toString(), mPassword.getText().toString());
             }
         });
@@ -68,7 +79,31 @@ public class LoginFragment extends Fragment {
      * @param password of the user
      */
     private void nativeLogin(@NonNull final String username, @NonNull final String password){
-       // we need to call Firebase, make the login and link the user to the database.
+        auth.signInWithEmailAndPassword(username, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            FirebaseUser user = auth.getCurrentUser();
+                            if(getActivity() != null) {
+                                Log.d(Constants.TAG, "signInWithEmail:success");
+
+                                SharedPreferences preferences = getActivity().getSharedPreferences(Constants.KAORI_SHARED_PREFERENCES, Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putBoolean(String.valueOf(R.string.preferences_master_login), true);
+                                editor.putString(String.valueOf(R.string.preferences_master_login_uid), user.getUid());
+                                editor.putString(String.valueOf(R.string.preferences_master_login_username), user.getEmail());
+                                editor.apply();
+                                getActivity().recreate();
+                            }
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(Constants.TAG, "signInWithEmail:failure", task.getException());
+                            Toast.makeText(getActivity(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     /**

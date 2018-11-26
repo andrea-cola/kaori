@@ -10,12 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.firebase.ui.auth.AuthUI;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This fragment handles the two option:
@@ -28,10 +24,6 @@ public class LoginRegistrationFragment extends Fragment {
      * Constants.
      */
     private final String BACK_STATE_NAME = getClass().getName();
-    private final List<AuthUI.IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                    new AuthUI.IdpConfig.GoogleBuilder().build(),
-                    new AuthUI.IdpConfig.FacebookBuilder().build());
 
     @Nullable
     @Override
