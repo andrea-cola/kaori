@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class SeachFragment extends Fragment {
+public class SearchFragment extends Fragment {
 
     /**
      * Constants
@@ -52,7 +52,7 @@ public class SeachFragment extends Fragment {
     private Query set;
     private FirestoreRecyclerAdapter adapter;
 
-    public SeachFragment(){ }
+    public SearchFragment(){ }
 
     @Nullable
     @Override

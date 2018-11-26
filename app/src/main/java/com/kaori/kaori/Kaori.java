@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
-import com.kaori.kaori.BottomBarFragments.SeachFragment;
+import com.kaori.kaori.BottomBarFragments.SearchFragment;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 
 /**
@@ -40,7 +40,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
                     bottomBarFragmentCall(new FeedFragment());
                     return true;
                 case R.id.navigation_hub:
-                    bottomBarCallFragment(new SeachFragment());
+                    bottomBarFragmentCall(new SearchFragment());
                     return true;
                 case R.id.navigation_study_with_me:
                     return true;
