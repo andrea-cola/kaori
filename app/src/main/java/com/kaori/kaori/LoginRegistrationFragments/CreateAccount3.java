@@ -2,10 +2,12 @@ package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,9 +45,8 @@ public class CreateAccount3 extends Fragment {
     private FirebaseFirestore db;
     private View waitLayout;
     private ArrayList<AutoCompleteTextView> autoCompleteTextViewArrayList;
-    private AutoCompleteTextView acUni, acCourseType;
     private User user;
-    private Button addSpinnerButton;
+    private Button addSpinnerButton, createNewAccountButton;
 
     @Nullable
     @Override
@@ -55,9 +56,8 @@ public class CreateAccount3 extends Fragment {
 
         // get views from layout
         spinnerSpace = view.findViewById(R.id.spinner_space);
-        acUni = view.findViewById(R.id.reg_ac_uni);
-        acCourseType = view.findViewById(R.id.reg_ac_course_type);
         waitLayout = view.findViewById(R.id.wait_layout);
+        createNewAccountButton = view.findViewById(R.id.button_create_new_account);
 
         // instantiate variables
         db = FirebaseFirestore.getInstance();
@@ -66,13 +66,18 @@ public class CreateAccount3 extends Fragment {
         courseTypes = new ArrayList<>();
         universities = new ArrayList<>();
 
-        acCourseType.setEnabled(false);
-        acCourseType.setAlpha(0.5f);
+        autoCompleteTextViewArrayList.add((AutoCompleteTextView)view.findViewById(R.id.reg_ac_uni));
+        autoCompleteTextViewArrayList.add((AutoCompleteTextView)view.findViewById(R.id.reg_ac_course_type));
+
+        createNewAccountButton.setEnabled(false);
+        createNewAccountButton.setAlpha(0.5f);
+        autoCompleteTextViewArrayList.get(1).setEnabled(false);
+        autoCompleteTextViewArrayList.get(1).setAlpha(0.5f);
 
         // add the first spinner
         autoCompleteTextViewArrayList.add((AutoCompleteTextView) tmp.findViewById(R.id.reg_ac));
-        autoCompleteTextViewArrayList.get(0).setEnabled(false);
-        autoCompleteTextViewArrayList.get(0).setAlpha(0.5f);
+        autoCompleteTextViewArrayList.get(2).setEnabled(false);
+        autoCompleteTextViewArrayList.get(2).setAlpha(0.5f);
         spinnerSpace.addView(tmp);
 
         // listener of the first button
@@ -85,8 +90,7 @@ public class CreateAccount3 extends Fragment {
         });
 
         // listener of the second button
-        Button button = view.findViewById(R.id.button_create_new_account);
-        button.setOnClickListener(new View.OnClickListener() {
+        createNewAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 updateUser();
@@ -95,6 +99,7 @@ public class CreateAccount3 extends Fragment {
 
         addListenerUniversitiesSpinner();
         addListenerCourseTypesSpinner();
+        addListenerCourseTypesSpinner2();
 
         getUniversitiesListFromDatabase();
 
@@ -111,24 +116,35 @@ public class CreateAccount3 extends Fragment {
     }
 
     private void addListenerUniversitiesSpinner() {
-        acUni.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        autoCompleteTextViewArrayList.get(0).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                acCourseType.setEnabled(true);
-                acCourseType.setAlpha(1f);
+                autoCompleteTextViewArrayList.get(1).setEnabled(true);
+                autoCompleteTextViewArrayList.get(1).setAlpha(1f);
                 closeKeyboard();
             }
         });
     }
 
     private void addListenerCourseTypesSpinner() {
-        acCourseType.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        autoCompleteTextViewArrayList.get(1).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                autoCompleteTextViewArrayList.get(0).setEnabled(true);
-                autoCompleteTextViewArrayList.get(0).setAlpha(1f);
+                autoCompleteTextViewArrayList.get(2).setEnabled(true);
+                autoCompleteTextViewArrayList.get(2).setAlpha(1f);
                 addSpinnerButton.setEnabled(true);
                 addSpinnerButton.setAlpha(1f);
+                closeKeyboard();
+            }
+        });
+    }
+
+    private void addListenerCourseTypesSpinner2() {
+        autoCompleteTextViewArrayList.get(2).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                createNewAccountButton.setEnabled(true);
+                createNewAccountButton.setAlpha(1f);
                 closeKeyboard();
             }
         });
@@ -198,13 +214,13 @@ public class CreateAccount3 extends Fragment {
         Context context = getContext();
         if(context != null) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, universities);
-            acUni.setAdapter(adapter);
+            autoCompleteTextViewArrayList.get(0).setAdapter(adapter);
 
             ArrayAdapter<String> adapter2 = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, courseTypes);
-            acCourseType.setAdapter(adapter2);
+            autoCompleteTextViewArrayList.get(1).setAdapter(adapter2);
 
             ArrayAdapter<String> adapter3 = new ArrayAdapter<>(context, android.R.layout.simple_dropdown_item_1line, exams);
-            autoCompleteTextViewArrayList.get(0).setAdapter(adapter3);
+            autoCompleteTextViewArrayList.get(2).setAdapter(adapter3);
 
             waitLayout.setVisibility(View.GONE);
         }
@@ -217,31 +233,48 @@ public class CreateAccount3 extends Fragment {
                 chosenExams.add(actw.getText().toString());
 
             user.setExams(chosenExams);
-            user.setUniversity(acUni.getText().toString());
-            user.setCourseType(acCourseType.getText().toString());
+            user.setUniversity(autoCompleteTextViewArrayList.get(0).getText().toString());
+            user.setCourseType(autoCompleteTextViewArrayList.get(1).getText().toString());
         } finally {
             uploadNewUserOnTheServer();
         }
     }
 
     private void uploadNewUserOnTheServer(){
-        db.collection("users")
-            .document()
-            .set(user)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // TODO: vanno settate le preferenze come utente loggato.
-                    Log.d(Constants.TAG, "DocumentSnapshot successfully written!");
+        final AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(getContext(), android.R.style.Theme_Material_Dialog_Alert);
+        builder.setTitle("Sei sicuro di procedere?")
+            .setMessage("Premendo Ok completerai la tua registazione e riceverai una mail di conferma. Premendo su ANNULLA potrai modificare i tuoi dati.")
+            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    db.collection("users")
+                            .document()
+                            .set(user)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(Constants.TAG, "DocumentSnapshot successfully written!");
+                                    // TODO: mandare mail in caso di conferma.
+                                    if (getActivity() != null)
+                                        getActivity().recreate();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // TODO: fare riprovare l'utente.
+                                    Log.w(Constants.TAG, "Error writing document", e);
+                                }
+                            });
                 }
             })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    // TODO: fare riprovare l'utente.
-                    Log.w(Constants.TAG, "Error writing document", e);
+            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+
                 }
-            });
+            })
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show();
     }
 
 }
