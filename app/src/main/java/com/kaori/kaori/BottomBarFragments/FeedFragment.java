@@ -43,7 +43,13 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
-        mBookList = new ArrayList<Book>();
+        mBookList = new ArrayList<>();
+        recyclerView = view.findViewById(R.id.my_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new recyclerAdapter(mBookList);
+        recyclerView.setAdapter(mAdapter);
 
         // Floating Action Button management for upload pdf files
         fab = view.findViewById(R.id.floatingActionButton);
@@ -69,18 +75,11 @@ public class FeedFragment extends Fragment {
                         String url = document.getString("url");
                         mBookList.add(new Book(title, author, url));
                     }
+                    if(getContext() != null)
+                        mAdapter.notifyDataSetChanged();
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
-
-                recyclerView = (RecyclerView) getView().findViewById(R.id.my_recycler_view);
-                recyclerView.setHasFixedSize(true);
-
-                layoutManager = new LinearLayoutManager(getContext());
-                recyclerView.setLayoutManager(layoutManager);
-
-                mAdapter = new recyclerAdapter(mBookList);
-                recyclerView.setAdapter(mAdapter);
             }
         });
 

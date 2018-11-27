@@ -7,14 +7,15 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
+import com.kaori.kaori.ProfileFragments.ProfileFragment;
 
 /**
  * Entry point of the app.
@@ -25,6 +26,11 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
      * Constants.
      */
     private final String BACK_STATE_NAME = getClass().getName();
+
+    /**
+     * Variables.
+     */
+    private boolean authenticated;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -44,6 +50,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
                 case R.id.navigation_study_with_me:
                     return true;
                 case R.id.navigation_my_profile:
+                    bottomBarFragmentCall(new ProfileFragment());
                     return true;
             }
             return false;
@@ -61,13 +68,13 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
-        Log.w(Constants.TAG, getSharedPreferences(Constants.KAORI_SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(String.valueOf(R.string.preferences_master_login), false) + "");
-
         if(checkLoginStatus()) {
             setContentView(R.layout.activity_main);
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+            // empty the stack.
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             entryPointFragmentCall(new FeedFragment());
         }
         else {
@@ -88,7 +95,10 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
      * If yes returns true, otherwise false.
      */
     private boolean checkLoginStatus(){
-        return getSharedPreferences(Constants.KAORI_SHARED_PREFERENCES, MODE_PRIVATE).getBoolean(String.valueOf(R.string.preferences_master_login), false);
+        if(authenticated)
+            return true;
+        authenticated = FirebaseAuth.getInstance().getCurrentUser() != null;
+        return authenticated;
     }
 
     /**
@@ -117,6 +127,16 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     public void onBackStackChanged() {
         shouldDisplayHomeUp();
+    }
+
+    /**
+     * Override of the default method.
+     * Checks if the user is already logged in.
+     */
+    @Override
+    public void onStart(){
+        super.onStart();
+        authenticated = FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     /**
