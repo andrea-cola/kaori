@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,18 +25,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -66,6 +74,7 @@ public class CreateAccount2 extends Fragment {
     private EditText name, surname, password, mail;
     private Button createNewAccount;
     private FirebaseAuth auth;
+    private StorageReference mStorage;
 
     /**
      * Override of the inherited method.
@@ -117,15 +126,6 @@ public class CreateAccount2 extends Fragment {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(Constants.TAG, "createUserWithEmail:success");
                                 updateUser(auth.getCurrentUser());
-
-                                CreateAccount3 createAccount3 = new CreateAccount3();
-                                createAccount3.setUser(user);
-                                getActivity().getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.container, createAccount3)
-                                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                                        .addToBackStack(BACK_STATE_NAME)
-                                        .commit();
-
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(Constants.TAG, "createUserWithEmail:failure", task.getException());
@@ -152,6 +152,11 @@ public class CreateAccount2 extends Fragment {
         user.setSurname(surname.getText().toString());
         user.setEmail(mail.getText().toString());
         user.setUid(u.getUid());
+        user.setPhotosUrl(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
+        mStorage = FirebaseStorage.getInstance().getReference(user.getPhotosUrl());
+
+        uploadFileInFirebaseStorage(profileImage
+        );
         // TODO: gestire la mancanza del photoURI
     }
 
@@ -305,7 +310,7 @@ public class CreateAccount2 extends Fragment {
                             if (photoFile != null) {
                                 Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
                                 Log.d(Constants.TAG, photoURI.toString());
-                                user.setPhotosUrl(photoURI);
+                                user.setPhotosUrl(photoURI.toString());
                                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                                 startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                             }
@@ -338,7 +343,7 @@ public class CreateAccount2 extends Fragment {
         if(data != null){
             try {
                 if(requestCode == PICK_IMAGE)
-                    user.setPhotosUrl(data.getData());
+                    user.setPhotosUrl(data.getData().toString());
 
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(user.getPhotosUrl()));
 
@@ -381,6 +386,36 @@ public class CreateAccount2 extends Fragment {
         String imageFileName = "JPEG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
+    }
+
+    private void uploadFileInFirebaseStorage(ImageView imageView){
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = mStorage.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.w(Constants.TAG, exception.getMessage());
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                Toast.makeText(getContext(), "Upload effettuato", Toast.LENGTH_SHORT).show();
+                CreateAccount3 createAccount3 = new CreateAccount3();
+                createAccount3.setUser(user);
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, createAccount3)
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(BACK_STATE_NAME)
+                        .commit();
+            }
+        });
     }
 
 }
