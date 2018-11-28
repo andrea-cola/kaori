@@ -36,6 +36,7 @@ public class UploadBookDialog extends DialogFragment {
 
     // this is the pic pdf code used in file chooser
     final static int PICK_PDF_CODE = 2342;
+    private final float PROGRESS_BAR_CONSTANT = 100f;
 
     /**
      * Views from layout
@@ -173,7 +174,7 @@ public class UploadBookDialog extends DialogFragment {
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                double progress = (PROGRESS_BAR_CONSTANT * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                 textProgress.setVisibility(View.VISIBLE);
                 textProgress.setText((int) progress + "% Uploading...");
             }

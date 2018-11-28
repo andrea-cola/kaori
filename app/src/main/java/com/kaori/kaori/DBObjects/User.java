@@ -1,15 +1,13 @@
 package com.kaori.kaori.DBObjects;
 
-import android.net.Uri;
-
+import java.io.Serializable;
 import java.util.List;
 
-public class User {
+public class User implements Serializable {
 
     private String email;
     private String name;
     private String surname;
-    private String birthday;
     private String photosUrl;
     private String university;
     private String courseType;
@@ -19,6 +17,7 @@ public class User {
 
     public User(){ }
 
+<<<<<<< HEAD
     public String getPosition() {
         return position;
     }
@@ -31,6 +30,8 @@ public class User {
         return birthday;
     }
 
+=======
+>>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
     public String getEmail() {
         return email;
     }
@@ -41,10 +42,6 @@ public class User {
 
     public String getSurname() {
         return surname;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
     }
 
     public void setEmail(String email) {

@@ -36,6 +36,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
+import com.kaori.kaori.SplashScreen;
 
 /**
  * Second step in login process.
@@ -149,7 +150,7 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             if(getActivity() != null) {
                                 Log.d(Constants.TAG, "signInWithEmail:success");
-                                getActivity().recreate();
+                                startActivity(new Intent(getActivity(), SplashScreen.class));
                             }
                         } else {
                             Log.w(Constants.TAG, "signInWithEmail:failure", task.getException());

@@ -9,19 +9,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
 import com.kaori.kaori.BottomBarFragments.MapFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
+<<<<<<< HEAD
 import com.kaori.kaori.BottomBarFragments.UserPositionsFragment;
+=======
+import com.kaori.kaori.DBObjects.User;
+>>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 
-/**
- * Entry point of the app.
- */
 public class Kaori extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
     /**
@@ -32,7 +30,8 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     /**
      * Variables.
      */
-    private boolean authenticated;
+    private User user;
+    private DataHub hub;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -67,14 +66,17 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash_screen);
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+        hub = DataHub.getInstance();
 
-        if(checkLoginStatus()) {
+        if(hub.isAuthenticated()) {
             setContentView(R.layout.activity_main);
+
             BottomNavigationView navigation = findViewById(R.id.navigation);
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+            user = hub.getUser();
 
             // empty the stack.
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -91,17 +93,6 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
 
             entryPointFragmentCall(new LoginRegistrationFragment());
         }
-    }
-
-    /**
-     * This method checks if the user has already logged in the app.
-     * If yes returns true, otherwise false.
-     */
-    private boolean checkLoginStatus(){
-        if(authenticated)
-            return true;
-        authenticated = FirebaseAuth.getInstance().getCurrentUser() != null;
-        return authenticated;
     }
 
     /**
@@ -130,16 +121,6 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     @Override
     public void onBackStackChanged() {
         shouldDisplayHomeUp();
-    }
-
-    /**
-     * Override of the default method.
-     * Checks if the user is already logged in.
-     */
-    @Override
-    public void onStart(){
-        super.onStart();
-        authenticated = FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     /**

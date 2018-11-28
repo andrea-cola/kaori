@@ -34,27 +34,30 @@ public class FeedFragment extends Fragment {
      */
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
     private ArrayList<Book> mBookList;
-    private FloatingActionButton fab;
     private final String BACK_STATE_NAME = getClass().getName();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
+<<<<<<< HEAD
 
         // setting the parameters
         mBookList = new ArrayList<>();
+=======
+>>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
         recyclerView = view.findViewById(R.id.my_recycler_view);
+
+        mBookList = new ArrayList<>();
+        mAdapter = new RecyclerAdapter(mBookList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new recyclerAdapter(mBookList);
         recyclerView.setAdapter(mAdapter);
 
         // Floating Action Button management for upload pdf files
-        fab = view.findViewById(R.id.floatingActionButton);
+        FloatingActionButton fab = view.findViewById(R.id.floatingActionButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,35 +92,49 @@ public class FeedFragment extends Fragment {
     }
 
     /**
+     * This method invokes the book fragment when the card is cliked
+     */
+    private void invokeFragmentWithParams(String author, String title, String updateDate) {
+        BookFragment bookFragment = new BookFragment();
+        bookFragment.setParameters(author, title);
+        if(getActivity() != null) {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, bookFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
+        }
+    }
+
+    /**
      * Private Adapter for RecyclerView
      */
-    private class recyclerAdapter extends RecyclerView.Adapter<recyclerAdapter.recyclerHolder> {
+    private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
         ArrayList<Book> books;
 
-        public recyclerAdapter(ArrayList<Book> bookList){
+        public RecyclerAdapter(ArrayList<Book> bookList){
             this.books = bookList;
         }
 
         /**
-         * This method inflates the CardView in the ReciclerView
+         * This method inflates the CardView in the RecyclerView
          */
         @NonNull
         @Override
-        public recyclerHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            recyclerHolder holder = new recyclerHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card, parent, false));
-            return holder;
+        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+            return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final recyclerHolder holder, int i) {
+        public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.author.setText(books.get(i).getAuthor());
             holder.title.setText(books.get(i).getTitle());
 
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    invokeFragmentWithParams(holder.author.getText().toString(),holder.title.getText().toString(), "ok");
+                    invokeFragmentWithParams(holder.author.getText().toString(), holder.title.getText().toString(), "ok");
                 }
             });
         }
@@ -128,34 +145,21 @@ public class FeedFragment extends Fragment {
         }
 
         /**
-         * Holder class contains the infos of the card and the book element selected or
+         * Holder class contains the info of the card and the book element selected or
          * the next book element in the recycler view
          */
-        public class recyclerHolder extends RecyclerView.ViewHolder {
-            public TextView title, author;
-            public CardView cardView;
+        /*package-private*/ class Holder extends RecyclerView.ViewHolder {
+            TextView title, author;
+            CardView cardView;
             //public ImageView image;
 
-            public recyclerHolder(View view) {
+            Holder (View view) {
                 super(view);
                 title = view.findViewById(R.id.cardTitle);
                 author = view.findViewById(R.id.cardAuthor);
                 cardView = view.findViewById(R.id.card_view);
                 //image = (ImageView) view.findViewById(R.id.thumbnail);
             }
-        }
-
-        /**
-         * This method invokes the book fragment when the card is cliked
-         */
-        private void invokeFragmentWithParams(String author, String title, String updateDate) {
-            Fragment bookFragment = new BookFragment();
-            ((BookFragment) bookFragment).setParameters(author, title);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, bookFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
         }
     }
 }

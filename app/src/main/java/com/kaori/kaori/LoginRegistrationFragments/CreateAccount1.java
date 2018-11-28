@@ -287,7 +287,7 @@ public class CreateAccount1 extends Fragment {
         user.setName(names[0]);
         user.setSurname(names[1]);
 
-        user.setPhotosUrl(firebaseUser.getPhotoUrl());
+        user.setPhotosUrl(firebaseUser.getPhotoUrl().toString());
 
         return user;
     }
