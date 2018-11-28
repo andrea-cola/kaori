@@ -39,10 +39,11 @@ public class Constants {
     public static final String STORAGE_PATH_UPLOADS = "uploads/";
     public static final String DATABASE_PATH_UPLOADS = "uploads";
     public static final String KAORI_SHARED_PREFERENCES = "kaori_shared";
+    public static final String STORAGE_DEFAULT_PROFILE_IMAGE = "https://firebasestorage.googleapis.com/v0/b/kaori-c5a43.appspot.com/o/profile_images%2Fdefault.png?alt=media&token=643f78ef-1681-43ae-bf52-e98d173849b4";
 
     /**
      * Numerical constants.
      */
-    public static int SPLASH_SCREEN_UPDATING_TIME = 6000;
+    public static int SPLASH_SCREEN_WAITING_TIME = 1000;
 
 }

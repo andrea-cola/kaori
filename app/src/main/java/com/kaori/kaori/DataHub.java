@@ -1,6 +1,10 @@
 package com.kaori.kaori;
 
+import android.widget.ImageView;
+
 import com.kaori.kaori.DBObjects.User;
+
+import java.util.ArrayList;
 
 /**
  * Singleton class that represent a store
@@ -12,10 +16,17 @@ public class DataHub {
 
     private boolean isAuthenticated;
     private User user;
+    private ImageView profileImageView;
+    private ArrayList<String> universities;
+    private ArrayList<String> courseTypes;
+    private ArrayList<String> exams;
 
     private DataHub(){
         isAuthenticated = false;
         user = new User();
+        universities = new ArrayList<>();
+        courseTypes = new ArrayList<>();
+        exams = new ArrayList<>();
     }
 
     public static DataHub getInstance(){
@@ -38,5 +49,30 @@ public class DataHub {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+
+    public ArrayList<String> getUniversities() {
+        return universities;
+    }
+
+    public void setUniversities(ArrayList<String> universities) {
+        this.universities = universities;
+    }
+
+    public ArrayList<String> getCourseTypes() {
+        return courseTypes;
+    }
+
+    public void setCourseType(ArrayList<String> courseType) {
+        this.courseTypes = courseType;
+    }
+
+    public ArrayList<String> getExams() {
+        return exams;
+    }
+
+    public void setExams(ArrayList<String> exams) {
+        this.exams = exams;
     }
 }

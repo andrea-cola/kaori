@@ -1,82 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_editor_absoluteY="81dp">
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    android:weightSum="1">
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="115dp"
-        android:layout_height="115dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_create_new_account"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.30"
-        app:srcCompat="@mipmap/ludo" />
+    <include layout="@layout/wait_layout" />
 
-    <Button
-        android:id="@+id/button_create_new_account"
-        style="@style/KaoriButton"
-        android:layout_width="300dp"
-        android:layout_height="@dimen/button_default_height"
-        android:text="@string/title_register"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout_editor_absoluteY="81dp">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="or"
-        android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@+id/button_fake_google"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_create_new_account" />
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="115dp"
+            android:layout_height="115dp"
+            app:layout_constraintBottom_toTopOf="@+id/button_create_new_account"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.30"
+            app:srcCompat="@mipmap/ludo" />
 
-    <Button
-        android:id="@+id/button_fake_facebook"
-        style="@style/KaoriButton"
-        android:layout_width="300dp"
-        android:layout_height="@dimen/button_default_height"
-        android:text="@string/title_register_facebook"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_fake_google" />
+        <Button
+            android:id="@+id/button_create_new_account"
+            style="@style/KaoriButton"
+            android:layout_width="300dp"
+            android:layout_height="@dimen/button_default_height"
+            android:text="@string/title_register"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_default"
+            app:layout_constraintBottom_toTopOf="@+id/textView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
-    <Button
-        android:id="@+id/button_fake_google"
-        style="@style/KaoriButton"
-        android:layout_width="300dp"
-        android:layout_height="@dimen/button_default_height"
-        android:padding="10dp"
-        android:text="@string/title_register_google"
-        android:textColor="@android:color/white"
-        android:textSize="@dimen/text_size_default"
-        app:layout_constraintBottom_toTopOf="@+id/button_fake_facebook"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="or"
+            android:textSize="@dimen/text_size_default"
+            app:layout_constraintBottom_toTopOf="@+id/button_fake_google"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_create_new_account" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/button_facebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        <Button
+            android:id="@+id/button_fake_facebook"
+            style="@style/KaoriButton"
+            android:layout_width="300dp"
+            android:layout_height="@dimen/button_default_height"
+            android:text="@string/title_register_facebook"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_default"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_fake_google" />
 
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/button_fake_google"
+            style="@style/KaoriButton"
+            android:layout_width="300dp"
+            android:layout_height="@dimen/button_default_height"
+            android:padding="10dp"
+            android:text="@string/title_register_google"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/text_size_default"
+            app:layout_constraintBottom_toTopOf="@+id/button_fake_facebook"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/button_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>
