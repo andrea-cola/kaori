@@ -13,10 +13,19 @@ public class User {
     private String photosUrl;
     private String university;
     private String courseType;
-    private List<String> exams;
     private String uid;
+    private String position;
+    private List<String> exams;
 
     public User(){ }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
     public String getBirthday() {
         return birthday;
@@ -54,8 +63,8 @@ public class User {
         return photosUrl;
     }
 
-    public void setPhotosUrl(Uri photosUrl) {
-        this.photosUrl = photosUrl.toString();
+    public void setPhotosUrl(String photosUrl) {
+        this.photosUrl = photosUrl;
     }
 
     public List<String> getExams() {

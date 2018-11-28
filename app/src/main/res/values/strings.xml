@@ -18,6 +18,8 @@
     <string name="facebook_app_id" translatable="false">1537422876359009</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1537422876359009</string>
 
+    <string name="mapbox_acces_token">pk.eyJ1IjoibWF0dGVvZGFjY28iLCJhIjoiY2pwMDVxbTBzMnNkMDNwbGtraHlpaG8zZCJ9.YfMp_jZ94UDom64UKGiVQA</string>
+
     <string name="camera_popup_title">Choose an option:</string>
     <string name="camera_popup_option1">From camera</string>
     <string name="camera_popup_option2">From gallery</string>

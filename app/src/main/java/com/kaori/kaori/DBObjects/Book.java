@@ -2,7 +2,7 @@ package com.kaori.kaori.DBObjects;
 
 import java.io.Serializable;
 
-public class Book {
+public class Book{
 
     private String title;
     private String author;

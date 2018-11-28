@@ -40,7 +40,7 @@ public class SearchFragment extends Fragment {
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
-     * View from layout
+     * Views from layout
      */
     private SearchView searchView;
     private RecyclerView recyclerView;
@@ -93,7 +93,6 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 firebaseUserSeach(newText);
-                Log.d("CIAONE", newText);
                 return false;
             }
         });
@@ -107,7 +106,7 @@ public class SearchFragment extends Fragment {
                 query = set.whereEqualTo("title", titles.get(i));
             }
         }
-        Log.d("CIAONE", query.toString());
+
         FirestoreRecyclerOptions<Book> options = new FirestoreRecyclerOptions.Builder<Book>()
                 .setQuery(query, Book.class)
                 .setLifecycleOwner(this)
@@ -148,6 +147,18 @@ public class SearchFragment extends Fragment {
                 .commit();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
     /**
      * Private adapter for the RecyclerView
      */
@@ -171,5 +182,4 @@ public class SearchFragment extends Fragment {
             book_author.setText(bookAuthor);
         }
     }
-
 }
