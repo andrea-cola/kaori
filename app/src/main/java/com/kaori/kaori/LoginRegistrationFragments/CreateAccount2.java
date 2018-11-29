@@ -6,8 +6,7 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,32 +18,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -74,7 +63,9 @@ public class CreateAccount2 extends Fragment {
     private EditText name, surname, password, mail;
     private Button createNewAccount;
     private FirebaseAuth auth;
-    private StorageReference mStorage;
+    private Bitmap profileImageBitmap;
+    private Uri filePath;
+    private FirebaseFirestore db;
 
     /**
      * Override of the inherited method.
@@ -94,6 +85,7 @@ public class CreateAccount2 extends Fragment {
 
         user = new User();
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // show the title bar
         if (getActivity() != null && isAdded())
@@ -118,25 +110,7 @@ public class CreateAccount2 extends Fragment {
         createNewAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(mail.getText().toString(), password.getText().toString())
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(Constants.TAG, "createUserWithEmail:success");
-                                updateUser(auth.getCurrentUser());
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(Constants.TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
-
-                            }
-
-                        }
-                    });
-
-
+                updateUser();
             }
         });
 
@@ -147,17 +121,18 @@ public class CreateAccount2 extends Fragment {
      * Update the user information before passing to the next
      * fragment.
      */
-    private void updateUser(FirebaseUser u) {
+    private void updateUser() {
         user.setName(name.getText().toString());
         user.setSurname(surname.getText().toString());
         user.setEmail(mail.getText().toString());
-        user.setUid(u.getUid());
-        user.setPhotosUrl(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
-        mStorage = FirebaseStorage.getInstance().getReference(user.getPhotosUrl());
 
-        uploadFileInFirebaseStorage(profileImage
-        );
-        // TODO: gestire la mancanza del photoURI
+        CreateAccount3 createAccount3 = new CreateAccount3();
+        createAccount3.setParams(user, profileImageBitmap, password.getText().toString());
+        getActivity().getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, createAccount3)
+            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+            .addToBackStack(BACK_STATE_NAME)
+            .commit();
     }
 
     /**
@@ -309,14 +284,12 @@ public class CreateAccount2 extends Fragment {
                             File photoFile = createImageFile();
                             if (photoFile != null) {
                                 Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
-                                Log.d(Constants.TAG, photoURI.toString());
-                                user.setPhotosUrl(photoURI.toString());
                                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                                 startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                             }
-
                         } catch (IOException ex) {
-                            //TODO: errore quanto crei il file
+                            // set the default image in case of problems.
+                            user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
                         }
                     }
                 }
@@ -340,26 +313,22 @@ public class CreateAccount2 extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data != null){
+        if(requestCode == CAMERA_REQUEST && filePath != null) {
+            profileImageBitmap = BitmapFactory.decodeFile(filePath.toString());
+            profileImage.setImageBitmap(profileImageBitmap);
+        }
+        else if(data != null && data.getData() != null && requestCode == PICK_IMAGE)
             try {
-                if(requestCode == PICK_IMAGE)
-                    user.setPhotosUrl(data.getData().toString());
-
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), Uri.parse(user.getPhotosUrl()));
-
-                if(requestCode == CAMERA_REQUEST) {
-                    Matrix matrix = new Matrix();
-                    matrix.postRotate(90);
-                    bitmap = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth(), bitmap.getHeight(), true);
-                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-                }
-
-                profileImage.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                Toast.makeText(getContext(), "Loading failed", Toast.LENGTH_SHORT).show();
+                profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
+                profileImage.setImageBitmap(profileImageBitmap);
+            } catch (FileNotFoundException e) {
+                // TODO
+                Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_LONG).show();
             }
-        } else
-            Toast.makeText(getContext(), "No image selected", Toast.LENGTH_SHORT).show();
+        else {
+            // TODO
+            Toast.makeText(getContext(), "Error in selecting the image.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -380,42 +349,14 @@ public class CreateAccount2 extends Fragment {
     }
 
     /**
-     * Create a new image file.
+     * Create a new image file and set the absolute path.
      */
     private File createImageFile() throws IOException {
         String imageFileName = "JPEG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(imageFileName, ".jpg", storageDir);
-    }
-
-    private void uploadFileInFirebaseStorage(ImageView imageView){
-        imageView.setDrawingCacheEnabled(true);
-        imageView.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = mStorage.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.w(Constants.TAG, exception.getMessage());
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                Toast.makeText(getContext(), "Upload effettuato", Toast.LENGTH_SHORT).show();
-                CreateAccount3 createAccount3 = new CreateAccount3();
-                createAccount3.setUser(user);
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, createAccount3)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(BACK_STATE_NAME)
-                        .commit();
-            }
-        });
+        File file = File.createTempFile(imageFileName, ".jpg", storageDir);
+        filePath = Uri.parse(file.getAbsolutePath());
+        return file;
     }
 
 }

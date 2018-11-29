@@ -33,10 +33,16 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.DataHub;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
+
+import java.util.ArrayList;
 
 /**
  * This class handles the first pass in account creation.
@@ -53,17 +59,24 @@ public class CreateAccount1 extends Fragment {
      * Variables.
      */
     private FirebaseAuth auth;
+    private FirebaseFirestore db;
     private CallbackManager callbackManager;
     private Button buttonCreateNewAccount, buttonFakeFacebook, buttonGoogle;
     private LoginButton buttonFacebook;
+    private View waitLayout;
+    private DataHub hub;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reg1, container, false);
+        waitLayout = view.findViewById(R.id.wait_layout);
 
         // objects initialization
         auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        hub = DataHub.getInstance();
+
         buttonCreateNewAccount = view.findViewById(R.id.button_create_new_account);
         buttonFakeFacebook = view.findViewById(R.id.button_fake_facebook);
         buttonFacebook = view.findViewById(R.id.button_facebook);
@@ -111,7 +124,69 @@ public class CreateAccount1 extends Fragment {
         setFacebookButtonLister();
         setGoogleButtonListener(gso);
 
+        getUniversitiesListFromDatabase();
+
         return view;
+    }
+
+    private void getUniversitiesListFromDatabase() {
+        db.collection(Constants.DB_COLL_UNIVERSITIES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> universities = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult())
+                        universities.add(document.getString("name"));
+                    hub.setUniversities(universities);
+                    Log.d(Constants.TAG, universities.size() + "");
+                }
+                else
+                    //TODO
+                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
+
+                getCourseTypesFromDatabase();
+            }
+        });
+    }
+
+    private void getCourseTypesFromDatabase() {
+        db.collection(Constants.DB_COLL_COURSE_TYPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> courseTypes = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult())
+                        courseTypes.add(document.getString("name"));
+                    hub.setCourseType(courseTypes);
+                    Log.d(Constants.TAG, courseTypes.size() + "");
+                }
+                else
+                    //TODO
+                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
+
+                getCoursesFromDatabase();
+            }
+        });
+    }
+
+    private void getCoursesFromDatabase() {
+        db.collection(Constants.DB_COLL_COURSES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<String> exams = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult())
+                        exams.add(document.getString("name"));
+                    hub.setExams(exams);
+                    Log.d(Constants.TAG, exams.size() + "");
+                }
+                else
+                    //TODO
+                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
+
+                waitLayout.setVisibility(View.GONE);
+            }
+        });
     }
 
     /**
@@ -264,7 +339,8 @@ public class CreateAccount1 extends Fragment {
     private void invokeNextFragmentWithParams(User user){
         if(getActivity() != null && isAdded()) {
             CreateAccount3 createAccount3 = new CreateAccount3();
-            createAccount3.setUser(user);
+            createAccount3.setParams(user);
+            createAccount3.setMethod(1);
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, createAccount3)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -287,7 +363,11 @@ public class CreateAccount1 extends Fragment {
         user.setName(names[0]);
         user.setSurname(names[1]);
 
-        user.setPhotosUrl(firebaseUser.getPhotoUrl().toString());
+        String tmp = firebaseUser.getPhotoUrl().toString();
+        if(tmp.isEmpty())
+            user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
+        else
+            user.setPhotosUrl(tmp);
 
         return user;
     }

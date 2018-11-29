@@ -67,6 +67,8 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
 
+
+
         hub = DataHub.getInstance();
 
         if(hub.isAuthenticated()) {
@@ -76,8 +78,6 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
             navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
             user = hub.getUser();
-
-            // empty the stack.
             getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             entryPointFragmentCall(new FeedFragment());
         }
