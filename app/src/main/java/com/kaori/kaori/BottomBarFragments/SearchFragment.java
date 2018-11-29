@@ -147,18 +147,6 @@ public class SearchFragment extends Fragment {
                 .commit();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
-
     /**
      * Private adapter for the RecyclerView
      */

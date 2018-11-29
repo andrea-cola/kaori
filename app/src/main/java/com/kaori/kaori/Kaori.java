@@ -12,11 +12,10 @@ import android.view.MenuItem;
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
 import com.kaori.kaori.BottomBarFragments.MapFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
-<<<<<<< HEAD
+
+import com.kaori.kaori.BottomBarFragments.SharePositionFragment;
 import com.kaori.kaori.BottomBarFragments.UserPositionsFragment;
-=======
 import com.kaori.kaori.DBObjects.User;
->>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 
@@ -49,7 +48,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
                     bottomBarFragmentCall(new SearchFragment());
                     return true;
                 case R.id.navigation_study_with_me:
-                    bottomBarFragmentCall(new UserPositionsFragment());
+                    bottomBarFragmentCall(new SharePositionFragment());
                     return true;
                 case R.id.navigation_my_profile:
                     bottomBarFragmentCall(new ProfileFragment());

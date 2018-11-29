@@ -11,13 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+
 import com.kaori.kaori.R;
+import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.MapboxMapOptions;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
+
     private MapView mapView;
+    private PermissionsManager permissionsManager;
 
     @Nullable
     @Override
@@ -27,11 +37,25 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.map_layout, container, false);
         mapView = (MapView) view.findViewById(R.id.mapView);
 
+        MapboxMapOptions options = new MapboxMapOptions()
+                .styleUrl(Style.OUTDOORS)
+                .camera(new CameraPosition.Builder()
+                        .target(new LatLng(43.7383, 7.4094))
+                        .zoom(12)
+                        .build());
+
         mapView.onCreate(savedInstanceState);
         return view;
     }
 
+    public void setParameters(){
 
+    }
+
+    @Override
+    public void onMapReady(MapboxMap mapboxMap) {
+
+    }
 
     @Override
     public void onStart() {

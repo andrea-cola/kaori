@@ -17,7 +17,6 @@ public class User implements Serializable {
 
     public User(){ }
 
-<<<<<<< HEAD
     public String getPosition() {
         return position;
     }
@@ -26,12 +25,6 @@ public class User implements Serializable {
         this.position = position;
     }
 
-    public String getBirthday() {
-        return birthday;
-    }
-
-=======
->>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
     public String getEmail() {
         return email;
     }

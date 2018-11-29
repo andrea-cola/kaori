@@ -33,17 +33,13 @@
 
         <activity
             android:name=".Kaori"
-<<<<<<< HEAD
             android:windowSoftInputMode="adjustPan|adjustResize"
-            android:label="@string/app_name">
-=======
-            android:windowSoftInputMode="adjustResize"
             android:label="@string/app_name" />
 
         <activity
             android:name=".SplashScreen"
             android:theme="@style/SplashTheme">
->>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

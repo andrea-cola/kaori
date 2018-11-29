@@ -7,7 +7,7 @@
     android:layout_height="match_parent">
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/feedFAB"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginStart="8dp"

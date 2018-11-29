@@ -41,12 +41,9 @@ public class FeedFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
-<<<<<<< HEAD
 
         // setting the parameters
         mBookList = new ArrayList<>();
-=======
->>>>>>> 628797db2f1597a193c3d3d5fd209d240fa752e8
         recyclerView = view.findViewById(R.id.my_recycler_view);
 
         mBookList = new ArrayList<>();
@@ -57,7 +54,7 @@ public class FeedFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
 
         // Floating Action Button management for upload pdf files
-        FloatingActionButton fab = view.findViewById(R.id.floatingActionButton);
+        FloatingActionButton fab = view.findViewById(R.id.feedFAB);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
