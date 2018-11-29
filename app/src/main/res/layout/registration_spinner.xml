@@ -8,7 +8,7 @@
         android:id="@+id/reg_ac"
         style="@android:style/Widget.Material.Light.AutoCompleteTextView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/button_default_height"
+        android:layout_height="@dimen/default_height"
         android:completionThreshold="1"
         android:hint="@string/spinner_title_new_exam" />
 

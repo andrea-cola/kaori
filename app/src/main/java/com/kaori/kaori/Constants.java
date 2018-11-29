@@ -46,4 +46,10 @@ public class Constants {
      */
     public static int SPLASH_SCREEN_WAITING_TIME = 1000;
 
+    /**
+     * Sign in method.
+     */
+    public static int NATIVE_SIGNIN = 0;
+    public static int SOCIAL_SIGNIN = 1;
+
 }

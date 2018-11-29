@@ -128,6 +128,7 @@ public class CreateAccount2 extends Fragment {
 
         CreateAccount3 createAccount3 = new CreateAccount3();
         createAccount3.setParams(user, profileImageBitmap, password.getText().toString());
+        createAccount3.setMethod(Constants.NATIVE_SIGNIN);
         getActivity().getSupportFragmentManager().beginTransaction()
             .replace(R.id.container, createAccount3)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

@@ -71,23 +71,15 @@ public class CreateAccount1 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reg1, container, false);
         waitLayout = view.findViewById(R.id.wait_layout);
-
-        // objects initialization
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        hub = DataHub.getInstance();
-
         buttonCreateNewAccount = view.findViewById(R.id.button_create_new_account);
         buttonFakeFacebook = view.findViewById(R.id.button_fake_facebook);
         buttonFacebook = view.findViewById(R.id.button_facebook);
         buttonGoogle = view.findViewById(R.id.button_fake_google);
 
-        // setup the google sign in options
-        final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .requestProfile()
-                .build();
+        // objects initialization
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        hub = DataHub.getInstance();
 
         // show the title bar
         if(getActivity() != null && isAdded()) {
@@ -122,7 +114,7 @@ public class CreateAccount1 extends Fragment {
         // set listeners
         setCreateNewAccountButtonListener();
         setFacebookButtonLister();
-        setGoogleButtonListener(gso);
+        setGoogleButtonListener();
 
         getUniversitiesListFromDatabase();
 
@@ -191,7 +183,6 @@ public class CreateAccount1 extends Fragment {
 
     /**
      * This method is used to handle the Google signin.
-     * https://developers.google.com/identity/sign-in/android/sign-in
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -308,7 +299,13 @@ public class CreateAccount1 extends Fragment {
     /**
      * Set up the google button listener.
      */
-    private void setGoogleButtonListener(final GoogleSignInOptions gso){
+    private void setGoogleButtonListener(){
+        final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .requestProfile()
+                .build();
+
         buttonGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -340,7 +337,7 @@ public class CreateAccount1 extends Fragment {
         if(getActivity() != null && isAdded()) {
             CreateAccount3 createAccount3 = new CreateAccount3();
             createAccount3.setParams(user);
-            createAccount3.setMethod(1);
+            createAccount3.setMethod(Constants.SOCIAL_SIGNIN);
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, createAccount3)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
