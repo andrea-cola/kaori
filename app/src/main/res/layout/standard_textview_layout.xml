@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/standard_textview"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/default_height"
+    android:textSize="@dimen/default_text_size"
+    android:layout_margin="@dimen/default_margin"
+    android:layout_marginBottom="0dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf=""
+    app:layout_constraintWidth_max="@dimen/default_max_width"
+    app:layout_constraintWidth_min="@dimen/default_min_width" />

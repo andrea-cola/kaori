@@ -1,12 +1,10 @@
 package com.kaori.kaori.ProfileFragments;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.DataHub;
 import com.kaori.kaori.R;
 import com.kaori.kaori.SplashScreen;
@@ -31,7 +23,6 @@ import com.kaori.kaori.SplashScreen;
 public class ProfileFragment extends Fragment {
 
     private ImageView profileImageView;
-    private StorageReference ref;
     private DataHub hub;
 
     @Nullable
@@ -43,30 +34,13 @@ public class ProfileFragment extends Fragment {
         Button logout = view.findViewById(R.id.profile_button_logout);
         profileImageView = view.findViewById(R.id.profile_image);
 
-        // get the instance of Datahub.
+        // get the instance of Datahub
         hub = DataHub.getInstance();
 
-        StorageReference s = FirebaseStorage.getInstance().getReference();
+        // load profile image
+        loadProfileImageView();
 
-        Glide.with(getContext())
-                .load(hub.getUser().getPhotosUrl())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(profileImageView);
-
-
-        FirebaseStorage.getInstance().getReference().child(hub.getUser().getPhotosUrl()).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Log.d(Constants.TAG, uri.toString());
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // TODO: handle any errors
-            }
-        });
-
+        // attach listener to the logout button
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,20 +49,20 @@ public class ProfileFragment extends Fragment {
                     startActivity(new Intent(getActivity(), SplashScreen.class));
                     getActivity().finish();
                 }
-                else{
-                    // TODO: fare qualcosa
-                }
             }
         });
 
         return view;
     }
 
+    /**
+     * Load profile image in the imageView.
+     */
     private void loadProfileImageView(){
-        /*Glide.with(getContext())
-            .load(uri.toString())
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(profileImageView);*/
+        Glide.with(getContext())
+                .load(hub.getUser().getPhotosUrl())
+                .apply(hub.getGetGlideRequestOptionsCircle())
+                .into(profileImageView);
     }
 
 }
