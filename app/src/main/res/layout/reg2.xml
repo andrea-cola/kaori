@@ -89,7 +89,7 @@
                 android:enabled="false"
                 android:text="@string/title_register"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/text_size_default"
+                android:textSize="@dimen/default_text_size"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

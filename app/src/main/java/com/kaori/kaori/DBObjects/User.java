@@ -1,5 +1,7 @@
 package com.kaori.kaori.DBObjects;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,18 +14,9 @@ public class User implements Serializable {
     private String university;
     private String courseType;
     private String uid;
-    private String position;
     private List<String> exams;
 
     public User(){ }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
 
     public String getEmail() {
         return email;

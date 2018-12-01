@@ -10,11 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
-import com.kaori.kaori.BottomBarFragments.MapFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
 
 import com.kaori.kaori.BottomBarFragments.SharePositionFragment;
-import com.kaori.kaori.BottomBarFragments.UserPositionsFragment;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
