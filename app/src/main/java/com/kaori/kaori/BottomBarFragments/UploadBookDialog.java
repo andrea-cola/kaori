@@ -149,8 +149,12 @@ public class UploadBookDialog extends DialogFragment {
 
                 // TODO: get the current user
 
-                Book newBook = new Book(fileName, "pippo", taskSnapshot.getUploadSessionUri().toString());
-                db.collection("books").add(newBook)
+                Book newBook = new Book();
+                newBook.setTitle(fileName);
+                newBook.setAuthor("pippo");
+                newBook.setUrl(taskSnapshot.getUploadSessionUri().toString());
+                db.collection("books")
+                        .add(newBook)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {

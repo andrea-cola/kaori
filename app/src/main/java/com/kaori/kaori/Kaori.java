@@ -13,6 +13,7 @@ import com.kaori.kaori.BottomBarFragments.FeedFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
 
 import com.kaori.kaori.BottomBarFragments.SharePositionFragment;
+import com.kaori.kaori.BottomBarFragments.UsersPositionsFragment;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
@@ -46,7 +47,7 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
                     bottomBarFragmentCall(new SearchFragment());
                     return true;
                 case R.id.navigation_study_with_me:
-                    bottomBarFragmentCall(new SharePositionFragment());
+                    bottomBarFragmentCall(new UsersPositionsFragment());
                     return true;
                 case R.id.navigation_my_profile:
                     bottomBarFragmentCall(new ProfileFragment());
@@ -64,8 +65,6 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-
-
 
         hub = DataHub.getInstance();
 

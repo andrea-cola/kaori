@@ -1,17 +1,27 @@
 package com.kaori.kaori.DBObjects;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
 public class Position {
     private GeoPoint point;
-    private String locationName;
+    private String location;
     private String uid;
     private String username;
+    private Timestamp timestamp;
 
     public Position(){}
 
-    public String getLocationName() {
-        return locationName;
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getLocation() {
+        return location;
     }
 
     public GeoPoint getPoint() {
@@ -26,8 +36,8 @@ public class Position {
         return username;
     }
 
-    public void setLocationName(String locationName) {
-        this.locationName = locationName;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public void setPoint(GeoPoint point) {

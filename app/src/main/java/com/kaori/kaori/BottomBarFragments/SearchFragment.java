@@ -119,7 +119,7 @@ public class SearchFragment extends Fragment {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        invokeFragmentWithParams(holder.book_author.getText().toString(),holder.book_title.getText().toString(), "ok");
+                        invokeFragmentWithParams(holder.book_author.getText().toString(), holder.book_title.getText().toString(), "ok");
                     }
                 });
             }

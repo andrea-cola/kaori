@@ -75,7 +75,11 @@ public class FeedFragment extends Fragment {
                         String title = document.getString("title");
                         String author = document.getString("author");
                         String url = document.getString("url");
-                        mBookList.add(new Book(title, author, url));
+                        Book book = new Book();
+                        book.setTitle(title);
+                        book.setUrl(url);
+                        book.setAuthor(author);
+                        mBookList.add(book);
                     }
                     if(getContext() != null)
                         mAdapter.notifyDataSetChanged();

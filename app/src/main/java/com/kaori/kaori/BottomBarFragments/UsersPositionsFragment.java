@@ -1,5 +1,6 @@
 package com.kaori.kaori.BottomBarFragments;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,34 +40,44 @@ public class UsersPositionsFragment extends Fragment {
      * Views from layout
      */
     private RecyclerView recyclerView;
+    private View view;
 
     /**
      * Constants
      */
     private String mStudy = "Hi, there! I'm studying here: ";
+    private final String BACK_STATE_NAME = getClass().getName();
 
     /**
      * Variables
      */
-    private Query position;
+    private Query positions;
     private FirestoreRecyclerAdapter adapter;
     private ArrayList<User> users;
     private FirebaseFirestore db;
+    private RecyclerView.LayoutManager layoutManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.user_position_layout, container, false);
+        view = inflater.inflate(R.layout.user_position_layout, container, false);
 
         // setting the parameters
         recyclerView = view.findViewById(R.id.user_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        users = new ArrayList();
+        users = new ArrayList<>();
 
         // setting the database
-        position = db.collection("position");
         db = FirebaseFirestore.getInstance();
+        positions = db.collection("positions");
+        positions.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful())
+                    populateRecyclerView();
+            }
+        });
 
         db.collection("users")
                 .get()
@@ -83,14 +94,12 @@ public class UsersPositionsFragment extends Fragment {
                     }
                 });
 
-        if(position.get().isSuccessful())
-            populateRecyclerView();
 
         FloatingActionButton fab = view.findViewById(R.id.positionFAB);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                invokeFragment(new SharePositionFragment());
             }
         });
 
@@ -114,32 +123,46 @@ public class UsersPositionsFragment extends Fragment {
 
         // Configure recycler adapter options:
         FirestoreRecyclerOptions<Position> options = new FirestoreRecyclerOptions.Builder<Position>()
-                .setQuery(position, Position.class)
+                .setQuery(positions, Position.class)
                 .setLifecycleOwner(this)
                 .build();
 
-        adapter = new FirestoreRecyclerAdapter<Position, UsersPositionsFragment.UserViewHolder>(options) {
+        // Creating the adapter
+        adapter = new FirestoreRecyclerAdapter<Position, UserViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final UsersPositionsFragment.UserViewHolder holder, int position, @NonNull Position model) {
-                holder.setDetails(getContext(), model.getUsername() , model.getLocationName(), model.getUid());
+            protected void onBindViewHolder(@NonNull final UserViewHolder holder, int position, @NonNull Position model) {
+                holder.setDetails(getContext(), model.getUsername() , model.getLocation(), model.getUid());
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         MapFragment mapFragment = new MapFragment();
                         mapFragment.setParameters(model);
+                        invokeFragment(mapFragment);
                     }
                 });
             }
-
             @NonNull
             @Override
-            public UsersPositionsFragment.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+            public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
                 View view = LayoutInflater.from(getContext()).inflate(R.layout.user_position_item, parent, false);
-                return new UsersPositionsFragment.UserViewHolder(view);
+                return new UserViewHolder(view);
             }
         };
-
         recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * This method invokes the share position fragment
+     * when the floating action button is cliked
+     */
+    private void invokeFragment(Fragment mapFragment) {
+        if(getActivity() != null) {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, mapFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
+        }
     }
 
     /**
@@ -154,10 +177,11 @@ public class UsersPositionsFragment extends Fragment {
 
         private UserViewHolder(View itemView) {
             super(itemView);
-            mView = itemView;
+            this.mView = itemView;
         }
 
-        private void setDetails(Context ctx, String userName , String locationName, String mUid){
+        // Setting the holder
+        private void setDetails(Context ctx, String userName, String locationName, String mUid){
 
             itemUser = mView.findViewById(R.id.itemUser);
             itemMessage = mView.findViewById(R.id.itemMessage);
@@ -166,15 +190,12 @@ public class UsersPositionsFragment extends Fragment {
             itemUser.setText(userName);
             itemMessage.setText(mStudy + locationName);
 
-            String userImage = null;
-
-            for(User user : users){
-                if(user.getUid().equals(mUid) && user.getName().equals(userName))
-                     userImage = user.getPhotosUrl();
+            for(User user : users) {
+                if (user.getUid() == (mUid)) {
+                    String userImage = user.getPhotosUrl();
+                    Glide.with(ctx).load(userImage).apply(RequestOptions.circleCropTransform()).into(itemImage);
+                }
             }
-
-            Glide.with(ctx).load(userImage).apply(RequestOptions.circleCropTransform()).into(itemImage);
-
         }
     }
 }

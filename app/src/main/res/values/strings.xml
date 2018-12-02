@@ -22,6 +22,7 @@
     <string name="mapbox_location_permission_explanation">For a better service, allow permissions</string>
     <string name="mapbox_permission_not_granted">Permission not granted</string>
     <string name="search_hint">Search here</string>
+    <string name="search_image">Search</string>
 
     <string name="camera_popup_title">Choose an option:</string>
     <string name="camera_popup_option1">From camera</string>
@@ -37,5 +38,6 @@
     <string name="preferences_master_login">master_login</string>
     <string name="preferences_master_login_uid">master_login_uid</string>
     <string name="preferences_master_login_username">master_login_username</string>
+    <string name="share_button">SHARE</string>
 
 </resources>
