@@ -274,9 +274,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                                     .set(position, SetOptions.merge());
                             db.collection("positions")
                                     .document(uiCode)
-                                    .set(position, SetOptions.merge());
-                            db.collection("positions")
-                                    .document(uiCode)
                                     .set(data, SetOptions.merge());
                             db.collection("positions")
                                     .document(uiCode)
@@ -292,9 +289,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                             db.collection("positions")
                                     .document(id)
                                     .set(data, SetOptions.merge());
-                            db.collection("positions")
-                                    .document(id)
-                                    .set(time, SetOptions.merge());
                         }
                     }
                 });

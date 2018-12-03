@@ -58,36 +58,37 @@ public class FeedFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UploadBookDialog uploadFragment = UploadBookDialog.newInstance();
-                uploadFragment.show(getFragmentManager(), "Dialog Fragment");
+                UploadBookFragment uploadFragment = new UploadBookFragment();
+                invokeNextFragment(uploadFragment);
             }
         });
 
         // put all books in the list, querying the database
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("books")
+                .orderBy("timestamp")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String title = document.getString("title");
-                        String author = document.getString("author");
-                        String url = document.getString("url");
-                        Book book = new Book();
-                        book.setTitle(title);
-                        book.setUrl(url);
-                        book.setAuthor(author);
-                        mBookList.add(book);
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String title = document.getString("title");
+                                String author = document.getString("author");
+                                String url = document.getString("url");
+                                Book book = new Book();
+                                book.setTitle(title);
+                                book.setUrl(url);
+                                book.setAuthor(author);
+                                mBookList.add(book);
+                            }
+                            if(getContext() != null)
+                                mAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
                     }
-                    if(getContext() != null)
-                        mAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
+                });
 
         return view;
     }
@@ -101,6 +102,19 @@ public class FeedFragment extends Fragment {
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, bookFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
+        }
+    }
+
+    /**
+     * This method invokes the book fragment when the card is cliked
+     */
+    private void invokeNextFragment(Fragment uploadFragment) {
+        if(getActivity() != null) {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, uploadFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
