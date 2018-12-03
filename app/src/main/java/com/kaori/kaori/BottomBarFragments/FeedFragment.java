@@ -101,7 +101,7 @@ public class FeedFragment extends Fragment {
         bookFragment.setParameters(author, title);
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, bookFragment)
+                    .replace(R.id.main_container, bookFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
