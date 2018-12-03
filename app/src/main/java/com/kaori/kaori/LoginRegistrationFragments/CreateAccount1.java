@@ -231,7 +231,7 @@ public class CreateAccount1 extends Fragment {
                         invokeNextFragmentWithParams(createNewUser(user));
                     } else {
                         Log.d(Constants.TAG, "GoogleSignInWithCredential --> failure.", task.getException());
-                        Snackbar.make(getActivity().findViewById(R.id.container), "Authentication with Google Failed.", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(getActivity().findViewById(R.id.main_container), "Authentication with Google Failed.", Snackbar.LENGTH_LONG).show();
                         // TODO: gestire l'errore e andare ad un punto della UI che possa permttere di ricominciare.
                         //updateUI(null);
                     }
@@ -324,7 +324,7 @@ public class CreateAccount1 extends Fragment {
     private void invokeNextFragment(){
         if(getActivity() != null && isAdded())
             getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new CreateAccount2())
+                .replace(R.id.main_container, new CreateAccount2())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(BACK_STATE_NAME)
                 .commit();
@@ -339,7 +339,7 @@ public class CreateAccount1 extends Fragment {
             createAccount3.setParams(user);
             createAccount3.setMethod(Constants.SOCIAL_SIGNIN);
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, createAccount3)
+                    .replace(R.id.main_container, createAccount3)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();

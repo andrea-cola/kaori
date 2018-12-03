@@ -64,7 +64,7 @@ public class LoginRegistrationFragment extends Fragment {
     private void invokeTheNextFragment(Fragment fragment){
         if(getActivity() != null && isAdded())
             getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
+                .replace(R.id.main_container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(BACK_STATE_NAME)
                 .commit();

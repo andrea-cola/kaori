@@ -142,7 +142,7 @@ public class SearchFragment extends Fragment {
         Fragment bookFragment = new BookFragment();
         ((BookFragment) bookFragment).setParameters(author, title);
         getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, bookFragment)
+                .replace(R.id.main_container, bookFragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(BACK_STATE_NAME)
                 .commit();

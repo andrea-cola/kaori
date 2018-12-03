@@ -62,8 +62,6 @@ public class Kaori extends AppCompatActivity implements FragmentManager.OnBackSt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
 
-
-
         hub = DataHub.getInstance();
 
         if(hub.isAuthenticated()) {

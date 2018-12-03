@@ -1,12 +1,17 @@
 <resources>
 
+    <!-- titles -->
     <string name="app_name">Kaori</string>
     <string name="title_home">Feed</string>
     <string name="title_hub">Material</string>
     <string name="title_my_profile">Profile</string>
     <string name="title_study_with_me">Finder</string>
 
+    <!-- subtitles -->
+    <string name="subtitle_exams_list">Your courses</string>
+
     <string name="title_login">Sign In</string>
+    <string name="title_logout">Logout</string>
     <string name="title_register">Create Account</string>
     <string name="title_register_facebook">Create with Facebook</string>
     <string name="title_register_google">Create with Google</string>
@@ -23,7 +28,8 @@
     <string name="camera_popup_option2">From gallery</string>
 
     <string name="button_cancel">Cancel</string>
-    <string name="button_add_spinner">Add course</string>
+    <string name="button_add_course">Add course</string>
+    <string name="button_edit_courses">Edit courses</string>
     <string name="spinner_title_courses">Your exams</string>
     <string name="spinner_title_course_type">Your course type</string>
     <string name="spinner_title_uni">Your university</string>

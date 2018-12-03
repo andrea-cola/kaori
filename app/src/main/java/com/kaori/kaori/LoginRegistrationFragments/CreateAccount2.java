@@ -130,7 +130,7 @@ public class CreateAccount2 extends Fragment {
         createAccount3.setParams(user, profileImageBitmap, password.getText().toString());
         createAccount3.setMethod(Constants.NATIVE_SIGNIN);
         getActivity().getSupportFragmentManager().beginTransaction()
-            .replace(R.id.container, createAccount3)
+            .replace(R.id.main_container, createAccount3)
             .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
             .addToBackStack(BACK_STATE_NAME)
             .commit();
