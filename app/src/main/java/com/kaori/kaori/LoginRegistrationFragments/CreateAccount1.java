@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -25,24 +23,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.Constants;
-import com.kaori.kaori.DBObjects.User;
-import com.kaori.kaori.DataHub;
-import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.SignInManager;
 
-import java.util.ArrayList;
+import timber.log.Timber;
 
 /**
  * This class handles the first pass in account creation.
@@ -58,34 +45,21 @@ public class CreateAccount1 extends Fragment {
     /**
      * Variables.
      */
-    private FirebaseAuth auth;
-    private FirebaseFirestore db;
     private CallbackManager callbackManager;
     private Button buttonCreateNewAccount, buttonFakeFacebook, buttonGoogle;
     private LoginButton buttonFacebook;
-    private View waitLayout;
-    private DataHub hub;
+    private SignInManager signInManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reg1, container, false);
-        waitLayout = view.findViewById(R.id.wait_layout);
         buttonCreateNewAccount = view.findViewById(R.id.button_create_new_account);
         buttonFakeFacebook = view.findViewById(R.id.button_fake_facebook);
         buttonFacebook = view.findViewById(R.id.button_facebook);
         buttonGoogle = view.findViewById(R.id.button_fake_google);
 
-        // objects initialization
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        hub = DataHub.getInstance();
-
-        // show the title bar
-        if(getActivity() != null && isAdded()) {
-            ((Kaori) getActivity()).getSupportActionBar().show();
-            ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.titleCreate);
-        }
+        signInManager = new SignInManager(getContext());
 
         // set up the real Facebook button
         callbackManager = CallbackManager.Factory.create();
@@ -95,7 +69,7 @@ public class CreateAccount1 extends Fragment {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(Constants.TAG, "facebook:onSuccess:" + loginResult);
-                handleFacebookAccessToken(loginResult.getAccessToken());
+                signInManager.signInWithFacebook(loginResult.getAccessToken());
             }
 
             @Override
@@ -116,69 +90,7 @@ public class CreateAccount1 extends Fragment {
         setFacebookButtonLister();
         setGoogleButtonListener();
 
-        getUniversitiesListFromDatabase();
-
         return view;
-    }
-
-    private void getUniversitiesListFromDatabase() {
-        db.collection(Constants.DB_COLL_UNIVERSITIES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<String> universities = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult())
-                        universities.add(document.getString("name"));
-                    hub.setUniversities(universities);
-                    Log.d(Constants.TAG, universities.size() + "");
-                }
-                else
-                    //TODO
-                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
-
-                getCourseTypesFromDatabase();
-            }
-        });
-    }
-
-    private void getCourseTypesFromDatabase() {
-        db.collection(Constants.DB_COLL_COURSE_TYPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<String> courseTypes = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult())
-                        courseTypes.add(document.getString("name"));
-                    hub.setCourseType(courseTypes);
-                    Log.d(Constants.TAG, courseTypes.size() + "");
-                }
-                else
-                    //TODO
-                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
-
-                getCoursesFromDatabase();
-            }
-        });
-    }
-
-    private void getCoursesFromDatabase() {
-        db.collection(Constants.DB_COLL_COURSES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    ArrayList<String> exams = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : task.getResult())
-                        exams.add(document.getString("name"));
-                    hub.setExams(exams);
-                    Log.d(Constants.TAG, exams.size() + "");
-                }
-                else
-                    //TODO
-                    Log.d(Constants.TAG, "Error getting documents: ", task.getException());
-
-                waitLayout.setVisibility(View.GONE);
-            }
-        });
     }
 
     /**
@@ -190,11 +102,11 @@ public class CreateAccount1 extends Fragment {
 
         // google sign in request
         if(requestCode == OK_GOOGLE) {
-            Log.w(Constants.TAG, "Google request code.");
+            Timber.tag(Constants.TAG).w("Google request code.");
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleGoogleSignIn(task);
         } else {
-            Log.w(Constants.TAG, "Facebook request code.");
+            Timber.tag(Constants.TAG).w("Facebook request code.");
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -206,63 +118,12 @@ public class CreateAccount1 extends Fragment {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             if(account != null)
-                firebaseAuthWithGoogle(account);
+                signInManager.signInWithGoogle(account);
         } catch (ApiException e) {
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(Constants.TAG, "GoogleSignInResult:failed code=" + e.getStatusCode());
+            Timber.tag(Constants.TAG).w("GoogleSignInResult:failed code=" + e.getStatusCode());
             //TODO: ritornare alla schermata iniziale
         }
-    }
-
-    /**
-     * Handle the firebase auth with Google.
-     */
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account){
-        Log.d(Constants.TAG, "firebaseAuthWithGoogle:" + account.getId());
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        auth.signInWithCredential(credential).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Log.d(Constants.TAG, "GoogleSignInWithCredential --> success.");
-                        FirebaseUser user = auth.getCurrentUser();
-                        Log.d(Constants.TAG, "mail: " + user.getEmail());
-                        invokeNextFragmentWithParams(createNewUser(user));
-                    } else {
-                        Log.d(Constants.TAG, "GoogleSignInWithCredential --> failure.", task.getException());
-                        Snackbar.make(getActivity().findViewById(R.id.main_container), "Authentication with Google Failed.", Snackbar.LENGTH_LONG).show();
-                        // TODO: gestire l'errore e andare ad un punto della UI che possa permttere di ricominciare.
-                        //updateUI(null);
-                    }
-                }
-            });
-    }
-
-    /**
-     * Handle the facebook sign in.
-     */
-    private void handleFacebookAccessToken(AccessToken token) {
-        Log.d(Constants.TAG, "handleFacebookAccessToken:" + token);
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        auth.signInWithCredential(credential)
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(Constants.TAG, "signInWithCredential:success");
-                            FirebaseUser user = auth.getCurrentUser();
-                            Log.d(Constants.TAG, "mail: " + user.getEmail());
-                            invokeNextFragmentWithParams(createNewUser(user));
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(Constants.TAG, "signInWithCredential:failure", task.getException());
-                            //Toast.makeText(FacebookLoginActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
-                        }
-                    }
-                });
     }
 
     /**
@@ -324,49 +185,10 @@ public class CreateAccount1 extends Fragment {
     private void invokeNextFragment(){
         if(getActivity() != null && isAdded())
             getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_container, new CreateAccount2())
+                .replace(R.id.main_layout, new CreateAccount2())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .addToBackStack(BACK_STATE_NAME)
                 .commit();
-    }
-
-    /**
-     * Invoce the next fragment passing parameters about the users.
-     */
-    private void invokeNextFragmentWithParams(User user){
-        if(getActivity() != null && isAdded()) {
-            CreateAccount3 createAccount3 = new CreateAccount3();
-            createAccount3.setParams(user);
-            createAccount3.setMethod(Constants.SOCIAL_SIGNIN);
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_container, createAccount3)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
-        }
-    }
-
-    /**
-     * It takes in input a FirebaseUser and return a User to pass
-     * It takes in input a FirebaseUser and return a User to pass
-     * to the next fragment.
-     */
-    private User createNewUser(FirebaseUser firebaseUser){
-        User user = new User();
-        user.setEmail(firebaseUser.getEmail());
-
-        String[] names = firebaseUser.getDisplayName().split(" ");
-        user.setUid(firebaseUser.getUid());
-        user.setName(names[0]);
-        user.setSurname(names[1]);
-
-        String tmp = firebaseUser.getPhotoUrl().toString();
-        if(tmp.isEmpty())
-            user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
-        else
-            user.setPhotosUrl(tmp);
-
-        return user;
     }
 
 }

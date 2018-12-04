@@ -10,18 +10,18 @@
     android:layout_marginBottom="4dp"
     card_view:cardCornerRadius="4dp"
     card_view:cardElevation="4dp"
-    card_view:cardBackgroundColor="@color/WHITE">
+    card_view:cardBackgroundColor="@color/white">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/WHITE">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/cardImage"
             android:layout_width="381dp"
             android:layout_height="226dp"
-            android:background="@color/WHITE"
+            android:background="@color/white"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintHorizontal_bias="0.0"
             card_view:layout_constraintStart_toStartOf="parent"

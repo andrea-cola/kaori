@@ -36,11 +36,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
-import com.kaori.kaori.SplashScreen;
 
 /**
- * Second step in login process.
- * The user must provide a method of login.
+ * Second step in signin process.
+ * The user must provide a method of signin.
  * 1) native: username and password
  * 2) social network
  * 3) password forgotten
@@ -71,13 +70,7 @@ public class LoginFragment extends Fragment {
         // instantiate the Firebase Authentication.
         mAuth = FirebaseAuth.getInstance();
 
-        // show the title bar
-        if(getActivity() != null && isAdded()) {
-            ((Kaori) getActivity()).getSupportActionBar().show();
-            ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.titleSignIn);
-        }
-
-        // add listener to the button login button.
+        // add listener to the button signin button.
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,7 +106,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Get the result from Facebook and Google login.
+     * Get the result from Facebook and Google signin.
      * The main branch of the if is relative to Google,
      * the else is relative to Facebook.
      */
@@ -139,7 +132,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * This method is responsible for the native login (username and password).
+     * This method is responsible for the native signin (username and password).
      * It calls Firebase and checks if the credentials are correct.
      */
     private void nativeLogin(@NonNull final String username, @NonNull final String password){
@@ -150,7 +143,7 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             if(getActivity() != null) {
                                 Log.d(Constants.TAG, "signInWithEmail:success");
-                                startActivity(new Intent(getActivity(), SplashScreen.class));
+                                startActivity(new Intent(getActivity(), Kaori.class));
                             }
                         } else {
                             Log.w(Constants.TAG, "signInWithEmail:failure", task.getException());
@@ -161,7 +154,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Set up the Facebook login and perform a click on the real button.
+     * Set up the Facebook signin and perform a click on the real button.
      */
     private void facebookLogin(){
         mCallbackManager = CallbackManager.Factory.create();
@@ -212,7 +205,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Set up the Google login.
+     * Set up the Google signin.
      */
     private void googleLogin(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -229,7 +222,7 @@ public class LoginFragment extends Fragment {
      * @param acct
      */
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(Constants.TAG, "firebaseAuthWithGoogle:" + acct.getId());
+        Log.d(Constants.TAG, "signInWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)

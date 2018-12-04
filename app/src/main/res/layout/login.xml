@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorAlternative"
-    tools:layout_editor_absoluteY="25dp">
+    android:orientation="vertical"
+    android:id="@+id/main_layout">
 
     <LinearLayout
         android:id="@+id/logo_group"
-        android:layout_width="384dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
+        android:layout_marginBottom="11dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintBottom_toTopOf="@+id/breadcrumb_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,43 +41,61 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:id="@+id/breadcrumb_group"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_top_bottom_parent_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="@dimen/default_margin"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintHeight_max="80dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_group">
 
-        <Button
-            android:id="@+id/button_create_new_account"
-            style="@style/KaoriButton"
+        <ImageView
+            android:id="@+id/imageView3"
             android:layout_width="match_parent"
-            android:text="@string/title_register_email"
-            />
+            android:layout_height="match_parent"
+            android:src="@drawable/uni" />
 
-        <Button
-            android:id="@+id/button_fake_facebook"
-            style="@style/KaoriButton"
+        <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
-            android:text="@string/title_register_facebook" />
-
-        <Button
-            android:id="@+id/button_fake_google"
-            style="@style/KaoriButton"
-            android:layout_width="match_parent"
-            android:text="@string/title_register_google"/>
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"
+            tools:layout_editor_absoluteY="298dp" />
 
     </LinearLayout>
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/button_facebook"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/button_group"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/breadcrumb_group">
+
+        <Button
+            android:id="@+id/signin_button"
+            style="@style/KaoriButton"
+            android:layout_width="match_parent"
+            android:text="@string/title_register" />
+
+        <Button
+            android:id="@+id/login_button"
+            style="@style/KaoriButton"
+            android:layout_width="match_parent"
+            android:text="@string/title_login" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

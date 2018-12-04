@@ -71,10 +71,18 @@
             android:id="@+id/profile_button_edit"
             style="@style/KaoriButton"
             android:text="@string/button_edit_courses"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_exams_list" />
+
+        <Button
+            android:id="@+id/profile_button_logout"
+            style="@style/KaoriButton"
+            android:text="@string/title_logout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_button_edit" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -149,7 +149,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                 Intent intent = new PlaceAutocomplete.IntentBuilder()
                         .accessToken(Mapbox.getAccessToken())
                         .placeOptions(PlaceOptions.builder()
-                                .backgroundColor(ResourcesCompat.getColor(getResources(), R.color.GREY_LIGHT, null))
+                                .backgroundColor(ResourcesCompat.getColor(getResources(), R.color.grey_light, null))
                                 .limit(10)
                                 .hint(getString(R.string.search_hint))
                                 .addInjectedFeature(work)

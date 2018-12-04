@@ -1,145 +1,89 @@
 package com.kaori.kaori;
 
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 
-import com.kaori.kaori.BottomBarFragments.FeedFragment;
-import com.kaori.kaori.BottomBarFragments.SearchFragment;
-
-import com.kaori.kaori.BottomBarFragments.SharePositionFragment;
-import com.kaori.kaori.BottomBarFragments.UsersPositionsFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.User;
-import com.kaori.kaori.LoginRegistrationFragments.LoginRegistrationFragment;
-import com.kaori.kaori.ProfileFragments.ProfileFragment;
 
-public class Kaori extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
-
-    /**
-     * Constants.
-     */
-    private final String BACK_STATE_NAME = getClass().getName();
+/**
+ * Splash screen activity.
+ */
+public class Kaori extends AppCompatActivity {
 
     /**
      * Variables.
      */
-    private User user;
     private DataHub hub;
 
-    /**
-     * Listener used to handle selections in the bottom bar.
-     * Each branch of the switch handle the selection of one icon in the bar.
-     */
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    bottomBarFragmentCall(new FeedFragment());
-                    return true;
-                case R.id.navigation_hub:
-                    bottomBarFragmentCall(new SearchFragment());
-                    return true;
-                case R.id.navigation_study_with_me:
-                    bottomBarFragmentCall(new UsersPositionsFragment());
-                    return true;
-                case R.id.navigation_my_profile:
-                    bottomBarFragmentCall(new ProfileFragment());
-                    return true;
-            }
-            return false;
-        }
-    };
-
-    /**
-     * On create method override.
-     * If the login is needed we handle the press on the two buttons by invoking the right fragment.
-     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
-
-        hub = DataHub.getInstance();
-
-        if(hub.isAuthenticated()) {
-            setContentView(R.layout.activity_main);
-
-            BottomNavigationView navigation = findViewById(R.id.navigation);
-            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-            user = hub.getUser();
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            entryPointFragmentCall(new FeedFragment());
-        }
-        else {
-            getSupportActionBar().hide();
-
-            //Listen for changes in the back stack
-            getSupportFragmentManager().addOnBackStackChangedListener(this);
-            //Handle when activity is recreated like on orientation Change
-            shouldDisplayHomeUp();
-            setContentView(R.layout.activity_empty_main);
-
-            entryPointFragmentCall(new LoginRegistrationFragment());
-        }
+        setup();
     }
 
     /**
-     * Enable Up button only if there are entries in the back stack.
-     * I set the limit to 1 because we do not want to return to empty activity.
+     * Creates a new thread that handles the setup.
+     * It verifies the authentication:
+     * If auth=true => download the user from db
+     * If auth=false => start the app
      */
-    public void shouldDisplayHomeUp(){
-        boolean canGoBack = getSupportFragmentManager().getBackStackEntryCount() > 0;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
+    private void setup(){
+        Runnable r = new Runnable() {
+            public void run() {
+                // initialize the DataHub
+                hub = DataHub.getInstance();
+                hub.setAuthenticated(checkLoginStatus());
+
+                if(hub.isAuthenticated())
+                    downloadUserProfile();
+                else
+                    startKaoriLogin();
+            }
+        };
+        new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);
     }
 
     /**
-     * This method overrides the default one, letting the user get
-     * back to the previous fragment by clicking on the arrow on the top of the screen.
+     * Start the main activity.
      */
-    @Override
-    public boolean onSupportNavigateUp() {
-        //This method is called when the up button is pressed. Just the pop back stack.
-        getSupportFragmentManager().popBackStack();
-        return true;
+    private void startKaoriLogin(){
+        startActivity(new Intent(this, KaoriLogin.class));
+        finish();
     }
 
     /**
-     * Handles the changes in the back stack.
+     * Check if the user is authenticated.
      */
-    @Override
-    public void onBackStackChanged() {
-        shouldDisplayHomeUp();
+    private boolean checkLoginStatus(){
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     /**
-     * This method handles the invocation of a new fragment
-     * when the user clicks on the bottom bar.
+     * Download the user from the database and run the main activity.
      */
-    private void bottomBarFragmentCall(Fragment fragment){
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
-    }
-
-    /**
-     * This methods is called by the application when it is opened.
-     * It invokes the first fragment.
-     */
-    private void entryPointFragmentCall(Fragment fragment){
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .commit();
+    private void downloadUserProfile(){
+        FirebaseFirestore
+            .getInstance()
+            .collection(Constants.DB_COLL_USERS)
+            .whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid())
+            .get()
+            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    hub.setUser(task.getResult().getDocuments().get(0).toObject(User.class));
+                    //startKaori();
+                }
+            });
     }
 
 }

@@ -6,15 +6,18 @@
     <string name="title_hub">Material</string>
     <string name="title_my_profile">Profile</string>
     <string name="title_study_with_me">Finder</string>
+    <string name="title_welcome">Your uni life has a new friend.</string>
 
     <!-- subtitles -->
     <string name="subtitle_exams_list">Your courses</string>
 
-    <string name="title_login">Sign In</string>
-    <string name="title_logout">Logout</string>
-    <string name="title_register">Create Account</string>
-    <string name="title_register_facebook">Create with Facebook</string>
-    <string name="title_register_google">Create with Google</string>
+    <string name="title_login">Ho già un accoount</string>
+    <string name="title_register">Sono un nuovo utente</string>
+    <string name="title_logout">Esci dall\'account</string>
+    <string name="title_registration_end">Conferma</string>
+    <string name="title_register_facebook">Crea account con Facebook</string>
+    <string name="title_register_google">Crea account con Google</string>
+    <string name="title_register_email">Crea account con la mail</string>
 
     <string name="profile_about_me">About Me</string>
     <string name="profile_my_courses">My Courses</string>
