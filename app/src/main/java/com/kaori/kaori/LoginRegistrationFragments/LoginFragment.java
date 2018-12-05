@@ -38,8 +38,8 @@ import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
 
 /**
- * Second step in signin process.
- * The user must provide a method of signin.
+ * Second step in signInWithEmail process.
+ * The user must provide a method of signInWithEmail.
  * 1) native: username and password
  * 2) social network
  * 3) password forgotten
@@ -70,7 +70,7 @@ public class LoginFragment extends Fragment {
         // instantiate the Firebase Authentication.
         mAuth = FirebaseAuth.getInstance();
 
-        // add listener to the button signin button.
+        // add listener to the button signInWithEmail button.
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,7 +106,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Get the result from Facebook and Google signin.
+     * Get the result from Facebook and Google signInWithEmail.
      * The main branch of the if is relative to Google,
      * the else is relative to Facebook.
      */
@@ -132,7 +132,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * This method is responsible for the native signin (username and password).
+     * This method is responsible for the native signInWithEmail (username and password).
      * It calls Firebase and checks if the credentials are correct.
      */
     private void nativeLogin(@NonNull final String username, @NonNull final String password){
@@ -154,7 +154,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Set up the Facebook signin and perform a click on the real button.
+     * Set up the Facebook signInWithEmail and perform a click on the real button.
      */
     private void facebookLogin(){
         mCallbackManager = CallbackManager.Factory.create();
@@ -205,7 +205,7 @@ public class LoginFragment extends Fragment {
     }
 
     /**
-     * Set up the Google signin.
+     * Set up the Google signInWithEmail.
      */
     private void googleLogin(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

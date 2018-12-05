@@ -56,7 +56,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
 
     /**
      * On create method override.
-     * If the signin is needed we handle the press on the two buttons by invoking the right fragment.
+     * If the signInWithEmail is needed we handle the press on the two buttons by invoking the right fragment.
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -38,17 +38,15 @@ public class Kaori extends AppCompatActivity {
      * If auth=false => start the app
      */
     private void setup(){
-        Runnable r = new Runnable() {
-            public void run() {
-                // initialize the DataHub
-                hub = DataHub.getInstance();
-                hub.setAuthenticated(checkLoginStatus());
+        Runnable r = () -> {
+            // initialize the DataHub
+            hub = DataHub.getInstance();
+            hub.setAuthenticated(checkLoginStatus());
 
-                if(hub.isAuthenticated())
-                    downloadUserProfile();
-                else
-                    startKaoriLogin();
-            }
+            if(hub.isAuthenticated())
+                downloadUserProfile();
+            else
+                startKaoriLogin();
         };
         new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);
     }

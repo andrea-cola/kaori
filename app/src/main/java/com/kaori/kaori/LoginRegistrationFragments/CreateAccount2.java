@@ -31,7 +31,6 @@ import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.AuthMethod;
 import com.kaori.kaori.Utils.SignInManager;
 
 import java.io.File;
@@ -126,7 +125,7 @@ public class CreateAccount2 extends Fragment {
         user.setEmail(mail.getText().toString());
 
         SignInManager signInManager = new SignInManager(getContext());
-        signInManager.signin(AuthMethod.NATIVE, user, password.getText().toString(), profileImageBitmap);
+        signInManager.signInWithEmail(AuthMethod.NATIVE, user, password.getText().toString(), profileImageBitmap);
     }
 
     /**

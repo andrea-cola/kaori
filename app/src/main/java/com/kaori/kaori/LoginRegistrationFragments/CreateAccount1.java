@@ -94,7 +94,7 @@ public class CreateAccount1 extends Fragment {
     }
 
     /**
-     * This method is used to handle the Google signin.
+     * This method is used to handle the Google signInWithEmail.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
