@@ -2,7 +2,7 @@ package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -27,10 +27,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
-import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.SignInManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -52,7 +53,6 @@ public class CreateAccount2 extends Fragment {
      */
     private final int PICK_IMAGE = 0;
     private final int CAMERA_REQUEST = 1;
-    private final String BACK_STATE_NAME = getClass().getName();
 
     /**
      * Variables.
@@ -66,6 +66,8 @@ public class CreateAccount2 extends Fragment {
     private Bitmap profileImageBitmap;
     private Uri filePath;
     private FirebaseFirestore db;
+    private StorageReference mStorage;
+    private ProgressDialog pd;
 
     /**
      * Override of the inherited method.
@@ -86,10 +88,6 @@ public class CreateAccount2 extends Fragment {
         user = new User();
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-
-        // show the title bar
-        if (getActivity() != null && isAdded())
-            ((Kaori) getActivity()).getSupportActionBar().setTitle(Constants.titleRegistrationForm);
 
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
@@ -126,14 +124,8 @@ public class CreateAccount2 extends Fragment {
         user.setSurname(surname.getText().toString());
         user.setEmail(mail.getText().toString());
 
-        CreateAccount3 createAccount3 = new CreateAccount3();
-        createAccount3.setParams(user, profileImageBitmap, password.getText().toString());
-        createAccount3.setMethod(Constants.NATIVE_SIGNIN);
-        getActivity().getSupportFragmentManager().beginTransaction()
-            .replace(R.id.main_container, createAccount3)
-            .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-            .addToBackStack(BACK_STATE_NAME)
-            .commit();
+        SignInManager signInManager = new SignInManager(getContext());
+        signInManager.signInWithEmail(AuthMethod.NATIVE, user, password.getText().toString(), profileImageBitmap);
     }
 
     /**

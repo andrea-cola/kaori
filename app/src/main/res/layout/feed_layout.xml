@@ -16,7 +16,7 @@
         android:clickable="true"
         android:focusable="true"
         android:scaleType="center"
-        android:tint="@color/WHITE"
+        android:tint="@color/white"
         app:backgroundTint="@color/colorAccent"
         app:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"

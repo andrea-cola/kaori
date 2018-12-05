@@ -20,6 +20,8 @@
         android:theme="@style/AppTheme">
 
         <meta-data tools:replace="android:value" android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+
+
         <activity android:name="com.facebook.FacebookActivity" android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:label="@string/app_name" />
         <activity android:name="com.facebook.CustomTabActivity" android:exported="true">
             <intent-filter>
@@ -32,12 +34,18 @@
         </activity>
 
         <activity
-            android:name=".Kaori"
-            android:windowSoftInputMode="adjustPan|adjustResize"
+            android:name=".KaoriApp"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:label="@string/app_name" />
 
         <activity
-            android:name=".SplashScreen"
+            android:name=".KaoriLogin"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:label="@string/app_name"
+            android:theme="@style/LoginTheme"/>
+
+        <activity
+            android:name=".Kaori"
             android:theme="@style/SplashTheme">
 
             <intent-filter>

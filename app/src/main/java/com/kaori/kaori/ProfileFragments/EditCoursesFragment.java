@@ -1,4 +1,4 @@
-package com.kaori.kaori.LoginRegistrationFragments;
+package com.kaori.kaori.ProfileFragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -43,10 +43,7 @@ import com.kaori.kaori.Kaori;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
-/**
- * This class represents the last phase of the
- */
-public class CreateAccount3 extends Fragment {
+public class EditCoursesFragment extends Fragment {
 
     /**
      * Variables.
@@ -95,7 +92,7 @@ public class CreateAccount3 extends Fragment {
             @Override
             public void onClick(View view) {
                 addSpinner(inflater, spinnerSpace);
-           }
+            }
         });
 
         // listener of the second button
@@ -258,22 +255,22 @@ public class CreateAccount3 extends Fragment {
         pd.setMessage("Uploading the user...");
 
         db.collection("users")
-            .document()
-            .set(user)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    Log.d(Constants.TAG, "DocumentSnapshot successfully written!");
-                    endRegistration();
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    // TODO: fare riprovare l'utente.
-                    Log.w(Constants.TAG, "Error writing document", e);
-                }
-            });
+                .document()
+                .set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(Constants.TAG, "DocumentSnapshot successfully written!");
+                        endRegistration();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // TODO: fare riprovare l'utente.
+                        Log.w(Constants.TAG, "Error writing document", e);
+                    }
+                });
     }
 
     private void uploadProfileImageOnTheServer(){
@@ -312,5 +309,4 @@ public class CreateAccount3 extends Fragment {
             getActivity().finish();
         }
     }
-
 }

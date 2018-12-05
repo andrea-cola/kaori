@@ -44,12 +44,18 @@ public class Constants {
     /**
      * Numerical constants.
      */
-    public static int SPLASH_SCREEN_WAITING_TIME = 1000;
+    public static int SPLASH_SCREEN_WAITING_TIME = 500;
 
     /**
      * Sign in method.
      */
     public static int NATIVE_SIGNIN = 0;
     public static int SOCIAL_SIGNIN = 1;
+
+    /**
+     * Registration messages.
+     */
+    public static String DIALOG_TITLE_CONFIRM = "Sei sicuro di procedere?";
+    public static String DIALOG_MESSAGE_CONFIRM = "Premendo Ok completerai la tua registazione e riceverai una mail di conferma. Premendo su ANNULLA potrai modificare i tuoi dati.";
 
 }

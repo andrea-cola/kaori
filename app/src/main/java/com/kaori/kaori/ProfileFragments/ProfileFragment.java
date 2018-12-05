@@ -1,5 +1,6 @@
 package com.kaori.kaori.ProfileFragments;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.DataHub;
 import com.kaori.kaori.R;
-import com.kaori.kaori.SplashScreen;
+import com.kaori.kaori.Kaori;
 
 import java.util.List;
 
@@ -26,6 +27,8 @@ import java.util.List;
  * This class represents the Profile entry of the bottom bar menu.
  */
 public class ProfileFragment extends Fragment {
+
+    private final String BACK_STATE_NAME = getClass().getName();
 
     private ImageView profileImageView;
     private DataHub hub;
@@ -40,7 +43,8 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.profile_layout, container, false);
 
         // get views from layout.
-        Button logout = view.findViewById(R.id.profile_button_edit);
+        Button editCourses = view.findViewById(R.id.profile_button_edit);
+        Button logout = view.findViewById(R.id.profile_button_logout);
         profileImageView = view.findViewById(R.id.profile_image);
         mName = view.findViewById(R.id.profile_name);
         mUniversity = view.findViewById(R.id.profile_university);
@@ -64,12 +68,23 @@ public class ProfileFragment extends Fragment {
         mExamsList.setAdapter(mAdapter);
 
         // attach listener to the logout button
+        editCourses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, new EditCoursesFragment())
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                        .addToBackStack(BACK_STATE_NAME)
+                        .commit();
+            }
+        });
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
                 if(getActivity() != null && isAdded()) {
-                    startActivity(new Intent(getActivity(), SplashScreen.class));
+                    startActivity(new Intent(getActivity(), Kaori.class));
                     getActivity().finish();
                 }
             }
