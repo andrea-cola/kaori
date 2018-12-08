@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.kaori.kaori.DataHub;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Kaori;
 
@@ -31,7 +31,7 @@ public class ProfileFragment extends Fragment {
     private final String BACK_STATE_NAME = getClass().getName();
 
     private ImageView profileImageView;
-    private DataHub hub;
+    private DataManager hub;
     private TextView mName, mUniversity, mCourseType;
     private RecyclerView mExamsList;
     private RecyclerView.Adapter mAdapter;
@@ -52,7 +52,7 @@ public class ProfileFragment extends Fragment {
         mExamsList = view.findViewById(R.id.profile_exams_list);
 
         // get the instance of Datahub
-        hub = DataHub.getInstance();
+        hub = DataManager.getInstance();
 
         // load profile image
         loadProfileImageView();

@@ -1,10 +1,11 @@
-package com.kaori.kaori;
+package com.kaori.kaori.Utils;
 
 import android.widget.ImageView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.R;
 
 import java.util.ArrayList;
 
@@ -12,9 +13,9 @@ import java.util.ArrayList;
  * Singleton class that represent a store
  * for the most important and common data.
  */
-public class DataHub {
+public class DataManager {
 
-    private static DataHub dataHub;
+    private static DataManager dataManager;
 
     private boolean isAuthenticated;
     private User user;
@@ -29,7 +30,7 @@ public class DataHub {
     private RequestOptions glideRequestOptions;
     private RequestOptions getGlideRequestOptionsCircle;
 
-    private DataHub(){
+    private DataManager(){
         isAuthenticated = false;
         user = new User();
         universities = new ArrayList<>();
@@ -49,10 +50,10 @@ public class DataHub {
                 .error(R.drawable.placeholder);
     }
 
-    public static DataHub getInstance(){
-        if(dataHub == null)
-            dataHub = new DataHub();
-        return dataHub;
+    public static DataManager getInstance(){
+        if(dataManager == null)
+            dataManager = new DataManager();
+        return dataManager;
     }
 
     public boolean isAuthenticated() {

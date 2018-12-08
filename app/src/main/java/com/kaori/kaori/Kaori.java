@@ -13,6 +13,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 /**
  * Splash screen activity.
@@ -22,7 +25,7 @@ public class Kaori extends AppCompatActivity {
     /**
      * Variables.
      */
-    private DataHub hub;
+    private DataManager hub;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,14 +41,17 @@ public class Kaori extends AppCompatActivity {
      * If auth=false => start the app
      */
     private void setup(){
+        LogManager.getInstance();
+
         Runnable r = () -> {
             // initialize the DataHub
-            hub = DataHub.getInstance();
+            hub = DataManager.getInstance();
             hub.setAuthenticated(checkLoginStatus());
 
-            if(hub.isAuthenticated())
-                downloadUserProfile();
-            else
+            FirebaseAuth.getInstance().signOut();
+            //if(hub.isAuthenticated())
+                //downloadUserProfile();
+            //else
                 startKaoriLogin();
         };
         new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);

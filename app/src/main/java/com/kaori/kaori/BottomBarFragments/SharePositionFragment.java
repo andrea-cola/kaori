@@ -24,7 +24,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.JsonObject;
-import com.kaori.kaori.DataHub;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.R;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
@@ -132,9 +132,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         shareCard.setVisibility(View.INVISIBLE);
 
         db = FirebaseFirestore.getInstance();
-        DataHub dataHub = DataHub.getInstance();
-        userUid = dataHub.getUser().getUid();
-        userName = dataHub.getUser().getName();
+        DataManager dataManager = DataManager.getInstance();
+        userUid = dataManager.getUser().getUid();
+        userName = dataManager.getUser().getName();
 
         addUserLocations();
     }

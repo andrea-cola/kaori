@@ -14,6 +14,7 @@ import com.kaori.kaori.BottomBarFragments.SearchFragment;
 import com.kaori.kaori.BottomBarFragments.UsersPositionsFragment;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
+import com.kaori.kaori.Utils.DataManager;
 
 public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
@@ -26,7 +27,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
      * Variables.
      */
     private User user;
-    private DataHub hub;
+    private DataManager hub;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -63,7 +64,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
 
-        hub = DataHub.getInstance();
+        hub = DataManager.getInstance();
 
         setContentView(R.layout.activity_main);
 

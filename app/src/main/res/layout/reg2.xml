@@ -47,7 +47,7 @@
         </android.support.constraint.ConstraintLayout>
 
         <EditText
-            android:id="@+id/reg_name"
+            android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="@dimen/default_height"
             android:layout_marginStart="@dimen/default_margin"
@@ -55,12 +55,12 @@
             android:layout_marginEnd="4dp"
             android:hint="Name"
             android:inputType="textPersonName"
-            app:layout_constraintEnd_toStartOf="@+id/reg_surname"
+            app:layout_constraintEnd_toStartOf="@+id/surname"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <EditText
-            android:id="@+id/reg_surname"
+            android:id="@+id/surname"
             android:layout_width="0dp"
             android:layout_height="@dimen/default_height"
             android:layout_marginStart="4dp"
@@ -69,11 +69,11 @@
             android:hint="Surname"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/reg_name"
+            app:layout_constraintStart_toEndOf="@+id/name"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <EditText
-            android:id="@+id/reg_mail"
+            android:id="@+id/username"
             android:layout_width="0dp"
             android:layout_height="@dimen/default_height"
             android:layout_marginStart="@dimen/default_margin"
@@ -84,10 +84,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reg_surname" />
+            app:layout_constraintTop_toBottomOf="@+id/surname" />
 
         <EditText
-            android:id="@+id/reg_password"
+            android:id="@+id/password"
             android:layout_width="0dp"
             android:layout_height="@dimen/default_height"
             android:layout_marginStart="@dimen/default_margin"
@@ -98,10 +98,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reg_mail" />
+            app:layout_constraintTop_toBottomOf="@+id/username" />
 
         <Button
-            android:id="@+id/button_create_new_account"
+            android:id="@+id/button_ok"
             style="@style/KaoriButton"
             android:layout_marginBottom="32dp"
             android:alpha="0.5"
@@ -111,7 +111,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/reg_password"
+            app:layout_constraintTop_toBottomOf="@+id/password"
             app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
