@@ -41,11 +41,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.DBObjects.User;
-import com.kaori.kaori.DataHub;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public class UploadBookFragment extends Fragment {
      */
     final static int PICK_PDF_CODE = 2342;
     private final float PROGRESS_BAR_CONSTANT = 100f;
-    private User currentUser = DataHub.getInstance().getUser();
+    private User currentUser = DataManager.getInstance().getUser();
     private static final float CHIP_TEXT_SIZE = 14;
 
     /**
