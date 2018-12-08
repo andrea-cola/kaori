@@ -85,7 +85,6 @@ public class SignInManager {
      */
     public boolean getSignInFacebookStarted(){
         return this.facebookSignInStarted;
-
     }
 
     /**

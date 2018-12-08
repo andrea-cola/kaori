@@ -43,6 +43,7 @@ public class LoginManager {
      */
     private final String WRONG_CREDENTIALS = "Le credenziali sono errate";
     private final String LOGIN_FAILED = "Login fallito. Riprova.";
+    private boolean facebookSignInStarted;
 
     /**
      * Class constructor.
@@ -50,6 +51,7 @@ public class LoginManager {
     private LoginManager(){
         mAuth = FirebaseAuth.getInstance();
         loginError = "";
+        facebookSignInStarted = false;
     }
 
     /**
@@ -68,6 +70,13 @@ public class LoginManager {
     public static LoginManager getInstance(Context c){
         context = c;
         return getInstance();
+    }
+
+    /**
+     * Return the flag relative to facebook sign in started.
+     */
+    public boolean getSignInFacebookStarted(){
+        return this.facebookSignInStarted;
     }
 
     /**
@@ -102,6 +111,7 @@ public class LoginManager {
      */
     public void loginWithFacebook(LoginButton loginButton){
         LogManager.getInstance().printConsoleMessage("loginWithFacebook");
+        this.facebookSignInStarted = true;
         mCallbackManager = CallbackManager.Factory.create();
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -184,6 +194,9 @@ public class LoginManager {
      * dialog.
      */
     private void endLogin(boolean isSuccess){
+        if(this.facebookSignInStarted)
+            facebookSignInStarted = false;
+
         if (isSuccess && context != null) {
             LogManager.getInstance().printConsoleMessage("endLogin:success");
             context.startActivity(new Intent(context, Kaori.class));

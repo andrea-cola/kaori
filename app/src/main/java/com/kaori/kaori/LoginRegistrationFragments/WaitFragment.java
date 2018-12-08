@@ -39,6 +39,7 @@ public class WaitFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.wait_fragment, container, false);
+        LogManager.setView(view);
 
         if(processType == Constants.LOGIN) {
             LoginManager loginManager = LoginManager.getInstance();
@@ -59,8 +60,6 @@ public class WaitFragment extends Fragment {
             else if (authMethod == AuthMethods.GOOGLE)
                 signInManager.signInWithGoogle();
         }
-
-        LogManager.setView(view);
 
         return view;
     }

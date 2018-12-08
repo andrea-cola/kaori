@@ -289,6 +289,7 @@ public class CreateAccountWithEmail extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LogManager.getInstance().showVisualError(getContext(), null, "fragment request code: " + requestCode);
         if(requestCode == CAMERA_REQUEST && filePath != null) {
             profileImageBitmap = BitmapFactory.decodeFile(filePath.toString());
             profileImage.setImageBitmap(profileImageBitmap);
