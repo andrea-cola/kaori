@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -70,6 +71,13 @@ public class LoginManager {
     }
 
     /**
+     * Getter of CallbackManager.
+     */
+    public CallbackManager getCallbackManager(){
+        return this.mCallbackManager;
+    }
+
+    /**
      * Handles the login with email.
      */
     public void loginWithEmail(String username, String password){
@@ -121,10 +129,16 @@ public class LoginManager {
     }
 
     /**
-     * Getter of CallbackManager.
+     * Set up the Google signInWithEmail.
      */
-    public CallbackManager getCallbackManager(){
-        return this.mCallbackManager;
+    public void loginWithGoogle(){
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        ((KaoriLogin)context).startActivityForResult(signInIntent, 0);
     }
 
     /**
@@ -149,7 +163,7 @@ public class LoginManager {
     /**
      * Handle the Facebook response.
      */
-    private void firebaseAuthWithFacebook(AccessToken token) {
+    private void firebaseAuthWithFacebook(@NonNull AccessToken token) {
         LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook");
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential).addOnCompleteListener((Activity)context, task -> {
@@ -182,19 +196,6 @@ public class LoginManager {
                 ((Activity)context).finish();
             }, 3000);
         }
-    }
-
-    /**
-     * Set up the Google signInWithEmail.
-     */
-    public void loginWithGoogle(){
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(context.getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        ((KaoriLogin)context).startActivityForResult(signInIntent, 0);
     }
 
 }

@@ -42,6 +42,7 @@ public class Kaori extends AppCompatActivity {
      */
     private void setup(){
         LogManager.getInstance();
+        LogManager.setView(findViewById(R.id.coordinator));
 
         Runnable r = () -> {
             // initialize the DataHub
@@ -52,7 +53,7 @@ public class Kaori extends AppCompatActivity {
             //if(hub.isAuthenticated())
                 //downloadUserProfile();
             //else
-                startKaoriLogin();
+            startKaoriLogin();
         };
         new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);
     }
