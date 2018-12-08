@@ -14,6 +14,7 @@ import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.LogManager;
 import com.kaori.kaori.Utils.LoginManager;
 import com.kaori.kaori.Utils.SignInManager;
 
@@ -37,8 +38,7 @@ public class WaitFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wait_layout, container, false);
-        view.findViewById(R.id.wait_layout).getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        View view = inflater.inflate(R.layout.wait_fragment, container, false);
 
         if(processType == Constants.LOGIN) {
             LoginManager loginManager = LoginManager.getInstance();
@@ -59,6 +59,8 @@ public class WaitFragment extends Fragment {
             else if (authMethod == AuthMethods.GOOGLE)
                 signInManager.signInWithGoogle();
         }
+
+        LogManager.setView(view);
 
         return view;
     }

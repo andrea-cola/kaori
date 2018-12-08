@@ -42,6 +42,7 @@ public class Kaori extends AppCompatActivity {
      */
     private void setup(){
         LogManager.getInstance();
+        LogManager.setView(findViewById(R.id.coordinator));
 
         Runnable r = () -> {
             // initialize the DataHub
@@ -49,10 +50,17 @@ public class Kaori extends AppCompatActivity {
             hub.setAuthenticated(checkLoginStatus());
 
             FirebaseAuth.getInstance().signOut();
+<<<<<<< HEAD
             if(hub.isAuthenticated())
                 downloadUserProfile();
             else
                 startKaoriLogin();
+=======
+            //if(hub.isAuthenticated())
+                //downloadUserProfile();
+            //else
+            startKaoriLogin();
+>>>>>>> 8087fa2e83ba9e5efc7343995bc73d0bfeb4a71a
         };
         new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);
     }
