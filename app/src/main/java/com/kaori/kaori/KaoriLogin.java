@@ -17,9 +17,6 @@ import com.kaori.kaori.Utils.LogManager;
 import com.kaori.kaori.Utils.LoginManager;
 import com.kaori.kaori.Utils.SignInManager;
 
-import static com.kaori.kaori.Utils.Constants.CAMERA_REQUEST;
-import static com.kaori.kaori.Utils.Constants.PICK_IMAGE;
-
 /**
  * Activity responsible for the Login and Signin.
  */
@@ -66,9 +63,7 @@ public class KaoriLogin extends AppCompatActivity {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CAMERA_REQUEST || requestCode == PICK_IMAGE)
-            super.onActivityResult(requestCode, resultCode, data);
-        else if (requestCode == Constants.GOOGLE_LOGIN_REQUEST) {
+        if (requestCode == Constants.GOOGLE_LOGIN_REQUEST) {
             LogManager.getInstance().printConsoleMessage("onActivityResult:GoogleLoginRequest");
             try {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
@@ -85,9 +80,11 @@ public class KaoriLogin extends AppCompatActivity {
             LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookSignInRequest");
             signInManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
         }
-        else {
+        else if(loginManager.getSignInFacebookStarted()){
             LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookLoginRequest");
             loginManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
         }
+        else
+            super.onActivityResult(requestCode, resultCode, data);
     }
 }

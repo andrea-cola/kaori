@@ -44,7 +44,6 @@ public class LoginFragment extends Fragment {
         // get true facebook button and setup the button.
         buttonFacebookLogin = view.findViewById(R.id.button_facebook);
         buttonFacebookLogin.setReadPermissions("email", "public_profile");
-        //buttonFacebookLogin.setFragment(this);
 
         // get views from the layout.
         Button loginButton = view.findViewById(R.id.button_ok);
