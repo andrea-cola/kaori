@@ -51,6 +51,8 @@ public class Constants {
      */
     public static final int GOOGLE_LOGIN_REQUEST = 0;
     public static final int GOOGLE_SIGNIN_REQUEST = 1;
+    public static final int PICK_IMAGE = 2;
+    public static final int CAMERA_REQUEST = 3;
     public static final int LOGIN = 0;
     public static final int SIGNIN = 1;
 

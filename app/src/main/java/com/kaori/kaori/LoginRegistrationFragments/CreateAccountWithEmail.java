@@ -40,6 +40,7 @@ import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.kaori.kaori.Utils.Constants.CAMERA_REQUEST;
 import static com.kaori.kaori.Utils.Constants.MY_CAMERA_PERMISSION_CODE;
 
 /**
@@ -50,8 +51,6 @@ public class CreateAccountWithEmail extends Fragment {
     /**
      * Constants.
      */
-    private final int PICK_IMAGE = 0;
-    private final int CAMERA_REQUEST = 1;
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
@@ -135,7 +134,7 @@ public class CreateAccountWithEmail extends Fragment {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.PICK_IMAGE);
     }
 
     /**
@@ -298,7 +297,7 @@ public class CreateAccountWithEmail extends Fragment {
             profileImageBitmap = BitmapFactory.decodeFile(filePath.toString());
             profileImage.setImageBitmap(profileImageBitmap);
         }
-        else if(data != null && data.getData() != null && requestCode == PICK_IMAGE)
+        else if(data != null && data.getData() != null && requestCode == Constants.PICK_IMAGE)
             try {
                 profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
                 profileImage.setImageBitmap(profileImageBitmap);
