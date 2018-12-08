@@ -1,4 +1,4 @@
-package com.kaori.kaori;
+package com.kaori.kaori.Utils;
 
 /**
  * This class contains all the constants of the app.
@@ -47,10 +47,12 @@ public class Constants {
     public static int SPLASH_SCREEN_WAITING_TIME = 500;
 
     /**
-     * Sign in method.
+     * Sign in and login constants.
      */
-    public static int NATIVE_SIGNIN = 0;
-    public static int SOCIAL_SIGNIN = 1;
+    public static final int GOOGLE_LOGIN_REQUEST = 0;
+    public static final int GOOGLE_SIGNIN_REQUEST = 1;
+    public static final int LOGIN = 0;
+    public static final int SIGNIN = 1;
 
     /**
      * Registration messages.

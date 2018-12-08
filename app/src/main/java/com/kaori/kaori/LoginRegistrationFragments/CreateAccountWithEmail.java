@@ -2,7 +2,7 @@ package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -25,13 +25,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.StorageReference;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.SignInManager;
+import com.kaori.kaori.Utils.AuthMethods;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -41,18 +39,19 @@ import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.kaori.kaori.Constants.MY_CAMERA_PERMISSION_CODE;
+import static com.kaori.kaori.Utils.Constants.MY_CAMERA_PERMISSION_CODE;
 
 /**
  * This class is responsible for the second step of account creation.
  */
-public class CreateAccount2 extends Fragment {
+public class CreateAccountWithEmail extends Fragment {
 
     /**
      * Constants.
      */
     private final int PICK_IMAGE = 0;
     private final int CAMERA_REQUEST = 1;
+    private final String BACK_STATE_NAME = getClass().getName();
 
     /**
      * Variables.
@@ -62,12 +61,8 @@ public class CreateAccount2 extends Fragment {
     private CircleImageView profileImage;
     private EditText name, surname, password, mail;
     private Button createNewAccount;
-    private FirebaseAuth auth;
     private Bitmap profileImageBitmap;
     private Uri filePath;
-    private FirebaseFirestore db;
-    private StorageReference mStorage;
-    private ProgressDialog pd;
 
     /**
      * Override of the inherited method.
@@ -78,39 +73,27 @@ public class CreateAccount2 extends Fragment {
         View view = inflater.inflate(R.layout.reg2, container, false);
 
         FloatingActionButton floatingActionButton = view.findViewById(R.id.floatingActionButton);
-        createNewAccount = view.findViewById(R.id.button_create_new_account);
-        name = view.findViewById(R.id.reg_name);
-        surname = view.findViewById(R.id.reg_surname);
-        password = view.findViewById(R.id.reg_password);
-        mail = view.findViewById(R.id.reg_mail);
+        createNewAccount = view.findViewById(R.id.button_ok);
+        name = view.findViewById(R.id.name);
+        surname = view.findViewById(R.id.surname);
+        password = view.findViewById(R.id.password);
+        mail = view.findViewById(R.id.username);
         profileImage = view.findViewById(R.id.reg_image_profile);
 
         user = new User();
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
 
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
 
-        // add listener to changes in edittext.
+        // add listener to changes in EditText.
         setEditTextWatchers();
 
         // add the action to the FAB.
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                buildChoicePopup();
-            }
-        });
+        floatingActionButton.setOnClickListener(view1 -> buildChoicePopup());
 
         createNewAccount.setEnabled(false);
-        createNewAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateUser();
-            }
-        });
+        createNewAccount.setOnClickListener(view12 -> updateUserAndLogin());
 
         return view;
     }
@@ -119,13 +102,25 @@ public class CreateAccount2 extends Fragment {
      * Update the user information before passing to the next
      * fragment.
      */
-    private void updateUser() {
+    private void updateUserAndLogin() {
         user.setName(name.getText().toString());
         user.setSurname(surname.getText().toString());
         user.setEmail(mail.getText().toString());
 
-        SignInManager signInManager = new SignInManager(getContext());
-        signInManager.signInWithEmail(AuthMethod.NATIVE, user, password.getText().toString(), profileImageBitmap);
+        Object[] o = new Object[3];
+        o[0] = user;
+        o[1] = password.getText().toString();
+        o[2] = profileImageBitmap;
+
+        WaitFragment waitFragment = new WaitFragment();
+        waitFragment.setParameters(Constants.SIGNIN, AuthMethods.NATIVE, o);
+
+        if(getActivity() != null && isAdded())
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_layout, waitFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
     }
 
     /**
@@ -256,46 +251,35 @@ public class CreateAccount2 extends Fragment {
         builderSingle.setView(view);
         final AlertDialog alert = builderSingle.create();
 
-        view.findViewById(R.id.popup_cancel_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alert.dismiss();
-            }
-        });
+        view.findViewById(R.id.popup_cancel_button).setOnClickListener(v -> alert.dismiss());
 
-        view.findViewById(R.id.popup_voice1).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                else {
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        view.findViewById(R.id.popup_voice1).setOnClickListener(v -> {
+            if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+            else {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    // Ensure that there's a camera activity to handle the intent
-                    if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                        try {
-                            File photoFile = createImageFile();
-                            if (photoFile != null) {
-                                Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
-                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                startActivityForResult(takePictureIntent, CAMERA_REQUEST);
-                            }
-                        } catch (IOException ex) {
-                            // set the default image in case of problems.
-                            user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
+                // Ensure that there's a camera activity to handle the intent
+                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    try {
+                        File photoFile = createImageFile();
+                        if (photoFile != null) {
+                            Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                            startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                         }
+                    } catch (IOException ex) {
+                        // set the default image in case of problems.
+                        user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
                     }
                 }
-                alert.dismiss();
             }
+            alert.dismiss();
         });
 
-        view.findViewById(R.id.popup_voice2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getImageFromLibrary();
-                alert.dismiss();
-            }
+        view.findViewById(R.id.popup_voice2).setOnClickListener(v -> {
+            getImageFromLibrary();
+            alert.dismiss();
         });
 
         alert.show();
@@ -315,13 +299,10 @@ public class CreateAccount2 extends Fragment {
                 profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
                 profileImage.setImageBitmap(profileImageBitmap);
             } catch (FileNotFoundException e) {
-                // TODO
-                Toast.makeText(getActivity(), "Something went wrong.", Toast.LENGTH_LONG).show();
+                LogManager.getInstance().showVisualError(getContext(), e, "File non trovato.");
             }
-        else {
-            // TODO
-            Toast.makeText(getContext(), "Error in selecting the image.", Toast.LENGTH_SHORT).show();
-        }
+        else
+            LogManager.getInstance().showVisualError(getContext(), null, "Riprovare a selezionare l'immagine.");
     }
 
     /**

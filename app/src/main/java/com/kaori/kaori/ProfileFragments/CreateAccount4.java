@@ -1,4 +1,4 @@
-package com.kaori.kaori.LoginRegistrationFragments;
+package com.kaori.kaori.ProfileFragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -34,9 +34,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.Constants;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.DBObjects.User;
-import com.kaori.kaori.DataHub;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Kaori;
 
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 /**
  * This class represents the last phase of the
  */
-public class CreateAccount3 extends Fragment {
+public class CreateAccount4 extends Fragment {
 
     /**
      * Variables.
@@ -71,14 +71,14 @@ public class CreateAccount3 extends Fragment {
 
         // get views from layout
         spinnerSpace = view.findViewById(R.id.spinner_space);
-        createNewAccountButton = view.findViewById(R.id.button_create_new_account);
+        createNewAccountButton = view.findViewById(R.id.button_ok);
 
         // instantiate variables
         db = FirebaseFirestore.getInstance();
         autoCompleteTextViewArrayList = new ArrayList<>();
-        exams = DataHub.getInstance().getExams();
-        courseTypes = DataHub.getInstance().getCourseTypes();
-        universities = DataHub.getInstance().getUniversities();
+        exams = DataManager.getInstance().getExams();
+        courseTypes = DataManager.getInstance().getCourseTypes();
+        universities = DataManager.getInstance().getUniversities();
 
         autoCompleteTextViewArrayList.add((AutoCompleteTextView)view.findViewById(R.id.reg_ac_uni));
         autoCompleteTextViewArrayList.add((AutoCompleteTextView)view.findViewById(R.id.reg_ac_course_type));
@@ -113,16 +113,6 @@ public class CreateAccount3 extends Fragment {
         addListenerCourseTypesSpinner2();
 
         return view;
-    }
-
-    public void setParams(User user, Bitmap bitmap, String password){
-        this.user = user;
-        this.localProfileBitmap = bitmap;
-        this.password = password;
-    }
-
-    public void setParams(User user){
-        this.user = user;
     }
 
     public void setMethod(int method){

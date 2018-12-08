@@ -145,7 +145,7 @@
                 android:textSize="@dimen/default_text_size"
                 android:alpha="0.5"
                 android:enabled="false"
-                app:layout_constraintBottom_toTopOf="@+id/button_create_new_account"
+                app:layout_constraintBottom_toTopOf="@+id/button_ok"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -155,7 +155,7 @@
                 app:layout_constraintWidth_min="@dimen/default_min_width" />
 
             <Button
-                android:id="@+id/button_create_new_account"
+                android:id="@+id/button_ok"
                 style="@style/KaoriButton"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/default_height"

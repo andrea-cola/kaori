@@ -1,113 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:layout_editor_absoluteY="81dp">
+    android:layout_width="match_parent"
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="115dp"
-        android:layout_height="116dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.30"
-        app:srcCompat="@mipmap/ludo" />
+    <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-    <EditText
-        android:id="@+id/login_username"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Username"
-        android:inputType="textEmailAddress"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/login_password"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_username" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/reg_image_profile"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_marginStart="@dimen/default_top_bottom_parent_margin"
+                android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
+                android:layout_marginEnd="@dimen/default_top_bottom_parent_margin"
+                android:layout_marginBottom="@dimen/default_top_bottom_parent_margin"
+                android:src="@drawable/logo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/login_button"
-        style="@style/KaoriButton"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/title_login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_forgotten" />
+        </android.support.constraint.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/password_forgotten"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Forgot your password?"
-        android:textAlignment="viewEnd"
-        app:layout_constraintEnd_toEndOf="@+id/login_password"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_password" />
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/default_height"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:hint="Email Address"
+            android:inputType="textEmailAddress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
-    <ImageView
-        android:id="@+id/button_fake_facebook"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button_google"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login_button"
-        app:srcCompat="@drawable/ic_if_circle_facebook__317752" />
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/default_height"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
+            android:hint="Password"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/username" />
+
+        <TextView
+            android:id="@+id/password_forgotten"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Forgot your password?"
+            android:textAlignment="viewEnd"
+            app:layout_constraintEnd_toEndOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
+
+        <Button
+            android:id="@+id/button_ok"
+            style="@style/KaoriButton"
+            android:layout_marginBottom="32dp"
+            android:text="@string/title_registration_end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/password_forgotten"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/button_fake_facebook"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/button_google"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_ok"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_if_circle_facebook__317752" />
 
 
-    <ImageView
-        android:id="@+id/button_google"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/button_fake_facebook"
-        app:layout_constraintTop_toBottomOf="@+id/login_button"
-        app:srcCompat="@drawable/ic_if_google_1298745" />
+        <ImageView
+            android:id="@+id/button_google"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/button_fake_facebook"
+            app:layout_constraintTop_toBottomOf="@+id/button_ok"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_if_google_1298745" />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/button_facebook"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/button_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
 
-</android.support.constraint.ConstraintLayout>
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

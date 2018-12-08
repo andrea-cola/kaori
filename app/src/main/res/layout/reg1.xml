@@ -51,7 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/logo_group">
 
         <Button
-            android:id="@+id/button_create_new_account"
+            android:id="@+id/button_ok"
             style="@style/KaoriButton"
             android:layout_width="match_parent"
             android:text="@string/title_register_email"

@@ -1,14 +1,23 @@
 package com.kaori.kaori.Utils;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
 
 import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,13 +27,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.Kaori;
+import com.kaori.kaori.KaoriLogin;
+import com.kaori.kaori.R;
 
 import java.io.ByteArrayOutputStream;
-
-import timber.log.Timber;
 
 /**
  * This class handles the login and the signInWithEmail of the user in the app.
@@ -34,25 +42,221 @@ public class SignInManager {
     /**
      * Variables.
      */
-    private ProgressDialog waitingProgressDialog;
-    private AlertDialog.Builder builder;
+    private static SignInManager signInManager;
+    private static Context context;
+    private boolean facebookSignInStarted;
     private User user;
     private String password;
     private FirebaseFirestore mDatabase;
     private FirebaseAuth mAuth;
     private Bitmap profileImageBitmap;
-    private Context context;
+    private CallbackManager callbackManager;
+    private String loginError;
 
     /**
      * Class constructor.
      */
-    public SignInManager(Context context) {
-        waitingProgressDialog = new ProgressDialog(context);
-        builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
-
-        this.context = context;
+    private SignInManager() {
         mDatabase = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
+        facebookSignInStarted = false;
+        loginError = "";
+    }
+
+    /**
+     * Retrieve the singleton instance.
+     */
+    public static SignInManager getInstance() throws IllegalStateException {
+        if (signInManager == null)
+            signInManager = new SignInManager();
+        return signInManager;
+    }
+
+    /**
+     * Retrieve the singleton instance and set the context.
+     */
+    public static SignInManager getInstance(Context c){
+        context = c;
+        return getInstance();
+    }
+
+    /**
+     * Return the flag relative to facebook sign in started.
+     */
+    public boolean getSignInFacebookStarted(){
+        return this.facebookSignInStarted;
+
+    }
+
+    /**
+     * Return callback manager.
+     */
+    public CallbackManager getCallbackManager(){
+        return this.callbackManager;
+    }
+
+    /**
+     * Start sign in with google.
+     */
+    public void signInWithGoogle(){
+        LogManager.getInstance().printConsoleMessage("signInWithGoogle");
+        final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .requestProfile()
+                .build();
+        if(context != null) {
+            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+            ((KaoriLogin)context).startActivityForResult(signInIntent, Constants.GOOGLE_SIGNIN_REQUEST);
+        }
+    }
+
+    /**
+     * Start the sign in with facebook.
+     */
+    public void signInWithFacebook(LoginButton button){
+        LogManager.getInstance().printConsoleMessage("signInWithFacebook");
+
+        this.facebookSignInStarted = true;
+        FirebaseAuth.getInstance().signOut();
+        callbackManager = CallbackManager.Factory.create();
+
+        button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                LogManager.getInstance().printConsoleMessage("signInWithFacebook:onSuccess -> " + loginResult);
+                authWithFacebook(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                LogManager.getInstance().showVisualMessage(context,"signInWithFacebook:onCancel");
+                endSignIn(false);
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                LogManager.getInstance().showVisualError(context, error,"signInWithFacebook:onCancel");
+                endSignIn(false);
+            }
+        });
+
+        button.performClick();
+    }
+
+    /**
+     * This method is used in native sign in with email and password.
+     */
+    public void signInWithEmail(User user, String password, Bitmap bitmap){
+        LogManager.getInstance().printConsoleMessage("signInWithEmail");
+        this.user = user;
+        this.password = password;
+        this.profileImageBitmap = bitmap;
+
+        authWithEmail();
+    }
+
+    /**
+     * This method is used in Google sign in.
+     */
+    private void authWithGoogle(GoogleSignInAccount account){
+        LogManager.getInstance().printConsoleMessage("authWithGoogle");
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mAuth.signInWithCredential(credential).addOnCompleteListener((Activity)context, task -> {
+            if (task.isSuccessful()) {
+                LogManager.getInstance().printConsoleMessage("authWithGoogle:success");
+                FirebaseUser user = mAuth.getCurrentUser();
+                if(user != null)
+                    createNewUserAndSignIn(user);
+                else {
+                    LogManager.getInstance().showVisualError(context,null, "signInWithGoogle:nullUser");
+                    endSignIn(false);
+                }
+            } else {
+                LogManager.getInstance().showVisualError(context,null, "signInWithGoogle:failure");
+                endSignIn(false);
+            }
+        });
+    }
+
+    /**
+     * This method is used in Facebook sign in.
+     */
+    private void authWithFacebook(AccessToken token) {
+        LogManager.getInstance().printConsoleMessage("authWithFacebook");
+
+        this.facebookSignInStarted = false;
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener((Activity)context, task -> {
+                    if (task.isSuccessful()) {
+                        LogManager.getInstance().printConsoleMessage("authWithFacebook:success");
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if(user != null && user.getEmail() != null && !user.getEmail().isEmpty())
+                            createNewUserAndSignIn(user);
+                        else{
+                            LogManager.getInstance().showVisualError(context, null, "authWithFacebook:nullUser");
+                            endSignIn(false);
+                        }
+
+                    } else {
+                        LogManager.getInstance().showVisualError(context, null, "authWithFacebook:failure");
+                        endSignIn(false);
+                    }
+                });
+    }
+
+    /**
+     * Sign in the user throw Firebase Auth.
+     */
+    private void authWithEmail() {
+        LogManager.getInstance().printConsoleMessage("authWithEmail");
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        LogManager.getInstance().printConsoleMessage("authWithEmail:success");
+
+                        if (task.getResult().getUser() != null) {
+                            user.setUid(task.getResult().getUser().getUid());
+
+                            if (profileImageBitmap != null)
+                                uploadProfileImageOnTheServer();
+                            else {
+                                user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
+                                uploadNewUserOnTheServer();
+                            }
+
+                        }
+                        else{
+                            LogManager.getInstance().showVisualError(context, null, "authWithEmail:nullUser");
+                            endSignIn(false);
+                        }
+
+
+                    } else {
+                        LogManager.getInstance().showVisualError(context, null, "authWithEmail:failure");
+                        endSignIn(false);
+                    }
+                });
+    }
+
+    /**
+     * Handle the sign in result of GoogleSignIn
+     */
+    public void handleGoogleSignIn(Task<GoogleSignInAccount> completedTask){
+        LogManager.getInstance().printConsoleMessage("handleGoogleSignIn");
+        try {
+            LogManager.getInstance().printConsoleMessage("handleGoogleSignIn:success");
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            if(account != null)
+                signInManager.authWithGoogle(account);
+        } catch (ApiException e) {
+            LogManager.getInstance().showVisualError(context, e, "handleGoogleSignIn:fail");
+            endSignIn(false);
+        }
     }
 
     /**
@@ -60,10 +264,11 @@ public class SignInManager {
      * to the next fragment.
      */
     private void createNewUserAndSignIn(FirebaseUser firebaseUser){
+        LogManager.getInstance().printConsoleMessage("createNewUserAndSignIn");
         user = new User();
         user.setEmail(firebaseUser.getEmail());
 
-        String[] names = createsNameAndSurname(firebaseUser.getDisplayName());
+        String[] names = createsNameAndSurname(firebaseUser.getDisplayName().split(" "));
         user.setUid(firebaseUser.getUid());
         user.setName(names[0]);
         user.setSurname(names[1]);
@@ -74,117 +279,23 @@ public class SignInManager {
         else
             user.setPhotosUrl(tmp);
 
-        waitingProgressDialog.setMessage("Creating new user...");
-        waitingProgressDialog.show();
-
         uploadNewUserOnTheServer();
-    }
-
-    /**
-     * This method is used in native sign in with email and password.
-     */
-    public void signInWithEmail(User user, String password, Bitmap bitmap){
-        this.user = user;
-        this.password = password;
-        this.profileImageBitmap = bitmap;
-
-        startNativeSignInProcess();
-    }
-
-    /**
-     * This method is used in Google sign in.
-     */
-    public void signInWithGoogle(GoogleSignInAccount account){
-        Timber.d("signInWithGoogle:%s", account.getId());
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        mAuth.signInWithCredential(credential).addOnCompleteListener((Activity)context, task -> {
-            if (task.isSuccessful()) {
-                Timber.d("GoogleSignInWithCredential --> success.");
-                FirebaseUser user = mAuth.getCurrentUser();
-                createNewUserAndSignIn(user);
-            } else {
-                Timber.d(task.getException(), "GoogleSignInWithCredential --> failure.");
-                //Snackbar.make(context.findViewById(R.id.main_container), "Authentication with Google Failed.", Snackbar.LENGTH_LONG).show();
-                // TODO: gestire l'errore e andare ad un punto della UI che possa permttere di ricominciare.
-            }
-        });
-    }
-
-    /**
-     * This method is used in Facebook sign in.
-     */
-    public void signInWithFacebook(AccessToken token) {
-        Timber.d("handleFacebookAccessToken:%s", token);
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener((Activity)context, task -> {
-                    if (task.isSuccessful()) {
-                        Timber.d("signInWithCredential:success");
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        Timber.d("mail: %s", user.getEmail());
-                        createNewUserAndSignIn(user);
-                    } else {
-                        Timber.tag(Constants.TAG).w(task.getException(), "signInWithCredential:failure");
-                        //Toast.makeText(FacebookLoginActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    /**
-     * Show a dialog asking the user if he wants to continue.
-     */
-    private void startNativeSignInProcess(){
-        builder.setTitle(Constants.DIALOG_TITLE_CONFIRM).setMessage(Constants.DIALOG_MESSAGE_CONFIRM)
-                .setPositiveButton(android.R.string.yes, (dialog, which) -> signInNewUser())
-                .setNegativeButton(android.R.string.no, (dialog, which) -> {
-                    // TODO
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
-
-    /**
-     * Sign in the user throw Firebase Auth.
-     */
-    private void signInNewUser() {
-        waitingProgressDialog.setMessage("Creating new user...");
-        waitingProgressDialog.show();
-
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Timber.d("createUserWithEmail:success");
-                        user.setUid(task.getResult().getUser().getUid());
-
-                        if (profileImageBitmap != null)
-                            uploadProfileImageOnTheServer();
-                        else {
-                            user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
-                            uploadNewUserOnTheServer();
-                        }
-                    } else {
-                        Timber.tag(Constants.TAG).w(task.getException(), "createUserWithEmail:failure");
-                        // TODO
-                    }
-                });
     }
 
     /**
      * This method writes the user in the database.
      */
     private void uploadNewUserOnTheServer(){
-        waitingProgressDialog.setMessage("Uploading the user...");
-        waitingProgressDialog.show();
+        LogManager.getInstance().printConsoleMessage("uploadNewUserOnTheServer");
         mDatabase.collection("users").document()
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
-                    Timber.d("DocumentSnapshot successfully written!");
-                    endRegistration();
+                    LogManager.getInstance().printConsoleMessage("uploadNewUserOnTheServer:written");
+                    endSignIn(true);
                 })
                 .addOnFailureListener(e -> {
-                    // TODO: fare riprovare l'utente.
-                    Timber.tag(Constants.TAG).w(e, "Error writing document");
+                    LogManager.getInstance().showVisualError(context, e, "uploadNewUserOnTheServer");
+                    endSignIn(false);
                 });
     }
 
@@ -192,41 +303,31 @@ public class SignInManager {
      * This method uploads the image in the Firebase storage.
      */
     private void uploadProfileImageOnTheServer(){
-        waitingProgressDialog.setMessage("Uploading the profile image...");
+        LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         profileImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
         final StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
         UploadTask uploadTask = mStorage.putBytes(baos.toByteArray());
-        uploadTask.addOnFailureListener(exception -> Timber.tag(Constants.TAG).w(exception))
-            .addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
-                Timber.tag(Constants.TAG).d(uri.toString());
-                user.setPhotosUrl(uri.toString());
-                uploadNewUserOnTheServer();
-            }));
-    }
-
-    /**
-     * Ends the registration process, dismissing the progress dialog.
-     */
-    private void endRegistration(){
-        waitingProgressDialog.dismiss();
-        // TODO: mandare mail in caso di conferma.
-        if (context != null){
-            context.startActivity(new Intent(context, Kaori.class));
-            ((Activity)context).finish();
-        }
+        uploadTask
+                .addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
+                    LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer:success");
+                    user.setPhotosUrl(uri.toString());
+                    uploadNewUserOnTheServer();
+                }))
+                .addOnFailureListener(e -> {
+                    LogManager.getInstance().showVisualError(context, e, "uploadProfileImageOnTheServer:error");
+                    endSignIn(false);
+                });
     }
 
     /**
      * Takes in input a string and returns a vector of two elements.
      * The first element is the name and the second is the surname.
      */
-    private String[] createsNameAndSurname(String nameAndSurname){
+    private String[] createsNameAndSurname(String[] parts){
         String[] vector = new String[2];
-        String[] parts = nameAndSurname.split(" ");
-
         vector[0] = parts[0];
         vector[1] = parts[1];
 
@@ -235,6 +336,26 @@ public class SignInManager {
                 vector[1] = " " + vector[i];
 
         return vector;
+    }
+
+    /**
+     * This method is called whenever the process is terminated.
+     * If successful restart the app, if not it only dismisses the
+     * dialog.
+     */
+    private void endSignIn(boolean isSuccess){
+        if (isSuccess && context != null) {
+            LogManager.getInstance().printConsoleMessage("endSignIn:success");
+            context.startActivity(new Intent(context, Kaori.class));
+            ((Activity) context).finish();
+        }
+        else if(!isSuccess && context != null) {
+            LogManager.getInstance().showVisualError(context, null, loginError);
+            (new Handler()).postDelayed(() -> {
+                context.startActivity(new Intent(context, KaoriLogin.class));
+                ((Activity)context).finish();
+            }, 3000);
+        }
     }
 
 }
