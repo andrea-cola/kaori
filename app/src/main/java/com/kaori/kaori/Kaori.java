@@ -44,25 +44,13 @@ public class Kaori extends AppCompatActivity {
         hub = DataManager.getInstance();
         hub.setAuthenticated(checkLoginStatus());
 
-<<<<<<< HEAD
-            FirebaseAuth.getInstance().signOut();
-<<<<<<< HEAD
-=======
+        FirebaseAuth.getInstance().signOut();
+
         Runnable r = () -> {
->>>>>>> 9ec62d99d080bfcad7189dc1723bc5693444443f
             if(hub.isAuthenticated())
                 downloadUserProfile();
             else
                 startKaoriLogin();
-<<<<<<< HEAD
-=======
-            //if(hub.isAuthenticated())
-                //downloadUserProfile();
-            //else
-            startKaoriLogin();
->>>>>>> 8087fa2e83ba9e5efc7343995bc73d0bfeb4a71a
-=======
->>>>>>> 9ec62d99d080bfcad7189dc1723bc5693444443f
         };
         new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);
     }

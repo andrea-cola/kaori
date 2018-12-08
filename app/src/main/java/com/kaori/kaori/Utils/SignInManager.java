@@ -235,7 +235,6 @@ public class SignInManager {
                             endSignIn(false);
                         }
 
-
                     } else {
                         LogManager.getInstance().showVisualError(context, null, "authWithEmail:failure");
                         endSignIn(false);
