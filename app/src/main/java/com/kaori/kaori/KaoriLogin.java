@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -18,34 +17,41 @@ import com.kaori.kaori.Utils.LogManager;
 import com.kaori.kaori.Utils.LoginManager;
 import com.kaori.kaori.Utils.SignInManager;
 
+import static com.kaori.kaori.Utils.Constants.CAMERA_REQUEST;
+import static com.kaori.kaori.Utils.Constants.PICK_IMAGE;
+
+/**
+ * Activity responsible for the Login and Signin.
+ */
 public class KaoriLogin extends AppCompatActivity {
 
     /**
      * Variables.
      */
     private final String BACK_STATE_NAME = getClass().getName();
-    private Button mLogin, mRegistration;
     private LoginManager loginManager;
     private SignInManager signInManager;
 
+    /**
+     * OnCreate override.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
-        mLogin = findViewById(R.id.login_button);
-        mRegistration = findViewById(R.id.signin_button);
-        setClickListeners();
-
+        // instantiate the managers for login and sign in.
         loginManager = LoginManager.getInstance(this);
         signInManager = SignInManager.getInstance(this);
+
+        // set click listeners
+        findViewById(R.id.login_button).setOnClickListener(view -> invokeNextFragment(new LoginFragment()));
+        findViewById(R.id.signin_button).setOnClickListener(view -> invokeNextFragment(new CreateAccount()));
     }
 
-    private void setClickListeners(){
-        mLogin.setOnClickListener(view -> invokeNextFragment(new LoginFragment()));
-        mRegistration.setOnClickListener(view -> invokeNextFragment(new CreateAccount()));
-    }
-
+    /**
+     * Method used to invoke a new fragment.
+     */
     private void invokeNextFragment(Fragment f){
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_layout, f)
@@ -54,9 +60,15 @@ public class KaoriLogin extends AppCompatActivity {
                 .commit();
     }
 
+    /**
+     * Method used to retrieve and use the result of the login
+     * done by Facebook and Google.
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.GOOGLE_LOGIN_REQUEST) {
+        if(requestCode == CAMERA_REQUEST || requestCode == PICK_IMAGE)
+            super.onActivityResult(requestCode, resultCode, data);
+        else if (requestCode == Constants.GOOGLE_LOGIN_REQUEST) {
             LogManager.getInstance().printConsoleMessage("onActivityResult:GoogleLoginRequest");
             try {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
@@ -77,7 +89,5 @@ public class KaoriLogin extends AppCompatActivity {
             LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookLoginRequest");
             loginManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
         }
-
-        super.onActivityResult(requestCode, resultCode, data);
     }
 }
