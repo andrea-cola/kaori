@@ -125,7 +125,7 @@ public class CreateAccount2 extends Fragment {
         user.setEmail(mail.getText().toString());
 
         SignInManager signInManager = new SignInManager(getContext());
-        signInManager.signInWithEmail(AuthMethod.NATIVE, user, password.getText().toString(), profileImageBitmap);
+        signInManager.signInWithEmail(user, password.getText().toString(), profileImageBitmap);
     }
 
     /**

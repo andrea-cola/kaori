@@ -17,13 +17,13 @@
         android:focusable="true"
         android:scaleType="center"
         android:tint="@color/white"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/colorPrimary"
         app:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.975"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add"
+        app:srcCompat="@drawable/ic_file_upload_black_24dp"
         tools:ignore="KeyboardInaccessibleWidget" />
 
     <android.support.v7.widget.RecyclerView

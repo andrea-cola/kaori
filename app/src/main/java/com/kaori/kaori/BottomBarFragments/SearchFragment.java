@@ -4,6 +4,9 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.chip.Chip;
+import android.support.design.chip.ChipGroup;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,6 +30,8 @@ import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -35,54 +40,90 @@ public class SearchFragment extends Fragment {
     /**
      * Constants
      */
-    private ArrayList<String> titles;
-    private ArrayList<String> authors;
     private final String BACK_STATE_NAME = getClass().getName();
+    private static final float CHIP_TEXT_SIZE = 14;
 
     /**
      * Views from layout
      */
+    private View view;
     private SearchView searchView;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private ChipGroup chipGroup;
+    private FloatingActionButton filterButton;
+    private TextView emptyView;
 
     /**
-     * Firebase storing constants
+     * Variables
      */
+    private ArrayList<String> titles;
+    private ArrayList<String> exams;
     private Query set;
     private FirestoreRecyclerAdapter adapter;
+    private FirebaseFirestore db;
 
+    /**
+     * Constructor
+     */
     public SearchFragment(){ }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_layout, container, false);
-
-        // setting the items of the search_layout
-        searchView = view.findViewById(R.id.searchView);
-        recyclerView = view.findViewById(R.id.searchList);
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        view = inflater.inflate(R.layout.search_layout, container, false);
+        setUpView();
 
         // setting the database
         titles = new ArrayList<>();
-        authors = new ArrayList<>();
-        set = FirebaseFirestore.getInstance().collection("books").orderBy("title", Query.Direction.DESCENDING);
+        exams = new ArrayList<>();
+
+        setUpFirebase();
+
+        setUpButtons();
+        return view;
+    }
+
+    /**
+     * This method sets up the Firebase db
+     */
+    private void setUpFirebase(){
+        db = FirebaseFirestore.getInstance();
+        set = db.collection("books").orderBy("title", Query.Direction.DESCENDING);
         set.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
                         titles.add((String) document.get("title"));
-                        authors.add((String) document.get("author"));
                     }
                 }else{
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             }
         });
+    }
 
+    /**
+     * This method sets up the View
+     */
+    private void setUpView(){
+        // setting the items of the search_layout
+        searchView = view.findViewById(R.id.searchView);
+        recyclerView = view.findViewById(R.id.searchList);
+        chipGroup = view.findViewById(R.id.searchChipGroup);
+        emptyView = view.findViewById(R.id.emptyView);
+        emptyView.setVisibility(View.INVISIBLE);
+        filterButton = view.findViewById(R.id.filterButton);
+
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+    /**
+     * This method sets up the buttons in the View
+     */
+    private void setUpButtons(){
         // listener to the search view
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -96,15 +137,76 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
-        return view;
+
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setChipGroup();
+            }
+        });
     }
 
+    /**
+     * This method sets up the Chip Group in the View
+     */
+    private void setChipGroup(){
+        db.collection("exams")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                chipGroup.addView(setChip(document.getString("name")));
+                            }
+                        }
+                    }
+                });
+        return;
+    }
+
+    /**
+     * This method is used to set up the chips
+     */
+    private Chip setChip(String text){
+        Chip chip = new Chip(getContext());
+        chip.setText(text);
+        chip.setTextSize(CHIP_TEXT_SIZE);
+        chip.setCheckable(false);
+        chip.setClickable(true);
+        chip.setCloseIconVisible(false);
+        chip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!exams.contains(chip.getText().toString())) {
+                    exams.add(chip.getText().toString());
+                }
+            }
+        });
+        return chip;
+    }
+
+    /**
+     * This method is used to search the title in the db
+     * Filtering the books according to the chips clicked
+     */
     private void firebaseUserSeach(String sequence) {
         Query query = set;
         for(int i=0; i<titles.size(); i++) {
             if (titles.get(i).toLowerCase().contains(sequence.toLowerCase())) {
                 query = set.whereEqualTo("title", titles.get(i));
             }
+        }
+
+        if(!exams.isEmpty())
+            query = set.whereEqualTo("course", exams);
+
+        if(sequence.equals("")){
+            recyclerView.setVisibility(View.INVISIBLE);
+            emptyView.setVisibility(View.VISIBLE);
+        }else{
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.INVISIBLE);
         }
 
         FirestoreRecyclerOptions<Book> options = new FirestoreRecyclerOptions.Builder<Book>()
@@ -155,7 +257,6 @@ public class SearchFragment extends Fragment {
         View mView;
         TextView book_title;
         TextView book_author;
-
 
         private BookViewHolder(View itemView) {
             super(itemView);

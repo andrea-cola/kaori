@@ -52,6 +52,7 @@
     <string name="upload_button">UPLOAD</string>
     <string name="upload_your_pdf">Upload your pdf</string>
     <string name="write_the_title">Write the title</string>
+    <string name="no_results">No Results</string>
 
 
 </resources>

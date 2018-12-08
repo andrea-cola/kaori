@@ -119,6 +119,9 @@ public class UploadBookFragment extends Fragment {
         commentView = view.findViewById(R.id.commentView);
     }
 
+    /**
+     * This method sets up the button in the view
+     */
     private void setUpButton(){
         // Listener for the button
         updateButton.setOnClickListener(new View.OnClickListener() {
@@ -139,7 +142,7 @@ public class UploadBookFragment extends Fragment {
     }
 
     /**
-     * Create intent for getting the pdf document
+     * This method creates intent for getting the pdf document
      */
     private void getPDF() {
         Intent intent = new Intent();
@@ -149,7 +152,7 @@ public class UploadBookFragment extends Fragment {
     }
 
     /**
-     * When the intent is returned for getting the pdf file
+     * This method is called when the intent is returned for getting the pdf file
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -220,6 +223,9 @@ public class UploadBookFragment extends Fragment {
         });
     }
 
+    /**
+     * This method set up the book in order to upload it to Firebase Firestore
+     */
     private Book createNewBook(UploadTask.TaskSnapshot task){
         String fileName = fileNameView.getText().toString();
         Book mBook = new Book();
@@ -232,6 +238,9 @@ public class UploadBookFragment extends Fragment {
         return mBook;
     }
 
+    /**
+     * This method adds to the Chip Group in the View chips with exams names
+     */
     private void setChipGroup(){
         db.collection("exams")
                 .get()
@@ -249,6 +258,9 @@ public class UploadBookFragment extends Fragment {
         return;
     }
 
+    /**
+     * This method sets up the chips on event listener
+     */
     private Chip setChip(String text){
         Chip chip = new Chip(getContext());
         chip.setText(text);
