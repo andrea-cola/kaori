@@ -1,5 +1,6 @@
 package com.kaori.kaori.BottomBarFragments;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -60,6 +61,7 @@ public class UploadBookFragment extends Fragment {
      */
     final static int PICK_PDF_CODE = 2342;
     private final float PROGRESS_BAR_CONSTANT = 100f;
+    private final String BACK_STATE_NAME = getClass().getName();
     private User currentUser = DataManager.getInstance().getUser();
     private static final float CHIP_TEXT_SIZE = 14;
 
@@ -81,6 +83,7 @@ public class UploadBookFragment extends Fragment {
     private StorageReference storage;
     private FirebaseFirestore db;
     private ArrayList<String> exams;
+    private boolean validFields[] = new boolean[2];
 
     /**
      * Constructor
@@ -96,6 +99,10 @@ public class UploadBookFragment extends Fragment {
         // Getting the Firebase objects
         storage = FirebaseStorage.getInstance().getReferenceFromUrl("gs://kaori-c5a43.appspot.com");
         db = FirebaseFirestore.getInstance();
+        // set to false all the field validity flags.
+        for (int i = 0; i < validFields.length; i++)
+            validFields[i] = false;
+
         exams = new ArrayList<>();
         setChipGroup();
         setUpView();
@@ -127,16 +134,60 @@ public class UploadBookFragment extends Fragment {
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(fileNameView.getText().toString().equals("")){
-                    Toast.makeText(getContext(), "Input the file name", Toast.LENGTH_SHORT).show();
-                } else if(chipGroup.getChildCount()>1){
-                    Toast.makeText(getContext(), "Select at least one course", Toast.LENGTH_SHORT).show();
-                } else if(commentView.getText().length()>30){
-                    Toast.makeText(getContext(), "Write less the 30 characters", Toast.LENGTH_SHORT).show();
+                boolean flag = true;
+                for(boolean field : validFields) flag = flag && field;
+                if(!flag){
+                    Toast.makeText(getContext(), "Controlla gli errori", Toast.LENGTH_SHORT).show();
+                } else if(exams.isEmpty()){
+                    Toast.makeText(getContext(), "Seleziona almeno un corso", Toast.LENGTH_SHORT).show();
                 } else {
-                    updateButton.setBackgroundColor(Color.GREEN);
                     getPDF();
                 }
+            }
+        });
+
+        fileNameView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // do nothing.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() < 1) {
+                    fileNameView.setError("Hai lasciato il campo vuoto");
+                    validFields[0] = false;
+                } else
+                    validFields[0] = true;
+            }
+        });
+
+        commentView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // do nothing.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                // do nothing.
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() < 1) {
+                    commentView.setError("Hai lasciato il campo vuoto");
+                    validFields[1] = false;
+                } else if (editable.length() > 30){
+                    commentView.setError("Commento troppo lungo");
+                    validFields[1] = false;
+                }else
+                    validFields[1] = true;
             }
         });
     }
@@ -174,7 +225,7 @@ public class UploadBookFragment extends Fragment {
     /**
      * This method is used to upload the file in the Cloud
      */
-    public void uploadFile(Uri data) {
+    private void uploadFile(Uri data) {
         progressBar.setVisibility(View.VISIBLE);
 
         StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + currentUser.getName() +  "_" + fileNameView.getText().toString() + ".pdf");
@@ -205,7 +256,7 @@ public class UploadBookFragment extends Fragment {
                             }
                         });
                 getActivity().getFragmentManager().popBackStack();
-
+                returnToFeedFragment();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -223,6 +274,16 @@ public class UploadBookFragment extends Fragment {
         });
     }
 
+    private void returnToFeedFragment(){
+        if(getActivity() != null) {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, new FeedFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
+        }
+    }
+
     /**
      * This method set up the book in order to upload it to Firebase Firestore
      */
@@ -235,6 +296,7 @@ public class UploadBookFragment extends Fragment {
         mBook.setSigned(checkBox.isChecked());
         mBook.setTimestamp(Timestamp.now());
         mBook.setCourses(exams);
+        mBook.setComment(commentView.getText().toString());
         return mBook;
     }
 
@@ -251,7 +313,6 @@ public class UploadBookFragment extends Fragment {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 chipGroup.addView(setChip(document.getString("name")));
                             }
-
                         }
                     }
                 });
@@ -265,20 +326,15 @@ public class UploadBookFragment extends Fragment {
         Chip chip = new Chip(getContext());
         chip.setText(text);
         chip.setTextSize(CHIP_TEXT_SIZE);
-        chip.setCheckable(false);
+        chip.setCheckable(true);
         chip.setClickable(true);
-        chip.setCloseIconVisible(true);
-        chip.setOnCloseIconClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                chipGroup.removeView(chip);
-            }
-        });
+        chip.setCloseIconVisible(false);
         chip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!exams.contains(chip.getText().toString()))
+                if(!exams.contains(chip.getText().toString()) && chip.isCheckedIconVisible()) {
                     exams.add(chip.getText().toString());
+                }
             }
         });
         return chip;

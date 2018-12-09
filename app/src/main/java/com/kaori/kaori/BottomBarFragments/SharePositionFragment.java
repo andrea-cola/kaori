@@ -103,7 +103,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
         mapView.getMapAsync(this);
 
-        setUpFragment();
+        setUpView();
+        setUpData();
+
         setUpButtons();
 
         return view;
@@ -121,9 +123,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     }
 
     /**
-     * This method sets up the elements of this fragment
+     * This method sets up the elements of the view
      */
-    private void setUpFragment(){
+    private void setUpView(){
         shareButton = view.findViewById(R.id.shareButton);
         nameView = view.findViewById(R.id.positionName);
         shareCard = view.findViewById(R.id.shareCardView);
@@ -131,11 +133,16 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
         shareCard.setVisibility(View.INVISIBLE);
 
+    }
+
+    /**
+     * This method sets up the data needed for this fragment
+     */
+    private void setUpData(){
         db = FirebaseFirestore.getInstance();
         DataManager dataManager = DataManager.getInstance();
         userUid = dataManager.getUser().getUid();
         userName = dataManager.getUser().getName();
-
         addUserLocations();
     }
 

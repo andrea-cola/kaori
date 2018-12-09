@@ -4,6 +4,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
 public class Position {
+
     private GeoPoint point;
     private String location;
     private String uid;

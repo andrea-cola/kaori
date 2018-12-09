@@ -1,8 +1,6 @@
 package com.kaori.kaori.DBObjects;
 
 import com.google.firebase.Timestamp;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Book{

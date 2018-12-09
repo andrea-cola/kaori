@@ -73,13 +73,11 @@ public class FeedFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                String title = document.getString("title");
-                                String author = document.getString("author");
-                                String url = document.getString("url");
                                 Book book = new Book();
-                                book.setTitle(title);
-                                book.setUrl(url);
-                                book.setAuthor(author);
+                                book.setTitle(document.getString("title"));
+                                book.setUrl(document.getString("url"));
+                                book.setAuthor(document.getString("author"));
+                                book.setCourses((ArrayList<String>) document.get("courses"));
                                 mBookList.add(book);
                             }
                             if(getContext() != null)
@@ -93,28 +91,14 @@ public class FeedFragment extends Fragment {
         return view;
     }
 
-    /**
-     * This method invokes the book fragment when the card is cliked
-     */
-    private void invokeFragmentWithParams(String author, String title, String updateDate) {
-        BookFragment bookFragment = new BookFragment();
-        bookFragment.setParameters(author, title);
-        if(getActivity() != null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_container, bookFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
-        }
-    }
 
     /**
      * This method invokes the book fragment when the card is cliked
      */
-    private void invokeNextFragment(Fragment uploadFragment) {
+    private void invokeNextFragment(Fragment fragment) {
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, uploadFragment)
+                    .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
@@ -145,11 +129,21 @@ public class FeedFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.author.setText(books.get(i).getAuthor());
             holder.title.setText(books.get(i).getTitle());
+            String examList = "";
+            for(String course : books.get(i).getCourses()) {
+                if(examList.length()>1)
+                    examList = examList + "," + course;
+                else
+                    examList = course;
+            }
+            holder.coursesView.setText(examList);
 
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    invokeFragmentWithParams(holder.author.getText().toString(), holder.title.getText().toString(), "ok");
+                    BookFragment bookFragment = new BookFragment();
+                    bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
+                    invokeNextFragment(bookFragment);
                 }
             });
         }
@@ -164,7 +158,7 @@ public class FeedFragment extends Fragment {
          * the next book element in the recycler view
          */
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView title, author;
+            TextView title, author, coursesView;
             CardView cardView;
             //public ImageView image;
 
@@ -172,6 +166,7 @@ public class FeedFragment extends Fragment {
                 super(view);
                 title = view.findViewById(R.id.cardTitle);
                 author = view.findViewById(R.id.cardAuthor);
+                coursesView = view.findViewById(R.id.cardAttachment);
                 cardView = view.findViewById(R.id.card_view);
                 //image = (ImageView) view.findViewById(R.id.thumbnail);
             }

@@ -1,6 +1,5 @@
 package com.kaori.kaori.DBObjects;
 
-import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
 import java.util.List;

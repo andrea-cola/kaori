@@ -1,5 +1,6 @@
 package com.kaori.kaori.BottomBarFragments;
 
+import android.annotation.SuppressLint;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class UsersPositionsFragment extends Fragment {
      */
     private RecyclerView recyclerView;
     private View view;
+    private FloatingActionButton fab;
 
     /**
      * Constants
@@ -62,48 +64,49 @@ public class UsersPositionsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.user_position_layout, container, false);
 
-        // setting the parameters
-        recyclerView = view.findViewById(R.id.user_recycler_view);
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        users = new ArrayList<>();
+        setUpView();
 
         // setting the database
         db = FirebaseFirestore.getInstance();
         positions = db.collection("positions");
-        positions.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful())
-                    populateRecyclerView();
-            }
+        positions.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful())
+                populateRecyclerView();
         });
 
         db.collection("users")
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
-                            for(DocumentSnapshot snapshot: task.getResult()) {
-                                setUsersList(snapshot);
-                            }
-                        }else{
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        for(DocumentSnapshot snapshot: task.getResult()) {
+                            setUsersList(snapshot);
                         }
+                    }else{
+                        Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 });
+        return view;
+    }
 
+    /**
+     * This method is used to set up the view
+     */
+    private void setUpView(){
+        // setting the parameters
+        recyclerView = view.findViewById(R.id.user_recycler_view);
+        fab = view.findViewById(R.id.positionFAB);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        users = new ArrayList<>();
+    }
 
-        FloatingActionButton fab = view.findViewById(R.id.positionFAB);
+    private void setUpButtons(){
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 invokeFragment(new SharePositionFragment());
             }
         });
-
-        return view;
     }
 
     /**
@@ -132,13 +135,10 @@ public class UsersPositionsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final UserViewHolder holder, int position, @NonNull Position model) {
                 holder.setDetails(getContext(), model.getUsername() , model.getLocation(), model.getUid());
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        MapFragment mapFragment = new MapFragment();
-                        mapFragment.setParameters(model);
-                        invokeFragment(mapFragment);
-                    }
+                holder.mView.setOnClickListener(v -> {
+                    MapFragment mapFragment = new MapFragment();
+                    mapFragment.setParameters(model);
+                    invokeFragment(mapFragment);
                 });
             }
             @NonNull
@@ -152,8 +152,7 @@ public class UsersPositionsFragment extends Fragment {
     }
 
     /**
-     * This method invokes the share position fragment
-     * when the floating action button is cliked
+     * This method invokes the share position fragment when the floating action button is clicked
      */
     private void invokeFragment(Fragment mapFragment) {
         if(getActivity() != null) {
@@ -181,6 +180,7 @@ public class UsersPositionsFragment extends Fragment {
         }
 
         // Setting the holder
+        @SuppressLint("SetTextI18n")
         private void setDetails(Context ctx, String userName, String locationName, String mUid){
 
             itemUser = mView.findViewById(R.id.itemUser);
@@ -191,7 +191,7 @@ public class UsersPositionsFragment extends Fragment {
             itemMessage.setText(mStudy + locationName);
 
             for(User user : users) {
-                if (user.getUid() == (mUid)) {
+                if (user.getUid().equals(mUid)) {
                     String userImage = user.getPhotosUrl();
                     Glide.with(ctx).load(userImage).apply(RequestOptions.circleCropTransform()).into(itemImage);
                 }

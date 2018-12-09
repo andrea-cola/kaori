@@ -36,12 +36,6 @@ import static android.support.constraint.Constraints.TAG;
  * This fragment shows the shared relative positions of the users
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
-    /**
-     * Constants
-     */
-    private static final String PIN_IMAGE_ID = "pin_id";
-    private static final String GEOJSON_SRC_ID = "extremes_source_id";
-    private static final String USERS_POSITIONS = "users_positions_id";
 
     /**
      * Elements from view
@@ -92,7 +86,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if(task.isSuccessful()){
-                            List<Position> positions = setPositionList(task);
+                            List<Position> positions = new ArrayList<>();
+                            for(DocumentSnapshot snapshot: task.getResult()) {
+                                positions.add(snapshot.toObject(Position.class));
+                            }
                             setUpMarkers(positions);
                         }else{
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -100,22 +97,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
                     }
                 });
-    }
-
-    /**
-     * This method sets the list of positions from Firebase
-     */
-    private List<Position> setPositionList(Task<QuerySnapshot> task){
-        List<Position> positions = new ArrayList<>();
-        for(DocumentSnapshot snapshot: task.getResult()) {
-            Position position = new Position();
-            position.setLocation((String) snapshot.get("location"));
-            position.setPoint((GeoPoint) snapshot.get("point"));
-            position.setUid((String) snapshot.get("uid"));
-            position.setUsername((String) snapshot.get("username"));
-            positions.add(position);
-        }
-        return positions;
     }
 
     /**

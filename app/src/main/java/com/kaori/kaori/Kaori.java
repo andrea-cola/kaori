@@ -44,8 +44,6 @@ public class Kaori extends AppCompatActivity {
         hub = DataManager.getInstance();
         hub.setAuthenticated(checkLoginStatus());
 
-        FirebaseAuth.getInstance().signOut();
-
         Runnable r = () -> {
             if(hub.isAuthenticated())
                 downloadUserProfile();
