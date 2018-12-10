@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.Position;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -92,7 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                             }
                             setUpMarkers(positions);
                         }else{
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                         }
 
                     }

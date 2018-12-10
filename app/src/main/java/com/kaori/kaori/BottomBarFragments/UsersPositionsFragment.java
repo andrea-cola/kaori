@@ -30,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.Position;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 
@@ -82,7 +83,7 @@ public class UsersPositionsFragment extends Fragment {
                             setUsersList(snapshot);
                         }
                     }else{
-                        Log.d(TAG, "Error getting documents: ", task.getException());
+                        LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                     }
                 });
         return view;

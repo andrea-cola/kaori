@@ -47,6 +47,7 @@ import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -247,12 +248,12 @@ public class UploadBookFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                LogManager.getInstance().printConsoleMessage("DocumentSnapshot added with ID: " + documentReference.getId());
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                Log.w(TAG, "Error adding document", e);
+                                LogManager.getInstance().printConsoleError("Error adding document: " + e.toString());
                             }
                         });
                 getActivity().getFragmentManager().popBackStack();

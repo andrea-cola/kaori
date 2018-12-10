@@ -1,6 +1,9 @@
 package com.kaori.kaori.BottomBarFragments;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.inputmethodservice.Keyboard;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -29,6 +33,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,7 +107,7 @@ public class SearchFragment extends Fragment {
                        books.add(document.toObject(Book.class));
                     }
                 }else{
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                 }
             }
         });
@@ -209,7 +215,6 @@ public class SearchFragment extends Fragment {
     private void firebaseSearch(String sequence) {
         Query query = set;
 
-        //TODO: farlo meglio
         if(!exams.isEmpty()) {
             for (Book book : books) {
                 if (book.getCourses().containsAll(exams)) {
@@ -224,7 +229,7 @@ public class SearchFragment extends Fragment {
             }
         }
 
-        if(sequence.equals("")){
+        if(sequence.equals("") || query.equals(set)){
             recyclerView.setVisibility(View.INVISIBLE);
             emptyView.setVisibility(View.VISIBLE);
             emptyTextView.setVisibility(View.VISIBLE);
@@ -246,6 +251,7 @@ public class SearchFragment extends Fragment {
                     BookFragment fragment = new BookFragment();
                     fragment.setParameters(holder.book_author.getText().toString(), holder.book_title.getText().toString());
                     invokeFragment(fragment);
+                    hideKeyboard();
                 });
             }
 
@@ -257,6 +263,11 @@ public class SearchFragment extends Fragment {
             }
         };
         recyclerView.setAdapter(adapter);
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     /**

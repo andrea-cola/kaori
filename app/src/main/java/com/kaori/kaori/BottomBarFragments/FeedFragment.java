@@ -22,6 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 
@@ -37,24 +38,48 @@ public class FeedFragment extends Fragment {
     private ArrayList<Book> mBookList;
     private final String BACK_STATE_NAME = getClass().getName();
 
+    /**
+     * View elements
+     */
+    private FloatingActionButton fab;
+    private View view;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.feed_layout, container, false);
+        view = inflater.inflate(R.layout.feed_layout, container, false);
 
         // setting the parameters
         mBookList = new ArrayList<>();
-        recyclerView = view.findViewById(R.id.my_recycler_view);
 
-        mBookList = new ArrayList<>();
+        setUpView();
+
+        setUpButtons();
+
+        setUpFirebase();
+
+        return view;
+    }
+
+    /**
+     * This method sets up the view elements
+     */
+    private void setUpView(){
+        recyclerView = view.findViewById(R.id.my_recycler_view);
+        fab = view.findViewById(R.id.feedFAB);
+
         mAdapter = new RecyclerAdapter(mBookList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
+    }
 
+    /**
+     * This methods sets up the listeners on the buttons of the view
+     */
+    private void setUpButtons(){
         // Floating Action Button management for upload pdf files
-        FloatingActionButton fab = view.findViewById(R.id.feedFAB);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,8 +87,12 @@ public class FeedFragment extends Fragment {
                 invokeNextFragment(uploadFragment);
             }
         });
+    }
 
-        // put all books in the list, querying the database
+    /**
+     * This method sets up the Firebase database
+     */
+    private void setUpFirebase(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("books")
                 .orderBy("timestamp")
@@ -73,24 +102,16 @@ public class FeedFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Book book = new Book();
-                                book.setTitle(document.getString("title"));
-                                book.setUrl(document.getString("url"));
-                                book.setAuthor(document.getString("author"));
-                                book.setCourses((ArrayList<String>) document.get("courses"));
-                                mBookList.add(book);
+                                mBookList.add(document.toObject(Book.class));
                             }
                             if(getContext() != null)
                                 mAdapter.notifyDataSetChanged();
                         } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
+                            LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                         }
                     }
                 });
-
-        return view;
     }
-
 
     /**
      * This method invokes the book fragment when the card is cliked
@@ -129,6 +150,8 @@ public class FeedFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.author.setText(books.get(i).getAuthor());
             holder.title.setText(books.get(i).getTitle());
+
+
             String examList = "";
             for(String course : books.get(i).getCourses()) {
                 if(examList.length()>1)
