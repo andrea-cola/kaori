@@ -1,18 +1,16 @@
 package com.kaori.kaori.DBObjects;
 
-import com.google.firebase.firestore.GeoPoint;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class User implements Serializable {
 
     private String email;
     private String name;
-    private String surname;
     private String photosUrl;
     private String university;
-    private String courseType;
+    private String course;
     private String uid;
     private List<String> exams;
 
@@ -26,20 +24,12 @@ public class User implements Serializable {
         return name;
     }
 
-    public String getSurname() {
-        return surname;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
     }
 
     public String getPhotosUrl() {
@@ -51,6 +41,8 @@ public class User implements Serializable {
     }
 
     public List<String> getExams() {
+        if(exams ==  null)
+            exams = new ArrayList<>();
         return exams;
     }
 
@@ -59,19 +51,19 @@ public class User implements Serializable {
     }
 
     public String getUniversity() {
-        return university;
+        return (university == null) ? "" : university;
     }
 
     public void setUniversity(String university) {
         this.university = university;
     }
 
-    public String getCourseType() {
-        return courseType;
+    public String getCourse() {
+        return (course == null) ? "" : course;
     }
 
-    public void setCourseType(String courseType) {
-        this.courseType = courseType;
+    public void setCourse(String course) {
+        this.course = course;
     }
 
     public String getUid() {

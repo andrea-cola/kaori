@@ -74,7 +74,6 @@ public class CreateAccountWithEmail extends Fragment {
         FloatingActionButton floatingActionButton = view.findViewById(R.id.floatingActionButton);
         createNewAccount = view.findViewById(R.id.button_ok);
         name = view.findViewById(R.id.name);
-        surname = view.findViewById(R.id.surname);
         password = view.findViewById(R.id.password);
         mail = view.findViewById(R.id.username);
         profileImage = view.findViewById(R.id.reg_image_profile);
@@ -103,7 +102,6 @@ public class CreateAccountWithEmail extends Fragment {
      */
     private void updateUserAndLogin() {
         user.setName(name.getText().toString());
-        user.setSurname(surname.getText().toString());
         user.setEmail(mail.getText().toString());
 
         Object[] o = new Object[3];

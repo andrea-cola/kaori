@@ -267,10 +267,8 @@ public class SignInManager {
         user = new User();
         user.setEmail(firebaseUser.getEmail());
 
-        String[] names = createsNameAndSurname(firebaseUser.getDisplayName().split(" "));
         user.setUid(firebaseUser.getUid());
-        user.setName(names[0]);
-        user.setSurname(names[1]);
+        user.setName(firebaseUser.getDisplayName());
 
         String tmp = firebaseUser.getPhotoUrl().toString();
         if(tmp.isEmpty())
@@ -286,7 +284,7 @@ public class SignInManager {
      */
     private void uploadNewUserOnTheServer(){
         LogManager.getInstance().printConsoleMessage("uploadNewUserOnTheServer");
-        mDatabase.collection("users").document()
+        mDatabase.collection("users").document(user.getUid())
                 .set(user)
                 .addOnSuccessListener(aVoid -> {
                     LogManager.getInstance().printConsoleMessage("uploadNewUserOnTheServer:written");
@@ -319,22 +317,6 @@ public class SignInManager {
                     LogManager.getInstance().showVisualError(context, e, "uploadProfileImageOnTheServer:error");
                     endSignIn(false);
                 });
-    }
-
-    /**
-     * Takes in input a string and returns a vector of two elements.
-     * The first element is the name and the second is the surname.
-     */
-    private String[] createsNameAndSurname(String[] parts){
-        String[] vector = new String[2];
-        vector[0] = parts[0];
-        vector[1] = parts[1];
-
-        if(parts.length > 2)
-            for (int i = 2; i < parts.length; i++)
-                vector[1] = " " + vector[i];
-
-        return vector;
     }
 
     /**

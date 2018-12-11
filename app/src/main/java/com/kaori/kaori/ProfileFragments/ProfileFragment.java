@@ -9,6 +9,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,9 +20,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.R;
 import com.kaori.kaori.Kaori;
+import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.DataManager;
 
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_layout, container, false);
+        setHasOptionsMenu(true);
 
         // get views from layout.
         Button editCourses = view.findViewById(R.id.profile_button_edit);
@@ -57,9 +61,9 @@ public class ProfileFragment extends Fragment {
         // load profile image
         loadProfileImageView();
 
-        mName.setText(hub.getUser().getName() + " " + hub.getUser().getSurname());
+        mName.setText(hub.getUser().getName());
         mUniversity.setText(hub.getUser().getUniversity());
-        mCourseType.setText(hub.getUser().getCourseType());
+        mCourseType.setText(hub.getUser().getCourse());
 
         mExamsList.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -68,34 +72,48 @@ public class ProfileFragment extends Fragment {
         mExamsList.setAdapter(mAdapter);
 
         // attach listener to the logout button
-        editCourses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, new EditCoursesFragment())
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(BACK_STATE_NAME)
-                        .commit();
-            }
-        });
+        editCourses.setOnClickListener(view1 -> showEditExams());
 
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                if(getActivity() != null && isAdded()) {
-                    startActivity(new Intent(getActivity(), Kaori.class));
-                    getActivity().finish();
-                }
+        logout.setOnClickListener(view12 -> {
+            FirebaseAuth.getInstance().signOut();
+            if(getActivity() != null && isAdded()) {
+                startActivity(new Intent(getActivity(), Kaori.class));
+                getActivity().finish();
             }
         });
 
         return view;
     }
 
-    /**
-     * Load profile image in the imageView.
-     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.action_bar, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_info)
+            return showEditProfile();
+        return super.onOptionsItemSelected(item);
+    }
+
+    private boolean showEditProfile() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new EditProfileInfo())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(BACK_STATE_NAME)
+                .commit();
+        return true;
+    }
+
+    private void showEditExams() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new EditCoursesFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack(BACK_STATE_NAME)
+                .commit();
+    }
+
     private void loadProfileImageView(){
         Glide.with(getContext())
                 .load(hub.getUser().getPhotosUrl())

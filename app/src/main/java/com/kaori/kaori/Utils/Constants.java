@@ -28,8 +28,8 @@ public class Constants {
      * Database constants.
      */
     public static final String DB_COLL_UNIVERSITIES = "universities";
-    public static final String DB_COLL_COURSE_TYPES = "course_types";
-    public static final String DB_COLL_COURSES = "exams";
+    public static final String DB_COLL_COURSE_TYPES = "courses";
+    public static final String DB_COLL_EXAMS = "exams";
     public static final String DB_COLL_USERS = "users";
 
     /**

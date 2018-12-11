@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:fillViewport="true">
@@ -52,24 +54,11 @@
             android:layout_height="@dimen/default_height"
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="@dimen/default_margin"
             android:hint="Name"
             android:inputType="textPersonName"
-            app:layout_constraintEnd_toStartOf="@+id/surname"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
-
-        <EditText
-            android:id="@+id/surname"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/default_height"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="@dimen/default_margin"
-            android:layout_marginEnd="@dimen/default_margin"
-            android:hint="Surname"
-            android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/name"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <EditText
@@ -77,14 +66,13 @@
             android:layout_width="0dp"
             android:layout_height="@dimen/default_height"
             android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_margin"
             android:layout_marginEnd="@dimen/default_margin"
             android:hint="Email Address"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/surname" />
+            tools:layout_editor_absoluteY="302dp" />
 
         <EditText
             android:id="@+id/password"

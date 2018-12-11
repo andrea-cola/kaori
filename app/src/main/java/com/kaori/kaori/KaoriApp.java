@@ -2,12 +2,11 @@ package com.kaori.kaori;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
@@ -34,26 +33,23 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
      * Each branch of the switch handle the selection of one icon in the bar.
      */
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    bottomBarFragmentCall(new FeedFragment());
-                    return true;
-                case R.id.navigation_hub:
-                    bottomBarFragmentCall(new SearchFragment());
-                    return true;
-                case R.id.navigation_study_with_me:
-                    bottomBarFragmentCall(new UsersPositionsFragment());
-                    return true;
-                case R.id.navigation_my_profile:
-                    bottomBarFragmentCall(new ProfileFragment());
-                    return true;
-            }
-            return false;
-        }
-    };
+            = item -> {
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
+                        bottomBarFragmentCall(new FeedFragment());
+                        return true;
+                    case R.id.navigation_hub:
+                        bottomBarFragmentCall(new SearchFragment());
+                        return true;
+                    case R.id.navigation_study_with_me:
+                        bottomBarFragmentCall(new UsersPositionsFragment());
+                        return true;
+                    case R.id.navigation_my_profile:
+                        bottomBarFragmentCall(new ProfileFragment());
+                        return true;
+                }
+                return false;
+            };
 
     /**
      * On create method override.
@@ -62,11 +58,14 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash_screen);
+        setContentView(R.layout.activity_main);
 
         hub = DataManager.getInstance();
 
-        setContentView(R.layout.activity_main);
+        // toolbar initialization
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

@@ -67,7 +67,7 @@ public class CreateAccount4 extends Fragment {
     @Override
     public View onCreateView(@NonNull final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reg3, container, false);
-        View tmp = inflater.inflate(R.layout.registration_spinner, null, false);
+        View tmp = inflater.inflate(R.layout.autocompletetextview, null, false);
 
         // get views from layout
         spinnerSpace = view.findViewById(R.id.spinner_space);
@@ -84,7 +84,7 @@ public class CreateAccount4 extends Fragment {
         autoCompleteTextViewArrayList.add((AutoCompleteTextView)view.findViewById(R.id.reg_ac_course_type));
 
         // add the first spinner
-        autoCompleteTextViewArrayList.add((AutoCompleteTextView) tmp.findViewById(R.id.reg_ac));
+        autoCompleteTextViewArrayList.add((AutoCompleteTextView) tmp.findViewById(R.id.autocompleteview));
         autoCompleteTextViewArrayList.get(2).setEnabled(false);
         autoCompleteTextViewArrayList.get(2).setAlpha(0.5f);
         spinnerSpace.addView(tmp);
@@ -161,8 +161,8 @@ public class CreateAccount4 extends Fragment {
 
     private void addSpinner(LayoutInflater inflater, LinearLayout linearLayout) {
         if(autoCompleteTextViewArrayList.size() < exams.size()) {
-            View tmp = inflater.inflate(R.layout.registration_spinner, null, false);
-            AutoCompleteTextView tmpS = tmp.findViewById(R.id.reg_ac);
+            View tmp = inflater.inflate(R.layout.autocompletetextview, null, false);
+            AutoCompleteTextView tmpS = tmp.findViewById(R.id.autocompleteview);
             tmpS.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, exams));
             autoCompleteTextViewArrayList.add(tmpS);
             linearLayout.addView(tmp);
@@ -190,7 +190,7 @@ public class CreateAccount4 extends Fragment {
 
         user.setExams(chosenExams);
         user.setUniversity(autoCompleteTextViewArrayList.get(0).getText().toString());
-        user.setCourseType(autoCompleteTextViewArrayList.get(1).getText().toString());
+        user.setCourse(autoCompleteTextViewArrayList.get(1).getText().toString());
     }
 
     private void buildPopup(){

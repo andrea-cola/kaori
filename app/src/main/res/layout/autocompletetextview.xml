@@ -5,11 +5,13 @@
     android:orientation="vertical">
 
     <AutoCompleteTextView
-        android:id="@+id/reg_ac"
+        android:id="@+id/autocompleteview"
         style="@android:style/Widget.Material.Light.AutoCompleteTextView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/default_height"
         android:completionThreshold="1"
+        android:enabled="false"
+        android:alpha="0.5"
         android:hint="@string/spinner_title_new_exam" />
 
 </LinearLayout>

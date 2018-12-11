@@ -86,8 +86,12 @@ public class Kaori extends AppCompatActivity {
             .whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid())
             .get()
             .addOnCompleteListener(task -> {
-                hub.setUser(task.getResult().getDocuments().get(0).toObject(User.class));
-                startKaoriApp();
+                if(task.getResult().getDocuments().size() > 0) {
+                    hub.setUser(task.getResult().getDocuments().get(0).toObject(User.class));
+                    startKaoriApp();
+                } else {
+                    startKaoriLogin();
+                }
             });
     }
 

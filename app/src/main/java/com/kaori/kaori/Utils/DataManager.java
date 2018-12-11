@@ -104,4 +104,5 @@ public class DataManager {
     public RequestOptions getGetGlideRequestOptionsCircle() {
         return getGlideRequestOptionsCircle;
     }
+
 }
