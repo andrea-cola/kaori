@@ -22,6 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 
@@ -37,70 +38,88 @@ public class FeedFragment extends Fragment {
     private ArrayList<Book> mBookList;
     private final String BACK_STATE_NAME = getClass().getName();
 
+    /**
+     * View elements
+     */
+    private FloatingActionButton fab;
+    private View view;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.feed_layout, container, false);
+        view = inflater.inflate(R.layout.feed_layout, container, false);
 
         // setting the parameters
         mBookList = new ArrayList<>();
-        recyclerView = view.findViewById(R.id.my_recycler_view);
 
-        mBookList = new ArrayList<>();
-        mAdapter = new RecyclerAdapter(mBookList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(mAdapter);
+        setUpView();
 
-        // Floating Action Button management for upload pdf files
-        FloatingActionButton fab = view.findViewById(R.id.feedFAB);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UploadBookDialog uploadFragment = UploadBookDialog.newInstance();
-                uploadFragment.show(getFragmentManager(), "Dialog Fragment");
-            }
-        });
+        setUpButtons();
 
-        // put all books in the list, querying the database
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("books")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String title = document.getString("title");
-                        String author = document.getString("author");
-                        String url = document.getString("url");
-                        Book book = new Book();
-                        book.setTitle(title);
-                        book.setUrl(url);
-                        book.setAuthor(author);
-                        mBookList.add(book);
-                    }
-                    if(getContext() != null)
-                        mAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        });
+        setUpFirebase();
 
         return view;
     }
 
     /**
+     * This method sets up the view elements
+     */
+    private void setUpView(){
+        recyclerView = view.findViewById(R.id.my_recycler_view);
+        fab = view.findViewById(R.id.feedFAB);
+
+        mAdapter = new RecyclerAdapter(mBookList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * This methods sets up the listeners on the buttons of the view
+     */
+    private void setUpButtons(){
+        // Floating Action Button management for upload pdf files
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UploadBookFragment uploadFragment = new UploadBookFragment();
+                invokeNextFragment(uploadFragment);
+            }
+        });
+    }
+
+    /**
+     * This method sets up the Firebase database
+     */
+    private void setUpFirebase(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("books")
+                .orderBy("timestamp")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                mBookList.add(document.toObject(Book.class));
+                            }
+                            if(getContext() != null)
+                                mAdapter.notifyDataSetChanged();
+                        } else {
+                            LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
+                        }
+                    }
+                });
+    }
+
+    /**
      * This method invokes the book fragment when the card is cliked
      */
-    private void invokeFragmentWithParams(String author, String title, String updateDate) {
-        BookFragment bookFragment = new BookFragment();
-        bookFragment.setParameters(author, title);
+    private void invokeNextFragment(Fragment fragment) {
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_container, bookFragment)
+                    .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
@@ -132,10 +151,22 @@ public class FeedFragment extends Fragment {
             holder.author.setText(books.get(i).getAuthor());
             holder.title.setText(books.get(i).getTitle());
 
+
+            String examList = "";
+            for(String course : books.get(i).getCourses()) {
+                if(examList.length()>1)
+                    examList = examList + "," + course;
+                else
+                    examList = course;
+            }
+            holder.coursesView.setText(examList);
+
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    invokeFragmentWithParams(holder.author.getText().toString(), holder.title.getText().toString(), "ok");
+                    BookFragment bookFragment = new BookFragment();
+                    bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
+                    invokeNextFragment(bookFragment);
                 }
             });
         }
@@ -150,7 +181,7 @@ public class FeedFragment extends Fragment {
          * the next book element in the recycler view
          */
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView title, author;
+            TextView title, author, coursesView;
             CardView cardView;
             //public ImageView image;
 
@@ -158,6 +189,7 @@ public class FeedFragment extends Fragment {
                 super(view);
                 title = view.findViewById(R.id.cardTitle);
                 author = view.findViewById(R.id.cardAuthor);
+                coursesView = view.findViewById(R.id.cardAttachment);
                 cardView = view.findViewById(R.id.card_view);
                 //image = (ImageView) view.findViewById(R.id.thumbnail);
             }

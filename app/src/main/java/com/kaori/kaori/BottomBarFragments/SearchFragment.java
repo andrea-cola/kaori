@@ -1,9 +1,15 @@
 package com.kaori.kaori.BottomBarFragments;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.inputmethodservice.Keyboard;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.chip.Chip;
+import android.support.design.chip.ChipGroup;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -25,8 +33,13 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.DBObjects.Book;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.support.constraint.Constraints.TAG;
 
@@ -35,54 +48,94 @@ public class SearchFragment extends Fragment {
     /**
      * Constants
      */
-    private ArrayList<String> titles;
-    private ArrayList<String> authors;
     private final String BACK_STATE_NAME = getClass().getName();
+    private static final float CHIP_TEXT_SIZE = 14;
 
     /**
      * Views from layout
      */
+    private View view;
     private SearchView searchView;
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
+    private ChipGroup chipGroup;
+    private FloatingActionButton filterButton;
+    private LinearLayout emptyView;
+    private TextView emptyTextView;
 
     /**
-     * Firebase storing constants
+     * Variables
      */
+    private ArrayList<Book> books;
+    private ArrayList<String> exams;
     private Query set;
     private FirestoreRecyclerAdapter adapter;
+    private FirebaseFirestore db;
+    private boolean clicked;
 
+    /**
+     * Constructor
+     */
     public SearchFragment(){ }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.search_layout, container, false);
+        view = inflater.inflate(R.layout.search_layout, container, false);
+        setUpView();
 
-        // setting the items of the search_layout
-        searchView = view.findViewById(R.id.searchView);
-        recyclerView = view.findViewById(R.id.searchList);
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+        books = new ArrayList<>();
+        exams = new ArrayList<>();
 
-        // setting the database
-        titles = new ArrayList<>();
-        authors = new ArrayList<>();
-        set = FirebaseFirestore.getInstance().collection("books").orderBy("title", Query.Direction.DESCENDING);
+        setUpFirebase();
+
+        setUpButtons();
+        return view;
+    }
+
+    /**
+     * This method sets up the Firebase db
+     */
+    private void setUpFirebase(){
+        db = FirebaseFirestore.getInstance();
+        set = db.collection("books").orderBy("title", Query.Direction.DESCENDING);
         set.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
                     for(QueryDocumentSnapshot document : task.getResult()){
-                        titles.add((String) document.get("title"));
-                        authors.add((String) document.get("author"));
+                       books.add(document.toObject(Book.class));
                     }
                 }else{
-                    Log.d(TAG, "Error getting documents: ", task.getException());
+                    LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                 }
             }
         });
+    }
 
+    /**
+     * This method sets up the View
+     */
+    private void setUpView(){
+        // setting the items of the search_layout
+        searchView = view.findViewById(R.id.searchView);
+        recyclerView = view.findViewById(R.id.searchList);
+        chipGroup = view.findViewById(R.id.searchChipGroup);
+        emptyView = view.findViewById(R.id.emptyView);
+        emptyView.setVisibility(View.VISIBLE);
+        emptyTextView = view.findViewById(R.id.emptyTextView);
+        emptyTextView.setVisibility(View.INVISIBLE);
+
+        filterButton = view.findViewById(R.id.filterButton);
+
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+    }
+
+    /**
+     * This method sets up the buttons in the View
+     */
+    private void setUpButtons(){
         // listener to the search view
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -92,19 +145,97 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                firebaseUserSeach(newText);
+                firebaseSearch(newText);
                 return false;
             }
         });
-        return view;
+
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!clicked) {
+                    clicked = true;
+                    setChipGroup();
+                }else{
+                    clicked = false;
+                    removeChips();
+                }
+            }
+        });
     }
 
-    private void firebaseUserSeach(String sequence) {
-        Query query = set;
-        for(int i=0; i<titles.size(); i++) {
-            if (titles.get(i).toLowerCase().contains(sequence.toLowerCase())) {
-                query = set.whereEqualTo("title", titles.get(i));
+    /**
+     * This method removes all chips on filter Button pressed
+     */
+    private void removeChips(){
+        chipGroup.removeAllViews();
+        exams.clear();
+    }
+
+    /**
+     * This method sets up the Chip Group in the View
+     */
+    private void setChipGroup(){
+        db.collection("exams")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            chipGroup.addView(setChip(document.getString("name")));
+                        }
+                    }
+                });
+        return;
+    }
+
+    /**
+     * This method is used to set up the chips
+     */
+    private Chip setChip(String text){
+        Chip chip = new Chip(getContext());
+        chip.setText(text);
+        chip.setTextSize(CHIP_TEXT_SIZE);
+        chip.setCheckable(true);
+        chip.setClickable(true);
+        chip.setCloseIconVisible(false);
+        chip.setOnClickListener(v -> {
+            if(!exams.contains(chip.getText().toString()) && chip.isCheckedIconVisible()) {
+                exams.add(chip.getText().toString());
+            }else if(exams.contains(chip.getText().toString()) && !chip.isCheckedIconVisible()){
+                exams.remove(chip.getText().toString());
             }
+        });
+        return chip;
+    }
+
+    /**
+     * This method is used to search the title in the db
+     * Filtering the books according to the chips clicked
+     */
+    private void firebaseSearch(String sequence) {
+        Query query = set;
+
+        if(!exams.isEmpty()) {
+            for (Book book : books) {
+                if (book.getCourses().containsAll(exams)) {
+                    query = set.whereEqualTo("title", book.getTitle());
+                }
+            }
+        }else{
+            for (Book book : books) {
+                if (book.getTitle().toLowerCase().contains(sequence.toLowerCase())) {
+                    query = set.whereEqualTo("title", book.getTitle());
+                }
+            }
+        }
+
+        if(sequence.equals("") || query.equals(set)){
+            recyclerView.setVisibility(View.INVISIBLE);
+            emptyView.setVisibility(View.VISIBLE);
+            emptyTextView.setVisibility(View.VISIBLE);
+        }else {
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.INVISIBLE);
         }
 
         FirestoreRecyclerOptions<Book> options = new FirestoreRecyclerOptions.Builder<Book>()
@@ -116,11 +247,11 @@ public class SearchFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final BookViewHolder holder, int position, @NonNull Book model) {
                 holder.setDetails(model.getTitle(), model.getAuthor());
-                holder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        invokeFragmentWithParams(holder.book_author.getText().toString(), holder.book_title.getText().toString(), "ok");
-                    }
+                holder.mView.setOnClickListener(v -> {
+                    BookFragment fragment = new BookFragment();
+                    fragment.setParameters(holder.book_author.getText().toString(), holder.book_title.getText().toString());
+                    invokeFragment(fragment);
+                    hideKeyboard();
                 });
             }
 
@@ -134,17 +265,22 @@ public class SearchFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     /**
-     * This method invokes the book fragment when the card is cliked
+     * This method invokes the book fragment when the card is clicked
      */
-    private void invokeFragmentWithParams(String author, String title, String updateDate) {
-        Fragment bookFragment = new BookFragment();
-        ((BookFragment) bookFragment).setParameters(author, title);
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_container, bookFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+    private void invokeFragment(Fragment fragment) {
+        if(getActivity()!= null && isAdded()) {
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_container, fragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
+        }
     }
 
     /**
@@ -155,7 +291,6 @@ public class SearchFragment extends Fragment {
         View mView;
         TextView book_title;
         TextView book_author;
-
 
         private BookViewHolder(View itemView) {
             super(itemView);
