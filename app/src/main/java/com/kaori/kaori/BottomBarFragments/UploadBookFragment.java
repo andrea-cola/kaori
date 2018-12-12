@@ -243,7 +243,7 @@ public class UploadBookFragment extends Fragment {
                 // upload pdf file in Firebase database
                 Book book = createNewBook(taskSnapshot);
 
-                db.collection("books")
+                db.collection("materials")
                         .add(book)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override

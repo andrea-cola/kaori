@@ -98,7 +98,7 @@ public class SearchFragment extends Fragment {
      */
     private void setUpFirebase(){
         db = FirebaseFirestore.getInstance();
-        set = db.collection("books").orderBy("title", Query.Direction.DESCENDING);
+        set = db.collection("materials").orderBy("title", Query.Direction.DESCENDING);
         set.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -210,7 +210,7 @@ public class SearchFragment extends Fragment {
 
     /**
      * This method is used to search the title in the db
-     * Filtering the books according to the chips clicked
+     * Filtering the materials according to the chips clicked
      */
     private void firebaseSearch(String sequence) {
         Query query = set;
