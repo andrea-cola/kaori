@@ -9,33 +9,33 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.kaori.kaori.DBObjects.Book;
+import com.kaori.kaori.DBObjects.Material;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
-
-import static android.support.constraint.Constraints.TAG;
+import java.util.List;
 
 public class FeedFragment extends Fragment {
+
+    private final String DB_COLL_MATERIAL = "material";
+    private final String DB_ORDER_BY_FIELD = "timestamp";
+    private final String DB_FILTER_FIELD = "course";
 
     /**
      * Variables.
      */
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
-    private ArrayList<Book> mBookList;
+    private List<Material> mMaterialList;
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
@@ -50,7 +50,7 @@ public class FeedFragment extends Fragment {
         view = inflater.inflate(R.layout.feed_layout, container, false);
 
         // setting the parameters
-        mBookList = new ArrayList<>();
+        mMaterialList = new ArrayList<>();
 
         setUpView();
 
@@ -68,7 +68,7 @@ public class FeedFragment extends Fragment {
         recyclerView = view.findViewById(R.id.my_recycler_view);
         fab = view.findViewById(R.id.feedFAB);
 
-        mAdapter = new RecyclerAdapter(mBookList);
+        mAdapter = new RecyclerAdapter(mMaterialList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -80,12 +80,9 @@ public class FeedFragment extends Fragment {
      */
     private void setUpButtons(){
         // Floating Action Button management for upload pdf files
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UploadBookFragment uploadFragment = new UploadBookFragment();
-                invokeNextFragment(uploadFragment);
-            }
+        fab.setOnClickListener(v -> {
+            UploadBookFragment uploadFragment = new UploadBookFragment();
+            invokeNextFragment(uploadFragment);
         });
     }
 
@@ -94,21 +91,19 @@ public class FeedFragment extends Fragment {
      */
     private void setUpFirebase(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("books")
-                .orderBy("timestamp")
+        db.collection(DB_COLL_MATERIAL)
+                .orderBy(DB_ORDER_BY_FIELD)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                mBookList.add(document.toObject(Book.class));
-                            }
-                            if(getContext() != null)
-                                mAdapter.notifyDataSetChanged();
-                        } else {
-                            LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (DataManager.getInstance().getUser().getExams().contains(String.valueOf(document.get(DB_FILTER_FIELD))))
+                                mMaterialList.add(document.toObject(Material.class));
                         }
+                        if(getContext() != null)
+                            mAdapter.notifyDataSetChanged();
+                    } else {
+                        LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                     }
                 });
     }
@@ -131,10 +126,10 @@ public class FeedFragment extends Fragment {
      */
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        ArrayList<Book> books;
+        List<Material> materials;
 
-        public RecyclerAdapter(ArrayList<Book> bookList){
-            this.books = bookList;
+        /*package-private*/ RecyclerAdapter(List<Material> materials){
+            this.materials = materials;
         }
 
         /**
@@ -148,30 +143,20 @@ public class FeedFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
-            holder.author.setText(books.get(i).getAuthor());
-            holder.title.setText(books.get(i).getTitle());
+            holder.author.setText(materials.get(i).getAuthor());
+            holder.title.setText(materials.get(i).getTitle());
+            holder.coursesView.setText(materials.get(i).getCourse());
 
-
-            String examList = "";
-            //if(examList.length()>1)
-                //examList = examList + "," + course;
-            //else
-                //examList = course;
-            holder.coursesView.setText(examList);
-
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BookFragment bookFragment = new BookFragment();
-                    bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
-                    invokeNextFragment(bookFragment);
-                }
+            holder.cardView.setOnClickListener(v -> {
+                BookFragment bookFragment = new BookFragment();
+                bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
+                invokeNextFragment(bookFragment);
             });
         }
 
         @Override
         public int getItemCount() {
-            return books.size();
+            return materials.size();
         }
 
         /**
@@ -185,9 +170,9 @@ public class FeedFragment extends Fragment {
 
             Holder (View view) {
                 super(view);
-                title = view.findViewById(R.id.cardTitle);
-                author = view.findViewById(R.id.cardAuthor);
-                coursesView = view.findViewById(R.id.cardAttachment);
+                title = view.findViewById(R.id.card_title);
+                author = view.findViewById(R.id.card_author);
+                coursesView = view.findViewById(R.id.card_type);
                 cardView = view.findViewById(R.id.card_view);
                 //image = (ImageView) view.findViewById(R.id.thumbnail);
             }
