@@ -31,11 +31,16 @@ import java.util.List;
  */
 public class ProfileFragment extends Fragment {
 
+    /**
+     * Constants.
+     */
     private final String BACK_STATE_NAME = getClass().getName();
 
+    /**
+     * Variables.
+     */
     private ImageView profileImageView;
     private DataManager hub;
-    private TextView mName, mUniversity, mCourseType;
     private RecyclerView mExamsList;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -50,9 +55,9 @@ public class ProfileFragment extends Fragment {
         Button editCourses = view.findViewById(R.id.profile_button_edit);
         Button logout = view.findViewById(R.id.profile_button_logout);
         profileImageView = view.findViewById(R.id.profile_image);
-        mName = view.findViewById(R.id.profile_name);
-        mUniversity = view.findViewById(R.id.profile_university);
-        mCourseType = view.findViewById(R.id.profile_course_type);
+        TextView mName = view.findViewById(R.id.profile_name);
+        TextView mUniversity = view.findViewById(R.id.profile_university);
+        TextView mCourseType = view.findViewById(R.id.profile_course_type);
         mExamsList = view.findViewById(R.id.profile_exams_list);
 
         // get the instance of Datahub
@@ -85,11 +90,17 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Add the menu to the layout.
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.action_bar, menu);
     }
 
+    /**
+     * Check the selection of the menu option.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_info)
@@ -97,23 +108,34 @@ public class ProfileFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Show the fragment that allows to edit the profile.
+     */
     private boolean showEditProfile() {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new EditProfileInfo())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+        if(getActivity() != null && getActivity().getSupportFragmentManager() != null)
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, new EditProfileInfo())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
         return true;
     }
 
+    /**
+     * Show the fragment that allows to edit the exams.
+     */
     private void showEditExams() {
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, new EditCoursesFragment())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+        if(getActivity() != null & getActivity().getSupportFragmentManager() != null)
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, new EditCoursesFragment())
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
     }
 
+    /**
+     * Load the image profile.
+     */
     private void loadProfileImageView(){
         Glide.with(getContext())
                 .load(hub.getUser().getPhotosUrl())

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    android:weightSum="1">
+
+    <include layout="@layout/wait_layout" />
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <TextView
+                android:id="@+id/spinner_courses_title"
+                android:layout_width="match_parent"
+                style="@style/KaoriSubTitleTextView"
+                android:text="@string/spinner_title_courses" />
+
+            <LinearLayout
+                android:id="@+id/adding_space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/default_margin"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/button_add_field"
+                style="@style/KaoriButton"
+                android:layout_width="match_parent"
+                android:text="@string/button_add_course" />
+
+            <Button
+                android:id="@+id/button_ok"
+                style="@style/KaoriButton"
+                android:layout_width="match_parent"
+                android:text="@string/title_register" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>
