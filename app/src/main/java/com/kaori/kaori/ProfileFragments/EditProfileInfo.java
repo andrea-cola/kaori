@@ -28,10 +28,15 @@ import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment responsible for the edit of profile information.
+ */
 public class EditProfileInfo extends Fragment {
 
+    /**
+     * Variables.
+     */
     private View view;
-    private EditText mName;
     private AutoCompleteTextView mUniversity, mCourse;
     private Button mButtonOk;
     private FirebaseFirestore db;
@@ -45,7 +50,7 @@ public class EditProfileInfo extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_info_layout, container, false);
         context = getContext();
-        mName = view.findViewById(R.id.profile_name);
+        EditText mName = view.findViewById(R.id.profile_name);
         mUniversity = view.findViewById(R.id.profile_university);
         mCourse = view.findViewById(R.id.profile_course);
         mButtonOk = view.findViewById(R.id.button_ok);
