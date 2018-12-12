@@ -1,17 +1,19 @@
 package com.kaori.kaori.DBObjects;
 
 import com.google.firebase.Timestamp;
-import java.util.ArrayList;
 
 public class Book{
 
     private String title;
     private String author;
-    private String url;
+    private String imageUrl;
     private Timestamp timestamp;
     private Boolean isSigned;
-    private ArrayList<String> courses;
+    private String exam;
     private String comment;
+    private String course;
+    private String professor;
+    private String url;
 
     public Book(){}
 
@@ -23,12 +25,12 @@ public class Book{
         this.comment = comment;
     }
 
-    public ArrayList<String> getCourses() {
-        return courses;
+    public String getExams() {
+        return exam;
     }
 
-    public void setCourses(ArrayList<String> courses) {
-        this.courses = courses;
+    public void setExams(String exams) {
+        this.exam = exams;
     }
 
     public void setSigned(Boolean signed) {
@@ -55,8 +57,8 @@ public class Book{
         this.author = author;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public String getTitle(){
@@ -67,7 +69,31 @@ public class Book{
         return author;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
+    public String getProfessor() {
+        return professor;
+    }
+
+    public void setProfessor(String professor) {
+        this.professor = professor;
+    }
+
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
