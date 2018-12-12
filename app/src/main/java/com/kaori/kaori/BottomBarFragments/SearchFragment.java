@@ -2,6 +2,7 @@ package com.kaori.kaori.BottomBarFragments;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
+import android.content.res.Resources;
 import android.inputmethodservice.Keyboard;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,7 +50,6 @@ public class SearchFragment extends Fragment {
      * Constants
      */
     private final String BACK_STATE_NAME = getClass().getName();
-    private static final float CHIP_TEXT_SIZE = 14;
 
     /**
      * Views from layout
@@ -90,6 +90,7 @@ public class SearchFragment extends Fragment {
         setUpFirebase();
 
         setUpButtons();
+
         return view;
     }
 
@@ -153,59 +154,9 @@ public class SearchFragment extends Fragment {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!clicked) {
-                    clicked = true;
-                    setChipGroup();
-                }else{
-                    clicked = false;
-                    removeChips();
-                }
+                invokeFragment(new FilterFragment());
             }
         });
-    }
-
-    /**
-     * This method removes all chips on filter Button pressed
-     */
-    private void removeChips(){
-        chipGroup.removeAllViews();
-        exams.clear();
-    }
-
-    /**
-     * This method sets up the Chip Group in the View
-     */
-    private void setChipGroup(){
-        db.collection("exams")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            chipGroup.addView(setChip(document.getString("name")));
-                        }
-                    }
-                });
-        return;
-    }
-
-    /**
-     * This method is used to set up the chips
-     */
-    private Chip setChip(String text){
-        Chip chip = new Chip(getContext());
-        chip.setText(text);
-        chip.setTextSize(CHIP_TEXT_SIZE);
-        chip.setCheckable(true);
-        chip.setClickable(true);
-        chip.setCloseIconVisible(false);
-        chip.setOnClickListener(v -> {
-            if(!exams.contains(chip.getText().toString()) && chip.isCheckedIconVisible()) {
-                exams.add(chip.getText().toString());
-            }else if(exams.contains(chip.getText().toString()) && !chip.isCheckedIconVisible()){
-                exams.remove(chip.getText().toString());
-            }
-        });
-        return chip;
     }
 
     /**
@@ -215,19 +166,19 @@ public class SearchFragment extends Fragment {
     private void firebaseSearch(String sequence) {
         Query query = set;
 
-        if(!exams.isEmpty()) {
-            for (Book book : books) {
-                if (book.getCourses().containsAll(exams)) {
-                    query = set.whereEqualTo("title", book.getTitle());
-                }
-            }
-        }else{
-            for (Book book : books) {
-                if (book.getTitle().toLowerCase().contains(sequence.toLowerCase())) {
-                    query = set.whereEqualTo("title", book.getTitle());
-                }
-            }
-        }
+//        if(!exams.isEmpty()) {
+//            for (Book book : books) {
+//                if (book.getCourses().containsAll(exams)) {
+//                    query = set.whereEqualTo("title", book.getTitle());
+//                }
+//            }
+//        }else{
+//            for (Book book : books) {
+//                if (book.getTitle().toLowerCase().contains(sequence.toLowerCase())) {
+//                    query = set.whereEqualTo("title", book.getTitle());
+//                }
+//            }
+//        }
 
         if(sequence.equals("") || query.equals(set)){
             recyclerView.setVisibility(View.INVISIBLE);
@@ -281,6 +232,10 @@ public class SearchFragment extends Fragment {
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
         }
+    }
+
+    public void filterBookQuery(String exam, String professor, String course){
+
     }
 
     /**

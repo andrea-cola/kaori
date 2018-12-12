@@ -153,12 +153,10 @@ public class FeedFragment extends Fragment {
 
 
             String examList = "";
-            for(String course : books.get(i).getCourses()) {
-                if(examList.length()>1)
-                    examList = examList + "," + course;
-                else
-                    examList = course;
-            }
+            //if(examList.length()>1)
+                //examList = examList + "," + course;
+            //else
+                //examList = course;
             holder.coursesView.setText(examList);
 
             holder.cardView.setOnClickListener(new View.OnClickListener() {
