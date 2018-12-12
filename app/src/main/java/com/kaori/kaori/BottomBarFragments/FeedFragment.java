@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +24,6 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
-
-import static android.support.constraint.Constraints.TAG;
 
 public class FeedFragment extends Fragment {
 
@@ -161,13 +158,10 @@ public class FeedFragment extends Fragment {
             }
             holder.coursesView.setText(examList);
 
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BookFragment bookFragment = new BookFragment();
-                    bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
-                    invokeNextFragment(bookFragment);
-                }
+            holder.cardView.setOnClickListener(v -> {
+                BookFragment bookFragment = new BookFragment();
+                bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
+                invokeNextFragment(bookFragment);
             });
         }
 
@@ -187,9 +181,9 @@ public class FeedFragment extends Fragment {
 
             Holder (View view) {
                 super(view);
-                title = view.findViewById(R.id.cardTitle);
-                author = view.findViewById(R.id.cardAuthor);
-                coursesView = view.findViewById(R.id.cardAttachment);
+                title = view.findViewById(R.id.card_title);
+                author = view.findViewById(R.id.card_author);
+                coursesView = view.findViewById(R.id.card_type);
                 cardView = view.findViewById(R.id.card_view);
                 //image = (ImageView) view.findViewById(R.id.thumbnail);
             }
