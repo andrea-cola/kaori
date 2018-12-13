@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,7 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.DBObjects.Book;
+import com.kaori.kaori.DBObjects.Material;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -88,13 +87,14 @@ public class UploadBookFragment extends Fragment {
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
-        exam = null;
-        professor = null;
+
+        setUpView();
+
+        setUpButton();
 
         setExamChipGroup();
+
         setProfessorChipGroup();
-        setUpView();
-        setUpButton();
 
         return view;
     }
@@ -102,7 +102,7 @@ public class UploadBookFragment extends Fragment {
     /**
      * This method sets up the view
      */
-    private void setUpView(){
+    private void setUpView() {
         fileNameView = view.findViewById(R.id.fileName);
         updateButton = view.findViewById(R.id.uploadButton);
         checkBox = view.findViewById(R.id.uploadCheckBox);
@@ -116,18 +116,18 @@ public class UploadBookFragment extends Fragment {
     /**
      * This method sets up the button in the view
      */
-    private void setUpButton(){
+    private void setUpButton() {
         // Listener for the button
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 boolean flag = true;
-                for(boolean field : validFields) flag = flag && field;
-                if(!flag){
+                for (boolean field : validFields) flag = flag && field;
+                if (!flag) {
                     Toast.makeText(getContext(), "Controlla gli errori", Toast.LENGTH_SHORT).show();
-                } else if(exam.equals("")) {
+                } else if (exam.equals("")) {
                     Toast.makeText(getContext(), "Seleziona un corso", Toast.LENGTH_SHORT).show();
-                }else if(professor.equals("")){
+                } else if (professor.equals("")) {
                     Toast.makeText(getContext(), "Seleziona un professore", Toast.LENGTH_SHORT).show();
                 } else {
                     getPDF();
@@ -172,10 +172,10 @@ public class UploadBookFragment extends Fragment {
                 if (editable.length() < 1) {
                     commentView.setError("Hai lasciato il campo vuoto");
                     validFields[1] = false;
-                } else if (editable.length() > 30){
+                } else if (editable.length() > 30) {
                     commentView.setError("Commento troppo lungo");
                     validFields[1] = false;
-                }else
+                } else
                     validFields[1] = true;
             }
         });
@@ -217,7 +217,7 @@ public class UploadBookFragment extends Fragment {
     private void uploadFile(Uri data) {
         ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Uploading...", true);
 
-        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + currentUser.getName() +  "_" + fileNameView.getText().toString() + ".pdf");
+        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + currentUser.getName() + "_" + fileNameView.getText().toString() + ".pdf");
         UploadTask task = reference.putFile(data);
 
         // register observers to listen for when the download is done or if it fails
@@ -226,21 +226,21 @@ public class UploadBookFragment extends Fragment {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 progressDialog.dismiss();
                 // upload pdf file in Firebase database
-                Book book = createNewBook(taskSnapshot);
+                Material material = createNewBook(taskSnapshot);
 
                 db.collection("materials")
-                        .add(book)
+                        .add(material)
                         .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 LogManager.getInstance().printConsoleMessage("DocumentSnapshot added with ID: " + documentReference.getId());
                             }
                         }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                LogManager.getInstance().printConsoleError("Error adding document: " + e.toString());
-                            }
-                        });
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        LogManager.getInstance().printConsoleError("Error adding document: " + e.toString());
+                    }
+                });
                 getActivity().getFragmentManager().popBackStack();
                 returnToFeedFragment();
             }
@@ -253,8 +253,8 @@ public class UploadBookFragment extends Fragment {
         });
     }
 
-    private void returnToFeedFragment(){
-        if(getActivity() != null) {
+    private void returnToFeedFragment() {
+        if (getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, new FeedFragment())
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -266,86 +266,76 @@ public class UploadBookFragment extends Fragment {
     /**
      * This method set up the book in order to upload it to Firebase Firestore
      */
-    private Book createNewBook(UploadTask.TaskSnapshot task){
+    private Material createNewBook(UploadTask.TaskSnapshot task) {
         String fileName = fileNameView.getText().toString();
-        Book mBook = new Book();
-        mBook.setTitle(fileName);
-        mBook.setAuthor(currentUser.getName());
-        mBook.setImageUrl(task.getUploadSessionUri().toString());
-        mBook.setSigned(checkBox.isChecked());
-        mBook.setTimestamp(Timestamp.now());
-        mBook.setExams(exam);
-        mBook.setCourse(currentUser.getCourse());
-        mBook.setProfessor(professor);
-        mBook.setComment(commentView.getText().toString());
-        return mBook;
+        Material mMaterial = new Material();
+        mMaterial.setTitle(fileName);
+        mMaterial.setAuthor(currentUser.getName());
+        mMaterial.setUrl(task.getUploadSessionUri().toString());
+        String type = checkBox.isChecked() ? "file" : "book";
+        mMaterial.setType(type);
+        mMaterial.setTimestamp(Timestamp.now());
+        mMaterial.setExam(exam);
+        mMaterial.setCourse(currentUser.getCourse());
+        mMaterial.setProfessor(professor);
+        mMaterial.setComment(commentView.getText().toString());
+        mMaterial.setAuthorUrl(currentUser.getPhotosUrl());
+        return mMaterial;
     }
 
     /**
      * This method adds to the Chip Group related to exams in the View chips with exams names
      */
-    private void setExamChipGroup(){
-        db.collection("exams")
-                .whereEqualTo("university", currentUser.getUniversity().toString())
-                .whereEqualTo("course", currentUser.getCourse().toString())
+    private void setExamChipGroup() {
+        for(String e :  currentUser.getExams()){
+            Chip chip = setChip(new Chip(getContext()), e);
+            examsChipGroup.addView(chip);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    professorChipGroup.removeAllViews();
+                    if (chip.isChecked()) {
+                        exam = chip.getText().toString();
+                        setProfessorChipGroup();
+                    }
+                }
+            });
+        }
+    }
+
+    private void setProfessorChipGroup() {
+        db.collection("professors")
+                .whereEqualTo("exam", exam)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()) {
+                        if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Chip chip = new Chip(getContext());
-                                examsChipGroup.addView(setChip(chip, document.getString("name")));
-                                chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                professorChipGroup.addView(setChip(chip, document.getString("name")));
+                                chip.setOnClickListener(new View.OnClickListener() {
                                     @Override
-                                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                        if(isChecked)
-                                            exam = chip.getText().toString();
+                                    public void onClick(View v) {
+                                        if(chip.isChecked())
+                                            professor = chip.getText().toString();
                                     }
                                 });
                             }
                         }
                     }
                 });
-        return;
-    }
-
-    private void setProfessorChipGroup(){
-        if(!exam.equals("")) {
-            db.collection("professors")
-                    .whereEqualTo("course", exam)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Chip chip = new Chip(getContext());
-                                    professorChipGroup.addView(setChip(chip, document.getString("name")));
-                                    chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                                        @Override
-                                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                            if(isChecked)
-                                                professor = chip.getText().toString();
-                                        }
-                                    });
-                                }
-                            }
-                        }
-                    });
-        }
     }
 
     /**
      * This method sets up the chips on event listener
      */
-    private Chip setChip(Chip chip, String text){
+    private Chip setChip(Chip chip, String text) {
         chip.setText(text);
-        chip.setTextSize(CHIP_TEXT_SIZE);
+        chip.setTextSize(getResources().getDimension(R.dimen.default_chip_text_size));
         chip.setCheckable(true);
         chip.setClickable(true);
         chip.setCloseIconVisible(false);
         return chip;
     }
-
 }

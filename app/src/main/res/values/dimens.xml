@@ -21,5 +21,5 @@
     <dimen name="design_fab_content_size" tools:override="true">24dp</dimen>
 
     <!-- Chip -->
-    <dimen name="default_chip_text_size">14dp</dimen>
+    <dimen name="default_chip_text_size">4dp</dimen>
 </resources>

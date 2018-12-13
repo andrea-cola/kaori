@@ -7,17 +7,23 @@ import android.support.annotation.Nullable;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 
 public class FilterFragment extends Fragment {
+
     /**
      * Constants
      */
@@ -31,16 +37,27 @@ public class FilterFragment extends Fragment {
     private ChipGroup coursesGroup, examsGroup, professorsGroup;
     private FirebaseFirestore db;
     private String exam, professor, course;
+    private User currentUser;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.filter_layout, container, false);
         db = FirebaseFirestore.getInstance();
+        exam= "";
+        professor = "";
+        course = "";
+        currentUser = DataManager.getInstance().getUser();
 
         setUpView();
+
         setUpButton();
-        setUpData();
+
+        setUpExams();
+
+        setUpCourses();
+
+        setUpProfessors();
 
         return view;
     }
@@ -59,41 +76,75 @@ public class FilterFragment extends Fragment {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!exam.equals("") || !professor.equals("") || !course.equals("")) {
-                    SearchFragment searchFragment = new SearchFragment();
-                    searchFragment.filterBookQuery(exam, professor, course);
+                SearchFragment searchFragment = new SearchFragment();
+                if(!exam.equals("")){
+                    searchFragment.filterBy("exam", exam);
+                    invokeFragment(searchFragment);
+                }else if(!professor.equals("") ){
+                    searchFragment.filterBy("professor", professor);
+                    invokeFragment(searchFragment);
+                }else if(!course.equals("")){
+                    invokeFragment(searchFragment);
+                    searchFragment.filterBy("course", course);
+                }else{
+                    Toast.makeText(getContext(), "Seleziona un filtro", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    private void setUpData(){
-        db.collection("exams")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            examsGroup.addView(setChip(document.getString("name")));
-                        }
-                    }
-                });
+    private void setUpExams(){
+        for(String e : currentUser.getExams()){
+            Chip chip = setChip(new Chip(getContext()), e);
+            examsGroup.addView(chip);
+            chip.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (chip.isChecked())
+                        exam = chip.getText().toString();
+                }
+            });
+        }
+    }
 
+    private void setUpCourses(){
         db.collection("courses")
+                .whereEqualTo("university", currentUser.getUniversity())
                 .get()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            coursesGroup.addView(setChip(document.getString("name")));
+                            Chip chip = new Chip(getContext());
+                            coursesGroup.addView(setChip(chip, document.getString("name")));
+                            chip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (chip.isChecked()) {
+                                        course = chip.getText().toString();
+                                    }
+                                }
+                            });
                         }
                     }
                 });
+    }
 
+    private void setUpProfessors(){
         db.collection("professors")
+                .whereEqualTo("university", currentUser.getUniversity())
                 .get()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            professorsGroup.addView(setChip(document.getString("name")));
+                            Chip chip = new Chip(getContext());
+                            professorsGroup.addView(setChip(chip, document.getString("name")));
+                            chip.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (chip.isChecked())
+                                        professor = chip.getText().toString();
+                                }
+                            });
                         }
                     }
                 });
@@ -103,9 +154,9 @@ public class FilterFragment extends Fragment {
      * This method invokes the book fragment when the card is clicked
      */
     private void invokeFragment(Fragment fragment) {
-        if(getActivity()!= null && isAdded()) {
+        if(getActivity()!= null) {
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_container, fragment)
+                    .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
@@ -115,21 +166,12 @@ public class FilterFragment extends Fragment {
     /**
      * This method is used to set up the chips
      */
-    private Chip setChip(String text){
-        Chip chip = new Chip(getContext());
+    private Chip setChip(Chip chip, String text){
         chip.setText(text);
-        chip.setTextSize(R.dimen.default_chip_text_size);
+        chip.setTextSize(getResources().getDimension(R.dimen.default_chip_text_size));
         chip.setCheckable(true);
         chip.setClickable(true);
         chip.setCloseIconVisible(false);
-        chip.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
-                    exam = chip.getText().toString();
-            }
-        });
         return chip;
     }
-
 }

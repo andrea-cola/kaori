@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.DBObjects.Book;
+import com.kaori.kaori.DBObjects.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
@@ -31,7 +31,7 @@ public class FeedFragment extends Fragment {
      */
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
-    private List<Book> mBookList;
+    private List<Material> mMaterialList;
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
@@ -46,7 +46,7 @@ public class FeedFragment extends Fragment {
         view = inflater.inflate(R.layout.feed_layout, container, false);
 
         // setting the parameters
-        mBookList = new ArrayList<>();
+        mMaterialList = new ArrayList<>();
 
         setUpView();
 
@@ -64,7 +64,7 @@ public class FeedFragment extends Fragment {
         recyclerView = view.findViewById(R.id.my_recycler_view);
         fab = view.findViewById(R.id.feedFAB);
 
-        mAdapter = new RecyclerAdapter(mBookList);
+        mAdapter = new RecyclerAdapter(mMaterialList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -87,14 +87,14 @@ public class FeedFragment extends Fragment {
      */
     private void setUpFirebase(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("books")
+        db.collection("materials")
                 .orderBy("timestamp")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             if (DataManager.getInstance().getUser().getExams().contains(String.valueOf(document.get("exam"))))
-                                mBookList.add(document.toObject(Book.class));
+                                mMaterialList.add(document.toObject(Material.class));
                         }
                         if(getContext() != null)
                             mAdapter.notifyDataSetChanged();
@@ -122,10 +122,10 @@ public class FeedFragment extends Fragment {
      */
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        List<Book> books;
+        List<Material> materials;
 
-        /*package-private*/ RecyclerAdapter(List<Book> books){
-            this.books = books;
+        /*package-private*/ RecyclerAdapter(List<Material> materials){
+            this.materials = materials;
         }
 
         /**
@@ -139,9 +139,9 @@ public class FeedFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
-            holder.author.setText(books.get(i).getAuthor());
-            holder.title.setText(books.get(i).getTitle());
-            holder.courseView.setText(books.get(i).getCourse());
+            holder.author.setText(materials.get(i).getAuthor());
+            holder.title.setText(materials.get(i).getTitle());
+            holder.courseView.setText(materials.get(i).getCourse());
 
             holder.cardView.setOnClickListener(v -> {
                 BookFragment bookFragment = new BookFragment();
@@ -152,7 +152,7 @@ public class FeedFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return books.size();
+            return materials.size();
         }
 
         /**
