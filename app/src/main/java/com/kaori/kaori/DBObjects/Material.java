@@ -2,7 +2,7 @@ package com.kaori.kaori.DBObjects;
 
 import com.google.firebase.Timestamp;
 
-public class Book{
+public class Material {
 
     private String author;
     private String authorUrl;
@@ -15,7 +15,7 @@ public class Book{
     private String type;
     private String url;
 
-    public Book(){}
+    public Material(){}
 
     public String getComment() {
         return comment;
