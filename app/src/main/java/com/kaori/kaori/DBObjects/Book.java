@@ -4,15 +4,15 @@ import com.google.firebase.Timestamp;
 
 public class Book{
 
-    private String title;
     private String author;
-    private String imageUrl;
-    private Timestamp timestamp;
-    private Boolean isSigned;
-    private String exam;
+    private String authorUrl;
     private String comment;
     private String course;
     private String professor;
+    private String exam;
+    private Timestamp timestamp;
+    private String title;
+    private String type;
     private String url;
 
     public Book(){}
@@ -25,20 +25,20 @@ public class Book{
         this.comment = comment;
     }
 
-    public String getExams() {
+    public String getExam() {
         return exam;
     }
 
-    public void setExams(String exams) {
-        this.exam = exams;
+    public String getType() {
+        return type;
     }
 
-    public void setSigned(Boolean signed) {
-        isSigned = signed;
+    public void setExam(String exam) {
+        this.exam = exam;
     }
 
-    public Boolean getSigned() {
-        return isSigned;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setTimestamp(Timestamp timestamp) {
@@ -57,8 +57,8 @@ public class Book{
         this.author = author;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setAuthorUrl(String authorUrl) {
+        this.authorUrl = authorUrl;
     }
 
     public String getTitle(){
@@ -69,8 +69,8 @@ public class Book{
         return author;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getAuthorUrl() {
+        return authorUrl;
     }
 
     public String getCourse() {
