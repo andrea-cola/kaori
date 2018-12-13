@@ -57,9 +57,9 @@ public class CreateAccountWithEmail extends Fragment {
      * Variables.
      */
     private User user;
-    private boolean[] validFields = new boolean[4];
+    private boolean[] validFields = new boolean[3];
     private CircleImageView profileImage;
-    private EditText name, surname, password, mail;
+    private EditText name, password, mail;
     private Button createNewAccount;
     private Bitmap profileImageBitmap;
     private Uri filePath;
@@ -189,9 +189,9 @@ public class CreateAccountWithEmail extends Fragment {
             public void afterTextChanged(Editable editable) {
                 if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editable.toString()).matches()) {
                     mail.setError("Indirizzo mail non valido.");
-                    validFields[2] = false;
+                    validFields[1] = false;
                 } else
-                    validFields[2] = true;
+                    validFields[1] = true;
                 updateButtonState();
             }
         });
@@ -211,9 +211,9 @@ public class CreateAccountWithEmail extends Fragment {
             public void afterTextChanged(Editable editable) {
                 if (editable.length() < 6) {
                     password.setError("Password di almeno 6 caratteri.");
-                    validFields[3] = false;
+                    validFields[2] = false;
                 } else
-                    validFields[3] = true;
+                    validFields[2] = true;
                 updateButtonState();
             }
         });
