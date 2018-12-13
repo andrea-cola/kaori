@@ -31,6 +31,8 @@ public class Constants {
     public static final String DB_COLL_COURSE_TYPES = "courses";
     public static final String DB_COLL_EXAMS = "exams";
     public static final String DB_COLL_USERS = "users";
+    public static final String DB_COLL_MESSAGES = "messages";
+    public static final String DB_SUBCOLL_MESSAGES = "chat";
 
     /**
      * Storage constants.

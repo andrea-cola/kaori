@@ -235,7 +235,7 @@ public class SignInManager {
                         }
 
                     } else {
-                        LogManager.getInstance().showVisualError(context, null, "authWithEmail:failure");
+                        LogManager.getInstance().showVisualError(context, task.getException(), "authWithEmail:failure");
                         endSignIn(false);
                     }
                 });
