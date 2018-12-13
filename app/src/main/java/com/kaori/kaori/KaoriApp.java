@@ -7,10 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.kaori.kaori.BottomBarFragments.FeedFragment;
 import com.kaori.kaori.BottomBarFragments.SearchFragment;
 import com.kaori.kaori.BottomBarFragments.UsersPositionsFragment;
+import com.kaori.kaori.ChatFragments.ChatListFragment;
 import com.kaori.kaori.DBObjects.User;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
@@ -63,9 +66,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         hub = DataManager.getInstance();
 
         // toolbar initialization
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-        setSupportActionBar(toolbar);
+        setupToolbar();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -75,13 +76,23 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         entryPointFragmentCall(new FeedFragment());
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.message_action_bar, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     /**
-     * Enable Up button only if there are entries in the back stack.
-     * I set the limit to 1 because we do not want to return to empty activity.
+     * Check the selection of the menu option.
      */
-    public void shouldDisplayHomeUp(){
-        boolean canGoBack = getSupportFragmentManager().getBackStackEntryCount() > 0;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_message) {
+            bottomBarFragmentCall(new ChatListFragment());
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -101,6 +112,24 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     public void onBackStackChanged() {
         shouldDisplayHomeUp();
+    }
+
+    /**
+     * Setup the toolbar.
+     */
+    private void setupToolbar(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+    }
+
+    /**
+     * Enable Up button only if there are entries in the back stack.
+     * I set the limit to 1 because we do not want to return to empty activity.
+     */
+    public void shouldDisplayHomeUp(){
+        boolean canGoBack = getSupportFragmentManager().getBackStackEntryCount() > 0;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
     }
 
     /**
