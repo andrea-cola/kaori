@@ -20,6 +20,7 @@ import com.kaori.kaori.DBObjects.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
@@ -50,6 +51,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private MapboxMap mapboxMap;
     private Position mPosition;
     private Query positions;
+
+    /**
+     * Constants
+     */
+    private final String snippet = "Contact me";
 
 
     @Nullable
@@ -109,7 +115,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             Double longitude = position.getPoint().getLongitude();
             mapboxMap.addMarker(new MarkerOptions()
                     .setTitle(position.getUsername())
+                    .setSnippet(snippet)
                     .setPosition(new LatLng(latitude, longitude)));
+            mapboxMap.setOnInfoWindowClickListener(new MapboxMap.OnInfoWindowClickListener() {
+                @Override
+                public boolean onInfoWindowClick(@NonNull Marker marker) {
+                    return false;
+                }
+            });
         }
     }
 

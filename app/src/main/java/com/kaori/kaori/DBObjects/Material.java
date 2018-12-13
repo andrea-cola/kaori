@@ -8,23 +8,14 @@ public class Material {
     private String authorUrl;
     private String comment;
     private String course;
-    private String exam;
     private String professor;
+    private String exam;
     private Timestamp timestamp;
     private String title;
     private String type;
     private String url;
 
-    public Material() {
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    public Material(){}
 
     public String getComment() {
         return comment;
@@ -34,44 +25,60 @@ public class Material {
         this.comment = comment;
     }
 
-    public String getCourse() {
-        return course;
-    }
-
-    public void setCourse(String couurse) {
-        this.course = couurse;
-    }
-
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public String getExam() {
+        return exam;
     }
 
     public String getType() {
         return type;
     }
 
+    public void setExam(String exam) {
+        this.exam = exam;
+    }
+
     public void setType(String type) {
         this.type = type;
     }
 
-    public String getUrl() {
-        return url;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTitle(String title){
+        this.title = title;
+    }
+
+    public void setAuthor(String author){
+        this.author = author;
+    }
+
+    public void setAuthorUrl(String authorUrl) {
+        this.authorUrl = authorUrl;
+    }
+
+    public String getTitle(){
+        return title;
+    }
+
+    public String getAuthor(){
+        return author;
+    }
+
+    public String getAuthorUrl() {
+        return authorUrl;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
     }
 
     public String getProfessor() {
@@ -82,19 +89,11 @@ public class Material {
         this.professor = professor;
     }
 
-    public String getExam() {
-        return exam;
+    public String getUrl() {
+        return url;
     }
 
-    public void setExam(String exam) {
-        this.exam = exam;
-    }
-
-    public String getAuthorUrl() {
-        return authorUrl;
-    }
-
-    public void setAuthorUrl(String authorUrl) {
-        this.authorUrl = authorUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -67,6 +67,8 @@ public class UsersPositionsFragment extends Fragment {
 
         setUpView();
 
+        setUpButtons();
+
         // setting the database
         db = FirebaseFirestore.getInstance();
         positions = db.collection("positions");

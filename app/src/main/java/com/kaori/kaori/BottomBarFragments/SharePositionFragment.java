@@ -81,7 +81,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * Variables
      */
     private MapboxMap mapboxMap;
-    private PermissionsManager permissionsManager;
     private CarmenFeature work;
     private FirebaseFirestore db;
     private String userUid;
@@ -142,7 +141,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         db = FirebaseFirestore.getInstance();
         DataManager dataManager = DataManager.getInstance();
         userUid = dataManager.getUser().getUid();
-        userName = dataManager.getUser().getName();
+        userName = dataManager.getUser().getEmail();
         addUserLocations();
     }
 

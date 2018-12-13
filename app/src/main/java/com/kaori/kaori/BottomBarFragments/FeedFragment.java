@@ -12,10 +12,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.DBObjects.Material;
@@ -26,13 +24,7 @@ import com.kaori.kaori.Utils.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class FeedFragment extends Fragment {
-
-    private final String DB_COLL_MATERIAL = "books";
-    private final String DB_ORDER_BY_FIELD = "timestamp";
-    private final String DB_FILTER_FIELD = "exam";
 
     /**
      * Variables.
@@ -95,14 +87,13 @@ public class FeedFragment extends Fragment {
      */
     private void setUpFirebase(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection(DB_COLL_MATERIAL)
-                .orderBy(DB_ORDER_BY_FIELD)
+        db.collection("materials")
+                .orderBy("timestamp")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            LogManager.getInstance().printConsoleMessage(String.valueOf(document.get(DB_FILTER_FIELD)));
-                            if (DataManager.getInstance().getUser().getExams().contains(String.valueOf(document.get(DB_FILTER_FIELD))))
+                            if (DataManager.getInstance().getUser().getExams().contains(String.valueOf(document.get("exam"))))
                                 mMaterialList.add(document.toObject(Material.class));
                         }
                         if(getContext() != null)
@@ -150,15 +141,7 @@ public class FeedFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.author.setText(materials.get(i).getAuthor());
             holder.title.setText(materials.get(i).getTitle());
-            holder.course.setText(materials.get(i).getCourse());
-
-            if(!materials.get(i).getType().equalsIgnoreCase("book"))
-                holder.materialImage.setImageDrawable(getResources().getDrawable(R.drawable.document_icon));
-
-            Glide.with(getContext())
-                    .load(materials.get(i).getAuthorUrl())
-                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                    .into(holder.authorThumb);
+            holder.courseView.setText(materials.get(i).getCourse());
 
             holder.cardView.setOnClickListener(v -> {
                 BookFragment bookFragment = new BookFragment();
@@ -177,19 +160,17 @@ public class FeedFragment extends Fragment {
          * the next book element in the recycler view
          */
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
+            TextView title, author, courseView;
             CardView cardView;
-            TextView title, author, course;
-            ImageView materialImage;
-            CircleImageView authorThumb;
+            //public ImageView image;
 
-            /*package-private*/ Holder (View view) {
+            Holder (View view) {
                 super(view);
                 title = view.findViewById(R.id.card_title);
                 author = view.findViewById(R.id.card_author);
-                course = view.findViewById(R.id.card_type);
+                courseView = view.findViewById(R.id.card_type);
                 cardView = view.findViewById(R.id.card_view);
-                materialImage = view.findViewById(R.id.card_image);
-                authorThumb = view.findViewById(R.id.card_author_thumbnail);
+                //image = (ImageView) view.findViewById(R.id.thumbnail);
             }
         }
     }
