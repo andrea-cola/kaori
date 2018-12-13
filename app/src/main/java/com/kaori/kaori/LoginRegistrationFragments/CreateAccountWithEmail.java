@@ -174,28 +174,6 @@ public class CreateAccountWithEmail extends Fragment {
             }
         });
 
-        surname.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.length() < 1) {
-                    surname.setError("Hai lasciato il campo vuoto");
-                    validFields[1] = false;
-                } else
-                    validFields[1] = true;
-                updateButtonState();
-            }
-        });
-
         mail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

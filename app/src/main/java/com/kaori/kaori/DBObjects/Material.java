@@ -5,9 +5,10 @@ import com.google.firebase.Timestamp;
 public class Material {
 
     private String author;
-    private String author_thumb;
+    private String authorUrl;
     private String comment;
     private String course;
+    private String exam;
     private String professor;
     private Timestamp timestamp;
     private String title;
@@ -23,14 +24,6 @@ public class Material {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getAuthor_thumb() {
-        return author_thumb;
-    }
-
-    public void setAuthor_thumb(String author_thumb) {
-        this.author_thumb = author_thumb;
     }
 
     public String getComment() {
@@ -87,5 +80,21 @@ public class Material {
 
     public void setProfessor(String professor) {
         this.professor = professor;
+    }
+
+    public String getExam() {
+        return exam;
+    }
+
+    public void setExam(String exam) {
+        this.exam = exam;
+    }
+
+    public String getAuthorUrl() {
+        return authorUrl;
+    }
+
+    public void setAuthorUrl(String authorUrl) {
+        this.authorUrl = authorUrl;
     }
 }
