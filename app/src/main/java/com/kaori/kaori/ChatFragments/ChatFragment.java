@@ -14,9 +14,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kaori.kaori.DBObjects.Chat;
 import com.kaori.kaori.DBObjects.Message;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -25,19 +26,16 @@ import com.kaori.kaori.Utils.LogManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class ChatFragment extends Fragment {
 
     private boolean isNewChat;
-    private String receiverUID, chatID;
+    private Chat chat;
+    private String senderUID, receiverUID, receiverName, chatID;
     private ImageButton mSendMessage;
-    private String messageBucketID;
     private EditText editText;
-    private List<String> users;
-    private Map<String, Object> chatParameters;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -49,32 +47,92 @@ public class ChatFragment extends Fragment {
         View view = inflater.inflate(R.layout.chat_layout, container, false);
         editText = view.findViewById(R.id.edittext);
         mSendMessage = view.findViewById(R.id.send_button);
-
-        users = new ArrayList<>();
-        chatParameters = new HashMap<>();
-        chatParameters.put("users", users);
-        users.add(DataManager.getInstance().getUser().getUid());
-        users.add(receiverUID);
-        messageBucketID = buildMessageBucketID();
-        LogManager.getInstance().printConsoleMessage("Message Bucket ID -> " + messageBucketID);
-
         mRecyclerView = view.findViewById(R.id.chat_list);
 
-        messages = new ArrayList<>();
+        messages = new LinkedList<>();
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // specify an adapter (see also next example)
         mAdapter = new MyAdapter(messages);
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
 
+        // add listener to the button that sends messages.
         addOnClickListener();
 
-        if(!isNewChat)
-            readMessages();
+        // if the chat is new, we don't need to load messages.
+        readMessages();
+
+        // Todo: la soluzione al problema è nascondere la barra sotto
 
         return view;
+    }
+
+    public void newChatParams(String uid, String name){
+        this.isNewChat = true;
+        this.senderUID = DataManager.getInstance().getUser().getUid();
+        this.receiverUID = uid;
+        this.receiverName = name;
+        this.chatID = createChatID(senderUID, receiverUID);
+
+        // create a new chat
+        this.chat = new Chat();
+        ArrayList<String> users = new ArrayList<>();
+        users.add(senderUID);
+        users.add(receiverUID);
+        chat.setUsers(users);
+    }
+
+    private String createChatID(String u1, String u2){
+        return (u1.compareTo(u2) > 0) ? u2 + "_" + u1 : u1 + "_" + u2;
+    }
+
+    public void setParams(Chat c, String senderUID, String receiverUID){
+        this.isNewChat = false;
+        this.senderUID = senderUID;
+        this.receiverUID = receiverUID;
+        this.chatID = createChatID(senderUID, receiverUID);
+        this.chat = c;
+    }
+
+    private void sendMessage(Message m) {
+        LogManager.getInstance().printConsoleMessage("sendMessage");
+
+        // get document reference.
+        DocumentReference documentReference = FirebaseFirestore
+                .getInstance()
+                .collection(Constants.DB_COLL_MESSAGES)
+                .document(chatID);
+
+        chat.setLastMessage(Timestamp.now());
+
+        // create the chat in the database and add the message in the collection.
+        documentReference
+                .set(chat)
+                .addOnSuccessListener(aVoid -> documentReference.collection(Constants.DB_SUBCOLL_MESSAGES)
+                .document()
+                .set(m)
+                .addOnSuccessListener(aVoid1 -> {
+                    LogManager.getInstance().showVisualMessage(getContext(),"sendMessage:written");
+
+                    if(isNewChat)
+                        isNewChat = false;
+                })
+                .addOnFailureListener(e -> {
+                    LogManager.getInstance().showVisualMessage(getContext(),"sendMessage:fail");
+                }));
+    }
+
+    private void addOnClickListener(){
+        mSendMessage.setOnClickListener(view -> {
+            Message message = new Message();
+            message.setChatID(chatID);
+            message.setMessage(String.valueOf(editText.getText()));
+            message.setReceiver(receiverUID);
+            message.setSenderID(senderUID);
+            message.setTimestamp(Timestamp.now());
+            sendMessage(message);
+        });
     }
 
     private void readMessages(){
@@ -83,61 +141,16 @@ public class ChatFragment extends Fragment {
                 .document(chatID)
                 .collection(Constants.DB_SUBCOLL_MESSAGES)
                 .addSnapshotListener((value, e) -> {
-                    for (DocumentSnapshot doc : value) {
-                        LogManager.getInstance().printConsoleMessage(doc.getId());
-                        messages.add(doc.toObject(Message.class));
-                        mAdapter.notifyDataSetChanged();
-                    }
+                    if(value != null)
+                        for (DocumentChange doc : value.getDocumentChanges()) {
+                            LogManager.getInstance().printConsoleMessage(doc.getDocument().getId());
+                            if (doc.getType().equals(DocumentChange.Type.ADDED)) {
+                                messages.add(doc.getDocument().toObject(Message.class));
+                                mAdapter.notifyDataSetChanged();
+                                mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
+                        }
                 });
-    }
-
-    private String buildMessageBucketID(){
-        String uid = DataManager.getInstance().getUser().getUid();
-        if(uid.compareTo(receiverUID) > 0)
-            return receiverUID + "_" + uid;
-        return uid + "_" + receiverUID;
-    }
-
-    public void setParams(boolean newChat, String uid, String chatID){
-        this.isNewChat = newChat;
-        this.receiverUID = uid;
-        this.chatID = chatID;
-    }
-
-    private void addOnClickListener(){
-        mSendMessage.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setChatID(messageBucketID);
-            message.setMessage(String.valueOf(editText.getText()));
-            message.setReceiver(receiverUID);
-            message.setSenderID(DataManager.getInstance().getUser().getUid());
-            message.setTimestamp(Timestamp.now());
-            writeDatabase(message);
-
-            if(isNewChat)
-                isNewChat = false;
-        });
-    }
-
-    private void writeDatabase(Message m) {
-        LogManager.getInstance().printConsoleMessage("writeDatabase");
-        DocumentReference documentReference = FirebaseFirestore
-                .getInstance()
-                .collection(Constants.DB_COLL_MESSAGES)
-                .document(messageBucketID);
-
-        chatParameters.put("lastMessage", Timestamp.now());
-        documentReference.set(chatParameters).addOnSuccessListener(aVoid -> {
-            documentReference.collection(Constants.DB_SUBCOLL_MESSAGES)
-                    .document()
-                    .set(m)
-                    .addOnSuccessListener(aVoid1 -> {
-                        LogManager.getInstance().showVisualMessage(getContext(),"writeDatabase:written");
-                    })
-                    .addOnFailureListener(e -> {
-                        LogManager.getInstance().showVisualMessage(getContext(),"writeDatabase:fail");
-                    });
-        });
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {

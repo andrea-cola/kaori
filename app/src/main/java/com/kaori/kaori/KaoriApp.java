@@ -30,6 +30,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
      */
     private User user;
     private DataManager hub;
+    private boolean mKeyboardVisible;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -64,6 +65,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         setContentView(R.layout.activity_main);
 
         hub = DataManager.getInstance();
+        mKeyboardVisible = false;
 
         // toolbar initialization
         setupToolbar();

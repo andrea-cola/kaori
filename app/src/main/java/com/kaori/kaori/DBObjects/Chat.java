@@ -1,6 +1,7 @@
 package com.kaori.kaori.DBObjects;
 
-import java.sql.Timestamp;
+import com.google.firebase.Timestamp;
+
 import java.util.List;
 
 public class Chat {

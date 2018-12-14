@@ -116,14 +116,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    /**
+     * Add a custom view to the marker in the mapbox.
+     */
     private void addCustomInfoWindowAdapter(Position position) {
         mapboxMap.setInfoWindowAdapter(marker -> {
             View v = getLayoutInflater().inflate(R.layout.mapbox_custom_info_window, null);
             ((TextView)v.findViewById(R.id.name)).setText(position.getUsername());
             v.findViewById(R.id.button_ok).setOnClickListener(view -> {
                 ChatFragment chatFragment = new ChatFragment();
-                chatFragment.setParams(true, position.getUid(), "");
-                
+                chatFragment.newChatParams(position.getUid(), position.getUsername());
+
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, chatFragment)
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
