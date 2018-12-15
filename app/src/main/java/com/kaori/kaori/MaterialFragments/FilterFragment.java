@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.MaterialFragments;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -7,19 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
 public class FilterFragment extends Fragment {
@@ -76,16 +73,16 @@ public class FilterFragment extends Fragment {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SearchFragment searchFragment = new SearchFragment();
+                MaterialFragment materialFragment = new MaterialFragment();
                 if(!exam.equals("")){
-                    searchFragment.filterBy("exam", exam);
-                    invokeFragment(searchFragment);
+                    materialFragment.filterBy("exam", exam);
+                    invokeFragment(materialFragment);
                 }else if(!professor.equals("") ){
-                    searchFragment.filterBy("professor", professor);
-                    invokeFragment(searchFragment);
+                    materialFragment.filterBy("professor", professor);
+                    invokeFragment(materialFragment);
                 }else if(!course.equals("")){
-                    invokeFragment(searchFragment);
-                    searchFragment.filterBy("course", course);
+                    invokeFragment(materialFragment);
+                    materialFragment.filterBy("course", course);
                 }else{
                     Toast.makeText(getContext(), "Seleziona un filtro", Toast.LENGTH_SHORT).show();
                 }

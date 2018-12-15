@@ -1,10 +1,9 @@
 package com.kaori.kaori.Utils;
 
-import android.widget.ImageView;
-
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Model.MiniUser;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ public class DataManager {
 
     private boolean isAuthenticated;
     private User user;
-    private ImageView profileImageView;
     private ArrayList<String> universities;
     private ArrayList<String> courseTypes;
     private ArrayList<String> exams;
@@ -103,6 +101,10 @@ public class DataManager {
 
     public RequestOptions getGetGlideRequestOptionsCircle() {
         return getGlideRequestOptionsCircle;
+    }
+
+    public MiniUser getMiniUser(){
+        return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl());
     }
 
 }

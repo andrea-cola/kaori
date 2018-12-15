@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;

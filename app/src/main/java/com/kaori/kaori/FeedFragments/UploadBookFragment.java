@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.FeedFragments;
 
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -32,8 +32,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.DBObjects.Material;
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;

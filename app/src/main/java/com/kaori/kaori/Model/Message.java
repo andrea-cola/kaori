@@ -1,4 +1,4 @@
-package com.kaori.kaori.DBObjects;
+package com.kaori.kaori.Model;
 
 import com.google.firebase.Timestamp;
 

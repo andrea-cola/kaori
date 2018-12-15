@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.FinderFragment;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.kaori.kaori.ChatFragments.ChatFragment;
-import com.kaori.kaori.DBObjects.Position;
+import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -105,10 +105,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     private void setUpMarkers(List<Position> positions){
         for(Position position: positions){
-            Double latitude = position.getPoint().getLatitude();
-            Double longitude = position.getPoint().getLongitude();
+            Double latitude = position.getGeoPoint().getLatitude();
+            Double longitude = position.getGeoPoint().getLongitude();
             mapboxMap.addMarker(new MarkerOptions()
-                    .setTitle(position.getUsername())
+                    .setTitle(position.getUser().getName())
                     .setSnippet(snippet)
                     .setPosition(new LatLng(latitude, longitude)));
             mapboxMap.setOnInfoWindowClickListener(marker -> false);
@@ -122,10 +122,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private void addCustomInfoWindowAdapter(Position position) {
         mapboxMap.setInfoWindowAdapter(marker -> {
             View v = getLayoutInflater().inflate(R.layout.mapbox_custom_info_window, null);
-            ((TextView)v.findViewById(R.id.name)).setText(position.getUsername());
+            ((TextView)v.findViewById(R.id.name)).setText(position.getUser().getName());
             v.findViewById(R.id.button_ok).setOnClickListener(view -> {
                 ChatFragment chatFragment = new ChatFragment();
-                chatFragment.newChatParams(position.getUid(), position.getUsername());
+                chatFragment.newChatParams(position.getUser());
 
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.container, chatFragment)
@@ -141,8 +141,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * This method moves the map camera
      */
     private void moveCamera(){
-        Double mLatitude = mPosition.getPoint().getLatitude();
-        Double mLongitude = mPosition.getPoint().getLongitude();
+        Double mLatitude = mPosition.getGeoPoint().getLatitude();
+        Double mLongitude = mPosition.getGeoPoint().getLongitude();
         CameraPosition newCameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(mLatitude, mLongitude))
                 .zoom(14)

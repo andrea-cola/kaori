@@ -29,6 +29,7 @@ public class Constants {
      */
     public static final String DB_COLL_UNIVERSITIES = "universities";
     public static final String DB_COLL_COURSE_TYPES = "courses";
+    public static final String DB_COLL_POSITIONS = "positions";
     public static final String DB_COLL_EXAMS = "exams";
     public static final String DB_COLL_USERS = "users";
     public static final String DB_COLL_MESSAGES = "messages";
@@ -61,7 +62,12 @@ public class Constants {
     /**
      * Registration messages.
      */
-    public static String DIALOG_TITLE_CONFIRM = "Sei sicuro di procedere?";
-    public static String DIALOG_MESSAGE_CONFIRM = "Premendo Ok completerai la tua registazione e riceverai una mail di conferma. Premendo su ANNULLA potrai modificare i tuoi dati.";
+    public static final String DIALOG_TITLE_CONFIRM = "Sei sicuro di procedere?";
+    public static final String DIALOG_MESSAGE_CONFIRM = "Premendo Ok completerai la tua registazione e riceverai una mail di conferma. Premendo su ANNULLA potrai modificare i tuoi dati.";
+
+    /**
+     * Finder fragments constants.
+     */
+    public static final String STATEMENT = "Hi, there! I'm studying here:";
 
 }

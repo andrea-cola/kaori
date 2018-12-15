@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.facebook.login.widget.LoginButton;
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;

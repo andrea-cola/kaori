@@ -17,23 +17,22 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.kaori.kaori.DBObjects.Chat;
-import com.kaori.kaori.DBObjects.Message;
+import com.kaori.kaori.Model.Chat;
+import com.kaori.kaori.Model.Message;
+import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class ChatFragment extends Fragment {
 
-    private boolean isNewChat;
     private Chat chat;
-    private String senderUID, receiverUID, receiverName, chatID;
+    private MiniUser myUser, otherUser;
     private ImageButton mSendMessage;
     private EditText editText;
     private RecyclerView mRecyclerView;
@@ -57,6 +56,8 @@ public class ChatFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
 
+        myUser = DataManager.getInstance().getMiniUser();
+
         // add listener to the button that sends messages.
         addOnClickListener();
 
@@ -68,30 +69,13 @@ public class ChatFragment extends Fragment {
         return view;
     }
 
-    public void newChatParams(String uid, String name){
-        this.isNewChat = true;
-        this.senderUID = DataManager.getInstance().getUser().getUid();
-        this.receiverUID = uid;
-        this.receiverName = name;
-        this.chatID = createChatID(senderUID, receiverUID);
-
-        // create a new chat
-        this.chat = new Chat();
-        ArrayList<String> users = new ArrayList<>();
-        users.add(senderUID);
-        users.add(receiverUID);
-        chat.setUsers(users);
-    }
-
-    private String createChatID(String u1, String u2){
-        return (u1.compareTo(u2) > 0) ? u2 + "_" + u1 : u1 + "_" + u2;
+    public void newChatParams(MiniUser receiverUser){
+        chat = new Chat();
+        chat.addUsers(myUser, receiverUser);
+        otherUser = receiverUser;
     }
 
     public void setParams(Chat c, String senderUID, String receiverUID){
-        this.isNewChat = false;
-        this.senderUID = senderUID;
-        this.receiverUID = receiverUID;
-        this.chatID = createChatID(senderUID, receiverUID);
         this.chat = c;
     }
 
@@ -102,7 +86,7 @@ public class ChatFragment extends Fragment {
         DocumentReference documentReference = FirebaseFirestore
                 .getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
-                .document(chatID);
+                .document(chat.getChatID());
 
         chat.setLastMessage(Timestamp.now());
 
@@ -114,9 +98,6 @@ public class ChatFragment extends Fragment {
                 .set(m)
                 .addOnSuccessListener(aVoid1 -> {
                     LogManager.getInstance().showVisualMessage(getContext(),"sendMessage:written");
-
-                    if(isNewChat)
-                        isNewChat = false;
                 })
                 .addOnFailureListener(e -> {
                     LogManager.getInstance().showVisualMessage(getContext(),"sendMessage:fail");
@@ -126,10 +107,10 @@ public class ChatFragment extends Fragment {
     private void addOnClickListener(){
         mSendMessage.setOnClickListener(view -> {
             Message message = new Message();
-            message.setChatID(chatID);
+            message.setChatID(chat.getChatID());
             message.setMessage(String.valueOf(editText.getText()));
-            message.setReceiver(receiverUID);
-            message.setSenderID(senderUID);
+            message.setReceiver(myUser.getUid());
+            message.setSenderID(otherUser.getUid());
             message.setTimestamp(Timestamp.now());
             sendMessage(message);
         });
@@ -138,7 +119,7 @@ public class ChatFragment extends Fragment {
     private void readMessages(){
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
-                .document(chatID)
+                .document(chat.getChatID())
                 .collection(Constants.DB_SUBCOLL_MESSAGES)
                 .addSnapshotListener((value, e) -> {
                     if(value != null)

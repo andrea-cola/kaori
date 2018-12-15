@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.MaterialFragments;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -19,20 +19,17 @@ import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.kaori.kaori.DBObjects.Material;
+import com.kaori.kaori.FeedFragments.BookFragment;
+import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 
-public class SearchFragment extends Fragment {
+public class MaterialFragment extends Fragment {
 
     /**
      * Constants
@@ -62,7 +59,7 @@ public class SearchFragment extends Fragment {
     /**
      * Constructor
      */
-    public SearchFragment(){ }
+    public MaterialFragment(){ }
 
     @Nullable
     @Override
@@ -90,16 +87,13 @@ public class SearchFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         set = db.collection("materials").orderBy("title", Query.Direction.DESCENDING);
         set.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for(QueryDocumentSnapshot document : task.getResult()){
-                                materials.add(document.toObject(Material.class));
-                            }
-                        }else{
-                            LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        for(QueryDocumentSnapshot document : task.getResult()){
+                            materials.add(document.toObject(Material.class));
                         }
+                    }else{
+                        LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                     }
                 });
     }

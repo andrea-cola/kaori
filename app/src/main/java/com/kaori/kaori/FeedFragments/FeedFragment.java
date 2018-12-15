@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.FeedFragments;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.DBObjects.Material;
+import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;

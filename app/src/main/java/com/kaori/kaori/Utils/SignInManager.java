@@ -27,7 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriLogin;
 import com.kaori.kaori.R;

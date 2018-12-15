@@ -1,41 +1,34 @@
 package com.kaori.kaori.ChatFragments;
 
-import android.app.FragmentTransaction;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.DBObjects.Chat;
-import com.kaori.kaori.DBObjects.User;
-import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
+import com.kaori.kaori.Model.Chat;
+import com.kaori.kaori.Model.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This class shows all the chat started by the user.
+ */
 public class ChatListFragment extends Fragment {
 
+    /**
+     * Constants.
+     */
     private final String BACK_STATE_NAME = getClass().getName();
-    private List<Chat> chatList;
-    private String senderID;
+
+    /**
+     * Variables.
+     */
+    private List<Chat> chatList; // list of all chats.
+    private String senderID; // id of the user that uses the app.
     private HashMap<String, User> chatUsers;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
+    /*
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,7 +38,7 @@ public class ChatListFragment extends Fragment {
         chatList = new ArrayList<>();
         chatUsers = new HashMap<>();
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         senderID = DataManager.getInstance().getUser().getUid();
 
@@ -53,15 +46,16 @@ public class ChatListFragment extends Fragment {
         mAdapter = new MyAdapter(chatList);
         mRecyclerView.setAdapter(mAdapter);
 
-        readMessages();
+        loadAllChats();
 
         return view;
     }
 
-    private void readMessages(){
+    private void loadAllChats(){
         LogManager.getInstance().printConsoleMessage(senderID);
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
+                .whereArrayContains("users", senderID)
                 .orderBy("lastMessage")
                 .addSnapshotListener((value, e) -> {
                     if(value != null) {
@@ -86,7 +80,6 @@ public class ChatListFragment extends Fragment {
                     }
                 });
     }
-
 
     private void loadUsers() {
         for (Chat c : chatList) {
@@ -167,6 +160,6 @@ public class ChatListFragment extends Fragment {
         public int getItemCount() {
             return mDataset.size();
         }
-    }
+    } */
 
 }

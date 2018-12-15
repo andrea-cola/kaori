@@ -10,11 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.kaori.kaori.BottomBarFragments.FeedFragment;
-import com.kaori.kaori.BottomBarFragments.SearchFragment;
-import com.kaori.kaori.BottomBarFragments.UsersPositionsFragment;
 import com.kaori.kaori.ChatFragments.ChatListFragment;
-import com.kaori.kaori.DBObjects.User;
+import com.kaori.kaori.FeedFragments.FeedFragment;
+import com.kaori.kaori.FinderFragment.FinderFragment;
+import com.kaori.kaori.MaterialFragments.MaterialFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
 
@@ -28,9 +27,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     /**
      * Variables.
      */
-    private User user;
     private DataManager hub;
-    private boolean mKeyboardVisible;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -43,10 +40,10 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
                         bottomBarFragmentCall(new FeedFragment());
                         return true;
                     case R.id.navigation_hub:
-                        bottomBarFragmentCall(new SearchFragment());
+                        bottomBarFragmentCall(new MaterialFragment());
                         return true;
                     case R.id.navigation_study_with_me:
-                        bottomBarFragmentCall(new UsersPositionsFragment());
+                        bottomBarFragmentCall(new FinderFragment());
                         return true;
                     case R.id.navigation_my_profile:
                         bottomBarFragmentCall(new ProfileFragment());
@@ -65,7 +62,6 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         setContentView(R.layout.activity_main);
 
         hub = DataManager.getInstance();
-        mKeyboardVisible = false;
 
         // toolbar initialization
         setupToolbar();
@@ -73,7 +69,6 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        user = hub.getUser();
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         entryPointFragmentCall(new FeedFragment());
     }

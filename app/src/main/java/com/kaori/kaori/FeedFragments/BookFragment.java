@@ -1,4 +1,4 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.FeedFragments;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,13 +18,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.BuildConfig;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
-
-import retrofit2.http.Url;
 
 public class BookFragment extends Fragment {
 

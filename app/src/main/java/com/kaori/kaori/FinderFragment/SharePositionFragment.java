@@ -1,7 +1,6 @@
-package com.kaori.kaori.BottomBarFragments;
+package com.kaori.kaori.FinderFragment;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,17 +15,18 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import com.google.gson.JsonObject;
-import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Model.MiniUser;
+import com.kaori.kaori.Model.Position;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
-import com.mapbox.android.core.permissions.PermissionsManager;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -45,8 +45,6 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -83,28 +81,25 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private MapboxMap mapboxMap;
     private CarmenFeature work;
     private FirebaseFirestore db;
-    private String userUid;
-    private String userName;
     private CarmenFeature feature;
+    private User user;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Create mapbox instance
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
 
         view = inflater.inflate(R.layout.share_position, container, false);
-
-        // Get map view
-        mapView = (MapView) view.findViewById(R.id.shareMapView);
+        mapView = view.findViewById(R.id.shareMapView);
         mapView.onCreate(savedInstanceState);
 
         mapView.getMapAsync(this);
 
         setUpView();
-        setUpData();
-
+        user = DataManager.getInstance().getUser();
+        db = FirebaseFirestore.getInstance();
+        addUserLocations();
         setUpButtons();
 
         return view;
@@ -131,54 +126,35 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         searchCard = view.findViewById(R.id.searchCardView);
 
         shareCard.setVisibility(View.INVISIBLE);
-
-    }
-
-    /**
-     * This method sets up the data needed for this fragment
-     */
-    private void setUpData(){
-        db = FirebaseFirestore.getInstance();
-        DataManager dataManager = DataManager.getInstance();
-        userUid = dataManager.getUser().getUid();
-        userName = dataManager.getUser().getEmail();
-        addUserLocations();
     }
 
     /**
      * This method sets up the elements' listeners of this fragment
      */
     private void setUpButtons(){
-        searchCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new PlaceAutocomplete.IntentBuilder()
-                        .accessToken(Mapbox.getAccessToken())
-                        .placeOptions(PlaceOptions.builder()
-                                .backgroundColor(ResourcesCompat.getColor(getResources(), R.color.grey_light, null))
-                                .limit(10)
-                                .hint(getString(R.string.search_hint))
-                                .addInjectedFeature(work)
-                                .build(PlaceOptions.MODE_CARDS))
-                        .build(getActivity());
-                startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE);
-            }
+        searchCard.setOnClickListener(v -> {
+            Intent intent = new PlaceAutocomplete.IntentBuilder()
+                    .accessToken(Mapbox.getAccessToken())
+                    .placeOptions(PlaceOptions.builder()
+                            .backgroundColor(ResourcesCompat.getColor(getResources(), R.color.grey_light, null))
+                            .limit(10)
+                            .hint(getString(R.string.search_hint))
+                            .addInjectedFeature(work)
+                            .build(PlaceOptions.MODE_CARDS))
+                    .build(getActivity());
+            startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE);
         });
 
-        shareButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(shareButton.isEnabled()) {
-                    Double latitude = ((Point)feature.geometry()).latitude();
-                    Double longitude = ((Point)feature.geometry()).longitude();
-                    GeoPoint point = new GeoPoint(latitude, longitude);
-                    String name = feature.placeName();
-                    sharePosition(name, point);
-                    invokeNextFragment();
-                    Toast.makeText(getActivity(), "Your position is shared", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getActivity(), "No place selected", Toast.LENGTH_SHORT).show();
-                }
+        shareButton.setOnClickListener(v -> {
+            if(shareButton.isEnabled()) {
+                Double latitude = ((Point)feature.geometry()).latitude();
+                Double longitude = ((Point)feature.geometry()).longitude();
+                GeoPoint point = new GeoPoint(latitude, longitude);
+                String name = feature.placeName();
+                sharePosition(name, point);
+                Toast.makeText(getActivity(), "Your position is shared", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getActivity(), "No place selected", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -199,12 +175,8 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * This method invokes the book fragment when the card is clicked
      */
     private void invokeNextFragment() {
-        Fragment nextFragment = new UsersPositionsFragment();
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, nextFragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+        if(getActivity() != null)
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 
     /**
@@ -251,53 +223,27 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
-    /**
-     * This method update the position of the user in Firebase Cloud
-     */
     private void sharePosition(String locationName, GeoPoint geoPoint){
-        // Fields to add the position document
-        Map<String, GeoPoint> position = new HashMap<>();
-        position.put("point", geoPoint);
-        Map<String, Timestamp> time = new HashMap<>();
-        time.put("timestamp", Timestamp.now());
-        Map<String, String> data = new HashMap<>();
-        data.put("location", locationName);
-        data.put("username", userName);
+        MiniUser miniUser = new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl());
+        Position position = new Position(miniUser, geoPoint, locationName, Timestamp.now());
 
-        // Search for the document of the current user
-        db.collection("positions")
-                .whereEqualTo("uid", userUid)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@javax.annotation.Nullable QuerySnapshot value, @javax.annotation.Nullable FirebaseFirestoreException e) {
-                        // If there already exists the current user position
-                        // otherwise update of the position of the user
-                        if(value.getDocuments().size()==0){
-                            String uiCode = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
-                            data.put("uid", userUid);
-                            db.collection("positions")
-                                    .document(uiCode)
-                                    .set(position, SetOptions.merge());
-                            db.collection("positions")
-                                    .document(uiCode)
-                                    .set(data, SetOptions.merge());
-                            db.collection("positions")
-                                    .document(uiCode)
-                                    .set(time, SetOptions.merge());
-                        }else{
-                            String id = value.getDocuments().get(0).getId();
-                            db.collection("positions")
-                                    .document(id)
-                                    .set(position, SetOptions.merge());
-                            db.collection("positions")
-                                    .document(id)
-                                    .set(time, SetOptions.merge());
-                            db.collection("positions")
-                                    .document(id)
-                                    .set(data, SetOptions.merge());
-                        }
+        OnCompleteListener onCompleteListener = task -> {
+            if(task.isSuccessful())
+                invokeNextFragment();
+        };
+
+        CollectionReference ref = db.collection(Constants.DB_COLL_POSITIONS);
+        ref.whereEqualTo("user.uid", miniUser.getUid())
+            .addSnapshotListener((value, e) -> {
+                if(value != null)
+                    if(value.getDocuments().size() == 0) {
+                        position.setPositionID(UUID.randomUUID().toString().replace("-", "").substring(0, 20));
+                        ref.document(position.getPositionID()).set(position).addOnCompleteListener(onCompleteListener);
+                    } else {
+                        position.setPositionID(value.getDocuments().get(0).getId());
+                        ref.document(position.getPositionID()).set(position).addOnCompleteListener(onCompleteListener);
                     }
-                });
+            });
     }
 
     /**
@@ -359,4 +305,5 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
+
 }
