@@ -1,12 +1,27 @@
 package com.kaori.kaori.ChatFragments;
 
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.kaori.kaori.Model.Chat;
-import com.kaori.kaori.Model.User;
+import com.kaori.kaori.Model.MiniUser;
+import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,12 +38,11 @@ public class ChatListFragment extends Fragment {
      * Variables.
      */
     private List<Chat> chatList; // list of all chats.
-    private String senderID; // id of the user that uses the app.
-    private HashMap<String, User> chatUsers;
+    private String myUid; // id of the user that uses the app.
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
-    /*
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -36,11 +50,10 @@ public class ChatListFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.chat_list);
 
         chatList = new ArrayList<>();
-        chatUsers = new HashMap<>();
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        senderID = DataManager.getInstance().getUser().getUid();
+        myUid = DataManager.getInstance().getUser().getUid();
 
         // specify an adapter (see also next example)
         mAdapter = new MyAdapter(chatList);
@@ -52,10 +65,10 @@ public class ChatListFragment extends Fragment {
     }
 
     private void loadAllChats(){
-        LogManager.getInstance().printConsoleMessage(senderID);
+        LogManager.getInstance().printConsoleMessage(myUid);
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
-                .whereArrayContains("users", senderID)
+                .whereArrayContains("users", myUid)
                 .orderBy("lastMessage")
                 .addSnapshotListener((value, e) -> {
                     if(value != null) {
@@ -64,6 +77,7 @@ public class ChatListFragment extends Fragment {
                             switch (doc.getType()) {
                                 case ADDED:
                                     chatList.add(doc.getDocument().toObject(Chat.class));
+                                    mAdapter.notifyDataSetChanged();
                                     break;
                                 case MODIFIED:
                                     // todo
@@ -73,33 +87,10 @@ public class ChatListFragment extends Fragment {
                                     break;
                             }
                         }
-                        if(chatList.size() > 0)
-                            loadUsers();
                     } else {
                         LogManager.getInstance().showVisualMessage(getContext(), "Nessun messaggio");
                     }
                 });
-    }
-
-    private void loadUsers() {
-        for (Chat c : chatList) {
-            String uid = getUserUidFromChat(c);
-            FirebaseFirestore.getInstance()
-                    .collection(Constants.DB_COLL_USERS)
-                    .whereEqualTo("uid", uid)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful())
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                chatUsers.put(uid, document.toObject(User.class));
-                                mAdapter.notifyDataSetChanged();
-                            }
-                    });
-        }
-    }
-
-    private String getUserUidFromChat(Chat c){
-        return c.getUsers().get(0).equalsIgnoreCase(senderID) ? c.getUsers().get(1) : c.getUsers().get(0);
     }
 
     private void invokeNextFragment(Fragment fragment){
@@ -135,9 +126,8 @@ public class ChatListFragment extends Fragment {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
 
             v.setOnClickListener(view -> {
-                String key = getUserUidFromChat(mDataset.get(mRecyclerView.getChildLayoutPosition(v)));
                 ChatFragment chatFragment = new ChatFragment();
-                chatFragment.setParams(mDataset.get(mRecyclerView.getChildLayoutPosition(v)), senderID, key);
+                chatFragment.setParams(mDataset.get(mRecyclerView.getChildLayoutPosition(v)));
                 invokeNextFragment(chatFragment);
             });
 
@@ -147,12 +137,9 @@ public class ChatListFragment extends Fragment {
         // Replace the contents of a view (invoked by the layout manager)
 
         @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
-            String key = getUserUidFromChat(mDataset.get(position));
-            holder.mTextView.setText(chatUsers.get(key).getName());
-
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(myUid);
+            holder.mTextView.setText(otherUser.getName());
         }
         // Return the size of your dataset (invoked by the layout manager)
 
@@ -160,6 +147,6 @@ public class ChatListFragment extends Fragment {
         public int getItemCount() {
             return mDataset.size();
         }
-    } */
+    }
 
 }

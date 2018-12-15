@@ -75,8 +75,13 @@ public class ChatFragment extends Fragment {
         otherUser = receiverUser;
     }
 
-    public void setParams(Chat c, String senderUID, String receiverUID){
+    public void setParams(Chat c){
         this.chat = c;
+
+        //set the other user.
+        for(MiniUser u : c.getUsers())
+            if(!u.getUid().equalsIgnoreCase(myUser.getUid()))
+                otherUser = u;
     }
 
     private void sendMessage(Message m) {

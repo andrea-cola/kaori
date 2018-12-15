@@ -48,4 +48,11 @@ public class Chat {
     public void setChatID(String chatID) {
         this.chatID = chatID;
     }
+
+    public MiniUser getTheOtherUserByUid(String uid){
+        for(MiniUser u : users)
+            if(!u.getUid().equalsIgnoreCase(uid))
+                return u;
+        return null;
+    }
 }
