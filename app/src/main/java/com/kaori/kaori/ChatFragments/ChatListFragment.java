@@ -68,7 +68,6 @@ public class ChatListFragment extends Fragment {
         LogManager.getInstance().printConsoleMessage(myUid);
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
-                .whereArrayContains("users", myUid)
                 .orderBy("lastMessage")
                 .addSnapshotListener((value, e) -> {
                     if(value != null) {
@@ -76,8 +75,11 @@ public class ChatListFragment extends Fragment {
                             LogManager.getInstance().printConsoleMessage(doc.getDocument().getId());
                             switch (doc.getType()) {
                                 case ADDED:
-                                    chatList.add(doc.getDocument().toObject(Chat.class));
-                                    mAdapter.notifyDataSetChanged();
+                                    Chat c = doc.getDocument().toObject(Chat.class);
+                                    if(containsMyUid(c.getUsers())) {
+                                        chatList.add(c);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
                                     break;
                                 case MODIFIED:
                                     // todo
@@ -91,6 +93,10 @@ public class ChatListFragment extends Fragment {
                         LogManager.getInstance().showVisualMessage(getContext(), "Nessun messaggio");
                     }
                 });
+    }
+
+    private boolean containsMyUid(List<MiniUser> users){
+        return users.get(0).getUid().equalsIgnoreCase(myUid) || users.get(1).getUid().equalsIgnoreCase(myUid);
     }
 
     private void invokeNextFragment(Fragment fragment){

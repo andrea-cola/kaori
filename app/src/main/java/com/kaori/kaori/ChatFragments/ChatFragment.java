@@ -56,8 +56,6 @@ public class ChatFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
 
-        myUser = DataManager.getInstance().getMiniUser();
-
         // add listener to the button that sends messages.
         addOnClickListener();
 
@@ -70,6 +68,7 @@ public class ChatFragment extends Fragment {
     }
 
     public void newChatParams(MiniUser receiverUser){
+        myUser = DataManager.getInstance().getMiniUser();
         chat = new Chat();
         chat.addUsers(myUser, receiverUser);
         otherUser = receiverUser;
@@ -77,6 +76,8 @@ public class ChatFragment extends Fragment {
 
     public void setParams(Chat c){
         this.chat = c;
+
+        myUser = DataManager.getInstance().getMiniUser();
 
         //set the other user.
         for(MiniUser u : c.getUsers())

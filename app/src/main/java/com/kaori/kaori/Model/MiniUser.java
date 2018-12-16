@@ -1,6 +1,8 @@
 package com.kaori.kaori.Model;
 
-public class MiniUser {
+import java.io.Serializable;
+
+public class MiniUser implements Serializable  {
 
     private String uid;
     private String name;

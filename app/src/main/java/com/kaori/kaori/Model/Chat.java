@@ -2,14 +2,15 @@ package com.kaori.kaori.Model;
 
 import com.google.firebase.Timestamp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chat {
+public class Chat implements Serializable {
 
     private String chatID;
     private Timestamp lastMessage;
-    private List<MiniUser> users;
+    private ArrayList<MiniUser> users;
 
     public Timestamp getLastMessage() {
         return lastMessage;
@@ -23,7 +24,7 @@ public class Chat {
         return users;
     }
 
-    public void setUsers(List<MiniUser> users) {
+    public void setUsers(ArrayList<MiniUser> users) {
         this.users = users;
     }
 
