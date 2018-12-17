@@ -4,7 +4,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,8 +47,6 @@ public class FeedFragment extends Fragment {
     }
 
     private void initializeView(View view){
-        FloatingActionButton fab = view.findViewById(R.id.feedFAB);
-        fab.setOnClickListener(v -> invokeNextFragment(new UploadBookFragment()));
 
         RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -109,7 +106,7 @@ public class FeedFragment extends Fragment {
             holder.courseView.setText(materials.get(i).getCourse());
 
             holder.cardView.setOnClickListener(v -> {
-                BookFragment bookFragment = new BookFragment();
+                MaterialFragment bookFragment = new MaterialFragment();
                 bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
                 invokeNextFragment(bookFragment);
             });

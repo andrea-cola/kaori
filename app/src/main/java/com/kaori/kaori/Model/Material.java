@@ -14,10 +14,11 @@ public class Material {
     private String title;
     private String type;
     private String url;
+    private Boolean isModified;
 
     public Material(){}
 
-    public Material(String title, String author, String url, String type, Timestamp timestamp, String exam, String course, String professor, String comment, String authorUrl){
+    public Material(String title, String author, String url, String type, Timestamp timestamp, String exam, String course, String professor, String comment, String authorUrl, Boolean isModified){
 
     }
 
@@ -99,5 +100,13 @@ public class Material {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public void setModified(Boolean modified) {
+        isModified = modified;
+    }
+
+    public Boolean getModified() {
+        return isModified;
     }
 }

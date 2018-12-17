@@ -11,6 +11,7 @@ import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,7 @@ import com.kaori.kaori.Utils.LogManager;
 
 import static android.app.Activity.RESULT_OK;
 
-public class UploadBookFragment extends Fragment {
+public class UploadMaterialFragment extends Fragment {
 
     /**
      * Constants
@@ -45,9 +46,8 @@ public class UploadBookFragment extends Fragment {
     /**
      * Views from layout
      */
-    private EditText fileNameView;
     private Button updateButton;
-    private EditText commentView;
+    private EditText fileNameView, commentView, linkView ;
     private CheckBox checkBox;
     private View view;
     private ChipGroup examsChipGroup, professorChipGroup;
@@ -60,11 +60,12 @@ public class UploadBookFragment extends Fragment {
     private String exam;
     private String professor;
     private boolean validFields[] = new boolean[2];
+    private boolean isMaterialModified = false;
 
     /**
      * Constructor
      */
-    public UploadBookFragment() {}
+    public UploadMaterialFragment() {}
 
     @Nullable
     @Override
@@ -78,6 +79,7 @@ public class UploadBookFragment extends Fragment {
             validFields[i] = false;
 
         initializeView();
+
         setupButtonListeners();
 
         setExamChipGroup();
@@ -93,6 +95,7 @@ public class UploadBookFragment extends Fragment {
     private void initializeView() {
         fileNameView = view.findViewById(R.id.fileName);
         updateButton = view.findViewById(R.id.uploadButton);
+        linkView = view.findViewById(R.id.linkEditText);
         checkBox = view.findViewById(R.id.uploadCheckBox);
         examsChipGroup = view.findViewById(R.id.uploadExamsChipGroup);
         examsChipGroup.setSingleSelection(true);
@@ -101,9 +104,6 @@ public class UploadBookFragment extends Fragment {
         commentView = view.findViewById(R.id.commentView);
     }
 
-    /**
-     * This method sets up the button in the view
-     */
     private void setupButtonListeners() {
         updateButton.setOnClickListener(v -> {
             boolean flag = true;
@@ -115,7 +115,7 @@ public class UploadBookFragment extends Fragment {
             else if (professor.equals(""))
                 Toast.makeText(getContext(), "Seleziona un professore", Toast.LENGTH_SHORT).show();
             else
-                getPDF();
+                checkUploadLink();
         });
 
         fileNameView.addTextChangedListener(new TextWatcher() {
@@ -165,6 +165,22 @@ public class UploadBookFragment extends Fragment {
     }
 
     /**
+     * This methos is used to check the link url: if it is valid upload it in the database,
+     * otherwise the user upload a saved pdf
+     */
+    private void checkUploadLink(){
+        if(linkView.getText().equals("")){
+            getPDF();
+        }else{
+            if(Patterns.WEB_URL.matcher(linkView.getText()).matches()){
+                uploadFileIntoDb(Uri.parse(linkView.getText().toString()));
+            }else {
+                Toast.makeText(getContext(), "Url non valido", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    /**
      * This method creates intent for getting the pdf document
      */
     private void getPDF() {
@@ -182,7 +198,7 @@ public class UploadBookFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null)
             if (data.getData() != null)
-                uploadFile(data.getData());
+                uploadFileIntoStorage(data.getData());
             else
                 Toast.makeText(getContext(), "No file chosen", Toast.LENGTH_SHORT).show();
     }
@@ -190,7 +206,7 @@ public class UploadBookFragment extends Fragment {
     /**
      * This method is used to upload the file in the Cloud
      */
-    private void uploadFile(Uri data) {
+    private void uploadFileIntoStorage(Uri data) {
         ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Uploading...", true);
 
         StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + currentUser.getName() + "_" + fileNameView.getText().toString() + ".pdf");
@@ -199,13 +215,9 @@ public class UploadBookFragment extends Fragment {
         // register observers to listen for when the download is done or if it fails
         task.addOnSuccessListener(taskSnapshot -> {
             progressDialog.dismiss();
-            // upload pdf file in Firebase database
-            Material material = createNewBook(taskSnapshot);
 
-            db.collection(Constants.DB_COLL_MATERIALS)
-                    .add(material)
-                    .addOnSuccessListener(documentReference -> LogManager.getInstance().printConsoleMessage("DocumentSnapshot added with ID: " + documentReference.getId()))
-                    .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
+            uploadFileIntoDb(taskSnapshot.getUploadSessionUri());
+
             getActivity().getFragmentManager().popBackStack();
             returnToFeedFragment();
         }).addOnFailureListener(e -> {
@@ -214,18 +226,34 @@ public class UploadBookFragment extends Fragment {
         });
     }
 
+    /**
+     * This method is used to upload the material in Firebase Firestore
+     */
+    private void uploadFileIntoDb(Uri uploadUri){
+        Material material = createNewBook(uploadUri);
+
+        db.collection(Constants.DB_COLL_MATERIALS)
+                .add(material)
+                .addOnSuccessListener(documentReference -> LogManager.getInstance().printConsoleMessage("DocumentSnapshot added with ID: " + documentReference.getId()))
+                .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
+    }
+
+
+    /**
+     * This method is used to return to the feed fragment
+     */
     private void returnToFeedFragment() {
         if (getActivity() != null)
             getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 
     /**
-     * This method set up the book in order to upload it to Firebase Firestore
+     * This method set up the book in order to checkUploadLink it to Firebase Firestore
      */
-    private Material createNewBook(UploadTask.TaskSnapshot task) {
-        return new Material(String.valueOf(fileNameView.getText()), currentUser.getName(), String.valueOf(task.getUploadSessionUri()),
+    private Material createNewBook(Uri uploadUri) {
+        return new Material(String.valueOf(fileNameView.getText()), currentUser.getName(), String.valueOf(uploadUri),
                 checkBox.isChecked() ? "file" : "book", Timestamp.now(), exam, currentUser.getCourse(),
-                professor, String.valueOf(commentView.getText()), currentUser.getPhotosUrl());
+                professor, String.valueOf(commentView.getText()), currentUser.getPhotosUrl(), isMaterialModified);
     }
 
     /**
@@ -245,6 +273,9 @@ public class UploadBookFragment extends Fragment {
         }
     }
 
+    /**
+     * This method adds to the Chip Group related to professor in the View chips with exams names
+     */
     private void setProfessorChipGroup() {
         db.collection(Constants.DB_COLL_PROFESSORS)
                 .whereEqualTo(Constants.FIELD_EXAM, exam)
@@ -273,5 +304,9 @@ public class UploadBookFragment extends Fragment {
         chip.setClickable(true);
         chip.setCloseIconVisible(false);
         return chip;
+    }
+
+    public void isMaterialModified(){
+        isMaterialModified = true;
     }
 }

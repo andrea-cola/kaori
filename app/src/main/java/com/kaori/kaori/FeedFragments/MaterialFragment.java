@@ -23,12 +23,12 @@ import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
 
-public class BookFragment extends Fragment {
+public class MaterialFragment extends Fragment {
 
     private StorageReference storage;
     private String title, author;
 
-    public BookFragment(){}
+    public MaterialFragment(){}
 
     @NonNull
     @Override

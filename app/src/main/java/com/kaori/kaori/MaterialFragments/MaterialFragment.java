@@ -22,7 +22,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.FeedFragments.BookFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.LogManager;
@@ -178,7 +177,7 @@ public class MaterialFragment extends Fragment {
             protected void onBindViewHolder(@NonNull final BookViewHolder holder, int position, @NonNull Material model) {
                 holder.setDetails(model.getTitle(), model.getAuthor());
                 holder.mView.setOnClickListener(v -> {
-                    BookFragment fragment = new BookFragment();
+                    com.kaori.kaori.FeedFragments.MaterialFragment fragment = new com.kaori.kaori.FeedFragments.MaterialFragment();
                     fragment.setParameters(holder.book_author.getText().toString(), holder.book_title.getText().toString());
                     invokeFragment(fragment);
                     hideKeyboard();
