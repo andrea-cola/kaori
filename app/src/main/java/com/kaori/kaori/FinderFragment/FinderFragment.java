@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Position;
@@ -75,15 +76,19 @@ public class FinderFragment extends Fragment {
 
     private void loadActivePositions(){
         LogManager.getInstance().printConsoleMessage("loadActivePositions");
-        db.collection(Constants.DB_COLL_POSITIONS).orderBy("timestamp").get().addOnCompleteListener(task -> {
-            if(task.isSuccessful() && task.getResult() != null)
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    LogManager.getInstance().printConsoleMessage("eccoci");
-                    if(!String.valueOf(document.get("user.uid")).equalsIgnoreCase(uid)) {
-                        positions.add(document.toObject(Position.class));
-                        adapter.notifyDataSetChanged();
-                    }
-                }
+        db.collection(Constants.DB_COLL_POSITIONS)
+                .orderBy("timestamp")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && task.getResult() != null)
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            LogManager.getInstance().printConsoleMessage("eccoci");
+                            if(!String.valueOf(document.get("user.uid")).equalsIgnoreCase(uid)
+                                    && Timestamp.now().toDate().equals(document.getTimestamp("timestamp").toDate())) {
+                                positions.add(document.toObject(Position.class));
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
         });
     }
 
