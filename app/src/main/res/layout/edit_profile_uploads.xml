@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/feedFAB"
+            android:id="@+id/FAB"
             android:layout_width="@dimen/default_height"
             android:layout_height="@dimen/default_height"
             android:layout_marginEnd="@dimen/default_margin"

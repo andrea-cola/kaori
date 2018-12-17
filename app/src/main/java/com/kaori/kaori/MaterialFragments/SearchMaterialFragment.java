@@ -22,13 +22,15 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.kaori.kaori.FeedFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 
-public class MaterialFragment extends Fragment {
+public class SearchMaterialFragment extends Fragment {
 
     /**
      * Constants
@@ -58,7 +60,7 @@ public class MaterialFragment extends Fragment {
     /**
      * Constructor
      */
-    public MaterialFragment(){ }
+    public SearchMaterialFragment(){ }
 
     @Nullable
     @Override
@@ -133,9 +135,12 @@ public class MaterialFragment extends Fragment {
             }
         });
 
-        filterButton.setOnClickListener(v -> {
-            FilterFragment fragment = new FilterFragment();
-            invokeFragment(fragment);
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FilterFragment fragment = new FilterFragment();
+                invokeFragment(fragment);
+            }
         });
     }
 
@@ -171,10 +176,10 @@ public class MaterialFragment extends Fragment {
 
         adapter = new FirestoreRecyclerAdapter<Material, BookViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final BookViewHolder holder, int position, @NonNull Material model) {
-                holder.setDetails(model.getTitle(), model.getAuthor());
+            protected void onBindViewHolder(@NonNull final BookViewHolder holder, int i, @NonNull Material model) {
+                holder.setDetails(materials.get(i).getTitle(), materials.get(i).getType()==Constants.LIBRO ? materials.get(i).getProfessor() : materials.get(i).getMiniUser().getName());
                 holder.mView.setOnClickListener(v -> {
-                    com.kaori.kaori.FeedFragments.MaterialFragment fragment = new com.kaori.kaori.FeedFragments.MaterialFragment();
+                    MaterialFragment fragment = new MaterialFragment();
                     fragment.setParameters(holder.book_author.getText().toString(), holder.book_title.getText().toString());
                     invokeFragment(fragment);
                     hideKeyboard();

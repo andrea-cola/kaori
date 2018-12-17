@@ -4,8 +4,7 @@ import com.google.firebase.Timestamp;
 
 public class Material {
 
-    private String author;
-    private String authorUrl;
+    private MiniUser miniUser;
     private String comment;
     private String course;
     private String professor;
@@ -18,7 +17,7 @@ public class Material {
 
     public Material(){}
 
-    public Material(String title, String author, String url, String type, Timestamp timestamp, String exam, String course, String professor, String comment, String authorUrl, Boolean isModified){
+    public Material(MiniUser miniUser, String title, String url, String type, Timestamp timestamp, String exam, String course, String professor, String comment, Boolean isModified){
 
     }
 
@@ -58,24 +57,16 @@ public class Material {
         this.title = title;
     }
 
-    public void setAuthor(String author){
-        this.author = author;
+    public MiniUser getMiniUser() {
+        return miniUser;
     }
 
-    public void setAuthorUrl(String authorUrl) {
-        this.authorUrl = authorUrl;
+    public void setMiniUser(MiniUser miniUser) {
+        this.miniUser = miniUser;
     }
 
     public String getTitle(){
         return title;
-    }
-
-    public String getAuthor(){
-        return author;
-    }
-
-    public String getAuthorUrl() {
-        return authorUrl;
     }
 
     public String getCourse() {

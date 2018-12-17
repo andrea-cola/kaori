@@ -10,14 +10,12 @@ import android.support.annotation.Nullable;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -31,7 +29,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Model.Material;
-import com.kaori.kaori.Model.User;
+import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -44,20 +42,14 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * Constants
      */
-    private final String LIBRO = "libro";
-    private final String FILE = "file";
-    private final String URL = "url";
     private final static int PICK_PDF_CODE = 2342;
-    private User currentUser = DataManager.getInstance().getUser();
     private final String GS_URL = "gs://kaori-c5a43.appspot.com";
 
     /**
      * Views from layout
      */
-    private Button button;
-    private EditText fileNameView, commentView, linkView ;
-    private CheckBox checkBox;
     private ChipGroup examsChipGroup, professorChipGroup;
+    private EditText titleView, authorView, commentView, linkView, statusView;
     private StorageReference storage;
     private FirebaseFirestore db;
     private String exam, professor, flag;
@@ -73,11 +65,8 @@ public class UploadMaterialFragment extends Fragment {
 
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
-        
-        //setupButtonListeners();
 
-        //setProfessorChipGroup();
-
+        initializeView(view);
 
         return view;
     }
@@ -96,99 +85,54 @@ public class UploadMaterialFragment extends Fragment {
             linearLayout.removeAllViews();
 
             flag = String.valueOf(radioButton.getText());
-            if (flag.equalsIgnoreCase(LIBRO))
+            if (flag.equalsIgnoreCase(Constants.LIBRO))
                 linearLayout.addView(inflater.inflate(R.layout.upload_libro_layout, null));
-            else if (flag.equalsIgnoreCase(FILE))
+            else if (flag.equalsIgnoreCase(Constants.FILE))
                 linearLayout.addView(inflater.inflate(R.layout.upload_file_layout, null));
             else
                 linearLayout.addView(inflater.inflate(R.layout.upload_link_layout, null));
 
-            initializeSubView(linearLayout);
+            initializeSubView(view);
         });
 
+        setUploadButton(view);
+
         radioGroup.check(R.id.radioButton);
+
     }
 
     private void initializeSubView(View view){
+        titleView = view.findViewById(R.id.title);
+        authorView = view.findViewById(R.id.author);
+        commentView = view.findViewById(R.id.comment);
+        linkView = view.findViewById(R.id.url);
+        statusView = view.findViewById(R.id.status);
+
         setExamChipGroup(view);
-        button = view.findViewById(R.id.button_ok);
-
-        //TODO
-        /*button.setOnClickListener(v -> {
-            boolean flag = true;
-            for (boolean field : validFields) flag = flag && field;
-            if (!flag)
-                Toast.makeText(getContext(), "Controlla gli errori", Toast.LENGTH_SHORT).show();
-            else if (exam.equals(""))
-                Toast.makeText(getContext(), "Seleziona un corso", Toast.LENGTH_SHORT).show();
-            else if (professor.equals(""))
-                Toast.makeText(getContext(), "Seleziona un professore", Toast.LENGTH_SHORT).show();
-            else
-                checkUploadLink();
-        });*/
     }
 
-    private void setupButtonListeners() {
-        fileNameView.addTextChangedListener(new TextWatcher() {
+    private void setUploadButton(View view) {
+        Button uploadButton = view.findViewById(R.id.button_ok);
+        uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.length() < 1) {
-                    fileNameView.setError("Hai lasciato il campo vuoto");
-                    validFields[0] = false;
-                } else
-                    validFields[0] = true;
+            public void onClick(View v) {
+                if(titleView.getText().toString().equals("") || commentView.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (flag.equalsIgnoreCase(Constants.LIBRO)) {
+                        String comment = "Lo stato è " + String.valueOf(statusView) + "\n\n" + "Il commento è " + String.valueOf(commentView);
+                        uploadFileIntoDb(null, Constants.LIBRO,  comment );
+                    } else if (flag.equalsIgnoreCase(Constants.FILE)) {
+                        getPDF();
+                    } else
+                        if(Patterns.WEB_URL.matcher(linkView.getText()).matches()){
+                            uploadFileIntoDb(String.valueOf(linkView), Constants.URL, String.valueOf(commentView));
+                        }else {
+                            Toast.makeText(getContext(), "Url non valido", Toast.LENGTH_SHORT).show();
+                        }
+                }
             }
         });
-
-        commentView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.length() < 1) {
-                    commentView.setError("Hai lasciato il campo vuoto");
-                    validFields[1] = false;
-                } else if (editable.length() > 30) {
-                    commentView.setError("Commento troppo lungo");
-                    validFields[1] = false;
-                } else
-                    validFields[1] = true;
-            }
-        });
-    }
-
-    /**
-     * This methos is used to check the link url: if it is valid upload it in the database,
-     * otherwise the user upload a saved pdf
-     */
-    private void checkUploadLink(){
-        if(linkView.getText().equals("")){
-            getPDF();
-        }else{
-            if(Patterns.WEB_URL.matcher(linkView.getText()).matches()){
-                uploadFileIntoDb(Uri.parse(linkView.getText().toString()));
-            }else {
-                Toast.makeText(getContext(), "Url non valido", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     /**
@@ -220,14 +164,14 @@ public class UploadMaterialFragment extends Fragment {
     private void uploadFileIntoStorage(Uri data) {
         ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Uploading...", true);
 
-        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + currentUser.getName() + "_" + fileNameView.getText().toString() + ".pdf");
+        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + titleView.getText().toString() + ".pdf");
         UploadTask task = reference.putFile(data);
 
         // register observers to listen for when the download is done or if it fails
         task.addOnSuccessListener(taskSnapshot -> {
             progressDialog.dismiss();
 
-            uploadFileIntoDb(taskSnapshot.getUploadSessionUri());
+            uploadFileIntoDb(taskSnapshot.getUploadSessionUri().toString(), Constants.FILE, String.valueOf(commentView));
 
             getActivity().getFragmentManager().popBackStack();
             returnToFeedFragment();
@@ -240,8 +184,8 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method is used to upload the material in Firebase Firestore
      */
-    private void uploadFileIntoDb(Uri uploadUri){
-        Material material = createNewBook(uploadUri);
+    private void uploadFileIntoDb(String uploadUri, String constant, String comment){
+        Material material = createNewBook(uploadUri, constant, comment);
 
         db.collection(Constants.DB_COLL_MATERIALS)
                 .add(material)
@@ -260,10 +204,11 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method set up the book in order to checkUploadLink it to Firebase Firestore
      */
-    private Material createNewBook(Uri uploadUri) {
-        return new Material(String.valueOf(fileNameView.getText()), currentUser.getName(), String.valueOf(uploadUri),
-                checkBox.isChecked() ? "file" : "book", Timestamp.now(), exam, currentUser.getCourse(),
-                professor, String.valueOf(commentView.getText()), currentUser.getPhotosUrl(), isMaterialModified);
+    private Material createNewBook(String uploadUri, String constant, String comment) {
+        MiniUser miniUser = DataManager.getInstance().getMiniUser();
+        String course = DataManager.getInstance().getUser().getCourse();
+        return new Material(miniUser, String.valueOf(titleView.getText()), uploadUri, constant,
+                    Timestamp.now(), exam, course, professor, comment, isMaterialModified );
     }
 
     /**
@@ -271,14 +216,14 @@ public class UploadMaterialFragment extends Fragment {
      */
     private void setExamChipGroup(View view) {
         examsChipGroup = view.findViewById(R.id.exams);
-        for(String e : currentUser.getExams()){
-            Chip chip = setChip(new Chip(getContext()), e);
+        for(String e : DataManager.getInstance().getUser().getExams()){
+            Chip chip = setChip(e);
             examsChipGroup.addView(chip);
             chip.setOnClickListener(v -> {
                 professorChipGroup.removeAllViews();
                 if (chip.isChecked()) {
                     exam = chip.getText().toString();
-                    if(flag.equalsIgnoreCase(FILE))
+                    if(flag.equalsIgnoreCase(Constants.FILE))
                         setProfessorChipGroup(view);
                 }
             });
@@ -290,15 +235,15 @@ public class UploadMaterialFragment extends Fragment {
      */
     private void setProfessorChipGroup(View view) {
         if (professorChipGroup == null)
-            professorChipGroup = view.findViewById(R.id.professor);
+            professorChipGroup = view.findViewById(R.id.professors);
         db.collection(Constants.DB_COLL_PROFESSORS)
                 .whereEqualTo(Constants.FIELD_EXAM, exam)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Chip chip = new Chip(getContext());
-                            professorChipGroup.addView(setChip(chip, document.getString(Constants.FIELD_NAME)));
+                            Chip chip = setChip(document.getString(Constants.FIELD_NAME));
+                            professorChipGroup.addView(chip);
                             chip.setOnClickListener(v -> {
                                 if (chip.isChecked())
                                     professor = chip.getText().toString();
@@ -311,15 +256,23 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method sets up the chips on event listener
      */
-    private Chip setChip(Chip chip, String text) {
-        chip.setText(text);
-        chip.setTextSize(getResources().getDimension(R.dimen.default_chip_text_size));
-        chip.setCheckable(true);
-        chip.setClickable(true);
-        chip.setCloseIconVisible(false);
-        return chip;
+    private Chip setChip(String text) {
+        if(getContext()!= null) {
+            Chip chip = new Chip(getContext());
+            chip.setText(text);
+            chip.setTextSize(getResources().getDimension(R.dimen.default_chip_text_size));
+            chip.setCheckable(true);
+            chip.setClickable(true);
+            chip.setCloseIconVisible(false);
+            return chip;
+        }
+        LogManager.getInstance().printConsoleError("CIAONE Error");
+        return null;
     }
 
+    /**
+     * This method sets if the material has been modified
+     */
     public void isMaterialModified(){
         isMaterialModified = true;
     }
