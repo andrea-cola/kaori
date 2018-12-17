@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
@@ -26,87 +27,57 @@ import java.util.List;
 
 public class FeedFragment extends Fragment {
 
-    /**
-     * Variables.
-     */
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private List<Material> mMaterialList;
     private final String BACK_STATE_NAME = getClass().getName();
 
-    /**
-     * View elements
-     */
-    private FloatingActionButton fab;
-    private View view;
+    private RecyclerView.Adapter mAdapter;
+    private List<Material> mMaterialList;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.feed_layout, container, false);
+        View view = inflater.inflate(R.layout.feed_layout, container, false);
 
         // setting the parameters
         mMaterialList = new ArrayList<>();
 
-        setUpView();
+        initializeView(view);
 
-        setUpButtons();
-
-        setUpFirebase();
+        downloadData();
 
         return view;
     }
 
-    /**
-     * This method sets up the view elements
-     */
-    private void setUpView(){
-        recyclerView = view.findViewById(R.id.my_recycler_view);
-        fab = view.findViewById(R.id.feedFAB);
+    private void initializeView(View view){
+        FloatingActionButton fab = view.findViewById(R.id.feedFAB);
+        fab.setOnClickListener(v -> invokeNextFragment(new UploadBookFragment()));
 
-        mAdapter = new RecyclerAdapter(mMaterialList);
+        RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
+        mAdapter = new RecyclerAdapter(mMaterialList);
         recyclerView.setAdapter(mAdapter);
     }
 
-    /**
-     * This methods sets up the listeners on the buttons of the view
-     */
-    private void setUpButtons(){
-        // Floating Action Button management for upload pdf files
-        fab.setOnClickListener(v -> {
-            UploadBookFragment uploadFragment = new UploadBookFragment();
-            invokeNextFragment(uploadFragment);
-        });
-    }
+    private void downloadData(){
+        List<String> myExams = DataManager.getInstance().getUser().getExams();
 
-    /**
-     * This method sets up the Firebase database
-     */
-    private void setUpFirebase(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("materials")
-                .orderBy("timestamp")
+        FirebaseFirestore.getInstance()
+                .collection(Constants.DB_COLL_MATERIALS)
+                .orderBy(Constants.FIELD_TIMESTAMP)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (DataManager.getInstance().getUser().getExams().contains(String.valueOf(document.get("exam"))))
+                    if (task.isSuccessful() && task.getResult() != null)
+                        for (QueryDocumentSnapshot document : task.getResult())
+                            if (myExams.contains(String.valueOf(document.get(Constants.FIELD_EXAM)))) {
                                 mMaterialList.add(document.toObject(Material.class));
-                        }
-                        if(getContext() != null)
-                            mAdapter.notifyDataSetChanged();
-                    } else {
+                                mAdapter.notifyDataSetChanged();
+                            }
+                    else
                         LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
-                    }
                 });
     }
 
-    /**
-     * This method invokes the book fragment when the card is cliked
-     */
     private void invokeNextFragment(Fragment fragment) {
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -117,9 +88,6 @@ public class FeedFragment extends Fragment {
         }
     }
 
-    /**
-     * Private Adapter for RecyclerView
-     */
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
         List<Material> materials;
@@ -128,9 +96,6 @@ public class FeedFragment extends Fragment {
             this.materials = materials;
         }
 
-        /**
-         * This method inflates the CardView in the RecyclerView
-         */
         @NonNull
         @Override
         public Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
@@ -155,10 +120,6 @@ public class FeedFragment extends Fragment {
             return materials.size();
         }
 
-        /**
-         * Holder class contains the info of the card and the book element selected or
-         * the next book element in the recycler view
-         */
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             TextView title, author, courseView;
             CardView cardView;

@@ -29,15 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Fragment that allows to edit the attented exams.
+ * Fragment that allows to edit the attended exams.
  */
 public class EditCoursesFragment extends Fragment {
 
     /**
      * Constants.
      */
-    private final String UNIVERSITY_FIELD = "university";
-    private final String COURSE_FIELD = "course";
     private final String ALREADY_SELECTED_ERROR = "Esame già selezionato";
     private final String GENERIC_ERROR = "Impossibile contattare il server";
 
@@ -64,11 +62,11 @@ public class EditCoursesFragment extends Fragment {
 
         buttonOk.setOnClickListener(view -> saveData());
 
-        context = getContext();
-        this.inflater = inflater;
         autoCompleteTextViewList = new ArrayList<>();
         fieldsList = new ArrayList<>();
         selectedCourses = new ArrayList<>();
+        context = getContext();
+        this.inflater = inflater;
 
         loadExams();
 
@@ -79,7 +77,6 @@ public class EditCoursesFragment extends Fragment {
      * Add a auto complete text view.
      */
     private void addAutoCompleteTextView(String e) {
-
         if (autoCompleteTextViewList.size() == 0 || !autoCompleteTextViewList.get(autoCompleteTextViewList.size() - 1).getText().toString().isEmpty()) {
             if (autoCompleteTextViewList.size() < importedCourses.size()) {
                 View acwLayout = inflater.inflate(R.layout.autocompletetextview, null, false);
@@ -102,7 +99,6 @@ public class EditCoursesFragment extends Fragment {
                 if (e != null)
                     acw.setText(e);
 
-                // do not change position
                 attachListeners(acw);
             } else
                 LogManager.getInstance().showVisualMessage(context, "Non è possible aggiungere altri esami.");
@@ -158,8 +154,8 @@ public class EditCoursesFragment extends Fragment {
      */
     private void loadExams() {
         FirebaseFirestore.getInstance().collection(Constants.DB_COLL_EXAMS)
-                .whereEqualTo(UNIVERSITY_FIELD, DataManager.getInstance().getUser().getUniversity())
-                .whereEqualTo(COURSE_FIELD, DataManager.getInstance().getUser().getCourse())
+                .whereEqualTo(Constants.FIELD_UNIVERSITY, DataManager.getInstance().getUser().getUniversity())
+                .whereEqualTo(Constants.FIELD_COURSES, DataManager.getInstance().getUser().getCourse())
                 .get()
                 .addOnCompleteListener(task -> {
                     QuerySnapshot result = task.getResult();
