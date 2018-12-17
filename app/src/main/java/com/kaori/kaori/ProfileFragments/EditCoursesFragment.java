@@ -46,7 +46,7 @@ public class EditCoursesFragment extends Fragment {
     private View view;
     private Button buttonOk;
     private List<String> importedCourses, selectedCourses;
-    private LayoutInflater inflater;
+    private LayoutInflater i;
     private ArrayAdapter standardAdapter;
     private LinearLayout addingSpace;
     private List<AutoCompleteTextView> autoCompleteTextViewList;
@@ -66,7 +66,7 @@ public class EditCoursesFragment extends Fragment {
         fieldsList = new ArrayList<>();
         selectedCourses = new ArrayList<>();
         context = getContext();
-        this.inflater = inflater;
+        i = inflater;
 
         loadExams();
 
@@ -79,7 +79,7 @@ public class EditCoursesFragment extends Fragment {
     private void addAutoCompleteTextView(String e) {
         if (autoCompleteTextViewList.size() == 0 || !autoCompleteTextViewList.get(autoCompleteTextViewList.size() - 1).getText().toString().isEmpty()) {
             if (autoCompleteTextViewList.size() < importedCourses.size()) {
-                View acwLayout = inflater.inflate(R.layout.autocompletetextview, null, false);
+                View acwLayout = i.inflate(R.layout.autocompletetextview, null, false);
                 AutoCompleteTextView acw = acwLayout.findViewById(R.id.autocompleteview);
                 acw.setAdapter(standardAdapter);
 

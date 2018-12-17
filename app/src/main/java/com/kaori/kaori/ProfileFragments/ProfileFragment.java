@@ -24,26 +24,13 @@ import com.kaori.kaori.Kaori;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class represents the Profile entry of the bottom bar menu.
- */
 public class ProfileFragment extends Fragment {
 
-    /**
-     * Constants.
-     */
     private final String BACK_STATE_NAME = getClass().getName();
-
-    /**
-     * Variables.
-     */
-    private ImageView profileImageView;
-    private DataManager hub;
     private RecyclerView mExamsList;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Nullable
     @Override
@@ -52,32 +39,30 @@ public class ProfileFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // get views from layout.
-        Button editCourses = view.findViewById(R.id.profile_button_edit);
         Button logout = view.findViewById(R.id.profile_button_logout);
-        profileImageView = view.findViewById(R.id.profile_image);
+        ImageView profileImageView = view.findViewById(R.id.profile_image);
         TextView mName = view.findViewById(R.id.profile_name);
         TextView mUniversity = view.findViewById(R.id.profile_university);
         TextView mCourseType = view.findViewById(R.id.profile_course_type);
         mExamsList = view.findViewById(R.id.profile_exams_list);
 
         // get the instance of Datahub
-        hub = DataManager.getInstance();
+        DataManager hub = DataManager.getInstance();
 
         // load profile image
-        loadProfileImageView();
+        if(getContext() != null)
+            Glide.with(getContext())
+                    .load(hub.getUser().getPhotosUrl())
+                    .apply(hub.getGetGlideRequestOptionsCircle())
+                    .into(profileImageView);
 
         mName.setText(hub.getUser().getName());
         mUniversity.setText(hub.getUser().getUniversity());
         mCourseType.setText(hub.getUser().getCourse());
 
         mExamsList.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mExamsList.setLayoutManager(mLayoutManager);
-        mAdapter = new ListAdapter(hub.getUser().getExams());
-        mExamsList.setAdapter(mAdapter);
-
-        // attach listener to the logout button
-        editCourses.setOnClickListener(view1 -> showEditExams());
+        mExamsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mExamsList.setAdapter(new ListAdapter());
 
         logout.setOnClickListener(view12 -> {
             FirebaseAuth.getInstance().signOut();
@@ -90,95 +75,61 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
-    /**
-     * Add the menu to the layout.
-     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.profile_action_bar, menu);
     }
 
-    /**
-     * Check the selection of the menu option.
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_info)
-            return showEditProfile();
+            return invokeNextFragment(new EditProfileInfo());
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Show the fragment that allows to edit the profile.
-     */
-    private boolean showEditProfile() {
+    private boolean invokeNextFragment(Fragment fragment) {
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new EditProfileInfo())
+                    .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
         return true;
     }
 
-    /**
-     * Show the fragment that allows to edit the exams.
-     */
-    private void showEditExams() {
-        if(getActivity() != null & getActivity().getSupportFragmentManager() != null)
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, new EditCoursesFragment())
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
-    }
-
-    /**
-     * Load the image profile.
-     */
-    private void loadProfileImageView(){
-        Glide.with(getContext())
-                .load(hub.getUser().getPhotosUrl())
-                .apply(hub.getGetGlideRequestOptionsCircle())
-                .into(profileImageView);
-    }
-
-    public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
+    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
         private List<String> mDataset;
 
         class ListViewHolder extends RecyclerView.ViewHolder {
             TextView mTextView;
+
             ListViewHolder(View v) {
                 super(v);
-                mTextView = v.findViewById(R.id.simple_list_item_textview);
+                mTextView = v.findViewById(R.id.chat_user);
             }
         }
 
-        ListAdapter(List<String> myDataset) {
-            mDataset = myDataset;
+        ListAdapter() {
+            mDataset = new ArrayList<>();
+            mDataset.add("I miei corsi");
+            mDataset.add("I miei uploads");
         }
 
-        // Create new views (invoked by the layout manager)
+        @NonNull
         @Override
-        public ListAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent,
-                                                         int viewType) {
-            // create a new view
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.simple_list_item, parent, false);
+        public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
+            v.setOnClickListener(view -> invokeNextFragment(mExamsList.getChildLayoutPosition(v) == 0 ? new EditCoursesFragment() : new EditFilesFragment()));
             return new ListViewHolder(v);
         }
 
-        // Replace the contents of a view (invoked by the layout manager)
         @Override
-        public void onBindViewHolder(ListViewHolder holder, int position) {
-            // - get element from your dataset at this position
-            // - replace the contents of the view with that element
+        public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
             holder.mTextView.setText(mDataset.get(position));
-
         }
 
-        // Return the size of your dataset (invoked by the layout manager)
         @Override
         public int getItemCount() {
             return mDataset.size();

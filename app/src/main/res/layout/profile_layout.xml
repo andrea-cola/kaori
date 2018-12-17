@@ -49,15 +49,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_university" />
 
-        <TextView
-            android:id="@+id/sb1"
-            style="@style/KaoriSubTitleTextView"
-            android:text="@string/subtitle_exams_list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_course_type"
-            />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/profile_exams_list"
             android:layout_width="0dp"
@@ -66,15 +57,7 @@
             android:layout_marginEnd="@dimen/default_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sb1" />
-
-        <Button
-            android:id="@+id/profile_button_edit"
-            style="@style/KaoriButton"
-            android:text="@string/button_edit_courses"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_exams_list" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_course_type" />
 
         <Button
             android:id="@+id/profile_button_logout"
@@ -83,7 +66,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_button_edit" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_exams_list" />
 
     </android.support.constraint.ConstraintLayout>
 
