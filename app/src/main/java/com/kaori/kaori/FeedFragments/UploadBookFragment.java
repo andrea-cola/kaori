@@ -125,10 +125,6 @@ public class UploadBookFragment extends Fragment {
                 for (boolean field : validFields) flag = flag && field;
                 if (!flag) {
                     Toast.makeText(getContext(), "Controlla gli errori", Toast.LENGTH_SHORT).show();
-                } else if (exam.equals("")) {
-                    Toast.makeText(getContext(), "Seleziona un corso", Toast.LENGTH_SHORT).show();
-                } else if (professor.equals("")) {
-                    Toast.makeText(getContext(), "Seleziona un professore", Toast.LENGTH_SHORT).show();
                 } else {
                     getPDF();
                 }
