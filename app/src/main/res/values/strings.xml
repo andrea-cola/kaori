@@ -48,11 +48,13 @@
     <string name="preferences_master_login_uid">master_login_uid</string>
     <string name="preferences_master_login_username">master_login_username</string>
 
-    <string name="share_button">SHARE</string>
-    <string name="upload_button">UPLOAD</string>
+    <string name="share_button">share</string>
+    <string name="upload_button">Upload</string>
     <string name="upload_your_pdf">Upload your pdf</string>
     <string name="write_the_title">Write the title</string>
     <string name="no_results">No Results</string>
+    <string name="upload_a_link">Upload a link</string>
+    <string name="upload_a_file_or_your_notes">Upload a file or your notes</string>
 
 
 </resources>
