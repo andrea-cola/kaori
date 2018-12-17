@@ -133,12 +133,9 @@ public class MaterialFragment extends Fragment {
             }
         });
 
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FilterFragment fragment = new FilterFragment();
-                invokeFragment(fragment);
-            }
+        filterButton.setOnClickListener(v -> {
+            FilterFragment fragment = new FilterFragment();
+            invokeFragment(fragment);
         });
     }
 

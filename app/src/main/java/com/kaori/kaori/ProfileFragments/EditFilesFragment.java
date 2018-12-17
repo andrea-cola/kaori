@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.kaori.kaori.FeedFragments.UploadBookFragment;
+import com.kaori.kaori.FeedFragments.UploadMaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -104,7 +104,8 @@ public class EditFilesFragment extends Fragment {
         @Override
         public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
-            UploadBookFragment uploadBookFragment = new UploadBookFragment();
+            UploadMaterialFragment uploadBookFragment = new UploadMaterialFragment();
+
             v.setOnClickListener(view -> invokeNextFragment(uploadBookFragment));
             return new ListViewHolder(v);
         }

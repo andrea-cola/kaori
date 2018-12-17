@@ -1,6 +1,7 @@
 package com.kaori.kaori.FeedFragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
@@ -40,72 +44,77 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * Constants
      */
+    private final String LIBRO = "libro";
+    private final String FILE = "file";
+    private final String URL = "url";
     private final static int PICK_PDF_CODE = 2342;
     private User currentUser = DataManager.getInstance().getUser();
+    private final String GS_URL = "gs://kaori-c5a43.appspot.com";
 
     /**
      * Views from layout
      */
-    private Button updateButton;
+    private Button button;
     private EditText fileNameView, commentView, linkView ;
     private CheckBox checkBox;
-    private View view;
     private ChipGroup examsChipGroup, professorChipGroup;
-
-    /**
-     * Variables
-     */
     private StorageReference storage;
     private FirebaseFirestore db;
-    private String exam;
-    private String professor;
-    private boolean validFields[] = new boolean[2];
-    private boolean isMaterialModified = false;
-
-    /**
-     * Constructor
-     */
-    public UploadMaterialFragment() {}
+    private String exam, professor, flag;
+    private boolean isMaterialModified = false, validFields[] = new boolean[2];
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.upload_pdf, container, false);
+        View view = inflater.inflate(R.layout.upload_layout, container, false);
 
-        storage = FirebaseStorage.getInstance().getReferenceFromUrl("gs://kaori-c5a43.appspot.com");
+        storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
         db = FirebaseFirestore.getInstance();
 
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
+        
+        //setupButtonListeners();
 
-        initializeView();
+        //setProfessorChipGroup();
 
-        setupButtonListeners();
-
-        setExamChipGroup();
-
-        setProfessorChipGroup();
 
         return view;
     }
 
-    /**
-     * This method sets up the view
-     */
-    private void initializeView() {
-        fileNameView = view.findViewById(R.id.fileName);
-        updateButton = view.findViewById(R.id.uploadButton);
-        linkView = view.findViewById(R.id.linkEditText);
-        checkBox = view.findViewById(R.id.uploadCheckBox);
-        examsChipGroup = view.findViewById(R.id.uploadExamsChipGroup);
-        examsChipGroup.setSingleSelection(true);
-        professorChipGroup = view.findViewById(R.id.uploadProfessorsChipGroup);
-        professorChipGroup.setSingleSelection(true);
-        commentView = view.findViewById(R.id.commentView);
+    private void initializeView(View view) {
+        LinearLayout linearLayout = view.findViewById(R.id.linearlayout);
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+        radioGroup.setOnCheckedChangeListener((radioGroup1, i) -> {
+            int selectedId = radioGroup1.getCheckedRadioButtonId();
+
+            // find the radiobutton by returned id
+            RadioButton radioButton = view.findViewById(selectedId);
+
+            linearLayout.removeAllViews();
+
+            flag = String.valueOf(radioButton.getText());
+            if (flag.equalsIgnoreCase(LIBRO))
+                linearLayout.addView(inflater.inflate(R.layout.upload_libro_layout, null));
+            else if (flag.equalsIgnoreCase(FILE))
+                linearLayout.addView(inflater.inflate(R.layout.upload_file_layout, null));
+            else
+                linearLayout.addView(inflater.inflate(R.layout.upload_link_layout, null));
+
+            initializeSubView(linearLayout);
+        });
+
+        radioGroup.check(R.id.radioButton);
     }
 
-    private void setupButtonListeners() {
-        updateButton.setOnClickListener(v -> {
+    private void initializeSubView(View view){
+        setExamChipGroup(view);
+        button = view.findViewById(R.id.button_ok);
+
+        //TODO
+        /*button.setOnClickListener(v -> {
             boolean flag = true;
             for (boolean field : validFields) flag = flag && field;
             if (!flag)
@@ -116,8 +125,10 @@ public class UploadMaterialFragment extends Fragment {
                 Toast.makeText(getContext(), "Seleziona un professore", Toast.LENGTH_SHORT).show();
             else
                 checkUploadLink();
-        });
+        });*/
+    }
 
+    private void setupButtonListeners() {
         fileNameView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -238,7 +249,6 @@ public class UploadMaterialFragment extends Fragment {
                 .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
     }
 
-
     /**
      * This method is used to return to the feed fragment
      */
@@ -259,7 +269,8 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method adds to the Chip Group related to exams in the View chips with exams names
      */
-    private void setExamChipGroup() {
+    private void setExamChipGroup(View view) {
+        examsChipGroup = view.findViewById(R.id.exams);
         for(String e : currentUser.getExams()){
             Chip chip = setChip(new Chip(getContext()), e);
             examsChipGroup.addView(chip);
@@ -267,7 +278,8 @@ public class UploadMaterialFragment extends Fragment {
                 professorChipGroup.removeAllViews();
                 if (chip.isChecked()) {
                     exam = chip.getText().toString();
-                    setProfessorChipGroup();
+                    if(flag.equalsIgnoreCase(FILE))
+                        setProfessorChipGroup(view);
                 }
             });
         }
@@ -276,7 +288,9 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method adds to the Chip Group related to professor in the View chips with exams names
      */
-    private void setProfessorChipGroup() {
+    private void setProfessorChipGroup(View view) {
+        if (professorChipGroup == null)
+            professorChipGroup = view.findViewById(R.id.professor);
         db.collection(Constants.DB_COLL_PROFESSORS)
                 .whereEqualTo(Constants.FIELD_EXAM, exam)
                 .get()
@@ -286,7 +300,7 @@ public class UploadMaterialFragment extends Fragment {
                             Chip chip = new Chip(getContext());
                             professorChipGroup.addView(setChip(chip, document.getString(Constants.FIELD_NAME)));
                             chip.setOnClickListener(v -> {
-                                if(chip.isChecked())
+                                if (chip.isChecked())
                                     professor = chip.getText().toString();
                             });
                         }
@@ -309,4 +323,5 @@ public class UploadMaterialFragment extends Fragment {
     public void isMaterialModified(){
         isMaterialModified = true;
     }
+
 }
