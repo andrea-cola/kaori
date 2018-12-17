@@ -17,6 +17,10 @@ public class Material {
 
     public Material(){}
 
+    public Material(String title, String author, String url, String type, Timestamp timestamp, String exam, String course, String professor, String comment, String authorUrl){
+
+    }
+
     public String getComment() {
         return comment;
     }

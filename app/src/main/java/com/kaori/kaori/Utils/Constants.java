@@ -1,5 +1,9 @@
 package com.kaori.kaori.Utils;
 
+import android.os.Environment;
+
+import java.io.File;
+
 /**
  * This class contains all the constants of the app.
  */
@@ -30,14 +34,22 @@ public class Constants {
     public static final String DB_COLL_UNIVERSITIES = "universities";
     public static final String DB_COLL_COURSE_TYPES = "courses";
     public static final String DB_COLL_POSITIONS = "positions";
+    public static final String DB_COLL_MATERIALS = "materials";
     public static final String DB_COLL_EXAMS = "exams";
     public static final String DB_COLL_USERS = "users";
+    public static final String DB_COLL_PROFESSORS = "professors";
     public static final String DB_COLL_MESSAGES = "messages";
     public static final String DB_SUBCOLL_MESSAGES = "chat";
+    public static final String FIELD_UNIVERSITY = "university";
+    public static final String FIELD_COURSES = "course";
+    public static final String FIELD_TIMESTAMP = "timestamp";
+    public static final String FIELD_EXAM = "exam";
+    public static final String FIELD_NAME = "name";
 
     /**
      * Storage constants.
      */
+    public static final String STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + File.separator;
     public static final String STORAGE_PATH_PROFILE_IMAGES = "profile_images/";
     public static final String STORAGE_PATH_UPLOADS = "uploads/";
     public static final String DATABASE_PATH_UPLOADS = "uploads";
