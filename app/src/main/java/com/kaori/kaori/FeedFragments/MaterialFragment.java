@@ -41,6 +41,7 @@ public class MaterialFragment extends Fragment {
         return view;
     }
 
+
     public void setParameters(String author, String title){
         this.author = author;
         this.title = title;

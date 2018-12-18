@@ -101,7 +101,7 @@ public class FeedFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
-            holder.author.setText(materials.get(i).getAuthor());
+            holder.author.setText(materials.get(i).getType().equals(Constants.LIBRO) ? materials.get(i).getProfessor() : materials.get(i).getMiniUser().getName());
             holder.title.setText(materials.get(i).getTitle());
             holder.courseView.setText(materials.get(i).getCourse());
 

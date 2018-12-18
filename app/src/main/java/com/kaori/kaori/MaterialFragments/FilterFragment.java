@@ -73,7 +73,7 @@ public class FilterFragment extends Fragment {
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MaterialFragment materialFragment = new MaterialFragment();
+                SearchMaterialFragment materialFragment = new SearchMaterialFragment();
                 if(!exam.equals("")){
                     materialFragment.filterBy("exam", exam);
                     invokeFragment(materialFragment);
