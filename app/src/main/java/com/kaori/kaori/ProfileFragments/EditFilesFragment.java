@@ -4,7 +4,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.FeedFragments.UploadMaterialFragment;
 import com.kaori.kaori.Model.Material;
-import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -38,7 +36,6 @@ public class EditFilesFragment extends Fragment {
      * Variables.
      */
     private View view;
-    private RecyclerView recyclerView;
     private List<Material> myUploads;
     private ListAdapter adapter;
 
@@ -47,18 +44,16 @@ public class EditFilesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_uploads, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        FloatingActionButton fab = view.findViewById(R.id.FAB);
-        UploadMaterialFragment uploadBookFragment = new UploadMaterialFragment();
-        fab.setOnClickListener(view -> invokeNextFragment(uploadBookFragment));
+        view.findViewById(R.id.FAB).setOnClickListener(view -> invokeNextFragment(new UploadMaterialFragment()));
 
         myUploads = new ArrayList<>();
         adapter = new ListAdapter(myUploads);
         recyclerView.setAdapter(adapter);
 
-        loadExams();
+        //loadExams();
 
         return view;
     }
@@ -70,7 +65,7 @@ public class EditFilesFragment extends Fragment {
                     QuerySnapshot result = task.getResult();
                     if (task.isSuccessful() && result != null)
                         for (QueryDocumentSnapshot document : result) {
-                            String uid = document.toObject(Material.class).getMiniUser().getUid();
+                            String uid = document.toObject(Material.class).getUser().getUid();
                             if(uid.equals(DataManager.getInstance().getUser().getUid())) {
                                 myUploads.add(document.toObject(Material.class));
                                 adapter.notifyDataSetChanged();
@@ -113,7 +108,6 @@ public class EditFilesFragment extends Fragment {
         public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
             UploadMaterialFragment uploadBookFragment = new UploadMaterialFragment();
-            //TODO
             v.setOnClickListener(view -> invokeNextFragment(uploadBookFragment));
             return new ListViewHolder(v);
         }

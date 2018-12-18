@@ -2,23 +2,25 @@ package com.kaori.kaori.Model;
 
 import com.google.firebase.Timestamp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Material {
 
-    private MiniUser miniUser;
+    private MiniUser user;
     private String comment;
     private String course;
-    private String professor;
-    private String exam;
+    private List<String> professors;
+    private List<String> exams;
     private Timestamp timestamp;
     private String title;
     private String type;
     private String url;
     private Boolean isModified;
 
-    public Material(){}
-
-    public Material(MiniUser miniUser, String title, String url, String type, Timestamp timestamp, String exam, String course, String professor, String comment, Boolean isModified){
-
+    public Material(){
+        exams = new ArrayList<>();
+        professors = new ArrayList<>();
     }
 
     public String getComment() {
@@ -29,16 +31,8 @@ public class Material {
         this.comment = comment;
     }
 
-    public String getExam() {
-        return exam;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setExam(String exam) {
-        this.exam = exam;
     }
 
     public void setType(String type) {
@@ -57,12 +51,12 @@ public class Material {
         this.title = title;
     }
 
-    public MiniUser getMiniUser() {
-        return miniUser;
+    public MiniUser getUser() {
+        return user;
     }
 
-    public void setMiniUser(MiniUser miniUser) {
-        this.miniUser = miniUser;
+    public void setUser(MiniUser user) {
+        this.user = user;
     }
 
     public String getTitle(){
@@ -75,14 +69,6 @@ public class Material {
 
     public void setCourse(String course) {
         this.course = course;
-    }
-
-    public String getProfessor() {
-        return professor;
-    }
-
-    public void setProfessor(String professor) {
-        this.professor = professor;
     }
 
     public String getUrl() {
@@ -99,5 +85,29 @@ public class Material {
 
     public Boolean getModified() {
         return isModified;
+    }
+
+    public void addExam(String exam){
+        exams.add(exam);
+    }
+
+    public void addProfessor(String professor){
+        professors.add(professor);
+    }
+
+    public List<String> getProfessors() {
+        return professors;
+    }
+
+    public void setProfessors(List<String> professors) {
+        this.professors = professors;
+    }
+
+    public List<String> getExams() {
+        return exams;
+    }
+
+    public void setExams(List<String> exams) {
+        this.exams = exams;
     }
 }

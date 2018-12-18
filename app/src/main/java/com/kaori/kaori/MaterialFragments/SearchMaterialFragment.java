@@ -25,7 +25,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.FeedFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
@@ -177,7 +176,7 @@ public class SearchMaterialFragment extends Fragment {
         adapter = new FirestoreRecyclerAdapter<Material, BookViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final BookViewHolder holder, int i, @NonNull Material model) {
-                holder.setDetails(materials.get(i).getTitle(), materials.get(i).getType()==Constants.LIBRO ? materials.get(i).getProfessor() : materials.get(i).getMiniUser().getName());
+                //holder.setDetails(materials.get(i).getTitle(), materials.get(i).getType()==Constants.LIBRO ? materials.get(i).getProfessor() : materials.get(i).getUser().getName());
                 holder.mView.setOnClickListener(v -> {
                     MaterialFragment fragment = new MaterialFragment();
                     fragment.setParameters(holder.book_author.getText().toString(), holder.book_title.getText().toString());
