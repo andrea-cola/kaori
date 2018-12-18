@@ -30,7 +30,6 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
-import com.kaori.kaori.Utils.SignInManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -105,12 +104,9 @@ public class CreateAccountWithEmail extends Fragment {
         user.setName(name.getText().toString());
         user.setEmail(mail.getText().toString());
 
-
-        SignInManager signInManager = SignInManager.getInstance();
-        signInManager.signInWithEmail(user, password.getText().toString(), profileImageBitmap);
         Object[] o = new Object[3];
         o[0] = user;
-        o[1] = password.getText().toString();
+        o[1] = String.valueOf(password.getText());
         o[2] = profileImageBitmap;
 
         WaitFragment waitFragment = new WaitFragment();

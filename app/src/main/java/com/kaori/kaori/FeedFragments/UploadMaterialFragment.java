@@ -73,11 +73,8 @@ public class UploadMaterialFragment extends Fragment {
 
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
-        
+
         //setupButtonListeners();
-
-        //setProfessorChipGroup();
-
 
         return view;
     }

@@ -65,17 +65,16 @@ public class ChatListFragment extends Fragment {
     }
 
     private void loadAllChats(){
-        LogManager.getInstance().printConsoleMessage(myUid);
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
-                .orderBy("lastMessage")
+                .orderBy(Constants.FIELD_LAST_MESSAGE)
                 .addSnapshotListener((value, e) -> {
                     if(value != null) {
                         for (DocumentChange doc : value.getDocumentChanges()) {
-                            LogManager.getInstance().printConsoleMessage(doc.getDocument().getId());
                             switch (doc.getType()) {
                                 case ADDED:
                                     Chat c = doc.getDocument().toObject(Chat.class);
+                                    LogManager.getInstance().printConsoleMessage(c.getChatID());
                                     if(containsMyUid(c.getUsers())) {
                                         chatList.add(c);
                                         mAdapter.notifyDataSetChanged();

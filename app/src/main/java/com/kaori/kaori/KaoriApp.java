@@ -25,11 +25,6 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     private final String BACK_STATE_NAME = getClass().getName();
 
     /**
-     * Variables.
-     */
-    private DataManager hub;
-
-    /**
      * Listener used to handle selections in the bottom bar.
      * Each branch of the switch handle the selection of one icon in the bar.
      */
@@ -61,9 +56,8 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        hub = DataManager.getInstance();
+        DataManager.getInstance();
 
-        // toolbar initialization
         setupToolbar();
 
         BottomNavigationView navigation = findViewById(R.id.navigation);

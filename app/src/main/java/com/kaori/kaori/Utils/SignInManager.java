@@ -24,12 +24,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.Model.User;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriLogin;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 
 import java.io.ByteArrayOutputStream;
@@ -99,11 +100,13 @@ public class SignInManager {
      */
     public void signInWithGoogle(){
         LogManager.getInstance().printConsoleMessage("signInWithGoogle");
+
         final GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(context.getString(R.string.default_web_client_id))
                 .requestEmail()
                 .requestProfile()
                 .build();
+
         if(context != null) {
             GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -118,7 +121,6 @@ public class SignInManager {
         LogManager.getInstance().printConsoleMessage("signInWithFacebook");
 
         this.facebookSignInStarted = true;
-        FirebaseAuth.getInstance().signOut();
         callbackManager = CallbackManager.Factory.create();
 
         button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
@@ -153,7 +155,18 @@ public class SignInManager {
         this.password = password;
         this.profileImageBitmap = bitmap;
 
-        authWithEmail();
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                LogManager.getInstance().printConsoleError(task.getException().getMessage() + "getInstanceId failed");
+                return;
+            }
+            user.setTokenID(task.getResult().getToken());
+
+            //TODO: da eliminare
+            LogManager.getInstance().printConsoleMessage(user.getTokenID());
+
+            authWithEmail();
+        });
     }
 
     /**
@@ -265,17 +278,24 @@ public class SignInManager {
         LogManager.getInstance().printConsoleMessage("createNewUserAndSignIn");
         user = new User();
         user.setEmail(firebaseUser.getEmail());
-
-        user.setUid(firebaseUser.getUid());
         user.setName(firebaseUser.getDisplayName());
+        user.setUid(firebaseUser.getUid());
 
-        String tmp = firebaseUser.getPhotoUrl().toString();
-        if(tmp.isEmpty())
-            user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
-        else
-            user.setPhotosUrl(tmp);
+        String tmp = String.valueOf(firebaseUser.getPhotoUrl());
+        user.setPhotosUrl(tmp.isEmpty() ? Constants.STORAGE_DEFAULT_PROFILE_IMAGE : tmp);
 
-        uploadNewUserOnTheServer();
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                LogManager.getInstance().printConsoleError(task.getException().getMessage() + "getInstanceId failed");
+                return;
+            }
+            user.setTokenID(task.getResult().getToken());
+
+            //TODO: da eliminare
+            LogManager.getInstance().printConsoleMessage(user.getTokenID());
+
+            uploadNewUserOnTheServer();
+        });
     }
 
     /**
@@ -306,8 +326,7 @@ public class SignInManager {
 
         final StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
         UploadTask uploadTask = mStorage.putBytes(baos.toByteArray());
-        uploadTask
-                .addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
+        uploadTask.addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
                     LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer:success");
                     user.setPhotosUrl(uri.toString());
                     uploadNewUserOnTheServer();

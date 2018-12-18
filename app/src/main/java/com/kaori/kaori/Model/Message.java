@@ -11,8 +11,7 @@ public class Message {
     private String receiver;
     private Timestamp timestamp;
 
-    public Message() {
-    }
+    public Message() { }
 
     public String getChatID() {
         return chatID;

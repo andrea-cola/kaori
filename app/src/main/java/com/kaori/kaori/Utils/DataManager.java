@@ -107,4 +107,8 @@ public class DataManager {
         return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl());
     }
 
+    public void clean(){
+        dataManager = new DataManager();
+    }
+
 }

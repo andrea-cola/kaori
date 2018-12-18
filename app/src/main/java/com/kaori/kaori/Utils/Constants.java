@@ -46,6 +46,7 @@ public class Constants {
     public static final String FIELD_EXAM = "exam";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_AUTHOR = "author";
+    public static final String FIELD_LAST_MESSAGE = "lastMessageSent";
 
     /**
      * Storage constants.

@@ -65,6 +65,7 @@ public class ProfileFragment extends Fragment {
         mExamsList.setAdapter(new ListAdapter());
 
         logout.setOnClickListener(view12 -> {
+            DataManager.getInstance().clean();
             FirebaseAuth.getInstance().signOut();
             if(getActivity() != null && isAdded()) {
                 startActivity(new Intent(getActivity(), Kaori.class));

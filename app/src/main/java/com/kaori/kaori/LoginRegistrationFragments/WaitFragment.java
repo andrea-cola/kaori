@@ -54,7 +54,7 @@ public class WaitFragment extends Fragment {
         else if(processType == Constants.SIGNIN) {
             SignInManager signInManager = SignInManager.getInstance();
             if (authMethod == AuthMethods.NATIVE)
-                signInManager.signInWithEmail((User)params[0], params[1].toString(), (Bitmap)params[2]);
+                signInManager.signInWithEmail((User)params[0], String.valueOf(params[1]), (Bitmap)params[2]);
             else if (authMethod == AuthMethods.FACEBOOK)
                 signInManager.signInWithFacebook((LoginButton) params[0]);
             else if (authMethod == AuthMethods.GOOGLE)

@@ -9,29 +9,27 @@ import java.util.List;
 public class Chat implements Serializable {
 
     private String chatID;
-    private Timestamp lastMessage;
-    private ArrayList<MiniUser> users;
+    private Timestamp lastMessageSent;
+    private List<MiniUser> users;
 
-    public Timestamp getLastMessage() {
-        return lastMessage;
+    public Chat(){ }
+
+    public Timestamp getLastMessageSent() {
+        return lastMessageSent;
     }
 
-    public void setLastMessage(Timestamp lastMessage) {
-        this.lastMessage = lastMessage;
+    public void setLastMessageSent(Timestamp lastMessageSent) {
+        this.lastMessageSent = lastMessageSent;
     }
 
-    public List<MiniUser> getUsers() {
+    public List<MiniUser> getUsers(){
         return users;
-    }
-
-    public void setUsers(ArrayList<MiniUser> users) {
-        this.users = users;
     }
 
     public void addUsers(MiniUser user1, MiniUser user2){
         users = new ArrayList<>();
-        users.add(user1);
-        users.add(user2);
+        this.users.add(user1);
+        this.users.add(user2);
         chatID = createChatID();
     }
 
@@ -51,9 +49,12 @@ public class Chat implements Serializable {
     }
 
     public MiniUser getTheOtherUserByUid(String uid){
-        for(MiniUser u : users)
-            if(!u.getUid().equalsIgnoreCase(uid))
-                return u;
-        return null;
+        if(!users.get(0).getUid().equalsIgnoreCase(uid))
+            return users.get(0);
+        return users.get(1);
+    }
+
+    public void setUsers(List<MiniUser> users) {
+        this.users = users;
     }
 }

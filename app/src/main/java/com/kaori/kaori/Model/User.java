@@ -13,6 +13,7 @@ public class User implements Serializable {
     private String course;
     private String uid;
     private List<String> exams;
+    private String tokenID;
 
     public User(){ }
 
@@ -72,5 +73,13 @@ public class User implements Serializable {
 
     public void setUid(String uid) {
         this.uid = uid;
+    }
+
+    public String getTokenID() {
+        return tokenID;
+    }
+
+    public void setTokenID(String tokenID) {
+        this.tokenID = tokenID;
     }
 }

@@ -37,7 +37,6 @@ public class ChatFragment extends Fragment {
     private EditText editText;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private List<Message> messages;
 
     @Nullable
@@ -50,8 +49,7 @@ public class ChatFragment extends Fragment {
 
         messages = new LinkedList<>();
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new MyAdapter(messages);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
@@ -94,7 +92,7 @@ public class ChatFragment extends Fragment {
                 .collection(Constants.DB_COLL_MESSAGES)
                 .document(chat.getChatID());
 
-        chat.setLastMessage(Timestamp.now());
+        chat.setLastMessageSent(Timestamp.now());
 
         // create the chat in the database and add the message in the collection.
         documentReference
@@ -115,10 +113,12 @@ public class ChatFragment extends Fragment {
             Message message = new Message();
             message.setChatID(chat.getChatID());
             message.setMessage(String.valueOf(editText.getText()));
-            message.setReceiver(myUser.getUid());
-            message.setSenderID(otherUser.getUid());
+            message.setReceiver(otherUser.getUid());
+            message.setSenderID(myUser.getUid());
             message.setTimestamp(Timestamp.now());
             sendMessage(message);
+
+            editText.setText("");
         });
     }
 

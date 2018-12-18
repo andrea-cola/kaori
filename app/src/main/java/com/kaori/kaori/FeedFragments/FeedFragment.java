@@ -47,7 +47,6 @@ public class FeedFragment extends Fragment {
     }
 
     private void initializeView(View view){
-
         RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
@@ -61,15 +60,16 @@ public class FeedFragment extends Fragment {
 
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MATERIALS)
-                .orderBy(Constants.FIELD_TIMESTAMP)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null)
-                        for (QueryDocumentSnapshot document : task.getResult())
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            LogManager.getInstance().printConsoleMessage("eccoci3");
                             if (myExams.contains(String.valueOf(document.get(Constants.FIELD_EXAM)))) {
                                 mMaterialList.add(document.toObject(Material.class));
                                 mAdapter.notifyDataSetChanged();
                             }
+                        }
                     else
                         LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                 });

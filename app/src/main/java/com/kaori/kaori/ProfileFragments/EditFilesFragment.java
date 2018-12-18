@@ -36,7 +36,6 @@ public class EditFilesFragment extends Fragment {
      * Variables.
      */
     private View view;
-    private RecyclerView recyclerView;
     private List<Material> myUploads;
     private ListAdapter adapter;
 
@@ -45,7 +44,7 @@ public class EditFilesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_uploads, container, false);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         myUploads = new ArrayList<>();
@@ -58,13 +57,16 @@ public class EditFilesFragment extends Fragment {
     }
 
     private void loadExams() {
+        LogManager.getInstance().printConsoleMessage("eccoci");
         FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS)
                 .whereEqualTo(Constants.FIELD_AUTHOR, DataManager.getInstance().getUser().getName())
                 .get()
                 .addOnCompleteListener(task -> {
+                    LogManager.getInstance().printConsoleMessage("eccoci2");
                     QuerySnapshot result = task.getResult();
                     if (task.isSuccessful() && result != null)
                         for (QueryDocumentSnapshot document : result) {
+                            LogManager.getInstance().printConsoleMessage("eccoci2");
                             myUploads.add(document.toObject(Material.class));
                             adapter.notifyDataSetChanged();
                         }

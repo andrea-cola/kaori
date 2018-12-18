@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Position;
@@ -27,6 +26,8 @@ import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class FinderFragment extends Fragment {
@@ -42,15 +43,17 @@ public class FinderFragment extends Fragment {
     private List<Position> positions;
     private FirebaseFirestore db;
     private RecyclerAdapter adapter;
+    private RecyclerView recyclerView;
     private Context context;
     private String uid;
+    private Date now;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.user_position_layout, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.user_recycler_view);
+        recyclerView = view.findViewById(R.id.user_recycler_view);
         FloatingActionButton fab = view.findViewById(R.id.positionFAB);
 
         // set up button listener.
@@ -60,6 +63,12 @@ public class FinderFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         context = getContext();
         uid = DataManager.getInstance().getUser().getUid();
+
+        Calendar today = Calendar.getInstance();
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        now = today.getTime();
 
         positions = new ArrayList<>();
 
@@ -82,9 +91,10 @@ public class FinderFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful() && task.getResult() != null)
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            LogManager.getInstance().printConsoleMessage("eccoci");
-                            if(!String.valueOf(document.get("user.uid")).equalsIgnoreCase(uid)
-                                    && Timestamp.now().toDate().equals(document.getTimestamp("timestamp").toDate())) {
+                            Date date = document.getTimestamp("timestamp").toDate();
+
+                            if(!String.valueOf(document.get("user.uid")).equalsIgnoreCase(uid) && (now.equals(date) || date.after(now))) {
+                                LogManager.getInstance().printConsoleMessage("eccoci");
                                 positions.add(document.toObject(Position.class));
                                 adapter.notifyDataSetChanged();
                             }
@@ -123,7 +133,7 @@ public class FinderFragment extends Fragment {
 
             view.setOnClickListener(view1 -> {
                 MapFragment mapFragment = new MapFragment();
-                mapFragment.setParameters(positions.get(i));
+                mapFragment.setParameters(positions.get(recyclerView.getChildLayoutPosition(view)));
                 invokeFragment(mapFragment);
             });
 
