@@ -11,10 +11,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.kaori.kaori.Model.Exams;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -65,10 +67,9 @@ public class FeedFragment extends Fragment {
                     if (task.isSuccessful() && task.getResult() != null)
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             LogManager.getInstance().printConsoleMessage("eccoci3");
-                            if (myExams.contains(String.valueOf(document.get(Constants.FIELD_EXAM)))) {
-                                mMaterialList.add(document.toObject(Material.class));
-                                mAdapter.notifyDataSetChanged();
-                            }
+                            //List<String> exams = document.toObject(Material.class).getExams();
+                            mMaterialList.add(document.toObject(Material.class));
+                            mAdapter.notifyDataSetChanged();
                         }
                     else
                         LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
@@ -87,6 +88,10 @@ public class FeedFragment extends Fragment {
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
+        private final int LIBRO = 0;
+        private final int FILE = 1;
+        private final int URL = 2;
+
         List<Material> materials;
 
         /*package-private*/ RecyclerAdapter(List<Material> materials){
@@ -101,15 +106,35 @@ public class FeedFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
-            //holder.author.setText(materials.get(i).getType().equals(Constants.LIBRO) ? materials.get(i).getProfessor() : materials.get(i).getUser().getName());
             holder.title.setText(materials.get(i).getTitle());
             holder.courseView.setText(materials.get(i).getCourse());
+
+            if (getItemViewType(i) == LIBRO){
+                holder.author.setText(materials.get(i).getProfessors().get(0));
+                holder.image.setImageDrawable(getResources().getDrawable(R.drawable.book_icon));
+            }else if (getItemViewType(i) == FILE){
+                holder.author.setText(materials.get(i).getUser().getName());
+                holder.image.setImageDrawable(getResources().getDrawable(R.drawable.document_icon));
+            }else {
+                holder.author.setText(materials.get(i).getUser().getName());
+                holder.image.setImageDrawable(getResources().getDrawable(R.drawable.link_icon));
+            }
 
             holder.cardView.setOnClickListener(v -> {
                 MaterialFragment bookFragment = new MaterialFragment();
                 bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
                 invokeNextFragment(bookFragment);
             });
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            if (materials.get(position).getType().equals("Libro")){
+                return LIBRO;
+            }else if (materials.get(position).getType().equals("File")){
+                return FILE;
+            }else
+                return URL;
         }
 
         @Override
@@ -120,7 +145,7 @@ public class FeedFragment extends Fragment {
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             TextView title, author, courseView;
             CardView cardView;
-            //public ImageView image;
+            ImageView image;
 
             Holder (View view) {
                 super(view);
@@ -128,7 +153,7 @@ public class FeedFragment extends Fragment {
                 author = view.findViewById(R.id.card_author);
                 courseView = view.findViewById(R.id.card_type);
                 cardView = view.findViewById(R.id.card_view);
-                //image = (ImageView) view.findViewById(R.id.thumbnail);
+                image = (ImageView) view.findViewById(R.id.card_image);
             }
         }
     }

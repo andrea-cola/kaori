@@ -50,6 +50,7 @@ public class MaterialFragment extends Fragment {
     private void initializeView(View view){
         TextView bookTitle = view.findViewById(R.id.bookTitle);
         TextView bookAuthor = view.findViewById(R.id.bookAuthor);
+
         Button downloadButton = view.findViewById(R.id.downloadButton);
 
         bookTitle.setText(title);
