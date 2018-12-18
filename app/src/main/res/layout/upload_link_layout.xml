@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"
-        android:hint="Titolo del libro"
+        android:hint="Link del libro"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />

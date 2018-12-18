@@ -10,9 +10,11 @@ import android.support.annotation.Nullable;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -26,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Professor;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -53,7 +56,7 @@ public class UploadMaterialFragment extends Fragment {
     private FirebaseFirestore db;
     private String exam, professor, flag;
     private Material newMaterial;
-    private List<String> professors;
+    private List<Professor> professors;
     private View view;
     private boolean isMaterialModified = false, validFields[] = new boolean[2];
 
@@ -64,7 +67,7 @@ public class UploadMaterialFragment extends Fragment {
         storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
         db = FirebaseFirestore.getInstance();
 
-        initializeView(view);
+        initializeView();
         loadProfessors();
 
         return view;
@@ -74,20 +77,19 @@ public class UploadMaterialFragment extends Fragment {
         professors = new ArrayList<>();
         db.collection(Constants.DB_COLL_PROFESSORS)
                 .whereEqualTo(Constants.FIELD_UNIVERSITY, DataManager.getInstance().getUser().getUniversity())
-                .whereEqualTo(Constants.FIELD_COURSES, DataManager.getInstance().getUser().getCourse())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null)
                         for (QueryDocumentSnapshot document : task.getResult())
-                            professors.add(document.getString(Constants.FIELD_NAME));
+                            professors.add(document.toObject(Professor.class));
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
                 });
     }
 
-    private void initializeView(View view) {
+    private void initializeView() {
         LinearLayout linearLayout = view.findViewById(R.id.linearlayout);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        setUploadButton(view);
+        setUploadButton();
 
         RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener((radioGroup1, i) -> {
@@ -104,7 +106,7 @@ public class UploadMaterialFragment extends Fragment {
             else
                 linearLayout.addView(inflater.inflate(R.layout.upload_link_layout, null));
 
-            initializeSubView(view);
+            initializeSubView();
         });
         radioGroup.check(R.id.radioButton);
     }
@@ -113,21 +115,20 @@ public class UploadMaterialFragment extends Fragment {
         newMaterial = new Material();
         newMaterial.setUser(DataManager.getInstance().getMiniUser());
         newMaterial.setCourse(DataManager.getInstance().getUser().getCourse());
-        newMaterial.setType(flag);
         newMaterial.setModified(isMaterialModified);
     }
 
-    private void initializeSubView(View view){
+    private void initializeSubView(){
         mTitle = view.findViewById(R.id.title);
         mAuthor = view.findViewById(R.id.author);
         mComment = view.findViewById(R.id.comment);
         mLink = view.findViewById(R.id.url);
         mStatus = view.findViewById(R.id.status);
 
-        setExamChipGroup(view);
+        setExamChipGroup();
     }
 
-    private void setUploadButton(View view) {
+    private void setUploadButton() {
         view.findViewById(R.id.button_ok).setOnClickListener(v -> {
             if (mTitle.getText().toString().equals("") || mComment.getText().toString().equals("")){
                 Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
@@ -143,20 +144,33 @@ public class UploadMaterialFragment extends Fragment {
     }
 
     private void createNewBook(){
-        newMaterial.setTitle(String.valueOf(mTitle.getText()));
-        newMaterial.addProfessor(String.valueOf(mAuthor.getText()));
-        String comment = "Lo stato è: " + String.valueOf(mStatus) + "\n\n" + "Il commento è: " + String.valueOf(mComment);
-        newMaterial.setComment(comment);
+        if (mAuthor.getText().toString().equals("") || mStatus.getText().toString().equals("")) {
+            Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
+        }else{
+            newMaterial.addProfessor(String.valueOf(mAuthor.getText()));
+            String comment = "Lo stato è: " + String.valueOf(mStatus.getText()) + "\n\n" + "Il commento è: " + String.valueOf(mComment.getText());
+            newMaterial.setType(flag);
+            newMaterial.setComment(comment);
 
+            writeDatabase();
+        }
+    }
+
+    private void createNewFile(String url){
+        newMaterial.setComment(String.valueOf(mComment.getText()));
+        newMaterial.setType(flag);
+        newMaterial.setUrl(url);
         writeDatabase();
     }
 
     private void createNewLink(){
-        /*if(Patterns.WEB_URL.matcher(mLink.getText()).matches()){
+        if (Patterns.WEB_URL.matcher(mLink.getText()).matches()){
+            newMaterial.setType(flag);
+            newMaterial.setUrl(String.valueOf(mLink.getText()));
             writeDatabase();
-        }else {
+        } else {
             Toast.makeText(getContext(), "Url non valido", Toast.LENGTH_SHORT).show();
-        }*/
+        }
     }
 
     /**
@@ -195,7 +209,7 @@ public class UploadMaterialFragment extends Fragment {
         task.addOnSuccessListener(taskSnapshot -> {
             progressDialog.dismiss();
 
-            //writeDatabase(taskSnapshot.getUploadSessionUri().toString(), Constants.FILE, String.valueOf(mComment));
+            createNewFile(taskSnapshot.getUploadSessionUri().toString());
 
             getActivity().getFragmentManager().popBackStack();
 
@@ -210,6 +224,7 @@ public class UploadMaterialFragment extends Fragment {
      * This method is used to upload the material in Firebase Firestore
      */
     private void writeDatabase(){
+        newMaterial.setTitle(String.valueOf(mTitle.getText()));
         newMaterial.setTimestamp(Timestamp.now());
         db.collection(Constants.DB_COLL_MATERIALS)
             .add(newMaterial)
@@ -220,18 +235,29 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method adds to the Chip Group related to exams in the View chips with exams names
      */
-    private void setExamChipGroup(View view) {
+    private void setExamChipGroup() {
         examsChipGroup = view.findViewById(R.id.exams);
-        for(String e : DataManager.getInstance().getUser().getExams()) {
+        for (String e : DataManager.getInstance().getUser().getExams()) {
             Chip chip = setChip(e);
             if (chip != null) {
                 examsChipGroup.addView(chip);
                 chip.setOnClickListener(view1 -> {
-                    if(!newMaterial.getExams().contains(String.valueOf(chip.getText())))
+                    if (!newMaterial.getExams().contains(String.valueOf(chip.getText())))
                         newMaterial.addExam(String.valueOf(chip.getText()));
 
-                    if (flag.equalsIgnoreCase(Constants.FILE))
-                        setProfessorChipGroup();
+                    if (flag.equalsIgnoreCase(Constants.FILE) && chip.isCheckedIconVisible()) {
+                        if (professorChipGroup==null) {
+                            professorChipGroup = view.findViewById(R.id.professors);
+                            setProfessorChipGroup(chip.getText().toString());
+                        }
+                        chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                            if (!buttonView.isChecked())
+                                professorChipGroup.removeAllViews();
+                            else
+                                setProfessorChipGroup(chip.getText().toString());
+
+                        });
+                    }
                 });
             }
         }
@@ -240,18 +266,16 @@ public class UploadMaterialFragment extends Fragment {
     /**
      * This method adds to the Chip Group related to professor in the View chips with exams names
      */
-    private void setProfessorChipGroup() {
-        if (professorChipGroup == null)
-            professorChipGroup = view.findViewById(R.id.professors);
-
-        for(String professor : professors) {
-            Chip chip = setChip(professor);
-            professorChipGroup.addView(chip);
-            chip.setOnClickListener(view -> {
-                if(newMaterial.getProfessors().contains(String.valueOf(chip.getText())))
-                    newMaterial.addProfessor(String.valueOf(chip.getText()));
-            });
-            professorChipGroup.addView(setChip(professor));
+    private void setProfessorChipGroup(String exam) {
+        for (Professor professor : professors) {
+            if (professor.getExam().equals(exam)) {
+                Chip chip = setChip(professor.getName());
+                professorChipGroup.addView(chip);
+                chip.setOnClickListener(view -> {
+                    if (!newMaterial.getProfessors().contains(String.valueOf(chip.getText())))
+                        newMaterial.addProfessor(String.valueOf(chip.getText()));
+                });
+            }
         }
     }
 
@@ -259,7 +283,7 @@ public class UploadMaterialFragment extends Fragment {
      * This method sets up the chips on event listener
      */
     private Chip setChip(String text) {
-        if(getContext()!= null) {
+        if (getContext()!= null) {
             Chip chip = new Chip(getContext());
             chip.setText(text);
             chip.setTextSize(getResources().getDimension(R.dimen.default_chip_text_size));

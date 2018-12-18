@@ -53,7 +53,7 @@ public class EditFilesFragment extends Fragment {
         adapter = new ListAdapter(myUploads);
         recyclerView.setAdapter(adapter);
 
-        //loadExams();
+        loadExams();
 
         return view;
     }
