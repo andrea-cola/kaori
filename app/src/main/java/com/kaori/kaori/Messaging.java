@@ -10,22 +10,23 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 public class Messaging extends FirebaseMessagingService {
-
-    private final static String CHANNEL_ID = "0";
 
     @Override
     public void onNewToken(String token) {
         LogManager.getInstance().printConsoleMessage("Refreshed token: " + token);
 
-        // If you want to send messages to this application instance or
-        // manage this apps subscriptions on the server side, send the
-        // Instance ID token to your app server.
-        //sendRegistrationToServer(token);
+        FirebaseFirestore.getInstance()
+                .collection(Constants.DB_COLL_USERS)
+                .document(DataManager.getInstance().getUser().getUid())
+                .update(Constants.FIELD_TOKEN, token);
     }
 
 

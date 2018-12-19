@@ -43,6 +43,7 @@ public class Constants {
     public static final String FIELD_UNIVERSITY = "university";
     public static final String FIELD_COURSES = "course";
     public static final String FIELD_TIMESTAMP = "timestamp";
+    public static final String FIELD_TOKEN = "tokenID";
     public static final String FIELD_EXAM = "exam";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_AUTHOR = "author";
