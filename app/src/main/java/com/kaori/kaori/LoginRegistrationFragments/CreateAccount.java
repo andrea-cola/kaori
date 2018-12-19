@@ -51,14 +51,14 @@ public class CreateAccount extends Fragment {
             Object[] p = new Object[1];
             p[0] = buttonFacebook;
 
-            WaitFragment waitFragment = new WaitFragment();
-            waitFragment.setParameters(Constants.SIGNIN, AuthMethods.FACEBOOK, p);
-            invokeNextFragment(waitFragment);
+            LoginWaitFragment loginWaitFragment = new LoginWaitFragment();
+            loginWaitFragment.setParameters(Constants.SIGNIN, AuthMethods.FACEBOOK, p);
+            invokeNextFragment(loginWaitFragment);
         });
         buttonGoogle.setOnClickListener(v -> {
-            WaitFragment waitFragment = new WaitFragment();
-            waitFragment.setParameters(Constants.SIGNIN, AuthMethods.GOOGLE, null);
-            invokeNextFragment(waitFragment);
+            LoginWaitFragment loginWaitFragment = new LoginWaitFragment();
+            loginWaitFragment.setParameters(Constants.SIGNIN, AuthMethods.GOOGLE, null);
+            invokeNextFragment(loginWaitFragment);
         });
 
         return view;

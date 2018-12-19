@@ -23,7 +23,7 @@ import com.kaori.kaori.Utils.SignInManager;
  * needed to make the log in correctly. In the end restart the activity
  * on the base of the result.
  */
-public class WaitFragment extends Fragment {
+public class LoginWaitFragment extends Fragment {
 
     /**
      * Variables.

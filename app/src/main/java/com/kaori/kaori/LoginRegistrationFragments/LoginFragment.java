@@ -82,13 +82,13 @@ public class LoginFragment extends Fragment {
      * Pass to the next fragment and start the login process.
      */
     private void startLogin(AuthMethods authMethod, Object[] params){
-        WaitFragment waitFragment = new WaitFragment();
-        waitFragment.setParameters(Constants.LOGIN, authMethod, params);
+        LoginWaitFragment loginWaitFragment = new LoginWaitFragment();
+        loginWaitFragment.setParameters(Constants.LOGIN, authMethod, params);
 
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null) {
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_layout, waitFragment)
+                    .replace(R.id.main_layout, loginWaitFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
         }

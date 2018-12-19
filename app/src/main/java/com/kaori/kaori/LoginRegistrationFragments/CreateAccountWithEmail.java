@@ -109,12 +109,12 @@ public class CreateAccountWithEmail extends Fragment {
         o[1] = String.valueOf(password.getText());
         o[2] = profileImageBitmap;
 
-        WaitFragment waitFragment = new WaitFragment();
-        waitFragment.setParameters(Constants.SIGNIN, AuthMethods.NATIVE, o);
+        LoginWaitFragment loginWaitFragment = new LoginWaitFragment();
+        loginWaitFragment.setParameters(Constants.SIGNIN, AuthMethods.NATIVE, o);
 
         if(getActivity() != null && isAdded())
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_layout, waitFragment)
+                    .replace(R.id.main_layout, loginWaitFragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();

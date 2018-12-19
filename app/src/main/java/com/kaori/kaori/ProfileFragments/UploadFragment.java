@@ -1,9 +1,8 @@
-package com.kaori.kaori.FeedFragments;
+package com.kaori.kaori.ProfileFragments;
 
-import android.app.ProgressDialog;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,19 +13,14 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.Model.Professor;
 import com.kaori.kaori.R;
@@ -39,22 +33,21 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class UploadMaterialFragment extends Fragment {
+public class UploadFragment extends Fragment {
 
     /**
      * Constants
      */
+    private final String BACK_STATE_NAME = getClass().getName();
     private final static int PICK_PDF_CODE = 2342;
-    private final String GS_URL = "gs://kaori-c5a43.appspot.com";
 
     /**
      * Views from layout
      */
     private ChipGroup examsChipGroup, professorChipGroup;
     private EditText mTitle, mAuthor, mComment, mLink, mStatus;
-    private StorageReference storage;
     private FirebaseFirestore db;
-    private String exam, professor, flag;
+    private String exam, professor, tag;
     private Material newMaterial;
     private List<Professor> professors;
     private View view;
@@ -64,7 +57,6 @@ public class UploadMaterialFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.upload_layout, container, false);
-        storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
         db = FirebaseFirestore.getInstance();
 
         initializeView();
@@ -98,10 +90,10 @@ public class UploadMaterialFragment extends Fragment {
             initializeNewMaterial();
 
             RadioButton radioButton = view.findViewById(radioGroup1.getCheckedRadioButtonId());
-            flag = String.valueOf(radioButton.getText());
-            if (flag.equalsIgnoreCase(Constants.LIBRO))
+            tag = String.valueOf(radioButton.getText());
+            if (tag.equalsIgnoreCase(Constants.LIBRO))
                 linearLayout.addView(inflater.inflate(R.layout.upload_libro_layout, null));
-            else if (flag.equalsIgnoreCase(Constants.FILE))
+            else if (tag.equalsIgnoreCase(Constants.FILE))
                 linearLayout.addView(inflater.inflate(R.layout.upload_file_layout, null));
             else
                 linearLayout.addView(inflater.inflate(R.layout.upload_link_layout, null));
@@ -133,54 +125,56 @@ public class UploadMaterialFragment extends Fragment {
             if (mTitle.getText().toString().equals("") || mComment.getText().toString().equals("")){
                 Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
             } else {
-                if (flag.equalsIgnoreCase(Constants.LIBRO))
+                if (tag.equalsIgnoreCase(Constants.LIBRO))
                     createNewBook();
-                else if (flag.equalsIgnoreCase(Constants.FILE))
+                else if (tag.equalsIgnoreCase(Constants.FILE))
                     getPDF();
-                else if(flag.equalsIgnoreCase(Constants.URL))
+                else if(tag.equalsIgnoreCase(Constants.URL))
                     createNewLink();
             }
         });
     }
 
-    private void createNewBook(){
+    private void createNewBook() {
         if (mAuthor.getText().toString().equals("") || mStatus.getText().toString().equals("")) {
             Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
+            newMaterial.setTitle(String.valueOf(mTitle.getText()));
             newMaterial.addProfessor(String.valueOf(mAuthor.getText()));
+            newMaterial.setType(tag);
+
             String comment = "Lo stato è: " + String.valueOf(mStatus.getText()) + "\n\n" + "Il commento è: " + String.valueOf(mComment.getText());
-            newMaterial.setType(flag);
             newMaterial.setComment(comment);
 
-            writeDatabase();
+            endProcess();
         }
     }
 
     private void createNewFile(String url){
+        newMaterial.setTitle(String.valueOf(mTitle.getText()));
         newMaterial.setComment(String.valueOf(mComment.getText()));
-        newMaterial.setType(flag);
+        newMaterial.setType(tag);
         newMaterial.setUrl(url);
-        writeDatabase();
+
+        endProcess();
     }
 
     private void createNewLink(){
         if (Patterns.WEB_URL.matcher(mLink.getText()).matches()){
-            newMaterial.setType(flag);
+            newMaterial.setTitle(String.valueOf(mTitle.getText()));
+            newMaterial.setType(tag);
             newMaterial.setUrl(String.valueOf(mLink.getText()));
-            writeDatabase();
+            endProcess();
         } else {
             Toast.makeText(getContext(), "Url non valido", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * This method creates intent for getting the pdf document
-     */
     private void getPDF() {
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PDF_CODE);
+        startActivityForResult(Intent.createChooser(intent, "Select File"), PICK_PDF_CODE);
     }
 
     /**
@@ -190,47 +184,15 @@ public class UploadMaterialFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null)
-            if (data.getData() != null)
-                uploadFileIntoStorage(data.getData());
+            if (data.getData() != null) {
+                createNewFile(data.getData().getPath());
+                endProcess();
+            }
             else
                 Toast.makeText(getContext(), "No file chosen", Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * This method is used to upload the file in the Cloud
-     */
-    private void uploadFileIntoStorage(Uri data) {
-        ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "", "Uploading...", true);
 
-        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + mTitle.getText().toString() + ".pdf");
-        UploadTask task = reference.putFile(data);
-
-        // register observers to listen for when the download is done or if it fails
-        task.addOnSuccessListener(taskSnapshot -> {
-            progressDialog.dismiss();
-
-            createNewFile(taskSnapshot.getUploadSessionUri().toString());
-
-            getActivity().getFragmentManager().popBackStack();
-
-            //end
-        }).addOnFailureListener(e -> {
-            progressDialog.dismiss();
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        });
-    }
-
-    /**
-     * This method is used to upload the material in Firebase Firestore
-     */
-    private void writeDatabase(){
-        newMaterial.setTitle(String.valueOf(mTitle.getText()));
-        newMaterial.setTimestamp(Timestamp.now());
-        db.collection(Constants.DB_COLL_MATERIALS)
-            .add(newMaterial)
-            .addOnSuccessListener(documentReference -> goBackToPreviousFragment())
-            .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
-    }
 
     /**
      * This method adds to the Chip Group related to exams in the View chips with exams names
@@ -245,7 +207,7 @@ public class UploadMaterialFragment extends Fragment {
                     if (!newMaterial.getExams().contains(String.valueOf(chip.getText())))
                         newMaterial.addExam(String.valueOf(chip.getText()));
 
-                    if (flag.equalsIgnoreCase(Constants.FILE) && chip.isCheckedIconVisible()) {
+                    if (tag.equalsIgnoreCase(Constants.FILE) && chip.isCheckedIconVisible()) {
                         if (professorChipGroup==null) {
                             professorChipGroup = view.findViewById(R.id.professors);
                             setProfessorChipGroup(chip.getText().toString());
@@ -271,10 +233,12 @@ public class UploadMaterialFragment extends Fragment {
             if (professor.getExam().equals(exam)) {
                 Chip chip = setChip(professor.getName());
                 professorChipGroup.addView(chip);
-                chip.setOnClickListener(view -> {
-                    if (!newMaterial.getProfessors().contains(String.valueOf(chip.getText())))
-                        newMaterial.addProfessor(String.valueOf(chip.getText()));
-                });
+                if (chip != null) {
+                    chip.setOnClickListener(view -> {
+                        if (!newMaterial.getProfessors().contains(String.valueOf(chip.getText())))
+                            newMaterial.addProfessor(String.valueOf(chip.getText()));
+                    });
+                }
             }
         }
     }
@@ -303,8 +267,16 @@ public class UploadMaterialFragment extends Fragment {
         isMaterialModified = true;
     }
 
-    private void goBackToPreviousFragment(){
-        getActivity().getSupportFragmentManager().popBackStackImmediate();
+    private void endProcess(){
+        UploadWaitFragment uploadWaitFragment = new UploadWaitFragment();
+        uploadWaitFragment.setParameters(tag, newMaterial);
+
+        if(getActivity() != null && getActivity().getSupportFragmentManager() != null)
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, uploadWaitFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
     }
 
 }
