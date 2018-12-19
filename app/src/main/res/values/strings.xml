@@ -55,5 +55,6 @@
     <string name="no_results">No Results</string>
     <string name="upload_a_link">Upload a link</string>
     <string name="upload_a_file_or_your_notes">Upload a file or your notes</string>
+    <string name="download">Download</string>
 
 </resources>

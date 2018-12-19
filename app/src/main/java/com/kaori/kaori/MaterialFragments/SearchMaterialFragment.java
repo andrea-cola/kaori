@@ -176,10 +176,9 @@ public class SearchMaterialFragment extends Fragment {
         adapter = new FirestoreRecyclerAdapter<Material, BookViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final BookViewHolder holder, int i, @NonNull Material model) {
-                //holder.setDetails(materials.get(i).getTitle(), materials.get(i).getType()==Constants.LIBRO ? materials.get(i).getProfessor() : materials.get(i).getUser().getName());
                 holder.mView.setOnClickListener(v -> {
                     MaterialFragment fragment = new MaterialFragment();
-                    fragment.setParameters(holder.book_author.getText().toString(), holder.book_title.getText().toString());
+                    fragment.setMaterial(materials.get(i));
                     invokeFragment(fragment);
                     hideKeyboard();
                 });

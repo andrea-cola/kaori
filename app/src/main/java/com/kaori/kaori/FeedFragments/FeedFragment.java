@@ -121,17 +121,17 @@ public class FeedFragment extends Fragment {
             }
 
             holder.cardView.setOnClickListener(v -> {
-                MaterialFragment bookFragment = new MaterialFragment();
-                bookFragment.setParameters(holder.author.getText().toString(), holder.title.getText().toString());
-                invokeNextFragment(bookFragment);
+                MaterialFragment materialFragment = new MaterialFragment();
+                materialFragment.setMaterial(materials.get(i));
+                invokeNextFragment(materialFragment);
             });
         }
 
         @Override
         public int getItemViewType(int position) {
-            if (materials.get(position).getType().equals("Libro")){
+            if (materials.get(position).getType().equals(Constants.LIBRO)){
                 return LIBRO;
-            }else if (materials.get(position).getType().equals("File")){
+            }else if (materials.get(position).getType().equals(Constants.FILE)){
                 return FILE;
             }else
                 return URL;

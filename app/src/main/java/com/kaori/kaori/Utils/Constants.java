@@ -48,9 +48,9 @@ public class Constants {
     public static final String FIELD_AUTHOR = "author";
     public static final String FIELD_LAST_MESSAGE = "lastMessageSent";
     public static final String FIELD_MINI_USER = "miniUser";
-    public static final String LIBRO = "libro";
-    public static final String FILE = "file";
-    public static final String URL = "url";
+    public static final String LIBRO = "Libro";
+    public static final String FILE = "File";
+    public static final String URL = "Url";
 
     /**
      * Storage constants.
