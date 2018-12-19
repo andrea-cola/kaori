@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,9 +71,11 @@ public class UploadWaitFragment extends Fragment {
     private void uploadFileIntoStorage(String url) {
         StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + material.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));
+        Log.d(Constants.TAG, "CIAONE " + url);
 
         task.addOnSuccessListener(taskSnapshot -> {
-            material.setUrl(String.valueOf(taskSnapshot.getUploadSessionUri()));
+            material.setUrl(taskSnapshot.getUploadSessionUri().toString());
+            Log.d(Constants.TAG, "CIAONE1 " + url);
             writeDatabase(material);
         }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
     }
