@@ -34,7 +34,7 @@ public class Messaging extends FirebaseMessagingService {
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         int notifyId = 1;
 
-        Intent intent = new Intent(this, Kaori.class);
+        Intent intent = new Intent(this, KaoriChat.class);
         intent.putExtra("notification", 1);
         PendingIntent mPendingIntent = PendingIntent.getActivity(this, notifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

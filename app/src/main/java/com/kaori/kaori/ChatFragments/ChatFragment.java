@@ -11,12 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
@@ -36,6 +39,8 @@ public class ChatFragment extends Fragment {
     private ImageButton mSendMessage;
     private EditText editText;
     private RecyclerView mRecyclerView;
+    private ImageView userImage;
+    private TextView userName;
     private RecyclerView.Adapter mAdapter;
     private List<Message> messages;
 
@@ -53,14 +58,23 @@ public class ChatFragment extends Fragment {
         mAdapter = new MyAdapter(messages);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
+        userImage = view.findViewById(R.id.user_profile_image);
+        userName = view.findViewById(R.id.user_profile_name);
+
+        userName.setText(otherUser.getName());
+
+        Glide.with(getContext())
+                .load(otherUser.getThumbnail())
+                .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                .into(userImage);
+
+        ((KaoriChat)getActivity()).getSupportActionBar().hide();
 
         // add listener to the button that sends messages.
         addOnClickListener();
 
         // if the chat is new, we don't need to load messages.
         readMessages();
-
-        // Todo: la soluzione al problema è nascondere la barra sotto
 
         return view;
     }
@@ -84,8 +98,6 @@ public class ChatFragment extends Fragment {
     }
 
     private void sendMessage(Message m) {
-        LogManager.getInstance().printConsoleMessage("sendMessage");
-
         // get document reference.
         DocumentReference documentReference = FirebaseFirestore
                 .getInstance()
@@ -113,11 +125,13 @@ public class ChatFragment extends Fragment {
             Message message = new Message();
             message.setChatID(chat.getChatID());
             message.setMessage(String.valueOf(editText.getText()));
-            message.setReceiver(otherUser.getUid());
-            message.setSenderID(myUser.getUid());
+            message.setReceiver(otherUser);
+            message.setSender(myUser);
             message.setTimestamp(Timestamp.now());
+
             sendMessage(message);
 
+            // reset the text field
             editText.setText("");
         });
     }
@@ -130,7 +144,6 @@ public class ChatFragment extends Fragment {
                 .addSnapshotListener((value, e) -> {
                     if(value != null)
                         for (DocumentChange doc : value.getDocumentChanges()) {
-                            LogManager.getInstance().printConsoleMessage(doc.getDocument().getId());
                             if (doc.getType().equals(DocumentChange.Type.ADDED)) {
                                 messages.add(doc.getDocument().toObject(Message.class));
                                 mAdapter.notifyDataSetChanged();
@@ -147,17 +160,17 @@ public class ChatFragment extends Fragment {
         private List<Message> mDataset;
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView author, content, timestamp;
+            ImageView userImage;
+            TextView content, timestamp;
 
             MyViewHolder(View v) {
                 super(v);
-                author = v.findViewById(R.id.message_author);
                 content = v.findViewById(R.id.message_content);
                 timestamp = v.findViewById(R.id.message_time);
+                userImage = v.findViewById(R.id.user_profile_image);
             }
         }
 
-        // Provide a suitable constructor (depends on the kind of dataset)
         MyAdapter(List<Message> myDataset) {
             mDataset = myDataset;
         }
@@ -177,16 +190,16 @@ public class ChatFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
-            if(getItemViewType(position) == MY_MESSAGE)
-                if(mDataset.get(position).getSenderID().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
-                    holder.author.setText(mDataset.get(position).getSenderID());
-                else
-                    holder.author.setText(DataManager.getInstance().getUser().getUid());
+            String thumbnail;
+            if(mDataset.get(position).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
+                thumbnail = mDataset.get(position).getSender().getThumbnail();
             else
-                if(mDataset.get(position).getSenderID().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
-                    holder.author.setText(DataManager.getInstance().getUser().getUid());
-                else
-                    holder.author.setText(mDataset.get(position).getSenderID());
+                thumbnail = mDataset.get(position).getReceiver().getThumbnail();
+
+            Glide.with(getContext())
+                    .load(thumbnail)
+                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                    .into(holder.userImage);
 
             holder.content.setText(mDataset.get(position).getMessage());
             SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -200,7 +213,7 @@ public class ChatFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            if(messages.get(position).getSenderID().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
+            if(messages.get(position).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
                 return MY_MESSAGE;
             return OTHER_MESSAGE;
         }

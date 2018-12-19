@@ -22,7 +22,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
@@ -45,7 +44,6 @@ public class FinderFragment extends Fragment {
     private RecyclerAdapter adapter;
     private RecyclerView recyclerView;
     private Context context;
-    private String uid;
     private Date now;
 
     @Nullable
@@ -62,7 +60,6 @@ public class FinderFragment extends Fragment {
         // setting the database
         db = FirebaseFirestore.getInstance();
         context = getContext();
-        uid = DataManager.getInstance().getUser().getUid();
 
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 0);
@@ -86,18 +83,14 @@ public class FinderFragment extends Fragment {
     private void loadActivePositions(){
         LogManager.getInstance().printConsoleMessage("loadActivePositions");
         db.collection(Constants.DB_COLL_POSITIONS)
-                .orderBy("timestamp")
+                .orderBy(Constants.FIELD_TIMESTAMP)
+                .whereGreaterThan(Constants.FIELD_TIMESTAMP, now)
                 .get()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful() && task.getResult() != null)
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            Date date = document.getTimestamp("timestamp").toDate();
-
-                            if(!String.valueOf(document.get("user.uid")).equalsIgnoreCase(uid) && (now.equals(date) || date.after(now))) {
-                                LogManager.getInstance().printConsoleMessage("eccoci");
-                                positions.add(document.toObject(Position.class));
-                                adapter.notifyDataSetChanged();
-                            }
+                            positions.add(document.toObject(Position.class));
+                            adapter.notifyDataSetChanged();
                         }
         });
     }
@@ -133,7 +126,8 @@ public class FinderFragment extends Fragment {
 
             view.setOnClickListener(view1 -> {
                 MapFragment mapFragment = new MapFragment();
-                mapFragment.setParameters(positions.get(recyclerView.getChildLayoutPosition(view)));
+                LogManager.getInstance().printConsoleMessage(positions.get(recyclerView.getChildLayoutPosition(view)).getUser().getName());
+                mapFragment.setParameters(positions, recyclerView.getChildLayoutPosition(view));
                 invokeFragment(mapFragment);
             });
 

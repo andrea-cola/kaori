@@ -38,6 +38,11 @@
             android:label="@string/app_name" />
 
         <activity
+            android:name=".KaoriChat"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:label="@string/app_name" />
+
+        <activity
             android:name=".KaoriLogin"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:label="@string/app_name"

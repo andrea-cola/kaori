@@ -1,6 +1,7 @@
 package com.kaori.kaori;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.kaori.kaori.ChatFragments.ChatListFragment;
 import com.kaori.kaori.FeedFragments.FeedFragment;
 import com.kaori.kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.MaterialFragments.SearchMaterialFragment;
@@ -54,7 +54,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_kaoriapp);
 
         DataManager.getInstance();
 
@@ -79,7 +79,8 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_message) {
-            bottomBarFragmentCall(new ChatListFragment());
+            startActivity(new Intent(this, KaoriChat.class));
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -92,7 +93,6 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
      */
     @Override
     public boolean onSupportNavigateUp() {
-        //This method is called when the up button is pressed. Just the pop back stack.
         getSupportFragmentManager().popBackStack();
         return true;
     }

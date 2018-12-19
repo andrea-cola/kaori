@@ -5,10 +5,9 @@ import com.google.firebase.Timestamp;
 public class Message {
 
     private String chatID;
-    private String messageID;
     private String message;
-    private String senderID;
-    private String receiver;
+    private MiniUser sender;
+    private MiniUser receiver;
     private Timestamp timestamp;
 
     public Message() { }
@@ -21,36 +20,12 @@ public class Message {
         this.chatID = chatID;
     }
 
-    public String getMessageID() {
-        return messageID;
-    }
-
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
-    }
-
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getSenderID() {
-        return senderID;
-    }
-
-    public void setSenderID(String senderID) {
-        this.senderID = senderID;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
     }
 
     public Timestamp getTimestamp() {
@@ -61,4 +36,19 @@ public class Message {
         this.timestamp = timestamp;
     }
 
+    public MiniUser getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(MiniUser receiver) {
+        this.receiver = receiver;
+    }
+
+    public MiniUser getSender() {
+        return sender;
+    }
+
+    public void setSender(MiniUser sender) {
+        this.sender = sender;
+    }
 }

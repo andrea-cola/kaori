@@ -10,8 +10,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.kaori.kaori.Model.Chat;
@@ -37,11 +39,11 @@ public class ChatListFragment extends Fragment {
     /**
      * Variables.
      */
-    private List<Chat> chatList; // list of all chats.
-    private String myUid; // id of the user that uses the app.
+    private List<Chat> chatList;
+    private String myUid;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-
+    private MiniUser otherUser;
 
     @Nullable
     @Override
@@ -49,17 +51,24 @@ public class ChatListFragment extends Fragment {
         View view = inflater.inflate(R.layout.chat_list_layout, container, false);
         mRecyclerView = view.findViewById(R.id.chat_list);
 
-        chatList = new ArrayList<>();
-        mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        myUid = DataManager.getInstance().getUser().getUid();
+        if(otherUser == null) {
+            chatList = new ArrayList<>();
+            mRecyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            myUid = DataManager.getInstance().getUser().getUid();
 
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(chatList);
-        mRecyclerView.setAdapter(mAdapter);
+            // specify an adapter (see also next example)
+            mAdapter = new MyAdapter(chatList);
+            mRecyclerView.setAdapter(mAdapter);
 
-        loadAllChats();
+            loadAllChats();
+        } else {
+            ChatFragment chatFragment = new ChatFragment();
+            chatFragment.newChatParams(otherUser);
+            otherUser = null;
+            invokeNextFragment(chatFragment);
+        }
 
         return view;
     }
@@ -69,29 +78,36 @@ public class ChatListFragment extends Fragment {
                 .collection(Constants.DB_COLL_MESSAGES)
                 .orderBy(Constants.FIELD_LAST_MESSAGE)
                 .addSnapshotListener((value, e) -> {
-                    if(value != null) {
-                        for (DocumentChange doc : value.getDocumentChanges()) {
-                            switch (doc.getType()) {
-                                case ADDED:
-                                    Chat c = doc.getDocument().toObject(Chat.class);
-                                    LogManager.getInstance().printConsoleMessage(c.getChatID());
-                                    if(containsMyUid(c.getUsers())) {
-                                        chatList.add(c);
-                                        mAdapter.notifyDataSetChanged();
-                                    }
-                                    break;
-                                case MODIFIED:
-                                    // todo
-                                    break;
-                                case REMOVED:
-                                    // todo
-                                    break;
-                            }
-                        }
-                    } else {
+                    if(value != null)
+                        for (DocumentChange doc : value.getDocumentChanges())
+                            handleDocumentChange(doc.getType(), doc.getDocument().toObject(Chat.class));
+                    else
                         LogManager.getInstance().showVisualMessage(getContext(), "Nessun messaggio");
-                    }
                 });
+    }
+
+    private void handleDocumentChange(DocumentChange.Type type, Chat c){
+        switch (type) {
+            case ADDED:
+                if(containsMyUid(c.getUsers())) {
+                    chatList.add(c);
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
+            case MODIFIED:
+
+                break;
+            case REMOVED:
+                if(containsMyUid(c.getUsers())) {
+                    chatList.remove(c);
+                    mAdapter.notifyDataSetChanged();
+                }
+                break;
+        }
+    }
+
+    public void setOtherUser(MiniUser miniUser){
+        this.otherUser = miniUser;
     }
 
     private boolean containsMyUid(List<MiniUser> users){
@@ -99,54 +115,54 @@ public class ChatListFragment extends Fragment {
     }
 
     private void invokeNextFragment(Fragment fragment){
-        getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+        if(getActivity() != null)
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
+                    .commit();
     }
 
-    public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+    private class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
         private List<Chat> mDataset;
-        class MyViewHolder extends RecyclerView.ViewHolder {
 
-            // each data item is just a string in this case
-            TextView mTextView;
+        class MyViewHolder extends RecyclerView.ViewHolder {
+            TextView chatUser;
+            ImageView chatImage;
+
             MyViewHolder(View v) {
                 super(v);
-                mTextView = v.findViewById(R.id.chat_user);
+                chatUser = v.findViewById(R.id.chat_user);
+                chatImage = v.findViewById(R.id.image);
             }
         }
-        // Provide a suitable constructor (depends on the kind of dataset)
 
         MyAdapter(List<Chat> myDataset) {
             mDataset = myDataset;
         }
-        // Create new views (invoked by the layout manager)
 
         @Override
         public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            // create a new view
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
-
             v.setOnClickListener(view -> {
                 ChatFragment chatFragment = new ChatFragment();
                 chatFragment.setParams(mDataset.get(mRecyclerView.getChildLayoutPosition(v)));
                 invokeNextFragment(chatFragment);
             });
 
-            MyViewHolder vh = new MyViewHolder(v);
-            return vh;
+            return new MyViewHolder(v);
         }
-        // Replace the contents of a view (invoked by the layout manager)
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(myUid);
-            holder.mTextView.setText(otherUser.getName());
+            holder.chatUser.setText(otherUser.getName());
+            Glide.with(getContext())
+                    .load(otherUser.getThumbnail())
+                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                    .into(holder.chatImage);
         }
-        // Return the size of your dataset (invoked by the layout manager)
 
         @Override
         public int getItemCount() {

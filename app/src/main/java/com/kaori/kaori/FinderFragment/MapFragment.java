@@ -1,6 +1,6 @@
 package com.kaori.kaori.FinderFragment;
 
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,13 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.kaori.kaori.ChatFragments.ChatFragment;
+import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -26,15 +22,12 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This fragment shows the shared relative positions of the users
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
-
-    private final String BACK_STATE_NAME = getClass().getName();
 
     /**
      * Elements from view
@@ -44,10 +37,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     /**
      * Variables
      */
+    private int selectedPosition;
     private MapView mapView;
     private MapboxMap mapboxMap;
-    private Position mPosition;
-    private Query positions;
+    private List<Position> positions;
 
     /**
      * Constants
@@ -58,52 +51,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
+        if(getContext() != null) {
+            Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
+            view = inflater.inflate(R.layout.map_layout, container, false);
 
-        view = inflater.inflate(R.layout.map_layout, container, false);
-
-        mapView = view.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
-
-        return view;
+            mapView = view.findViewById(R.id.mapView);
+            mapView.onCreate(savedInstanceState);
+            mapView.getMapAsync(this);
+            return view;
+        }
+        return null;
     }
 
-    public void setParameters(Position position){
-        this.mPosition = position;
+    public void setParameters(List<Position> positions, int i){
+        this.positions = positions;
+        this.selectedPosition = i;
     }
 
-    @Override
-    public void onMapReady(MapboxMap mapboxMap){
-        this.mapboxMap = mapboxMap;
-        setUpFirebase();
-        moveCamera();
-    }
-
-    /**
-     * This method queries the Firebase Cloud.
-     */
-    private void setUpFirebase(){
-        positions = FirebaseFirestore.getInstance().collection("positions");
-        positions.get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        List<Position> positions = new ArrayList<>();
-                        for(DocumentSnapshot snapshot: task.getResult()) {
-                            positions.add(snapshot.toObject(Position.class));
-                        }
-                        setUpMarkers(positions);
-                    }else{
-                        LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
-                    }
-
-                });
-    }
-
-    /**
-     * This method set up the markers representing the users on the map
-     */
-    private void setUpMarkers(List<Position> positions){
+    private void setUpMarkers(){
         for(Position position: positions){
             Double latitude = position.getGeoPoint().getLatitude();
             Double longitude = position.getGeoPoint().getLongitude();
@@ -116,38 +81,34 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    /**
-     * Add a custom view to the marker in the mapbox.
-     */
     private void addCustomInfoWindowAdapter(Position position) {
         mapboxMap.setInfoWindowAdapter(marker -> {
             View v = getLayoutInflater().inflate(R.layout.mapbox_custom_info_window, null);
             ((TextView)v.findViewById(R.id.name)).setText(position.getUser().getName());
             v.findViewById(R.id.button_ok).setOnClickListener(view -> {
-                ChatFragment chatFragment = new ChatFragment();
-                chatFragment.newChatParams(position.getUser());
-
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.container, chatFragment)
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                        .addToBackStack(BACK_STATE_NAME)
-                        .commit();
+                Intent intent = new Intent(getActivity(), KaoriChat.class);
+                intent.putExtra("user", position.getUser());
+                startActivity(intent);
             });
             return v;
         });
     }
 
-    /**
-     * This method moves the map camera
-     */
     private void moveCamera(){
-        Double mLatitude = mPosition.getGeoPoint().getLatitude();
-        Double mLongitude = mPosition.getGeoPoint().getLongitude();
+        Double mLatitude = positions.get(selectedPosition).getGeoPoint().getLatitude();
+        Double mLongitude = positions.get(selectedPosition).getGeoPoint().getLongitude();
         CameraPosition newCameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(mLatitude, mLongitude))
                 .zoom(14)
                 .build();
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 4000);
+    }
+
+    @Override
+    public void onMapReady(MapboxMap mapboxMap){
+        this.mapboxMap = mapboxMap;
+        moveCamera();
+        setUpMarkers();
     }
 
     @Override
