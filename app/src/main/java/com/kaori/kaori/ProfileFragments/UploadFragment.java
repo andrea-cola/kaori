@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.chip.Chip;
 import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -135,6 +136,9 @@ public class UploadFragment extends Fragment {
         });
     }
 
+    /**
+     * This method create the new material with book type
+     */
     private void createNewBook() {
         if (mAuthor.getText().toString().equals("") || mStatus.getText().toString().equals("")) {
             Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
@@ -150,15 +154,22 @@ public class UploadFragment extends Fragment {
         }
     }
 
+    /**
+     * This method create the new material with file type
+     */
     private void createNewFile(String url){
         newMaterial.setTitle(String.valueOf(mTitle.getText()));
         newMaterial.setComment(String.valueOf(mComment.getText()));
         newMaterial.setType(tag);
         newMaterial.setUrl(url);
+        Log.d(Constants.TAG, "CIAONE " + url );
 
         endProcess();
     }
 
+    /**
+     * This method create the new material with link type
+     */
     private void createNewLink(){
         if (Patterns.WEB_URL.matcher(mLink.getText()).matches()){
             newMaterial.setTitle(String.valueOf(mTitle.getText()));
@@ -170,6 +181,9 @@ public class UploadFragment extends Fragment {
         }
     }
 
+    /**
+     * This method start the activity to get the pdf file
+     */
     private void getPDF() {
         Intent intent = new Intent();
         intent.setType("application/pdf");
@@ -185,14 +199,11 @@ public class UploadFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null)
             if (data.getData() != null) {
-                createNewFile(data.getData().getPath());
-                endProcess();
+                createNewFile(data.getData().toString());
             }
             else
                 Toast.makeText(getContext(), "No file chosen", Toast.LENGTH_SHORT).show();
     }
-
-
 
     /**
      * This method adds to the Chip Group related to exams in the View chips with exams names
@@ -267,6 +278,10 @@ public class UploadFragment extends Fragment {
         isMaterialModified = true;
     }
 
+    /**
+     * This method calls the wait fragment to manage the upload of
+     * the material in Firebase Firestore and Storage
+     */
     private void endProcess(){
         UploadWaitFragment uploadWaitFragment = new UploadWaitFragment();
         uploadWaitFragment.setParameters(tag, newMaterial);
