@@ -20,8 +20,13 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriLogin;
+import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.R;
 
 /**
@@ -198,9 +203,21 @@ public class LoginManager {
             facebookSignInStarted = false;
 
         if (isSuccess && context != null) {
-            LogManager.getInstance().printConsoleMessage("endLogin:success");
-            context.startActivity(new Intent(context, Kaori.class));
-            ((Activity) context).finish();
+            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+                if (!task.isSuccessful()) {
+                    LogManager.getInstance().printConsoleError(task.getException().getMessage() + "getInstanceId failed");
+                    return;
+                }
+
+                updateTokens(task.getResult().getToken());
+
+                //TODO: da eliminare
+                LogManager.getInstance().printConsoleMessage(task.getResult().getToken());
+
+                LogManager.getInstance().printConsoleMessage("endLogin:success");
+                context.startActivity(new Intent(context, Kaori.class));
+                ((Activity) context).finish();
+            });
         }
         else if(!isSuccess && context != null) {
             LogManager.getInstance().showVisualError(context, null, loginError);
@@ -209,6 +226,28 @@ public class LoginManager {
                 ((Activity)context).finish();
             }, 3000);
         }
+    }
+
+    private void updateTokens(String token){
+        FirebaseFirestore.getInstance()
+                .collection(Constants.DB_COLL_USERS)
+                .document(mAuth.getUid())
+                .update(Constants.FIELD_TOKEN, token);
+
+        CollectionReference messages = FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MESSAGES);
+        messages.get()
+                .addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task1.getResult()) {
+                            Chat c = document.toObject(Chat.class);
+                            if(c.getUsers().get(0).getUid().equals(mAuth.getUid()))
+                                c.getUsers().get(0).setTokenID(token);
+                            else if(c.getUsers().get(1).getUid().equals(mAuth.getUid()))
+                                c.getUsers().get(1).setTokenID(token);
+                            messages.document(c.getChatID()).set(c);
+                        }
+                    }
+                });
     }
 
 }

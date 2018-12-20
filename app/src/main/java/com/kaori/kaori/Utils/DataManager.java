@@ -104,7 +104,7 @@ public class DataManager {
     }
 
     public MiniUser getMiniUser(){
-        return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl());
+        return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl(), user.getTokenID());
     }
 
     public void clean(){

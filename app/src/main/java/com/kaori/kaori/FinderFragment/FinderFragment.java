@@ -22,6 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
@@ -89,8 +90,10 @@ public class FinderFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful() && task.getResult() != null)
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            positions.add(document.toObject(Position.class));
-                            adapter.notifyDataSetChanged();
+                            if(!document.getString("user.uid").equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
+                                positions.add(document.toObject(Position.class));
+                                adapter.notifyDataSetChanged();
+                            }
                         }
         });
     }

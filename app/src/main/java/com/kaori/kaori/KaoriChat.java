@@ -10,7 +10,7 @@ import com.kaori.kaori.Model.MiniUser;
 
 public class KaoriChat extends AppCompatActivity {
 
-    MiniUser otherUser;
+    private MiniUser otherUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,7 +19,7 @@ public class KaoriChat extends AppCompatActivity {
         setupToolbar();
 
         otherUser = null;
-        if(getIntent() != null) {
+        if(getIntent() != null && getIntent().getSerializableExtra("user") != null) {
             otherUser = (MiniUser) getIntent().getSerializableExtra("user");
             this.getIntent().removeExtra("user");
         }

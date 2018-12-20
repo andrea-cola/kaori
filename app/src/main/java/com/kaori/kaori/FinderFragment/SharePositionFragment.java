@@ -21,9 +21,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.JsonObject;
-import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.Model.Position;
-import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -82,7 +80,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private CarmenFeature work;
     private FirebaseFirestore db;
     private CarmenFeature feature;
-    private User user;
 
 
     @Nullable
@@ -97,7 +94,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         mapView.getMapAsync(this);
 
         setUpView();
-        user = DataManager.getInstance().getUser();
         db = FirebaseFirestore.getInstance();
         addUserLocations();
         setUpButtons();
@@ -224,8 +220,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     }
 
     private void sharePosition(String locationName, GeoPoint geoPoint){
-        MiniUser miniUser = new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl());
-        Position position = new Position(miniUser, geoPoint, locationName, Timestamp.now());
+        Position position = new Position(DataManager.getInstance().getMiniUser(), geoPoint, locationName, Timestamp.now());
 
         OnCompleteListener onCompleteListener = task -> {
             if(task.isSuccessful())
@@ -233,7 +228,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         };
 
         CollectionReference ref = db.collection(Constants.DB_COLL_POSITIONS);
-        ref.whereEqualTo("user.uid", miniUser.getUid())
+        ref.whereEqualTo("user.uid", position.getUser().getUid())
             .addSnapshotListener((value, e) -> {
                 if(value != null)
                     if(value.getDocuments().size() == 0) {

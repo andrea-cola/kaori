@@ -51,7 +51,12 @@ public class ChatListFragment extends Fragment {
         View view = inflater.inflate(R.layout.chat_list_layout, container, false);
         mRecyclerView = view.findViewById(R.id.chat_list);
 
-        if(otherUser == null) {
+        if(otherUser != null) {
+            ChatFragment chatFragment = new ChatFragment();
+            chatFragment.newChatParams(otherUser);
+            otherUser = null;
+            invokeNextFragment(chatFragment);
+        } else {
             chatList = new ArrayList<>();
             mRecyclerView.setHasFixedSize(true);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
@@ -63,11 +68,6 @@ public class ChatListFragment extends Fragment {
             mRecyclerView.setAdapter(mAdapter);
 
             loadAllChats();
-        } else {
-            ChatFragment chatFragment = new ChatFragment();
-            chatFragment.newChatParams(otherUser);
-            otherUser = null;
-            invokeNextFragment(chatFragment);
         }
 
         return view;

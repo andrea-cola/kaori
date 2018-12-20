@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
@@ -16,6 +17,10 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 public class Messaging extends FirebaseMessagingService {
 
@@ -35,11 +40,14 @@ public class Messaging extends FirebaseMessagingService {
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         int notifyId = 1;
 
+        LogManager.getInstance().printConsoleError("NEW MESSAGE");
+
         Intent intent = new Intent(this, KaoriChat.class);
         intent.putExtra("notification", 1);
         PendingIntent mPendingIntent = PendingIntent.getActivity(this, notifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification mNotification = null;
+        Notification mNotification;
+        Bitmap bmp = getBitmap(remoteMessage.getNotification().getIcon());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String id = "id";
@@ -47,33 +55,43 @@ public class Messaging extends FirebaseMessagingService {
             int importance = NotificationManager.IMPORTANCE_HIGH;
 
             NotificationChannel mChannel = new NotificationChannel(id, name, importance);
-            mChannel.setDescription("description");
-            mChannel.enableLights(true);
-            mChannel.setLightColor(Color.RED);
             mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[] {100, 300, 200, 300});
+            mChannel.setVibrationPattern(new long[]{100, 300, 200, 300});
             mNotificationManager.createNotificationChannel(mChannel);
 
             mNotification = new Notification.Builder(getApplicationContext(), id)
                     .setContentTitle(remoteMessage.getNotification().getTitle())
                     .setContentText(remoteMessage.getNotification().getBody())
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo))
+                    .setLargeIcon(bmp)
                     .setContentIntent(mPendingIntent)
                     .setColor(getResources().getColor(R.color.colorPrimary))
                     .setSmallIcon(R.drawable.logo)
                     .build();
-        } else {
-            mNotification = new Notification.Builder(getApplicationContext())
-                    .setContentTitle(remoteMessage.getNotification().getTitle())
-                    .setContentText(remoteMessage.getNotification().getBody())
-                    .setContentIntent(mPendingIntent)
-                    .setSmallIcon(R.drawable.logo)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.logo))
-                    .setLights(Color.WHITE, Color.RED, Color.GREEN)
-                    .setVibrate(new long[] {100, 300, 200, 300})
-                    .build();
-        }
+        } else
+            mNotification = createOldNotification(remoteMessage, mPendingIntent, bmp);
+
         mNotificationManager.notify(notifyId, mNotification);
+    }
+
+    private Bitmap getBitmap(String url){
+        try {
+            InputStream in = new URL(url).openStream();
+            return BitmapFactory.decodeStream(in);
+        } catch (IOException e) {
+            return BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+        }
+    }
+
+    private Notification createOldNotification(RemoteMessage remoteMessage, PendingIntent pendingIntent, Bitmap icon){
+        return new Notification.Builder(getApplicationContext())
+                .setContentTitle(remoteMessage.getNotification().getTitle())
+                .setContentText(remoteMessage.getNotification().getBody())
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.logo)
+                .setLargeIcon(icon)
+                .setLights(Color.WHITE, Color.RED, Color.GREEN)
+                .setVibrate(new long[]{100, 300, 200, 300})
+                .build();
     }
 
 }
