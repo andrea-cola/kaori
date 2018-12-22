@@ -18,7 +18,6 @@ public class LogManager {
      * Variables.
      */
     private static LogManager logManager;
-    private static Snackbar snackbar;
     private static View view;
 
     /**

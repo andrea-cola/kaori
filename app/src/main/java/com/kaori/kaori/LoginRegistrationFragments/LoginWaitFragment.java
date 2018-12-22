@@ -14,7 +14,6 @@ import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.LogManager;
 import com.kaori.kaori.Utils.LoginManager;
 import com.kaori.kaori.Utils.SignInManager;
 
@@ -38,8 +37,7 @@ public class LoginWaitFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wait_fragment, container, false);
-        LogManager.setView(view);
+        View view = inflater.inflate(R.layout.wait_layout, container, false);
 
         if(processType == Constants.LOGIN) {
             LoginManager loginManager = LoginManager.getInstance();

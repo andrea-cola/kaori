@@ -1,101 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/coordinator"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorAlternative"
-    android:orientation="vertical"
-    android:id="@+id/main_layout">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/logo_group"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
-        android:layout_marginBottom="11dp"
+    <android.support.constraint.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAlternative"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/breadcrumb_group"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/main_layout">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageView2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:background="@android:color/white" />
+        <LinearLayout
+            android:id="@+id/logo_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
+            android:layout_marginBottom="11dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toTopOf="@+id/breadcrumb_group"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView"
-            style="@style/KaoriTextView"
-            android:layout_width="match_parent"
-            android:fontFamily="roboto_medium"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageView2"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:background="@android:color/white" />
+
+            <TextView
+                android:id="@+id/textView"
+                style="@style/KaoriTextView"
+                android:layout_width="match_parent"
+                android:fontFamily="roboto_medium"
+                android:gravity="center"
+                android:text="@string/title_welcome"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/breadcrumb_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginEnd="@dimen/default_margin"
             android:gravity="center"
-            android:text="@string/title_welcome"
-            android:textColor="@color/white" />
+            android:orientation="vertical"
+            app:layout_constraintHeight_max="80dp"
+            app:layout_constraintBottom_toTopOf="@+id/button_group"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/logo_group">
 
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/uni" />
 
-    <LinearLayout
-        android:id="@+id/breadcrumb_group"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginEnd="@dimen/default_margin"
-        android:gravity="center"
-        android:orientation="vertical"
-        app:layout_constraintHeight_max="80dp"
-        app:layout_constraintBottom_toTopOf="@+id/button_group"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo_group">
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/colorAccent"
+                tools:layout_editor_absoluteY="298dp" />
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/uni" />
+        </LinearLayout>
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/colorAccent"
-            tools:layout_editor_absoluteY="298dp" />
+        <LinearLayout
+            android:id="@+id/button_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/default_margin"
+            android:layout_marginBottom="@dimen/default_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/breadcrumb_group">
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/signin_button"
+                style="@style/KaoriButton"
+                android:layout_width="match_parent"
+                android:text="@string/title_register" />
 
-    <LinearLayout
-        android:id="@+id/button_group"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginBottom="@dimen/default_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/breadcrumb_group">
+            <Button
+                android:id="@+id/login_button"
+                style="@style/KaoriButton"
+                android:layout_width="match_parent"
+                android:text="@string/title_login" />
 
-        <Button
-            android:id="@+id/signin_button"
-            style="@style/KaoriButton"
-            android:layout_width="match_parent"
-            android:text="@string/title_register" />
+        </LinearLayout>
 
-        <Button
-            android:id="@+id/login_button"
-            style="@style/KaoriButton"
-            android:layout_width="match_parent"
-            android:text="@string/title_login" />
+    </android.support.constraint.ConstraintLayout>
 
-    </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

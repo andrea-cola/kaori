@@ -16,6 +16,7 @@ import com.kaori.kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.MaterialFragments.SearchMaterialFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
@@ -55,6 +56,9 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kaoriapp);
+
+        LogManager.getInstance();
+        LogManager.setView(findViewById(R.id.coordinator));
 
         DataManager.getInstance();
 

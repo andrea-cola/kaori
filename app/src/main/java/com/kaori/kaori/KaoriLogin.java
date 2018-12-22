@@ -40,6 +40,7 @@ public class KaoriLogin extends AppCompatActivity {
         // instantiate the managers for login and sign in.
         loginManager = LoginManager.getInstance(this);
         signInManager = SignInManager.getInstance(this);
+        LogManager.setView(findViewById(R.id.coordinator));
 
         // set click listeners
         findViewById(R.id.login_button).setOnClickListener(view -> invokeNextFragment(new LoginFragment()));

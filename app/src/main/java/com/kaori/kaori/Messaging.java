@@ -28,10 +28,11 @@ public class Messaging extends FirebaseMessagingService {
     public void onNewToken(String token) {
         LogManager.getInstance().printConsoleMessage("Refreshed token: " + token);
 
-        FirebaseFirestore.getInstance()
-                .collection(Constants.DB_COLL_USERS)
-                .document(DataManager.getInstance().getUser().getUid())
-                .update(Constants.FIELD_TOKEN, token);
+        if(DataManager.getInstance().getUser() != null)
+            FirebaseFirestore.getInstance()
+                    .collection(Constants.DB_COLL_USERS)
+                    .document(DataManager.getInstance().getUser().getUid())
+                    .update(Constants.FIELD_TOKEN, token);
     }
 
 

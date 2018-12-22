@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -55,8 +57,8 @@ public class CreateAccountWithEmail extends Fragment {
     /**
      * Variables.
      */
-    private User user;
     private boolean[] validFields = new boolean[3];
+    private User user;
     private CircleImageView profileImage;
     private EditText name, password, mail;
     private Button createNewAccount;
@@ -261,24 +263,54 @@ public class CreateAccountWithEmail extends Fragment {
     }
 
     /**
+     * Change the orientation of the image if it is wrong.
+     */
+    private Bitmap editImage(String filePath){
+        BitmapFactory.Options bounds = new BitmapFactory.Options();
+        bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filePath, bounds);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        Bitmap bm = BitmapFactory.decodeFile(filePath, opts);
+
+        try {
+            ExifInterface exif = new ExifInterface(filePath);
+            String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+            int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+
+            int rotationAngle = 0;
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+            if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+
+            Matrix matrix = new Matrix();
+            matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+            bm = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+        } catch (IOException e){
+            LogManager.getInstance().printConsoleError(e.getMessage());
+        }
+        return bm;
+    }
+
+    /**
      * Handles the result coming from the activity that choose the image.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LogManager.getInstance().showVisualError(getContext(), null, "fragment request code: " + requestCode);
         if(requestCode == CAMERA_REQUEST && filePath != null) {
-            profileImageBitmap = BitmapFactory.decodeFile(filePath.toString());
+            profileImageBitmap = editImage(String.valueOf(filePath));
             profileImage.setImageBitmap(profileImageBitmap);
         }
         else if(data != null && data.getData() != null && requestCode == Constants.PICK_IMAGE)
             try {
-                profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
-                profileImage.setImageBitmap(profileImageBitmap);
+                if(getActivity() != null) {
+                    profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
+                    profileImage.setImageBitmap(profileImageBitmap);
+                }
             } catch (FileNotFoundException e) {
-                LogManager.getInstance().showVisualError(getContext(), e, "File non trovato.");
+                LogManager.getInstance().showVisualError(getContext(), e, "File non trovato. Riprovare.");
             }
         else
-            LogManager.getInstance().showVisualError(getContext(), null, "Riprovare a selezionare l'immagine.");
+            LogManager.getInstance().showVisualError(getContext(), null, "Nessuna immagine selezionata.");
     }
 
     /**

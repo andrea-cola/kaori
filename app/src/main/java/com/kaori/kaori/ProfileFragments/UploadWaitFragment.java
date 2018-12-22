@@ -43,7 +43,7 @@ public class UploadWaitFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.wait_fragment, container, false);
+        View view = inflater.inflate(R.layout.wait_layout, container, false);
         LogManager.setView(view);
         storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
 
