@@ -29,6 +29,7 @@ public class Constants {
     public static final String DB_COLL_POSITIONS = "positions";
     public static final String DB_COLL_MATERIALS = "materials";
     public static final String DB_COLL_EXAMS = "exams";
+    public static final String DB_COLL_COURSES = "courses";
     public static final String DB_COLL_USERS = "users";
     public static final String DB_COLL_PROFESSORS = "professors";
     public static final String DB_COLL_MESSAGES = "messages";

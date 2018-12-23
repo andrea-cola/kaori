@@ -22,12 +22,13 @@ import com.kaori.kaori.FeedFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchMaterialFragment extends Fragment {
+public class SearchFragment extends Fragment {
 
     /**
      * Constants
@@ -52,7 +53,7 @@ public class SearchMaterialFragment extends Fragment {
     /**
      * Constructor
      */
-    public SearchMaterialFragment(){ }
+    public SearchFragment(){ }
 
     @Nullable
     @Override
@@ -60,7 +61,10 @@ public class SearchMaterialFragment extends Fragment {
         view = inflater.inflate(R.layout.search_layout, container, false);
         materials = new ArrayList<>();
 
-        downloadMaterialFromDatabase();
+        if(DataManager.getInstance().getAllMaterials().size() > 0)
+            materials = DataManager.getInstance().getAllMaterials();
+        else
+            downloadMaterialFromDatabase();
         setupView();
         setupButtons();
 
@@ -75,6 +79,7 @@ public class SearchMaterialFragment extends Fragment {
                     if (task.isSuccessful() && task.getResult() != null) {
                         for (QueryDocumentSnapshot document : task.getResult())
                             materials.add(document.toObject(Material.class));
+                        DataManager.getInstance().setAllMaterials(materials);
                     } else {
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                         LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
@@ -89,7 +94,7 @@ public class SearchMaterialFragment extends Fragment {
         subMaterials = new ArrayList<>();
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.searchList);
-        filterButton = view.findViewById(R.id.filterFAB);
+        //filterButton = view.findViewById(R.id.filterFAB);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -116,7 +121,7 @@ public class SearchMaterialFragment extends Fragment {
             }
         });
 
-        filterButton.setOnClickListener(v -> invokeFragment(new FilterFragment()));
+        //filterButton.setOnClickListener(v -> invokeFragment(new FilterFragment()));
     }
 
     /**
@@ -131,7 +136,8 @@ public class SearchMaterialFragment extends Fragment {
             for(Material m : materials)
                 if (m.getTitle().toLowerCase().contains(sequence.toLowerCase())
                         || m.getCourse().toLowerCase().contains(sequence.toLowerCase())
-                        || containsExams(m, sequence)) {
+                        || containsExams(m, sequence)
+                        || containsProfessor(m, sequence)) {
                     subMaterials.add(m);
                     recyclerAdapter.notifyDataSetChanged();
                 }
@@ -143,6 +149,13 @@ public class SearchMaterialFragment extends Fragment {
 
     private boolean containsExams(Material m, String sequence){
         for(String e : m.getExams())
+            if(e.toLowerCase().contains(sequence.toLowerCase()))
+                return true;
+        return false;
+    }
+
+    private boolean containsProfessor(Material m, String sequence){
+        for(String e : m.getProfessors())
             if(e.toLowerCase().contains(sequence.toLowerCase()))
                 return true;
         return false;

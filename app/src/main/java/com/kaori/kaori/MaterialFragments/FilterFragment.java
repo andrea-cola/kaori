@@ -16,7 +16,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 public class FilterFragment extends Fragment {
 
@@ -47,7 +49,7 @@ public class FilterFragment extends Fragment {
 
         setupView();
 
-        //setupButton();
+        setupButton();
 
         setupExams();
 
@@ -68,9 +70,9 @@ public class FilterFragment extends Fragment {
         professorsGroup.setSingleSelection(true);
     }
 
-    /*private void setupButton(){
+    private void setupButton(){
         filterButton.setOnClickListener(v -> {
-            SearchMaterialFragment materialFragment = new SearchMaterialFragment();
+            SearchFragment materialFragment = new SearchFragment();
             if(!exam.equals("")){
                 materialFragment.filterBy("exam", exam);
                 invokeFragment(materialFragment);
@@ -81,10 +83,10 @@ public class FilterFragment extends Fragment {
                 invokeFragment(materialFragment);
                 materialFragment.filterBy("course", course);
             }else{
-                Toast.makeText(getContext(), "Seleziona un filtro", Toast.LENGTH_SHORT).show();
+                LogManager.getInstance().showVisualMessage("Seleziona un filtro");
             }
         });
-    }*/
+    }
 
     private void setupExams(){
         for(String e : currentUser.getExams()){
@@ -98,8 +100,8 @@ public class FilterFragment extends Fragment {
     }
 
     private void setupCourses(){
-        db.collection("courses")
-                .whereEqualTo("university", currentUser.getUniversity())
+        db.collection(Constants.DB_COLL_COURSES)
+                .whereEqualTo(Constants.FIELD_UNIVERSITY, currentUser.getUniversity())
                 .get()
                 .addOnCompleteListener(task -> {
                     if(task.isSuccessful()) {

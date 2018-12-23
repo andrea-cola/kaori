@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.kaori.kaori.FeedFragments.FeedFragment;
 import com.kaori.kaori.FinderFragment.FinderFragment;
-import com.kaori.kaori.MaterialFragments.SearchMaterialFragment;
+import com.kaori.kaori.MaterialFragments.SearchFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
@@ -37,7 +37,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
                         bottomBarFragmentCall(new FeedFragment());
                         return true;
                     case R.id.navigation_hub:
-                        bottomBarFragmentCall(new SearchMaterialFragment());
+                        bottomBarFragmentCall(new SearchFragment());
                         return true;
                     case R.id.navigation_study_with_me:
                         bottomBarFragmentCall(new FinderFragment());
