@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -19,6 +21,7 @@ import android.widget.LinearLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -56,6 +59,8 @@ public class EditCoursesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_exams, container, false);
+        setHasOptionsMenu(true);
+        ((KaoriApp)getActivity()).hideBottomBar();
         addingSpace = view.findViewById(R.id.adding_space);
         view.findViewById(R.id.button_add_field).setOnClickListener(view -> addAutoCompleteTextView(null));
         buttonOk = view.findViewById(R.id.button_ok);
@@ -71,6 +76,12 @@ public class EditCoursesFragment extends Fragment {
         loadExams();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.empty_menu, menu);
     }
 
     /**
