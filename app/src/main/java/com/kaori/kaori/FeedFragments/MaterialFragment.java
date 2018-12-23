@@ -35,7 +35,6 @@ import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MaterialFragment extends Fragment {
@@ -152,11 +151,8 @@ public class MaterialFragment extends Fragment {
     }
 
     private void initializeSubView(){
-        TextView title = view.findViewById(R.id.title);
-        title.setText(mMaterial.getTitle());
-
-        TextView comment = view.findViewById(R.id.comment);
-        comment.setText(mMaterial.getComment());
+        ((TextView)view.findViewById(R.id.title)).setText(mMaterial.getTitle());
+        ((TextView)view.findViewById(R.id.comment)).setText(mMaterial.getComment());
     }
 
     private void show() {
@@ -167,18 +163,24 @@ public class MaterialFragment extends Fragment {
             pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             pdfIntent.setDataAndType(path, "application/pdf");
             pdfIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-            if (getActivity() != null)
-                startActivity(pdfIntent);
+            startActivity(pdfIntent);
         }
+    }
+
+    private void loadImage(ImageView imageView, String url){
+        if(getContext() != null)
+            Glide.with(getContext())
+                    .load(url)
+                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                    .into(imageView);
     }
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        List<Feedback> feedbacks;
+        private List<Feedback> feedbackList;
 
-        /*package-private*/ RecyclerAdapter(List<Feedback> feedbacks){
-            this.feedbacks = feedbacks;
+        /*package-private*/ RecyclerAdapter(List<Feedback> feedbackList){
+            this.feedbackList = feedbackList;
         }
 
         @NonNull
@@ -189,28 +191,21 @@ public class MaterialFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            holder.timestamp.setText(sfd.format(feedbacks.get(i).getTimestamp().toDate()));
-
-            if(getContext() != null)
-                Glide.with(getContext())
-                        .load(feedbacks.get(i).getUser().getThumbnail())
-                        .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                        .into(holder.userImage);
-
-            holder.content.setText(feedbacks.get(i).getText());
+            holder.timestamp.setText(Constants.dateFormat.format(feedbackList.get(i).getTimestamp().toDate()));
+            loadImage(holder.userImage, feedbackList.get(i).getUser().getThumbnail());
+            holder.content.setText(feedbackList.get(i).getText());
         }
 
         @Override
         public int getItemCount() {
-            return feedbacks.size();
+            return feedbackList.size();
         }
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             ImageView userImage;
             TextView content, timestamp;
 
-            Holder (View v) {
+            /*package-private*/ Holder (View v) {
                 super(v);
                 content = v.findViewById(R.id.message_content);
                 timestamp = v.findViewById(R.id.message_time);

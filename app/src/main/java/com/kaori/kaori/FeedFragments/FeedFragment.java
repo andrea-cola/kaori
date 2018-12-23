@@ -16,8 +16,8 @@ import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.Model.Exams;
 import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -26,25 +26,24 @@ import com.kaori.kaori.Utils.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.collections4.ListUtils.intersection;
+
 public class FeedFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
 
     private RecyclerView.Adapter mAdapter;
     private List<Material> mMaterialList;
+    private User me;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
-
-        // setting the parameters
         mMaterialList = new ArrayList<>();
-
+        me = DataManager.getInstance().getUser();
         initializeView(view);
-
         downloadData();
-
         return view;
     }
 
@@ -58,22 +57,26 @@ public class FeedFragment extends Fragment {
     }
 
     private void downloadData(){
-        List<String> myExams = DataManager.getInstance().getUser().getExams();
-
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MATERIALS)
+                .whereEqualTo(Constants.FIELD_COURSES, me.getCourse())
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult() != null)
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            LogManager.getInstance().printConsoleMessage("eccoci3");
-                            //List<String> exams = document.toObject(Material.class).getExams();
-                            mMaterialList.add(document.toObject(Material.class));
-                            mAdapter.notifyDataSetChanged();
+                            Material material = document.toObject(Material.class);
+                            if(examsIntersection(material.getExams(), me.getExams())) {
+                                mMaterialList.add(material);
+                                mAdapter.notifyDataSetChanged();
+                            }
                         }
                     else
                         LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
                 });
+    }
+
+    private boolean examsIntersection(List<String> exams1, List<String> exams2){
+        return intersection(exams1, exams2).size() > 0;
     }
 
     private void invokeNextFragment(Fragment fragment) {

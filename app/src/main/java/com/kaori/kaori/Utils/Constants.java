@@ -3,6 +3,8 @@ package com.kaori.kaori.Utils;
 import android.os.Environment;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * This class contains all the constants of the app.
@@ -89,5 +91,7 @@ public class Constants {
      * Finder fragments constants.
      */
     public static final String STATEMENT = "Hi, there! I'm studying here:";
+
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ITALY);
 
 }
