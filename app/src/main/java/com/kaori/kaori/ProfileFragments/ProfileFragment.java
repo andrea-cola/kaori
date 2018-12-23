@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.Kaori;
+import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 
@@ -37,6 +38,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.profile_layout, container, false);
         setHasOptionsMenu(true);
+        ((KaoriApp)getActivity()).hideBottomBar(false);
 
         // get views from layout.
         Button logout = view.findViewById(R.id.profile_button_logout);

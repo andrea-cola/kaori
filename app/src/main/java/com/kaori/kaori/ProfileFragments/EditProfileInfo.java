@@ -75,7 +75,7 @@ public class EditProfileInfo extends Fragment {
         view = inflater.inflate(R.layout.edit_profile_info_layout, container, false);
         context = getContext();
         setHasOptionsMenu(true);
-        ((KaoriApp)getActivity()).hideBottomBar();
+        ((KaoriApp)getActivity()).hideBottomBar(true);
 
         EditText mName = view.findViewById(R.id.profile_name);
         mUniversity = view.findViewById(R.id.profile_university);
@@ -126,14 +126,7 @@ public class EditProfileInfo extends Fragment {
             setViewState(mCourse, true);
 
             selectedUniversity = String.valueOf(adapterView.getItemAtPosition(i));
-
-            courses = new ArrayList<>();
-            for(Course c : allCourses)
-                if(c.getUniversity().equalsIgnoreCase(selectedUniversity))
-                    courses.add(c.getName());
-
-            mCourse.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, courses));
-            LogManager.getInstance().printConsoleMessage("" + mCourse.getAdapter().getCount());
+            filterCoursesByUniversity();
         });
 
         mUniversity.addTextChangedListener(new TextWatcher() {
@@ -185,6 +178,15 @@ public class EditProfileInfo extends Fragment {
                     setViewState(mButtonOk, false);
             }
         });
+    }
+
+    private void filterCoursesByUniversity(){
+        courses = new ArrayList<>();
+        for(Course c : allCourses)
+            if(c.getUniversity().equalsIgnoreCase(selectedUniversity))
+                courses.add(c.getName());
+
+        mCourse.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, courses));
     }
 
     /**
@@ -286,6 +288,8 @@ public class EditProfileInfo extends Fragment {
                     else {
                         // TODO
                     }
+                    if(selectedUniversity != null && selectedCourse != null)
+                        filterCoursesByUniversity();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
                 });
     }

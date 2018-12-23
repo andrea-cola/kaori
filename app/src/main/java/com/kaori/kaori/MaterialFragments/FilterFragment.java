@@ -18,7 +18,6 @@ import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 public class FilterFragment extends Fragment {
 
@@ -71,7 +70,7 @@ public class FilterFragment extends Fragment {
     }
 
     private void setupButton(){
-        filterButton.setOnClickListener(v -> {
+        /*filterButton.setOnClickListener(v -> {
             SearchFragment materialFragment = new SearchFragment();
             if(!exam.equals("")){
                 materialFragment.filterBy("exam", exam);
@@ -85,7 +84,7 @@ public class FilterFragment extends Fragment {
             }else{
                 LogManager.getInstance().showVisualMessage("Seleziona un filtro");
             }
-        });
+        });*/
     }
 
     private void setupExams(){

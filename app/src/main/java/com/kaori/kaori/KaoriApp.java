@@ -75,7 +75,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        findViewById(R.id.navigation).setVisibility(View.VISIBLE);
+        hideBottomBar(false);
     }
 
     @Override
@@ -121,8 +121,8 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void hideBottomBar(){
-        findViewById(R.id.navigation).setVisibility(View.GONE);
+    public void hideBottomBar(boolean flag){
+        findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
     }
 
     /**

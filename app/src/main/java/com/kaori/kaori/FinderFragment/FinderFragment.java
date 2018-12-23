@@ -46,12 +46,12 @@ public class FinderFragment extends Fragment {
     private RecyclerView recyclerView;
     private Context context;
     private Date now;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.user_position_layout, container, false);
-
+        view = inflater.inflate(R.layout.user_position_layout, container, false);
         recyclerView = view.findViewById(R.id.user_recycler_view);
         FloatingActionButton fab = view.findViewById(R.id.positionFAB);
 
@@ -82,19 +82,24 @@ public class FinderFragment extends Fragment {
     }
 
     private void loadActivePositions(){
-        LogManager.getInstance().printConsoleMessage("loadActivePositions");
         db.collection(Constants.DB_COLL_POSITIONS)
                 .orderBy(Constants.FIELD_TIMESTAMP)
                 .whereGreaterThan(Constants.FIELD_TIMESTAMP, now)
                 .get()
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && task.getResult() != null)
+                    if(task.isSuccessful() && task.getResult() != null) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            if(!document.getString("user.uid").equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
+                            if (!document.getString("user.uid").equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
                                 positions.add(document.toObject(Position.class));
                                 adapter.notifyDataSetChanged();
                             }
                         }
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        if(positions.size() == 0)
+                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    } else
+                        LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
+
         });
     }
 

@@ -78,6 +78,8 @@ public class FeedFragment extends Fragment {
                         DataManager.getInstance().setFeedElements(mMaterialList);
                         mAdapter.notifyDataSetChanged();
                         view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        if(mMaterialList.size() == 0)
+                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                     }
                     else {
                         view.findViewById(R.id.wait_layout).setVisibility(View.GONE);

@@ -47,7 +47,7 @@ public class EditFilesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_uploads, container, false);
         setHasOptionsMenu(true);
-        ((KaoriApp)getActivity()).hideBottomBar();
+        ((KaoriApp)getActivity()).hideBottomBar(true);
 
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
