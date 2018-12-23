@@ -2,6 +2,8 @@ package com.kaori.kaori.Utils;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
@@ -109,6 +111,12 @@ public class DataManager {
 
     public void clean(){
         dataManager = new DataManager();
+    }
+
+    public void postComment(Material material){
+        FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS)
+                .document(material.getId())
+                .set(material);
     }
 
 }

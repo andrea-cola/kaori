@@ -36,4 +36,24 @@
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"/>
 
+    <LinearLayout
+        android:id="@+id/feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/edittext_button"
+        style="@style/KaoriButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Posta un feedback"/>
+
 </LinearLayout>

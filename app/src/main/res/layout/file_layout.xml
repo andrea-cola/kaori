@@ -43,4 +43,24 @@
         android:layout_marginBottom="@dimen/default_margin"
         android:text="@string/download" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <EditText
+        android:id="@+id/edittext"
+        android:layout_width="match_parent"
+        android:layout_height="56dp" />
+
+    <Button
+        android:id="@+id/edittext_button"
+        style="@style/KaoriButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Posta un feedback"/>
+
 </LinearLayout>

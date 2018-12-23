@@ -7,6 +7,7 @@ import java.util.List;
 
 public class Material {
 
+    private String id;
     private MiniUser user;
     private String comment;
     private String course;
@@ -17,6 +18,7 @@ public class Material {
     private String type;
     private String url;
     private Boolean isModified;
+    private List<Feedback> feedbacks;
 
     public Material(){
         exams = new ArrayList<>();
@@ -109,5 +111,23 @@ public class Material {
 
     public void setExams(List<String> exams) {
         this.exams = exams;
+    }
+
+    public List<Feedback> getFeedbacks() {
+        if(feedbacks == null)
+            feedbacks = new ArrayList<>();
+        return feedbacks;
+    }
+
+    public void setFeedbacks(List<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

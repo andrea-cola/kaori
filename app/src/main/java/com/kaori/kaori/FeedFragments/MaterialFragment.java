@@ -9,19 +9,25 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.BuildConfig;
 import com.kaori.kaori.KaoriChat;
+import com.kaori.kaori.Model.Feedback;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -29,12 +35,15 @@ import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class MaterialFragment extends Fragment {
 
     private View view;
     private StorageReference storage;
     private Material mMaterial;
+    private RecyclerView recyclerView;
 
     public MaterialFragment(){}
 
@@ -85,6 +94,7 @@ public class MaterialFragment extends Fragment {
 
     private void setFileLayout(){
         Button downloadButton = view.findViewById(R.id.downloadButton);
+        TextView edittext = view.findViewById(R.id.edittext);
         downloadButton.setOnClickListener(v -> storage.child(Constants.STORAGE_PATH_UPLOADS + mMaterial.getUser().getName() + "_" + mMaterial.getTitle() + ".pdf").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -97,15 +107,48 @@ public class MaterialFragment extends Fragment {
                     show();
             }
         }));
+
+        view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
+            Feedback feedback = new Feedback();
+            feedback.setText(edittext.getText().toString());
+            feedback.setTimestamp(Timestamp.now());
+            feedback.setUser(DataManager.getInstance().getMiniUser());
+            mMaterial.getFeedbacks().add(feedback);
+            recyclerView.getAdapter().notifyDataSetChanged();
+
+            DataManager.getInstance().postComment(mMaterial);
+        });
+
+        recyclerView = view.findViewById(R.id.feedback);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
+        recyclerView.setAdapter(recyclerAdapter);
     }
 
     private void setLinkLayout(){
+        TextView edittext = view.findViewById(R.id.edittext);
         TextView author = view.findViewById(R.id.author);
         author.setText(mMaterial.getUser().getName());
         TextView link = view.findViewById(R.id.url);
         link.setText(mMaterial.getUrl());
         link.setLinkTextColor(Color.BLUE);
         Linkify.addLinks(link, Linkify.WEB_URLS);
+
+        view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
+            Feedback feedback = new Feedback();
+            feedback.setText(edittext.getText().toString());
+            feedback.setTimestamp(Timestamp.now());
+            feedback.setUser(DataManager.getInstance().getMiniUser());
+            mMaterial.getFeedbacks().add(feedback);
+            recyclerView.getAdapter().notifyDataSetChanged();
+
+            DataManager.getInstance().postComment(mMaterial);
+        });
+
+        recyclerView = view.findViewById(R.id.feedback);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
+        recyclerView.setAdapter(recyclerAdapter);
     }
 
     private void initializeSubView(){
@@ -127,6 +170,52 @@ public class MaterialFragment extends Fragment {
 
             if (getActivity() != null)
                 startActivity(pdfIntent);
+        }
+    }
+
+    private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
+
+        List<Feedback> feedbacks;
+
+        /*package-private*/ RecyclerAdapter(List<Feedback> feedbacks){
+            this.feedbacks = feedbacks;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerAdapter.Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+            return new RecyclerAdapter.Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_left, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
+            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            holder.timestamp.setText(sfd.format(feedbacks.get(i).getTimestamp().toDate()));
+
+            if(getContext() != null)
+                Glide.with(getContext())
+                        .load(feedbacks.get(i).getUser().getThumbnail())
+                        .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                        .into(holder.userImage);
+
+            holder.content.setText(feedbacks.get(i).getText());
+        }
+
+        @Override
+        public int getItemCount() {
+            return feedbacks.size();
+        }
+
+        /*package-private*/ class Holder extends RecyclerView.ViewHolder {
+            ImageView userImage;
+            TextView content, timestamp;
+
+            Holder (View v) {
+                super(v);
+                content = v.findViewById(R.id.message_content);
+                timestamp = v.findViewById(R.id.message_time);
+                userImage = v.findViewById(R.id.user_profile_image);
+            }
         }
     }
 }

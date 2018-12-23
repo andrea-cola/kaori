@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -62,10 +63,11 @@ public class UploadWaitFragment extends Fragment {
 
     private void writeDatabase(Material material) {
         material.setTimestamp(Timestamp.now());
-        FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS)
-                .add(material)
-                .addOnSuccessListener(documentReference -> goBackToPreviousFragment())
-                .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
+        DocumentReference doc = FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS).document();
+        material.setId(doc.getId());
+        doc.set(material)
+            .addOnSuccessListener(documentReference -> goBackToPreviousFragment())
+            .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
     }
 
     private void uploadFileIntoStorage(String url) {
