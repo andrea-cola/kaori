@@ -40,6 +40,7 @@ public class EditFilesFragment extends Fragment {
     private View view;
     private List<Material> myUploads;
     private ListAdapter adapter;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
@@ -48,7 +49,7 @@ public class EditFilesFragment extends Fragment {
         setHasOptionsMenu(true);
         ((KaoriApp)getActivity()).hideBottomBar();
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         view.findViewById(R.id.FAB).setOnClickListener(view -> invokeNextFragment(new UploadFragment()));
@@ -117,8 +118,11 @@ public class EditFilesFragment extends Fragment {
         @Override
         public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
-            UploadFragment uploadBookFragment = new UploadFragment();
-            v.setOnClickListener(view -> invokeNextFragment(uploadBookFragment));
+            v.setOnClickListener(view -> {
+                UploadFragment uploadBookFragment = new UploadFragment();
+                uploadBookFragment.isMaterialModified(mDataset.get(recyclerView.getChildAdapterPosition(v)));
+                invokeNextFragment(uploadBookFragment);
+            });
             return new ListViewHolder(v);
         }
 

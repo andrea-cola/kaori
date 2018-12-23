@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -60,7 +59,6 @@ public class EditCoursesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_exams, container, false);
         setHasOptionsMenu(true);
-        ((KaoriApp)getActivity()).hideBottomBar();
         addingSpace = view.findViewById(R.id.adding_space);
         view.findViewById(R.id.button_add_field).setOnClickListener(view -> addAutoCompleteTextView(null));
         buttonOk = view.findViewById(R.id.button_ok);

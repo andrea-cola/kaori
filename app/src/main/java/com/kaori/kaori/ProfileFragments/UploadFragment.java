@@ -51,6 +51,7 @@ public class UploadFragment extends Fragment {
     private String exam, professor, tag;
     private Material newMaterial;
     private List<Professor> professors;
+    private RadioGroup radioGroup;
     private View view;
     private boolean isMaterialModified = false, validFields[] = new boolean[2];
 
@@ -82,13 +83,13 @@ public class UploadFragment extends Fragment {
     private void initializeView() {
         LinearLayout linearLayout = view.findViewById(R.id.linearlayout);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        setUploadButton();
 
-        RadioGroup radioGroup = view.findViewById(R.id.radioGroup);
+        radioGroup = view.findViewById(R.id.radioGroup);
         radioGroup.setOnCheckedChangeListener((radioGroup1, i) -> {
             linearLayout.removeAllViews();
 
-            initializeNewMaterial();
+            if(!isMaterialModified)
+                initializeNewMaterial();
 
             RadioButton radioButton = view.findViewById(radioGroup1.getCheckedRadioButtonId());
             tag = String.valueOf(radioButton.getText());
@@ -101,7 +102,38 @@ public class UploadFragment extends Fragment {
 
             initializeSubView();
         });
-        radioGroup.check(R.id.radioButton);
+        if(newMaterial == null)
+            radioGroup.check(R.id.radioButton);
+        else
+            preset();
+    }
+
+    private void preset(){
+        radioGroup.setEnabled(false);
+        radioGroup.setAlpha(0.5f);
+
+        if(newMaterial.getType().equalsIgnoreCase(Constants.LIBRO)) {
+            radioGroup.check(R.id.radioButton);
+            mTitle.setText(newMaterial.getTitle());
+            mAuthor.setText(newMaterial.getProfessors().get(0));
+            mStatus.setText(splitComment(newMaterial.getComment())[0]);
+            mComment.setText(splitComment(newMaterial.getComment())[1]);
+        }
+        else if(newMaterial.getType().equalsIgnoreCase(Constants.FILE)) {
+            radioGroup.check(R.id.radioButton2);
+            mTitle.setText(newMaterial.getTitle());
+            mComment.setText(newMaterial.getComment());
+        }
+        else if(newMaterial.getType().equalsIgnoreCase(Constants.URL)) {
+            radioGroup.check(R.id.radioButton3);
+            mTitle.setText(newMaterial.getTitle());
+            mLink.setText(newMaterial.getUrl());
+            mComment.setText(newMaterial.getComment());
+        }
+    }
+
+    private String[] splitComment(String comment){
+        return comment.split("\n\n");
     }
 
     private void initializeNewMaterial(){
@@ -118,7 +150,19 @@ public class UploadFragment extends Fragment {
         mLink = view.findViewById(R.id.url);
         mStatus = view.findViewById(R.id.status);
 
+        if(!isMaterialModified && view.findViewById(R.id.button_save) != null)
+            view.findViewById(R.id.button_save).setVisibility(View.GONE);
+        else if(isMaterialModified && newMaterial.getType().equalsIgnoreCase(Constants.LIBRO))
+            view.findViewById(R.id.button_save).setOnClickListener(v -> {
+                if (mTitle.getText().toString().equals("") || mComment.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
+                } else {
+                    createNewFile(newMaterial.getUrl());
+                }
+            });
+
         setExamChipGroup();
+        setUploadButton();
     }
 
     private void setUploadButton() {
@@ -274,8 +318,9 @@ public class UploadFragment extends Fragment {
     /**
      * This method sets if the material has been modified
      */
-    public void isMaterialModified(){
+    public void isMaterialModified(Material m){
         isMaterialModified = true;
+        newMaterial = m;
     }
 
     /**
