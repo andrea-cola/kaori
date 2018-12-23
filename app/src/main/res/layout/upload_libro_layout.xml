@@ -71,7 +71,7 @@
         style="@style/KaoriButton"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/default_margin"
-        android:text="@string/upload_button"
+        android:text="Pubblica il libro"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

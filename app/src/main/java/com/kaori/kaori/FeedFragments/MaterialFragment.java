@@ -21,9 +21,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.BuildConfig;
+import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
@@ -70,11 +72,15 @@ public class MaterialFragment extends Fragment {
 
     }
 
-
     private void setLibroLayout(){
         TextView author = view.findViewById(R.id.author);
         author.setText(mMaterial.getProfessors().get(0));
-
+        if(!mMaterial.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
+            view.findViewById(R.id.button).setOnClickListener(view -> {
+                Intent intent = new Intent(getActivity(), KaoriChat.class);
+                intent.putExtra("user", mMaterial.getUser());
+                startActivity(intent);
+            });
     }
 
     private void setFileLayout(){
