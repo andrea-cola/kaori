@@ -15,6 +15,8 @@ import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -72,7 +74,7 @@ public class EditProfileInfo extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_profile_info_layout, container, false);
         context = getContext();
-        setHasOptionsMenu(false);
+        setHasOptionsMenu(true);
         ((KaoriApp)getActivity()).hideBottomBar();
 
         EditText mName = view.findViewById(R.id.profile_name);
@@ -110,6 +112,12 @@ public class EditProfileInfo extends Fragment {
         floatingActionButton.setOnClickListener(view -> imagePicker.showChoicePopup());
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.empty_menu, menu);
     }
 
     private void setTextWatchers(){
