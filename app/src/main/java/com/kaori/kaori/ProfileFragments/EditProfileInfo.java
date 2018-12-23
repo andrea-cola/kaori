@@ -218,7 +218,7 @@ public class EditProfileInfo extends Fragment {
                     getActivity().getSupportFragmentManager().popBackStackImmediate();
             })
             .addOnFailureListener(e -> {
-                LogManager.getInstance().showVisualError(context, e, "saveData:fail");
+                LogManager.getInstance().showVisualError(e, "saveData:fail");
                 if(getActivity() != null)
                     getActivity().getSupportFragmentManager().popBackStackImmediate();
             });
@@ -241,7 +241,7 @@ public class EditProfileInfo extends Fragment {
             uploadNewUserOnTheServer(user);
         }))
         .addOnFailureListener(e -> {
-            LogManager.getInstance().showVisualError(context, e, "uploadProfileImageOnTheServer:error");
+            LogManager.getInstance().showVisualError(e, "uploadProfileImageOnTheServer:error");
             //endSignIn(false);
         });
     }
@@ -327,7 +327,7 @@ public class EditProfileInfo extends Fragment {
             }
         }
         else
-            LogManager.getInstance().showVisualError(getContext(), null, getString(R.string.no_image_selected));
+            LogManager.getInstance().showVisualError( null, getString(R.string.no_image_selected));
     }
 
     /**

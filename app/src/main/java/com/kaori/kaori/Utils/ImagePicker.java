@@ -76,7 +76,8 @@ public class ImagePicker {
                             fragment.startActivityForResult(takePictureIntent, CAMERA_REQUEST);
                         }
                     } catch (IOException ex) {
-                        LogManager.getInstance().showVisualError(activity, ex, "");
+                        // TODO
+                        LogManager.getInstance().showVisualError(ex, "");
                     }
                 }
             }

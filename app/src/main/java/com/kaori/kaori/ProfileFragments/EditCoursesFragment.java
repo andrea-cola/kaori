@@ -110,9 +110,9 @@ public class EditCoursesFragment extends Fragment {
 
                 attachListeners(acw);
             } else
-                LogManager.getInstance().showVisualMessage(context, "Non è possible aggiungere altri esami.");
+                LogManager.getInstance().showVisualMessage("Non è possible aggiungere altri esami.");
         }else
-            LogManager.getInstance().showVisualMessage(context, "Compila il campo vuoto.");
+            LogManager.getInstance().showVisualMessage("Compila il campo vuoto.");
     }
 
     /**
@@ -179,7 +179,7 @@ public class EditCoursesFragment extends Fragment {
                         updateList();
                     }
                     else {
-                        LogManager.getInstance().showVisualError(context,null,"Impossibile caricare i corsi, riprovare.");
+                        LogManager.getInstance().showVisualError(null,"Impossibile caricare i corsi, riprovare.");
                         endProcess(false);
                     }
                 });
@@ -212,7 +212,7 @@ public class EditCoursesFragment extends Fragment {
                     endProcess(true);
                 })
                 .addOnFailureListener(e -> {
-                    LogManager.getInstance().showVisualError(getContext(), e, "saveData:fail");
+                    LogManager.getInstance().showVisualError(e, "saveData:fail");
                 });
     }
 
@@ -226,7 +226,7 @@ public class EditCoursesFragment extends Fragment {
             getFragmentManager().popBackStackImmediate();
         }
         else if(!isSuccess && context != null) {
-            LogManager.getInstance().showVisualError(context, null, GENERIC_ERROR);
+            LogManager.getInstance().showVisualError(null, GENERIC_ERROR);
             (new Handler()).postDelayed(() -> getFragmentManager().popBackStackImmediate(), 3000);
         }
     }

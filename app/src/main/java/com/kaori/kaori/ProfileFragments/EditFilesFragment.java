@@ -83,7 +83,7 @@ public class EditFilesFragment extends Fragment {
                             }
                         }
                     else
-                        LogManager.getInstance().showVisualError(getContext(),null,"Impossibile caricare i corsi, riprovare.");
+                        LogManager.getInstance().showVisualError(null,"Impossibile caricare i corsi, riprovare.");
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
                 });
     }

@@ -68,4 +68,13 @@
     <string name="file_not_found">File non trovato. Riprovare.</string>
     <string name="no_image_selected">Nessuna immagine selezionata.</string>
 
+    <!-- Errors & Messages -->
+    <string name="signin_success">Registrazione effettuata.</string>
+    <string name="login_success">Login effettuato.</string>
+    <string name="generic_error">Verifica la tua connessione.</string>
+    <string name="google_error">Login con Google fallito. Riprova.</string>
+    <string name="native_error">Login fallito. Riprova.</string>
+    <string name="facebook_error">Login con Facebook fallito. Riprova.</string>
+    <string name="firebase_error">Login con Firebase fallito. Riprova.</string>
+
 </resources>

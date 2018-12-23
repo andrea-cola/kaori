@@ -82,7 +82,8 @@ public class ChatListFragment extends Fragment {
                         for (DocumentChange doc : value.getDocumentChanges())
                             handleDocumentChange(doc.getType(), doc.getDocument().toObject(Chat.class));
                     else
-                        LogManager.getInstance().showVisualMessage(getContext(), "Nessun messaggio");
+                        // TODO: empty view
+                        LogManager.getInstance().showVisualMessage("Nessun messaggio");
                 });
     }
 

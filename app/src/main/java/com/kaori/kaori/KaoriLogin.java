@@ -64,23 +64,20 @@ public class KaoriLogin extends AppCompatActivity {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.GOOGLE_LOGIN_REQUEST) {
+        if (requestCode == Constants.GOOGLE_LOGIN_REQUEST)
             try {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
                 loginManager.firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                LogManager.getInstance().showVisualError(this, e, "Google sign in failed");
+                LogManager.getInstance().showVisualError(e, getString(R.string.google_error));
             }
-        } else if (requestCode == Constants.GOOGLE_SIGNIN_REQUEST) {
-            LogManager.getInstance().printConsoleMessage("onActivityResult:GoogleSignInRequest");
+        else if (requestCode == Constants.GOOGLE_SIGNIN_REQUEST)
             signInManager.handleGoogleSignIn(GoogleSignIn.getSignedInAccountFromIntent(data));
-        } else if (signInManager.getSignInFacebookStarted()) {
-            LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookSignInRequest");
+        else if (signInManager.getSignInFacebookStarted())
             signInManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
-        } else if (loginManager.getSignInFacebookStarted()) {
-            LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookLoginRequest");
+        else if (loginManager.getSignInFacebookStarted())
             loginManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
-        } else
+        else
             super.onActivityResult(requestCode, resultCode, data);
     }
 

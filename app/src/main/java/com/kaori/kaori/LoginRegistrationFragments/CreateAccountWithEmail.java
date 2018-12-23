@@ -212,10 +212,10 @@ public class CreateAccountWithEmail extends Fragment {
                     profileImage.setImageBitmap(profileImageBitmap);
                 }
             } catch (FileNotFoundException e) {
-                LogManager.getInstance().showVisualError(getContext(), e, getString(R.string.file_not_found));
+                LogManager.getInstance().showVisualError(e, getString(R.string.file_not_found));
             }
         else
-            LogManager.getInstance().showVisualError(getContext(), null, getString(R.string.no_image_selected));
+            LogManager.getInstance().showVisualError(null, getString(R.string.no_image_selected));
     }
 
     /**

@@ -41,6 +41,8 @@
 
     <style name="KaoriProgressBar" parent="ThemeOverlay.MaterialComponents.Light">
         <item name="android:colorAccent">@color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <!-- Kaori standard TextView -->

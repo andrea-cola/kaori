@@ -25,7 +25,6 @@ import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.apache.commons.collections4.ListUtils.intersection;
 
 public class FeedFragment extends Fragment {
@@ -33,14 +32,14 @@ public class FeedFragment extends Fragment {
     private final String BACK_STATE_NAME = getClass().getName();
 
     private RecyclerView.Adapter mAdapter;
-    private List<Material> mMaterialList;
+    private ArrayList<Material> mMaterialList;
     private User me;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.feed_layout, container, false);
-        mMaterialList = new ArrayList<>();
+        view = inflater.inflate(R.layout.feed_layout, container, false);
         me = DataManager.getInstance().getUser();
         initializeView(view);
         downloadData();
@@ -48,12 +47,20 @@ public class FeedFragment extends Fragment {
     }
 
     private void initializeView(View view){
+        mMaterialList = new ArrayList<>();
+
         RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecyclerAdapter(mMaterialList);
+        if(DataManager.getInstance().getFeedElements().size() > 0)
+            mAdapter = new RecyclerAdapter(DataManager.getInstance().getFeedElements());
+        else
+            mAdapter = new RecyclerAdapter(mMaterialList);
         recyclerView.setAdapter(mAdapter);
+
+        if(DataManager.getInstance().getFeedElements().size() > 0)
+            view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
     }
 
     private void downloadData(){
@@ -62,16 +69,21 @@ public class FeedFragment extends Fragment {
                 .whereEqualTo(Constants.FIELD_COURSES, me.getCourse())
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null)
+                    if (task.isSuccessful() && task.getResult() != null) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Material material = document.toObject(Material.class);
-                            if(examsIntersection(material.getExams(), me.getExams())) {
+                            if (examsIntersection(material.getExams(), me.getExams()))
                                 mMaterialList.add(material);
-                                mAdapter.notifyDataSetChanged();
-                            }
                         }
-                    else
-                        LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
+                        DataManager.getInstance().setFeedElements(mMaterialList);
+                        mAdapter.notifyDataSetChanged();
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                    }
+                    else {
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                        LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
+                    }
                 });
     }
 
@@ -132,12 +144,14 @@ public class FeedFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            if (materials.get(position).getType().equals(Constants.LIBRO)){
-                return LIBRO;
-            }else if (materials.get(position).getType().equals(Constants.FILE)){
-                return FILE;
-            }else
-                return URL;
+            switch (materials.get(position).getType()) {
+                case Constants.LIBRO:
+                    return LIBRO;
+                case Constants.FILE:
+                    return FILE;
+                default:
+                    return URL;
+            }
         }
 
         @Override

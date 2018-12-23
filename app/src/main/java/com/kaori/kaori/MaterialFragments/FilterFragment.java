@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -46,20 +45,20 @@ public class FilterFragment extends Fragment {
         course = "";
         currentUser = DataManager.getInstance().getUser();
 
-        setUpView();
+        setupView();
 
-        setUpButton();
+        //setupButton();
 
-        setUpExams();
+        setupExams();
 
-        setUpCourses();
+        setupCourses();
 
-        setUpProfessors();
+        setupProfessors();
 
         return view;
     }
 
-    private void setUpView(){
+    private void setupView(){
         filterButton = view.findViewById(R.id.filterButton);
         coursesGroup = view.findViewById(R.id.coursesChipGroup);
         coursesGroup.setSingleSelection(true);
@@ -69,42 +68,36 @@ public class FilterFragment extends Fragment {
         professorsGroup.setSingleSelection(true);
     }
 
-    private void setUpButton(){
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SearchMaterialFragment materialFragment = new SearchMaterialFragment();
-                if(!exam.equals("")){
-                    materialFragment.filterBy("exam", exam);
-                    invokeFragment(materialFragment);
-                }else if(!professor.equals("") ){
-                    materialFragment.filterBy("professor", professor);
-                    invokeFragment(materialFragment);
-                }else if(!course.equals("")){
-                    invokeFragment(materialFragment);
-                    materialFragment.filterBy("course", course);
-                }else{
-                    Toast.makeText(getContext(), "Seleziona un filtro", Toast.LENGTH_SHORT).show();
-                }
+    /*private void setupButton(){
+        filterButton.setOnClickListener(v -> {
+            SearchMaterialFragment materialFragment = new SearchMaterialFragment();
+            if(!exam.equals("")){
+                materialFragment.filterBy("exam", exam);
+                invokeFragment(materialFragment);
+            }else if(!professor.equals("") ){
+                materialFragment.filterBy("professor", professor);
+                invokeFragment(materialFragment);
+            }else if(!course.equals("")){
+                invokeFragment(materialFragment);
+                materialFragment.filterBy("course", course);
+            }else{
+                Toast.makeText(getContext(), "Seleziona un filtro", Toast.LENGTH_SHORT).show();
             }
         });
-    }
+    }*/
 
-    private void setUpExams(){
+    private void setupExams(){
         for(String e : currentUser.getExams()){
             Chip chip = setChip(new Chip(getContext()), e);
             examsGroup.addView(chip);
-            chip.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (chip.isChecked())
-                        exam = chip.getText().toString();
-                }
+            chip.setOnClickListener(v -> {
+                if (chip.isChecked())
+                    exam = chip.getText().toString();
             });
         }
     }
 
-    private void setUpCourses(){
+    private void setupCourses(){
         db.collection("courses")
                 .whereEqualTo("university", currentUser.getUniversity())
                 .get()
@@ -113,12 +106,9 @@ public class FilterFragment extends Fragment {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Chip chip = new Chip(getContext());
                             coursesGroup.addView(setChip(chip, document.getString("name")));
-                            chip.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (chip.isChecked()) {
-                                        course = chip.getText().toString();
-                                    }
+                            chip.setOnClickListener(v -> {
+                                if (chip.isChecked()) {
+                                    course = chip.getText().toString();
                                 }
                             });
                         }
@@ -126,7 +116,7 @@ public class FilterFragment extends Fragment {
                 });
     }
 
-    private void setUpProfessors(){
+    private void setupProfessors(){
         db.collection("professors")
                 .whereEqualTo("university", currentUser.getUniversity())
                 .get()

@@ -13,21 +13,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.FeedFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SearchMaterialFragment extends Fragment {
 
@@ -41,20 +39,15 @@ public class SearchMaterialFragment extends Fragment {
      */
     private View view;
     private SearchView searchView;
-    private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
     private FloatingActionButton filterButton;
-    private LinearLayout emptyView;
-    private TextView emptyTextView;
 
     /**
      * Variables
      */
     private ArrayList<Material> materials;
-    private Query set, mQuery;
-    private FirestoreRecyclerAdapter adapter;
-    private FirebaseFirestore db;
-    private boolean isFiltered = false;
+    private ArrayList<Material> subMaterials;
+    private RecyclerAdapter recyclerAdapter;
+    private RecyclerView recyclerView;
 
     /**
      * Constructor
@@ -65,35 +58,26 @@ public class SearchMaterialFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_layout, container, false);
-        setUpView();
-
         materials = new ArrayList<>();
 
-        setUpFirebase();
+        downloadMaterialFromDatabase();
+        setupView();
+        setupButtons();
 
-        setUpButtons();
-
-        if(isFiltered) {
-            emptyView.setVisibility(View.INVISIBLE);
-            setAdapter();
-        }
         return view;
     }
 
-    /**
-     * This method sets up the Firebase db
-     */
-    private void setUpFirebase(){
-        db = FirebaseFirestore.getInstance();
-        set = db.collection("materials").orderBy("title", Query.Direction.DESCENDING);
-        set.get()
+    private void downloadMaterialFromDatabase(){
+        FirebaseFirestore.getInstance()
+                .collection(Constants.DB_COLL_MATERIALS)
+                .get()
                 .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        for(QueryDocumentSnapshot document : task.getResult()){
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        for (QueryDocumentSnapshot document : task.getResult())
                             materials.add(document.toObject(Material.class));
-                        }
-                    }else{
-                        LogManager.getInstance().printConsoleError("Error getting documents: " + task.getException());
+                    } else {
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                        LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
                     }
                 });
     }
@@ -101,29 +85,27 @@ public class SearchMaterialFragment extends Fragment {
     /**
      * This method sets up the View
      */
-    private void setUpView(){
-        // setting the items of the search_layout
+    private void setupView(){
+        subMaterials = new ArrayList<>();
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.searchList);
-        emptyView = view.findViewById(R.id.emptyView);
-        emptyView.setVisibility(View.VISIBLE);
-        emptyTextView = view.findViewById(R.id.emptyTextView);
-        emptyTextView.setVisibility(View.INVISIBLE);
-
         filterButton = view.findViewById(R.id.filterFAB);
 
-        layoutManager = new LinearLayoutManager(getContext());
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
+        recyclerAdapter = new RecyclerAdapter(subMaterials);
+        recyclerView.setAdapter(recyclerAdapter);
+        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
     }
 
     /**
      * This method sets up the buttons in the View
      */
-    private void setUpButtons(){
-        // listener to the search view
+    private void setupButtons(){
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                hideKeyboard();
                 return false;
             }
 
@@ -134,13 +116,7 @@ public class SearchMaterialFragment extends Fragment {
             }
         });
 
-        filterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FilterFragment fragment = new FilterFragment();
-                invokeFragment(fragment);
-            }
-        });
+        filterButton.setOnClickListener(v -> invokeFragment(new FilterFragment()));
     }
 
     /**
@@ -148,53 +124,29 @@ public class SearchMaterialFragment extends Fragment {
      * Filtering the materials according to the chips clicked
      */
     private void firebaseSearch(String sequence) {
-        for (Material material : materials) {
-            if (material.getTitle().toLowerCase().contains(sequence.toLowerCase())) {
-                mQuery = set.whereEqualTo("title", material.getTitle());
-            }
-        }
+        if(sequence.length() > 0) {
+            subMaterials.clear();
+            recyclerAdapter.notifyDataSetChanged();
 
-        if(sequence.equals("")){
-            recyclerView.setVisibility(View.INVISIBLE);
-            emptyView.setVisibility(View.VISIBLE);
-            emptyTextView.setVisibility(View.VISIBLE);
-        }else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.INVISIBLE);
-        }
-        setAdapter();
+            for(Material m : materials)
+                if (m.getTitle().toLowerCase().contains(sequence.toLowerCase())
+                        || m.getCourse().toLowerCase().contains(sequence.toLowerCase())
+                        || containsExams(m, sequence)) {
+                    subMaterials.add(m);
+                    recyclerAdapter.notifyDataSetChanged();
+                }
+
+            view.findViewById(R.id.empty_view).setVisibility(subMaterials.size() == 0 ? View.VISIBLE : View.GONE);
+        } else
+            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
     }
 
-
-    private void setAdapter(){
-
-        FirestoreRecyclerOptions<Material> options = new FirestoreRecyclerOptions.Builder<Material>()
-                .setQuery(mQuery, Material.class)
-                .setLifecycleOwner(this)
-                .build();
-
-        adapter = new FirestoreRecyclerAdapter<Material, BookViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull final BookViewHolder holder, int i, @NonNull Material model) {
-                holder.mView.setOnClickListener(v -> {
-                    MaterialFragment fragment = new MaterialFragment();
-                    fragment.setMaterial(materials.get(i));
-                    invokeFragment(fragment);
-                    hideKeyboard();
-                });
-            }
-
-            @NonNull
-            @Override
-            public BookViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-                View view = LayoutInflater.from(getContext()).inflate(R.layout.search_list_item, parent, false);
-                return new BookViewHolder(view);
-            }
-        };
-
-        recyclerView.setAdapter(adapter);
+    private boolean containsExams(Material m, String sequence){
+        for(String e : m.getExams())
+            if(e.toLowerCase().contains(sequence.toLowerCase()))
+                return true;
+        return false;
     }
-
 
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -214,35 +166,57 @@ public class SearchMaterialFragment extends Fragment {
         }
     }
 
-    public void filterBy(String field, String o){
-        mQuery = FirebaseFirestore.getInstance().collection("materials");
+    private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        if(!o.equals("")){
-            mQuery = mQuery.whereEqualTo(field, o);
-            isFiltered = true;
+        List<Material> materials;
+
+        /*package-private*/ RecyclerAdapter(List<Material> materials){
+            this.materials = materials;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerAdapter.Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item, parent, false);
+            v.setOnClickListener(view -> {
+                MaterialFragment materialFragment = new MaterialFragment();
+                materialFragment.setMaterial(this.materials.get(recyclerView.getChildAdapterPosition(v)));
+                invokeFragment(materialFragment);
+            });
+            return new RecyclerAdapter.Holder(v);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
+            holder.setDetails(materials.get(i).getTitle(), materials.get(i).getCourse());
+        }
+
+        @Override
+        public int getItemCount() {
+            return materials.size();
+        }
+
+        /**
+         * Private adapter for the RecyclerView
+         */
+        class Holder extends RecyclerView.ViewHolder {
+            View mView;
+            TextView book_title;
+            TextView book_author;
+
+            private Holder(View itemView) {
+                super(itemView);
+                mView = itemView;
+            }
+
+            private void setDetails(String bookTitle, String bookAuthor){
+                book_title = mView.findViewById(R.id.itemTitle);
+                book_author = mView.findViewById(R.id.itemAuthor);
+
+                book_title.setText(bookTitle);
+                book_author.setText(bookAuthor);
+            }
         }
     }
 
-    /**
-     * Private adapter for the RecyclerView
-     */
-    private class BookViewHolder extends RecyclerView.ViewHolder {
-
-        View mView;
-        TextView book_title;
-        TextView book_author;
-
-        private BookViewHolder(View itemView) {
-            super(itemView);
-            mView = itemView;
-        }
-
-        private void setDetails(String bookTitle, String bookAuthor){
-            book_title = mView.findViewById(R.id.itemTitle);
-            book_author = mView.findViewById(R.id.itemAuthor);
-
-            book_title.setText(bookTitle);
-            book_author.setText(bookAuthor);
-        }
-    }
 }

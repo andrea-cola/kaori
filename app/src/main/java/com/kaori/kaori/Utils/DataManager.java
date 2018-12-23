@@ -23,6 +23,7 @@ public class DataManager {
     private ArrayList<String> universities;
     private ArrayList<String> courseTypes;
     private ArrayList<String> exams;
+    private ArrayList<Material> feedElements;
 
     /**
      * Request options for Glide.
@@ -36,6 +37,7 @@ public class DataManager {
         universities = new ArrayList<>();
         courseTypes = new ArrayList<>();
         exams = new ArrayList<>();
+        feedElements = new ArrayList<>();
         glideRequestOptions = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
@@ -119,4 +121,15 @@ public class DataManager {
                 .set(material);
     }
 
+    public ArrayList<Material> getFeedElements() {
+        return feedElements;
+    }
+
+    public void setFeedElements(ArrayList<Material> feedElements) {
+        this.feedElements = feedElements;
+    }
+
+    public void addFeedElements(Material material){
+        this.feedElements.add(material);
+    }
 }

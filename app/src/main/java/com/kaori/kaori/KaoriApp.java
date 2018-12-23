@@ -99,7 +99,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     }
 
     /**
-     * This method overrides the default one, letting the user get
+     * This method overrides the empty_image one, letting the user get
      * back to the previous fragment by clicking on the arrow on the top of the screen.
      */
     @Override

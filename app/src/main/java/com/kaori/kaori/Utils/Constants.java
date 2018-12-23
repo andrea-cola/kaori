@@ -12,15 +12,6 @@ import java.util.Locale;
 public class Constants {
 
     /**
-     * Screen titles.
-     */
-    public static final String titleSignIn = "Sign In";
-    public static final String titleCreate = "Create new account";
-    public static final String titleRegistrationForm = "Registration Form";
-    public static final String titleProfileInformation = "Profile Information";
-    public static final String titleSplashScreen = "Loading";
-
-    /**
      * Log titles.
      */
     public static final String TAG = "KaoriDebug";
@@ -49,6 +40,7 @@ public class Constants {
     public static final String FIELD_EXAM = "exam";
     public static final String FIELD_NAME = "name";
     public static final String FIELD_AUTHOR = "author";
+    public static final String FIELD_TITLE = "title";
     public static final String FIELD_LAST_MESSAGE = "lastMessageSent";
     public static final String FIELD_MINI_USER = "miniUser";
     public static final String FIELD_UID = "uid";
@@ -69,7 +61,7 @@ public class Constants {
     /**
      * Numerical constants.
      */
-    public static int SPLASH_SCREEN_WAITING_TIME = 500;
+    public static int SPLASH_SCREEN_WAITING_TIME = 0;
 
     /**
      * Sign in and login constants.

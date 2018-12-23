@@ -1,11 +1,9 @@
 package com.kaori.kaori.Utils;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.kaori.kaori.R;
 
@@ -61,17 +59,10 @@ public class LogManager {
      * and in the console.
      */
     @SuppressLint("LogNotTimber")
-    public void showVisualError(Context context, Exception e, String message){
-        if(e == null)
-            Log.e(Constants.TAG, message);
-        else
-            Log.e(Constants.TAG, message + " -> " + e.getMessage());
+    public void showVisualError(Exception e, String message){
+        Log.e(Constants.TAG, e == null ? message : message + " -> " + e.getMessage());
 
-        if(view != null) {
-            Snackbar snackbar = Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG);
-            snackbar.show();
-        } else
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+        if(view != null) Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -79,15 +70,10 @@ public class LogManager {
      * and in the console.
      */
     @SuppressLint("LogNotTimber")
-    public void showVisualMessage(Context context, String message){
+    public void showVisualMessage(String message){
         Log.d(Constants.TAG, message);
-        if(view != null) {
-            Snackbar snackbar = Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG);
-            snackbar.show();
-        } else
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+        if(view != null) Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
     }
 
 }
-
-

@@ -208,19 +208,13 @@ public class LoginManager {
                     LogManager.getInstance().printConsoleError(task.getException().getMessage() + "getInstanceId failed");
                     return;
                 }
-
                 updateTokens(task.getResult().getToken());
-
-                //TODO: da eliminare
-                LogManager.getInstance().printConsoleMessage(task.getResult().getToken());
-
-                LogManager.getInstance().printConsoleMessage("endLogin:success");
                 context.startActivity(new Intent(context, Kaori.class));
                 ((Activity) context).finish();
             });
         }
         else if(!isSuccess && context != null) {
-            LogManager.getInstance().showVisualError(context, null, loginError);
+            LogManager.getInstance().showVisualError(null, loginError);
             (new Handler()).postDelayed(() -> {
                 context.startActivity(new Intent(context, KaoriLogin.class));
                 ((Activity)context).finish();

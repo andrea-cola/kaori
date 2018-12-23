@@ -28,7 +28,6 @@ import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -113,10 +112,12 @@ public class ChatFragment extends Fragment {
                 .document()
                 .set(m)
                 .addOnSuccessListener(aVoid1 -> {
-                    LogManager.getInstance().showVisualMessage(getContext(),"sendMessage:written");
+                    // TODO: da eliminare
+                    LogManager.getInstance().showVisualMessage("Messaggio inviato");
                 })
                 .addOnFailureListener(e -> {
-                    LogManager.getInstance().showVisualMessage(getContext(),"sendMessage:fail");
+                    // TODO : eliminare il messaggio dalla coda.
+                    LogManager.getInstance().showVisualMessage("Invio fallito. Riprovare.");
                 }));
     }
 
@@ -202,8 +203,7 @@ public class ChatFragment extends Fragment {
                     .into(holder.userImage);
 
             holder.content.setText(mDataset.get(position).getMessage());
-            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-            holder.timestamp.setText(sfd.format(mDataset.get(position).getTimestamp().toDate()));
+            holder.timestamp.setText(Constants.dateFormat.format(mDataset.get(position).getTimestamp().toDate()));
         }
 
         @Override
