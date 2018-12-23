@@ -56,14 +56,17 @@ public class ProfileFragment extends Fragment {
                     .apply(hub.getGetGlideRequestOptionsCircle())
                     .into(profileImageView);
 
+        // set the text in the text view.
         mName.setText(hub.getUser().getName());
         mUniversity.setText(hub.getUser().getUniversity());
         mCourseType.setText(hub.getUser().getCourse());
 
+        // setup the recycler view
         mExamsList.setHasFixedSize(true);
         mExamsList.setLayoutManager(new LinearLayoutManager(getContext()));
         mExamsList.setAdapter(new ListAdapter());
 
+        // add click listener to logout button
         logout.setOnClickListener(view12 -> {
             DataManager.getInstance().clean();
             FirebaseAuth.getInstance().signOut();
@@ -89,6 +92,9 @@ public class ProfileFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Invoke the next fragment.
+     */
     private boolean invokeNextFragment(Fragment fragment) {
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -99,11 +105,14 @@ public class ProfileFragment extends Fragment {
         return true;
     }
 
+    /**
+     * Recycler view adapter.
+     */
     private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
         private List<String> mDataset;
 
-        class ListViewHolder extends RecyclerView.ViewHolder {
+        /*package-private*/ class ListViewHolder extends RecyclerView.ViewHolder {
             TextView mTextView;
 
             ListViewHolder(View v) {
@@ -112,10 +121,10 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        ListAdapter() {
+        private ListAdapter() {
             mDataset = new ArrayList<>();
-            mDataset.add("I miei corsi");
-            mDataset.add("I miei uploads");
+            mDataset.add(getString(R.string.my_exams));
+            mDataset.add(getString(R.string.my_uploads));
         }
 
         @NonNull

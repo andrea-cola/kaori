@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.kaori.kaori.FeedFragments.FeedFragment;
 import com.kaori.kaori.FinderFragment.FinderFragment;
@@ -72,6 +73,12 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        findViewById(R.id.navigation).setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.message_action_bar, menu);
         return super.onCreateOptionsMenu(menu);
@@ -107,6 +114,15 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     public void onBackStackChanged() {
         shouldDisplayHomeUp();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void hideBottomBar(){
+        findViewById(R.id.navigation).setVisibility(View.GONE);
     }
 
     /**

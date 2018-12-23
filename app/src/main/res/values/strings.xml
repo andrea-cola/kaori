@@ -1,5 +1,8 @@
 <resources>
 
+    <!-- system strings -->
+    <string name="file_provider_authority">com.kaori.kaori.fileprovider</string>
+
     <!-- titles -->
     <string name="app_name">Kaori</string>
     <string name="title_home">Feed</string>
@@ -56,5 +59,13 @@
     <string name="upload_a_link">Upload a link</string>
     <string name="upload_a_file_or_your_notes">Upload a file or your notes</string>
     <string name="download">Download</string>
+
+    <!-- Profile fragments strings -->
+    <string name="my_exams">I miei corsi</string>
+    <string name="my_uploads">I miei uploads</string>
+
+    <!-- Create Account With Email fragments strings -->
+    <string name="file_not_found">File non trovato. Riprovare.</string>
+    <string name="no_image_selected">Nessuna immagine selezionata.</string>
 
 </resources>

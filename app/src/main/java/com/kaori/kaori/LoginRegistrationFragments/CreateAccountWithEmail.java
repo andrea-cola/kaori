@@ -1,23 +1,15 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
-import android.Manifest;
-import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -25,19 +17,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.ImagePicker;
 import com.kaori.kaori.Utils.LogManager;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -63,7 +51,7 @@ public class CreateAccountWithEmail extends Fragment {
     private EditText name, password, mail;
     private Button createNewAccount;
     private Bitmap profileImageBitmap;
-    private Uri filePath;
+    private ImagePicker imagePicker;
 
     /**
      * Override of the inherited method.
@@ -81,6 +69,7 @@ public class CreateAccountWithEmail extends Fragment {
         profileImage = view.findViewById(R.id.reg_image_profile);
 
         user = new User();
+        user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
 
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
@@ -89,8 +78,9 @@ public class CreateAccountWithEmail extends Fragment {
         // add listener to changes in EditText.
         setEditTextWatchers();
 
+        imagePicker = new ImagePicker(getActivity(), this);
         // add the action to the FAB.
-        floatingActionButton.setOnClickListener(view1 -> buildChoicePopup());
+        floatingActionButton.setOnClickListener(view1 -> imagePicker.showChoicePopup());
 
         createNewAccount.setEnabled(false);
         createNewAccount.setOnClickListener(view12 -> updateUserAndLogin());
@@ -120,17 +110,6 @@ public class CreateAccountWithEmail extends Fragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
-    }
-
-    /**
-     * Calls the activity that allows to select an image
-     * from the library.
-     */
-    private void getImageFromLibrary() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), Constants.PICK_IMAGE);
     }
 
     /**
@@ -218,86 +197,12 @@ public class CreateAccountWithEmail extends Fragment {
     }
 
     /**
-     * This method creates a popup letting the user either choose from
-     * the gallery or take a photo with the camera.
-     */
-    private void buildChoicePopup() {
-        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        View view = getActivity().getLayoutInflater().inflate(R.layout.camera_popup_menu, null);
-
-        builderSingle.setView(view);
-        final AlertDialog alert = builderSingle.create();
-
-        view.findViewById(R.id.popup_cancel_button).setOnClickListener(v -> alert.dismiss());
-
-        view.findViewById(R.id.popup_voice1).setOnClickListener(v -> {
-            if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-            else {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                    try {
-                        File photoFile = createImageFile();
-                        if (photoFile != null) {
-                            Uri photoURI = FileProvider.getUriForFile(getActivity(), "com.kaori.kaori.fileprovider", photoFile);
-                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(takePictureIntent, CAMERA_REQUEST);
-                        }
-                    } catch (IOException ex) {
-                        // set the default image in case of problems.
-                        user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
-                    }
-                }
-            }
-            alert.dismiss();
-        });
-
-        view.findViewById(R.id.popup_voice2).setOnClickListener(v -> {
-            getImageFromLibrary();
-            alert.dismiss();
-        });
-
-        alert.show();
-    }
-
-    /**
-     * Change the orientation of the image if it is wrong.
-     */
-    private Bitmap editImage(String filePath){
-        BitmapFactory.Options bounds = new BitmapFactory.Options();
-        bounds.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filePath, bounds);
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        Bitmap bm = BitmapFactory.decodeFile(filePath, opts);
-
-        try {
-            ExifInterface exif = new ExifInterface(filePath);
-            String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-            int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
-
-            int rotationAngle = 0;
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
-            if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
-
-            Matrix matrix = new Matrix();
-            matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-            bm = Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
-        } catch (IOException e){
-            LogManager.getInstance().printConsoleError(e.getMessage());
-        }
-        return bm;
-    }
-
-    /**
      * Handles the result coming from the activity that choose the image.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CAMERA_REQUEST && filePath != null) {
-            profileImageBitmap = editImage(String.valueOf(filePath));
+        if(requestCode == CAMERA_REQUEST) {
+            profileImageBitmap = imagePicker.editImage(String.valueOf(imagePicker.getFilePath()));
             profileImage.setImageBitmap(profileImageBitmap);
         }
         else if(data != null && data.getData() != null && requestCode == Constants.PICK_IMAGE)
@@ -307,10 +212,10 @@ public class CreateAccountWithEmail extends Fragment {
                     profileImage.setImageBitmap(profileImageBitmap);
                 }
             } catch (FileNotFoundException e) {
-                LogManager.getInstance().showVisualError(getContext(), e, "File non trovato. Riprovare.");
+                LogManager.getInstance().showVisualError(getContext(), e, getString(R.string.file_not_found));
             }
         else
-            LogManager.getInstance().showVisualError(getContext(), null, "Nessuna immagine selezionata.");
+            LogManager.getInstance().showVisualError(getContext(), null, getString(R.string.no_image_selected));
     }
 
     /**
@@ -319,26 +224,12 @@ public class CreateAccountWithEmail extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_PERMISSION_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity(), "Camera permission granted", Toast.LENGTH_LONG).show();
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(cameraIntent, CAMERA_REQUEST);
-            } else {
-                Toast.makeText(getActivity(), "Camera permission denied", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    /**
-     * Create a new image file and set the absolute path.
-     */
-    private File createImageFile() throws IOException {
-        String imageFileName = "JPEG_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File file = File.createTempFile(imageFileName, ".jpg", storageDir);
-        filePath = Uri.parse(file.getAbsolutePath());
-        return file;
+        if (requestCode == MY_CAMERA_PERMISSION_CODE)
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                imagePicker.showChoicePopup();
+            else
+                // TODO: eliminare
+                LogManager.getInstance().printConsoleError("Permessi non dati.");
     }
 
 }

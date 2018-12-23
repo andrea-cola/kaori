@@ -50,7 +50,7 @@ public class KaoriLogin extends AppCompatActivity {
     /**
      * Method used to invoke a new fragment.
      */
-    private void invokeNextFragment(Fragment f){
+    private void invokeNextFragment(Fragment f) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.main_layout, f)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -65,27 +65,23 @@ public class KaoriLogin extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.GOOGLE_LOGIN_REQUEST) {
-            LogManager.getInstance().printConsoleMessage("onActivityResult:GoogleLoginRequest");
             try {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
                 loginManager.firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 LogManager.getInstance().showVisualError(this, e, "Google sign in failed");
             }
-        }
-        else if(requestCode == Constants.GOOGLE_SIGNIN_REQUEST) {
+        } else if (requestCode == Constants.GOOGLE_SIGNIN_REQUEST) {
             LogManager.getInstance().printConsoleMessage("onActivityResult:GoogleSignInRequest");
             signInManager.handleGoogleSignIn(GoogleSignIn.getSignedInAccountFromIntent(data));
-        }
-        else if(signInManager.getSignInFacebookStarted()) {
+        } else if (signInManager.getSignInFacebookStarted()) {
             LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookSignInRequest");
             signInManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
-        }
-        else if(loginManager.getSignInFacebookStarted()){
+        } else if (loginManager.getSignInFacebookStarted()) {
             LogManager.getInstance().printConsoleMessage("onActivityResult:FacebookLoginRequest");
             loginManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
-        }
-        else
+        } else
             super.onActivityResult(requestCode, resultCode, data);
     }
+
 }
