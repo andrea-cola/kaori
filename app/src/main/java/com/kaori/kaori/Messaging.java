@@ -66,7 +66,7 @@ public class Messaging extends FirebaseMessagingService {
                     .setLargeIcon(bmp)
                     .setContentIntent(mPendingIntent)
                     .setColor(getResources().getColor(R.color.colorPrimary))
-                    .setSmallIcon(R.drawable.logo)
+                    .setSmallIcon(R.drawable.ic_notification)
                     .build();
         } else
             mNotification = createOldNotification(remoteMessage, mPendingIntent, bmp);
