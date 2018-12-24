@@ -44,11 +44,12 @@ public class ChatListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private MiniUser otherUser;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.chat_list_layout, container, false);
+        view = inflater.inflate(R.layout.chat_list_layout, container, false);
         mRecyclerView = view.findViewById(R.id.chat_list);
 
         if(otherUser != null) {
@@ -79,10 +80,12 @@ public class ChatListFragment extends Fragment {
                 .orderBy(Constants.FIELD_LAST_MESSAGE)
                 .addSnapshotListener((value, e) -> {
                     if(value != null)
-                        for (DocumentChange doc : value.getDocumentChanges())
+                        for (DocumentChange doc : value.getDocumentChanges()) {
                             handleDocumentChange(doc.getType(), doc.getDocument().toObject(Chat.class));
+                            view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        }
                     else
-                        // TODO: empty view
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                         LogManager.getInstance().showVisualMessage("Nessun messaggio");
                 });
     }

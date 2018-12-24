@@ -123,17 +123,19 @@ public class ChatFragment extends Fragment {
 
     private void addOnClickListener(){
         mSendMessage.setOnClickListener(view -> {
-            Message message = new Message();
-            message.setChatID(chat.getChatID());
-            message.setMessage(String.valueOf(editText.getText()));
-            message.setReceiver(otherUser);
-            message.setSender(myUser);
-            message.setTimestamp(Timestamp.now());
+            if(editText.getText().length() > 0) {
+                Message message = new Message();
+                message.setChatID(chat.getChatID());
+                message.setMessage(String.valueOf(editText.getText()));
+                message.setReceiver(otherUser);
+                message.setSender(myUser);
+                message.setTimestamp(Timestamp.now());
 
-            sendMessage(message);
+                sendMessage(message);
 
-            // reset the text field
-            editText.setText("");
+                // reset the text field
+                editText.setText("");
+            }
         });
     }
 

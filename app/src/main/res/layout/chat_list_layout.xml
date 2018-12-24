@@ -15,4 +15,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
+    <include layout="@layout/wait_layout" />
+
+    <include layout="@layout/empty_view"
+        android:visibility="gone" />
+
 </android.support.constraint.ConstraintLayout>
