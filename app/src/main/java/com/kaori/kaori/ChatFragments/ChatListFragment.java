@@ -93,7 +93,6 @@ public class ChatListFragment extends Fragment {
                         }
                     else
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                        LogManager.getInstance().showVisualMessage("Nessun messaggio");
                 });
     }
 

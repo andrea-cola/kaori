@@ -32,7 +32,6 @@ public class Messaging extends FirebaseMessagingService {
                     .update(Constants.FIELD_TOKEN, token);
     }
 
-
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);

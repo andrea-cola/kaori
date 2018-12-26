@@ -38,7 +38,6 @@ public class Kaori extends AppCompatActivity {
      * If auth=false => start the app
      */
     private void setup(){
-        // initialize Log manager.
         LogManager.getInstance();
 
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
@@ -46,8 +45,6 @@ public class Kaori extends AppCompatActivity {
                 .build();
         FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
-
-        // initialize the DataHub
         hub = DataManager.getInstance();
         hub.setAuthenticated(checkLoginStatus());
 

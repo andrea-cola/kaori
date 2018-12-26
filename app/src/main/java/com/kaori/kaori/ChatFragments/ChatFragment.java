@@ -39,8 +39,6 @@ public class ChatFragment extends Fragment {
     private ImageButton mSendMessage;
     private EditText editText;
     private RecyclerView mRecyclerView;
-    private ImageView userImage;
-    private TextView userName;
     private RecyclerView.Adapter mAdapter;
     private List<Object> messages;
     private List<String> dates;
@@ -60,8 +58,8 @@ public class ChatFragment extends Fragment {
         mAdapter = new MyAdapter(messages);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
-        userImage = view.findViewById(R.id.user_profile_image);
-        userName = view.findViewById(R.id.user_profile_name);
+        ImageView userImage = view.findViewById(R.id.user_profile_image);
+        TextView userName = view.findViewById(R.id.user_profile_name);
 
         userName.setText(otherUser.getName());
 
@@ -89,11 +87,9 @@ public class ChatFragment extends Fragment {
     }
 
     public void setParams(Chat c){
-        this.chat = c;
-
+        chat = c;
         myUser = DataManager.getInstance().getMiniUser();
 
-        //set the other user.
         for(MiniUser u : c.getUsers())
             if(!u.getUid().equalsIgnoreCase(myUser.getUid()))
                 otherUser = u;
@@ -108,18 +104,12 @@ public class ChatFragment extends Fragment {
 
         chat.setLastMessageSent(Timestamp.now());
 
-        // create the chat in the database and add the message in the collection.
         documentReference
                 .set(chat)
                 .addOnSuccessListener(aVoid -> documentReference.collection(Constants.DB_SUBCOLL_MESSAGES)
                 .document()
                 .set(m)
-                .addOnSuccessListener(aVoid1 -> {
-                    // TODO: da eliminare
-                    LogManager.getInstance().showVisualMessage("Messaggio inviato");
-                })
                 .addOnFailureListener(e -> {
-                    // TODO : eliminare il messaggio dalla coda.
                     LogManager.getInstance().showVisualMessage("Invio fallito. Riprovare.");
                 }));
     }
@@ -135,8 +125,6 @@ public class ChatFragment extends Fragment {
                 message.setTimestamp(Timestamp.now());
 
                 sendMessage(message);
-
-                // reset the text field
                 editText.setText("");
             }
         });
@@ -147,7 +135,7 @@ public class ChatFragment extends Fragment {
                 .collection(Constants.DB_COLL_MESSAGES)
                 .document(chat.getChatID())
                 .collection(Constants.DB_SUBCOLL_MESSAGES)
-                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .orderBy(Constants.FIELD_TIMESTAMP, Query.Direction.ASCENDING)
                 .addSnapshotListener((value, e) -> {
                     if(value != null)
                         for (DocumentChange doc : value.getDocumentChanges()) {
@@ -218,10 +206,9 @@ public class ChatFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
-            String thumbnail;
             if(getItemViewType(position) == MY_MESSAGE || getItemViewType(position) == OTHER_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
-                
+
                 Glide.with(getContext())
                         .load(m.getSender().getThumbnail())
                         .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
@@ -229,9 +216,8 @@ public class ChatFragment extends Fragment {
 
                 ((MyViewHolderMessage)holder).content.setText(m.getMessage());
                 ((MyViewHolderMessage)holder).timestamp.setText(Constants.dateFormat3.format(m.getTimestamp().toDate()));
-            } else {
+            } else
                 ((MyViewHolderDate)holder).date.setText(mDataset.get(position).toString());
-            }
         }
 
         @Override
