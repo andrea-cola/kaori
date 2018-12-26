@@ -173,8 +173,9 @@ public class ChatListFragment extends Fragment {
             LogManager.getInstance().printConsoleMessage(otherUser.getThumbnail());
 
             Glide.with(fragment)
-                  .load(otherUser.getThumbnail())
-                  .into(holder.chatImage);
+                    .load(otherUser.getThumbnail())
+                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                    .into(holder.chatImage);
         }
 
         @Override

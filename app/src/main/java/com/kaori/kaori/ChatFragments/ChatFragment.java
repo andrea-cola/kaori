@@ -221,13 +221,9 @@ public class ChatFragment extends Fragment {
             String thumbnail;
             if(getItemViewType(position) == MY_MESSAGE || getItemViewType(position) == OTHER_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
-                if (m.getSender().getUid().equalsIgnoreCase(myUser.getUid()))
-                    thumbnail = m.getSender().getThumbnail();
-                else
-                    thumbnail = m.getReceiver().getThumbnail();
-
+                
                 Glide.with(getContext())
-                        .load(thumbnail)
+                        .load(m.getSender().getThumbnail())
                         .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
                         .into(((MyViewHolderMessage)holder).userImage);
 

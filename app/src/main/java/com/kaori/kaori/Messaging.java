@@ -16,7 +16,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +25,6 @@ public class Messaging extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        LogManager.getInstance().printConsoleMessage("Refreshed token: " + token);
-
         if(DataManager.getInstance().getUser() != null)
             FirebaseFirestore.getInstance()
                     .collection(Constants.DB_COLL_USERS)
@@ -40,8 +37,6 @@ public class Messaging extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         int notifyId = 1;
-
-        LogManager.getInstance().printConsoleError("NEW MESSAGE");
 
         Intent intent = new Intent(this, KaoriChat.class);
         intent.putExtra("notification", 1);
@@ -88,7 +83,7 @@ public class Messaging extends FirebaseMessagingService {
                 .setContentTitle(remoteMessage.getNotification().getTitle())
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.logo)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(icon)
                 .setLights(Color.WHITE, Color.RED, Color.GREEN)
                 .setVibrate(new long[]{100, 300, 200, 300})
