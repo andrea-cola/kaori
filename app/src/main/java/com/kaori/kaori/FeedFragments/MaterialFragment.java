@@ -37,67 +37,87 @@ import com.kaori.kaori.Utils.FileManager;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Show all the info about a single material.
+ */
 public class MaterialFragment extends Fragment {
 
+    /**
+     * Constants.
+     */
+    private final String USER_INTENT = "user";
+    private final String PDF_EXT = ".pdf";
+
+    /**
+     * Variables.
+     */
     private View view;
     private StorageReference storage;
     private Material mMaterial;
     private RecyclerView recyclerView;
-
-    public MaterialFragment(){}
 
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.material_layout, container, false);
         storage = FirebaseStorage.getInstance().getReferenceFromUrl("gs://kaori-c5a43.appspot.com");
-
         initializeView();
-
         return view;
     }
 
-
+    /**
+     * Let the previous fragment to set the material to be shown.
+     */
     public void setMaterial(Material material){
         this.mMaterial = material;
     }
 
+    /**
+     * Initialize the view on the base of the type of the current material.
+     */
     private void initializeView(){
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-        if (mMaterial.getType().equalsIgnoreCase(Constants.LIBRO)) {
-            linearLayout.addView(inflater.inflate(R.layout.libro_layout, null));
-            setLibroLayout();
-        }else if (mMaterial.getType().equalsIgnoreCase(Constants.FILE)) {
-            linearLayout.addView(inflater.inflate(R.layout.file_layout, null));
-            setFileLayout();
-        }else {
-            linearLayout.addView(inflater.inflate(R.layout.link_layout, null));
-            setLinkLayout();
+        if(getActivity() != null) {
+            LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (mMaterial.getType().equalsIgnoreCase(Constants.LIBRO)) {
+                linearLayout.addView(inflater.inflate(R.layout.libro_layout, null));
+                setBookLayout();
+            } else if (mMaterial.getType().equalsIgnoreCase(Constants.FILE)) {
+                linearLayout.addView(inflater.inflate(R.layout.file_layout, null));
+                setFileLayout();
+            } else if (mMaterial.getType().equalsIgnoreCase(Constants.URL)) {
+                linearLayout.addView(inflater.inflate(R.layout.link_layout, null));
+                setLinkLayout();
+            }
+            initializeSubView();
         }
-        initializeSubView();
-
     }
 
-    private void setLibroLayout(){
+    /**
+     * Set book sub layout.
+     */
+    private void setBookLayout(){
         TextView author = view.findViewById(R.id.author);
         author.setText(mMaterial.getProfessors().get(0));
         if(!mMaterial.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
             view.findViewById(R.id.button).setOnClickListener(view -> {
                 Intent intent = new Intent(getActivity(), KaoriChat.class);
-                intent.putExtra("user", mMaterial.getUser());
+                intent.putExtra(USER_INTENT, mMaterial.getUser());
                 startActivity(intent);
             });
     }
 
+    /**
+     * Set file sub layout.
+     */
     private void setFileLayout(){
         Button downloadButton = view.findViewById(R.id.downloadButton);
         TextView edittext = view.findViewById(R.id.edittext);
         downloadButton.setOnClickListener(v -> storage.child(Constants.STORAGE_PATH_UPLOADS + mMaterial.getUser().getName() + "_" + mMaterial.getTitle() + ".pdf").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                File pdfFile = new File(Constants.STORAGE_PATH + mMaterial.getTitle() + ".pdf");
+                String path = Constants.STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
+                File pdfFile = new File(path);
                 if (!pdfFile.exists()){
                     FileManager fileManager = new FileManager(mMaterial.getTitle(), uri, getActivity(), getContext());
                     if(fileManager.download())
@@ -156,7 +176,7 @@ public class MaterialFragment extends Fragment {
     }
 
     private void show() {
-        File pdfFile = new File(Constants.STORAGE_PATH + mMaterial.getTitle() + ".pdf");
+        File pdfFile = new File(Constants.STORAGE_PATH + mMaterial.getTitle() + PDF_EXT);
         if (pdfFile.exists() && getContext() != null) {
             Uri path = FileProvider.getUriForFile(getContext(),BuildConfig.APPLICATION_ID + ".fileprovider", pdfFile);
             Intent pdfIntent = new Intent(Intent.ACTION_VIEW);

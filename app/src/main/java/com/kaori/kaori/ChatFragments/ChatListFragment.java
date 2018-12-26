@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
@@ -45,12 +46,18 @@ public class ChatListFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private MiniUser otherUser;
     private View view;
+    private Fragment fragment;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.chat_list_layout, container, false);
         mRecyclerView = view.findViewById(R.id.chat_list);
+
+        if(getActivity() != null)
+            ((KaoriChat)getActivity()).getSupportActionBar().show();
+
+        fragment = this;
 
         if(otherUser != null) {
             ChatFragment chatFragment = new ChatFragment();
@@ -162,10 +169,12 @@ public class ChatListFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(myUid);
             holder.chatUser.setText(otherUser.getName());
-            Glide.with(getContext())
-                    .load(otherUser.getThumbnail())
-                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                    .into(holder.chatImage);
+
+            LogManager.getInstance().printConsoleMessage(otherUser.getThumbnail());
+
+            Glide.with(fragment)
+                  .load(otherUser.getThumbnail())
+                  .into(holder.chatImage);
         }
 
         @Override

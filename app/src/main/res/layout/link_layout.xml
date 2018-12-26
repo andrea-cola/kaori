@@ -36,18 +36,18 @@
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"/>
 
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/feedback"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    </LinearLayout>
+    </android.support.v7.widget.RecyclerView>
 
     <EditText
         android:id="@+id/edittext"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="56dp" />
 
     <Button
         android:id="@+id/edittext_button"

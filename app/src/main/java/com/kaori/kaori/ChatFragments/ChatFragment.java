@@ -19,6 +19,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
@@ -41,7 +42,8 @@ public class ChatFragment extends Fragment {
     private ImageView userImage;
     private TextView userName;
     private RecyclerView.Adapter mAdapter;
-    private List<Message> messages;
+    private List<Object> messages;
+    private List<String> dates;
 
     @Nullable
     @Override
@@ -52,6 +54,7 @@ public class ChatFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.chat_list);
 
         messages = new LinkedList<>();
+        dates = new LinkedList<>();
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new MyAdapter(messages);
@@ -144,11 +147,17 @@ public class ChatFragment extends Fragment {
                 .collection(Constants.DB_COLL_MESSAGES)
                 .document(chat.getChatID())
                 .collection(Constants.DB_SUBCOLL_MESSAGES)
+                .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, e) -> {
                     if(value != null)
                         for (DocumentChange doc : value.getDocumentChanges()) {
                             if (doc.getType().equals(DocumentChange.Type.ADDED)) {
-                                messages.add(doc.getDocument().toObject(Message.class));
+                                Message m = doc.getDocument().toObject(Message.class);
+                                if(!dates.contains(Constants.dateFormat2.format(m.getTimestamp().toDate()))) {
+                                    dates.add(Constants.dateFormat2.format(m.getTimestamp().toDate()));
+                                    messages.add(Constants.dateFormat2.format(m.getTimestamp().toDate()));
+                                }
+                                messages.add(m);
                                 mAdapter.notifyDataSetChanged();
                                 mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                             }
@@ -160,13 +169,21 @@ public class ChatFragment extends Fragment {
 
         private final int MY_MESSAGE = 0;
         private final int OTHER_MESSAGE = 1;
-        private List<Message> mDataset;
+        private final int DATE_HEADER = 2;
+        private List<Object> mDataset;
 
         class MyViewHolder extends RecyclerView.ViewHolder {
+
+            MyViewHolder(@NonNull View itemView) {
+                super(itemView);
+            }
+        }
+
+        class MyViewHolderMessage extends MyViewHolder {
             ImageView userImage;
             TextView content, timestamp;
 
-            MyViewHolder(View v) {
+            MyViewHolderMessage(View v) {
                 super(v);
                 content = v.findViewById(R.id.message_content);
                 timestamp = v.findViewById(R.id.message_time);
@@ -174,7 +191,16 @@ public class ChatFragment extends Fragment {
             }
         }
 
-        MyAdapter(List<Message> myDataset) {
+        class MyViewHolderDate extends MyViewHolder {
+            TextView date;
+
+            MyViewHolderDate(View v) {
+                super(v);
+                date = v.findViewById(R.id.date_header);
+            }
+        }
+
+        MyAdapter(List<Object> myDataset) {
             mDataset = myDataset;
         }
 
@@ -183,29 +209,33 @@ public class ChatFragment extends Fragment {
             // create a new view
             View v;
             if(viewType == MY_MESSAGE)
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_right, parent, false);
+                return new MyViewHolderMessage(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_right, parent, false));
+            else if(viewType == OTHER_MESSAGE)
+                return new MyViewHolderMessage(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_left, parent, false));
             else
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_left, parent, false);
-
-            MyAdapter.MyViewHolder vh = new MyAdapter.MyViewHolder(v);
-            return vh;
+                return new MyViewHolderDate(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_date, parent, false));
         }
 
         @Override
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
             String thumbnail;
-            if(mDataset.get(position).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
-                thumbnail = mDataset.get(position).getSender().getThumbnail();
-            else
-                thumbnail = mDataset.get(position).getReceiver().getThumbnail();
+            if(getItemViewType(position) == MY_MESSAGE || getItemViewType(position) == OTHER_MESSAGE) {
+                Message m = (Message) mDataset.get(position);
+                if (m.getSender().getUid().equalsIgnoreCase(myUser.getUid()))
+                    thumbnail = m.getSender().getThumbnail();
+                else
+                    thumbnail = m.getReceiver().getThumbnail();
 
-            Glide.with(getContext())
-                    .load(thumbnail)
-                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                    .into(holder.userImage);
+                Glide.with(getContext())
+                        .load(thumbnail)
+                        .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                        .into(((MyViewHolderMessage)holder).userImage);
 
-            holder.content.setText(mDataset.get(position).getMessage());
-            holder.timestamp.setText(Constants.dateFormat.format(mDataset.get(position).getTimestamp().toDate()));
+                ((MyViewHolderMessage)holder).content.setText(m.getMessage());
+                ((MyViewHolderMessage)holder).timestamp.setText(Constants.dateFormat3.format(m.getTimestamp().toDate()));
+            } else {
+                ((MyViewHolderDate)holder).date.setText(mDataset.get(position).toString());
+            }
         }
 
         @Override
@@ -215,9 +245,12 @@ public class ChatFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            if(messages.get(position).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
-                return MY_MESSAGE;
-            return OTHER_MESSAGE;
+            if(messages.get(position) instanceof Message) {
+                if (((Message)messages.get(position)).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
+                    return MY_MESSAGE;
+                return OTHER_MESSAGE;
+            }
+            return DATE_HEADER;
         }
     }
 
