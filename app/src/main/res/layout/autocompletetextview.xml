@@ -20,6 +20,6 @@
         android:layout_weight=".2"
         android:scaleType="fitEnd"
         android:src="@drawable/ic_delete_black_24dp"
-        android:tint="@color/colorRedAccent" />
+        android:tint="@color/colorAccent" />
 
 </LinearLayout>

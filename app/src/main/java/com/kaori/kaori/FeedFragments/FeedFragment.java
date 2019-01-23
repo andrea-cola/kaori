@@ -4,8 +4,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.card.MaterialCardView;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Material;
@@ -25,6 +26,8 @@ import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import static org.apache.commons.collections4.ListUtils.intersection;
 
 public class FeedFragment extends Fragment {
@@ -124,18 +127,30 @@ public class FeedFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.title.setText(materials.get(i).getTitle());
-            holder.courseView.setText(materials.get(i).getCourse());
+            holder.author.setText(materials.get(i).getUser().getName());
+            String info = materials.get(i).getCourse();
+
+            String type = "";
+            if(materials.get(i).getModified())
+                type = type + "Aggiornamento a ";
+            else
+                type = type + "Nuovo " ;
+            holder.type.setText(type + materials.get(i).getType());
 
             if (getItemViewType(i) == LIBRO){
-                holder.author.setText(materials.get(i).getProfessors().get(0));
-                holder.image.setImageDrawable(getResources().getDrawable(R.drawable.book_icon));
+                info = info + "\nAutore: " + materials.get(i).getProfessors().get(0);
             }else if (getItemViewType(i) == FILE){
-                holder.author.setText(materials.get(i).getUser().getName());
-                holder.image.setImageDrawable(getResources().getDrawable(R.drawable.document_icon));
+                info = info + "\nCaricato da: " + materials.get(i).getUser().getName();
             }else {
-                holder.author.setText(materials.get(i).getUser().getName());
-                holder.image.setImageDrawable(getResources().getDrawable(R.drawable.link_icon));
+                info = info + "\nCaricato da: " + materials.get(i).getUser().getName();
             }
+
+            holder.info.setText(info);
+
+            Glide.with(Objects.requireNonNull(getContext()))
+                    .load(materials.get(i).getUser().getThumbnail())
+                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
+                    .into(holder.authorIcon);
 
             holder.cardView.setOnClickListener(v -> {
                 MaterialFragment materialFragment = new MaterialFragment();
@@ -162,17 +177,18 @@ public class FeedFragment extends Fragment {
         }
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView title, author, courseView;
-            CardView cardView;
-            ImageView image;
+            TextView title, type, info, author;
+            MaterialCardView cardView;
+            ImageView authorIcon;
 
             Holder (View view) {
                 super(view);
-                title = view.findViewById(R.id.card_title);
-                author = view.findViewById(R.id.card_author);
-                courseView = view.findViewById(R.id.card_type);
+                title = view.findViewById(R.id.title);
+                author = view.findViewById(R.id.author);
+                info = view.findViewById(R.id.info);
+                type = view.findViewById(R.id.type);
                 cardView = view.findViewById(R.id.card_view);
-                image = (ImageView) view.findViewById(R.id.card_image);
+                authorIcon = view.findViewById(R.id.author_image);
             }
         }
     }
