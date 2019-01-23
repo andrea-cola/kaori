@@ -128,24 +128,14 @@ public class FeedFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.title.setText(materials.get(i).getTitle());
             holder.author.setText(materials.get(i).getUser().getName());
-            String info = materials.get(i).getCourse();
+            holder.type.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
+            holder.info.setText(materials.get(i).getCourse());
+            holder.date.setText(Constants.dateFormat2.format(materials.get(i).getTimestamp().toDate()));
 
-            String type = "";
-            if(materials.get(i).getModified())
-                type = type + "Aggiornamento a ";
+            if (getItemViewType(i) == LIBRO)
+                holder.comments.setVisibility(View.GONE);
             else
-                type = type + "Nuovo " ;
-            holder.type.setText(type + materials.get(i).getType());
-
-            if (getItemViewType(i) == LIBRO){
-                info = info + "\nAutore: " + materials.get(i).getProfessors().get(0);
-            }else if (getItemViewType(i) == FILE){
-                info = info + "\nCaricato da: " + materials.get(i).getUser().getName();
-            }else {
-                info = info + "\nCaricato da: " + materials.get(i).getUser().getName();
-            }
-
-            holder.info.setText(info);
+                holder.comments.setText((materials.get(i).getFeedbacks() != null ? materials.get(i).getFeedbacks().size() : "0") + " commenti");
 
             Glide.with(Objects.requireNonNull(getContext()))
                     .load(materials.get(i).getUser().getThumbnail())
@@ -177,7 +167,7 @@ public class FeedFragment extends Fragment {
         }
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView title, type, info, author;
+            TextView title, type, info, author, comments, date;
             MaterialCardView cardView;
             ImageView authorIcon;
 
@@ -187,8 +177,10 @@ public class FeedFragment extends Fragment {
                 author = view.findViewById(R.id.author);
                 info = view.findViewById(R.id.info);
                 type = view.findViewById(R.id.type);
+                date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
-                authorIcon = view.findViewById(R.id.author_image);
+                authorIcon = view.findViewById(R.id.authorImage);
+                comments = view.findViewById(R.id.comments);
             }
         }
     }
