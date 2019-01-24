@@ -26,6 +26,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.BuildConfig;
+import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Feedback;
 import com.kaori.kaori.Model.Material;
@@ -36,6 +37,8 @@ import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
 import java.util.List;
+
+import static com.kaori.kaori.Utils.Constants.REMOTE_STORAGE_PATH;
 
 /**
  * Show all the info about a single material.
@@ -60,8 +63,11 @@ public class MaterialFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.material_layout, container, false);
-        storage = FirebaseStorage.getInstance().getReferenceFromUrl("gs://kaori-c5a43.appspot.com");
+        storage = FirebaseStorage.getInstance().getReferenceFromUrl(REMOTE_STORAGE_PATH);
         initializeView();
+
+        ((KaoriApp)getActivity()).shouldDisplayHomeUp();
+
         return view;
     }
 
@@ -111,23 +117,21 @@ public class MaterialFragment extends Fragment {
      * Set file sub layout.
      */
     private void setFileLayout(){
-        Button downloadButton = view.findViewById(R.id.downloadButton);
-        TextView edittext = view.findViewById(R.id.edittext);
+        Button downloadButton = view.findViewById(R.id.button);
+        TextView edittext = view.findViewById(R.id.feedbackEdittext);
         downloadButton.setOnClickListener(v -> storage.child(Constants.STORAGE_PATH_UPLOADS + mMaterial.getUser().getName() + "_" + mMaterial.getTitle() + ".pdf").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                String path = Constants.STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
+                String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
                 File pdfFile = new File(path);
-                if (!pdfFile.exists()){
-                    FileManager fileManager = new FileManager(mMaterial.getTitle(), uri, getActivity(), getContext());
-                    if(fileManager.download())
-                        show();
-                } else
+                if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), uri, getActivity(), getContext()).download())
+                    show();
+                else
                     show();
             }
         }));
 
-        view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
+        view.findViewById(R.id.feedbackButton).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
             feedback.setText(edittext.getText().toString());
             feedback.setTimestamp(Timestamp.now());
@@ -138,14 +142,14 @@ public class MaterialFragment extends Fragment {
             DataManager.getInstance().postComment(mMaterial);
         });
 
-        recyclerView = view.findViewById(R.id.feedback);
+        recyclerView = view.findViewById(R.id.feedbackList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
         recyclerView.setAdapter(recyclerAdapter);
     }
 
     private void setLinkLayout(){
-        TextView edittext = view.findViewById(R.id.edittext);
+        TextView edittext = view.findViewById(R.id.feedbackEdittext);
         TextView author = view.findViewById(R.id.author);
         author.setText(mMaterial.getUser().getName());
         TextView link = view.findViewById(R.id.url);
@@ -164,7 +168,7 @@ public class MaterialFragment extends Fragment {
             DataManager.getInstance().postComment(mMaterial);
         });
 
-        recyclerView = view.findViewById(R.id.feedback);
+        recyclerView = view.findViewById(R.id.feedbackList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
         recyclerView.setAdapter(recyclerAdapter);
@@ -172,11 +176,18 @@ public class MaterialFragment extends Fragment {
 
     private void initializeSubView(){
         ((TextView)view.findViewById(R.id.title)).setText(mMaterial.getTitle());
-        ((TextView)view.findViewById(R.id.comment)).setText(mMaterial.getComment());
+        ((TextView)view.findViewById(R.id.course)).setText(mMaterial.getCourse());
+        ((TextView)view.findViewById(R.id.author)).setText(mMaterial.getUser().getName());
+        ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat2.format(mMaterial.getTimestamp().toDate()));
+
+        String exams = "";
+        for(String e : mMaterial.getExams())
+             exams = e + ", ";
+        ((TextView)view.findViewById(R.id.exams)).setText(exams.substring(0, exams.length() - 2));
     }
 
     private void show() {
-        File pdfFile = new File(Constants.STORAGE_PATH + mMaterial.getTitle() + PDF_EXT);
+        File pdfFile = new File(Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT);
         if (pdfFile.exists() && getContext() != null) {
             Uri path = FileProvider.getUriForFile(getContext(),BuildConfig.APPLICATION_ID + ".fileprovider", pdfFile);
             Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
@@ -211,7 +222,7 @@ public class MaterialFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            holder.timestamp.setText(Constants.dateFormat.format(feedbackList.get(i).getTimestamp().toDate()));
+            holder.timestamp.setText(Constants.dateFormat2.format(feedbackList.get(i).getTimestamp().toDate()));
             loadImage(holder.userImage, feedbackList.get(i).getUser().getThumbnail());
             holder.content.setText(feedbackList.get(i).getText());
         }

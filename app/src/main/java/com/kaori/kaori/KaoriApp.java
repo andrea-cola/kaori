@@ -19,7 +19,7 @@ import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
-public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+public class KaoriApp extends AppCompatActivity {
 
     /**
      * Constants.
@@ -75,7 +75,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        hideBottomBar(false);
+        shouldDisplayHomeUp();
     }
 
     @Override
@@ -93,8 +93,11 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
             startActivity(new Intent(this, KaoriChat.class));
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             return true;
+        } else if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
         } else {
-            return super.onOptionsItemSelected(item);
+            return true;
         }
     }
 
@@ -106,14 +109,6 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
     public boolean onSupportNavigateUp() {
         getSupportFragmentManager().popBackStack();
         return true;
-    }
-
-    /**
-     * Handles the changes in the back stack.
-     */
-    @Override
-    public void onBackStackChanged() {
-        shouldDisplayHomeUp();
     }
 
     @Override
@@ -139,8 +134,7 @@ public class KaoriApp extends AppCompatActivity implements FragmentManager.OnBac
      * I set the limit to 1 because we do not want to return to empty activity.
      */
     public void shouldDisplayHomeUp(){
-        boolean canGoBack = getSupportFragmentManager().getBackStackEntryCount() > 0;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
     }
 
     /**

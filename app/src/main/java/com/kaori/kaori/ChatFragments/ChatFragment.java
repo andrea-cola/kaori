@@ -47,7 +47,7 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_layout, container, false);
-        editText = view.findViewById(R.id.edittext);
+        editText = view.findViewById(R.id.feedbackEdittext);
         mSendMessage = view.findViewById(R.id.send_button);
         mRecyclerView = view.findViewById(R.id.chat_list);
 

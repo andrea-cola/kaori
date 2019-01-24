@@ -74,7 +74,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <EditText
-                android:id="@+id/edittext"
+                android:id="@+id/feedbackEdittext"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/default_height"
                 app:layout_constraintBottom_toBottomOf="parent"

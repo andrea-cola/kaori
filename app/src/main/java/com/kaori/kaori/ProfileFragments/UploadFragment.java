@@ -146,7 +146,7 @@ public class UploadFragment extends Fragment {
     private void initializeSubView(){
         mTitle = view.findViewById(R.id.title);
         mAuthor = view.findViewById(R.id.author);
-        mComment = view.findViewById(R.id.comment);
+        mComment = view.findViewById(R.id.course);
         mLink = view.findViewById(R.id.url);
         mStatus = view.findViewById(R.id.status);
 

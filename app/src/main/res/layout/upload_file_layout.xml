@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@id/exams" />
 
     <EditText
-        android:id="@+id/comment"
+        android:id="@+id/course"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/default_margin"
@@ -61,7 +61,7 @@
         android:text="Pubblica le modifiche"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/comment"/>
+        app:layout_constraintTop_toBottomOf="@id/course"/>
 
     <Button
         android:id="@+id/button_ok"

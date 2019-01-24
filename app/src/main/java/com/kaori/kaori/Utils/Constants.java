@@ -52,7 +52,8 @@ public class Constants {
     /**
      * Storage constants.
      */
-    public static final String STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + File.separator;
+    public static final String REMOTE_STORAGE_PATH = "gs://kaori-c5a43.appspot.com";
+    public static final String INTERNAL_STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + File.separator;
     public static final String STORAGE_PATH_PROFILE_IMAGES = "profile_images/";
     public static final String STORAGE_PATH_UPLOADS = "uploads/";
     public static final String DATABASE_PATH_UPLOADS = "uploads";
