@@ -72,7 +72,7 @@ public class ChatListFragment extends Fragment {
             myUid = DataManager.getInstance().getUser().getUid();
 
             // specify an adapter (see also next example)
-            mAdapter = new MyAdapter(chatList);
+            mAdapter = new ChatAdapter(chatList);
             mRecyclerView.setAdapter(mAdapter);
 
             loadAllChats();
@@ -81,6 +81,9 @@ public class ChatListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Load all the chats from the database.
+     */
     private void loadAllChats(){
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
@@ -96,6 +99,9 @@ public class ChatListFragment extends Fragment {
                 });
     }
 
+    /**
+     * Handle the realtime update of the chats.
+     */
     private void handleDocumentChange(DocumentChange.Type type, Chat c){
         switch (type) {
             case ADDED:
@@ -116,14 +122,23 @@ public class ChatListFragment extends Fragment {
         }
     }
 
+    /**
+     * Set the adversary user of the chat.
+     */
     public void setOtherUser(MiniUser miniUser){
         this.otherUser = miniUser;
     }
 
+    /**
+     * Check if the chat contains my uid.
+     */
     private boolean containsMyUid(List<MiniUser> users){
         return users.get(0).getUid().equalsIgnoreCase(myUid) || users.get(1).getUid().equalsIgnoreCase(myUid);
     }
 
+    /**
+     * Call the next fragment.
+     */
     private void invokeNextFragment(Fragment fragment){
         if(getActivity() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -133,28 +148,28 @@ public class ChatListFragment extends Fragment {
                     .commit();
     }
 
-    private class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+    /**
+     * Recycler view adapter.
+     */
+    private class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
 
+        /**
+         * My chat dataset.
+         */
         private List<Chat> mDataset;
 
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView chatUser;
-            ImageView chatImage;
-
-            MyViewHolder(View v) {
-                super(v);
-                chatUser = v.findViewById(R.id.chat_user);
-                chatImage = v.findViewById(R.id.image);
-            }
-        }
-
-        MyAdapter(List<Chat> myDataset) {
+        /**
+         * Class constructor.
+         */
+        /*package-private*/ ChatAdapter(List<Chat> myDataset) {
             mDataset = myDataset;
         }
 
         @Override
-        public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ChatAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
+
+            // click listener on the single chat
             v.setOnClickListener(view -> {
                 ChatFragment chatFragment = new ChatFragment();
                 chatFragment.setParams(mDataset.get(mRecyclerView.getChildLayoutPosition(v)));
@@ -168,9 +183,11 @@ public class ChatListFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(myUid);
             holder.chatUser.setText(otherUser.getName());
+            holder.chatDate.setText(Constants.dateFormat2.format(mDataset.get(position).getLastMessageSent().toDate()));
 
             LogManager.getInstance().printConsoleMessage(otherUser.getThumbnail());
 
+            // load asynchronously the image
             Glide.with(fragment)
                     .load(otherUser.getThumbnail())
                     .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
@@ -180,6 +197,21 @@ public class ChatListFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mDataset.size();
+        }
+
+        /**
+         * Holder of the chat.
+         */
+        /*package-private*/ class MyViewHolder extends RecyclerView.ViewHolder {
+            TextView chatUser, chatDate;
+            ImageView chatImage;
+
+            MyViewHolder(View v) {
+                super(v);
+                chatUser = v.findViewById(R.id.chat_user);
+                chatImage = v.findViewById(R.id.image);
+                chatDate = v.findViewById(R.id.date);
+            }
         }
     }
 

@@ -20,7 +20,6 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
@@ -67,8 +66,6 @@ public class ChatFragment extends Fragment {
                 .load(otherUser.getThumbnail())
                 .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
                 .into(userImage);
-
-        ((KaoriChat)getActivity()).getSupportActionBar().hide();
 
         // add listener to the button that sends messages.
         addOnClickListener();
@@ -184,7 +181,7 @@ public class ChatFragment extends Fragment {
 
             MyViewHolderDate(View v) {
                 super(v);
-                date = v.findViewById(R.id.date_header);
+                date = v.findViewById(R.id.date);
             }
         }
 
