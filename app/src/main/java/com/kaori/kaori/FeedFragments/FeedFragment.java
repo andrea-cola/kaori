@@ -128,14 +128,25 @@ public class FeedFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.title.setText(materials.get(i).getTitle());
             holder.author.setText(materials.get(i).getUser().getName());
-            holder.type.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
-            holder.info.setText(materials.get(i).getCourse());
+            holder.status.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
             holder.date.setText(Constants.dateFormat2.format(materials.get(i).getTimestamp().toDate()));
+            holder.type.setText(materials.get(i).getType());
 
-            if (getItemViewType(i) == LIBRO)
-                holder.comments.setVisibility(View.GONE);
-            else
+            if (getItemViewType(i) == LIBRO) {
+                holder.materialIcon.setImageResource(R.drawable.book_icon);
+                holder.comments.setText(materials.get(i).getProfessors().get(0));
+            } else if(getItemViewType(i) == FILE) {
+                holder.materialIcon.setImageResource(R.drawable.document_icon);
                 holder.comments.setText((materials.get(i).getFeedbacks() != null ? materials.get(i).getFeedbacks().size() : "0") + " commenti");
+            } else {
+                holder.materialIcon.setImageResource(R.drawable.link_icon);
+                holder.comments.setText((materials.get(i).getFeedbacks() != null ? materials.get(i).getFeedbacks().size() : "0") + " commenti");
+            }
+
+            String info = "";
+            for(String ex : materials.get(i).getExams())
+                info = info + ex + ", ";
+            holder.info.setText(info.substring(0, info.length()-2));
 
             Glide.with(Objects.requireNonNull(getContext()))
                     .load(materials.get(i).getUser().getThumbnail())
@@ -167,20 +178,22 @@ public class FeedFragment extends Fragment {
         }
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView title, type, info, author, comments, date;
+            TextView title, status, info, author, comments, date, type;
             MaterialCardView cardView;
-            ImageView authorIcon;
+            ImageView authorIcon, materialIcon;
 
-            Holder (View view) {
+            /*package-private*/ Holder (View view) {
                 super(view);
                 title = view.findViewById(R.id.title);
                 author = view.findViewById(R.id.author);
                 info = view.findViewById(R.id.info);
-                type = view.findViewById(R.id.type);
+                status = view.findViewById(R.id.status);
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
                 authorIcon = view.findViewById(R.id.authorImage);
                 comments = view.findViewById(R.id.comments);
+                type = view.findViewById(R.id.type);
+                materialIcon = view.findViewById(R.id.type_icon);
             }
         }
     }
