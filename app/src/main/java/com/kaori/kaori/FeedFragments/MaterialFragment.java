@@ -34,6 +34,7 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.FileManager;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.io.File;
 import java.util.List;
@@ -152,10 +153,12 @@ public class MaterialFragment extends Fragment {
         TextView edittext = view.findViewById(R.id.feedbackEdittext);
         TextView author = view.findViewById(R.id.author);
         author.setText(mMaterial.getUser().getName());
-        TextView link = view.findViewById(R.id.url);
-        link.setText(mMaterial.getUrl());
-        link.setLinkTextColor(Color.BLUE);
-        Linkify.addLinks(link, Linkify.WEB_URLS);
+
+        view.findViewById(R.id.button).setOnClickListener(view->{
+            Uri link = Uri.parse("http://" + mMaterial.getUrl());
+            Intent intent = new Intent(Intent.ACTION_VIEW, link);
+            startActivity(intent);
+        });
 
         view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
