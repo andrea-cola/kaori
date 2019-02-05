@@ -34,7 +34,7 @@
 
         <activity
             android:name=".KaoriApp"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:label="@string/app_name" />
 
         <activity
