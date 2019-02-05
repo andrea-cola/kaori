@@ -80,7 +80,7 @@ public class MaterialFragment extends Fragment {
     }
 
     /**
-     * Initialize the view on the base of the type of the current material.
+     * Initialize the view on the base of the status of the current material.
      */
     private void initializeView(){
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
