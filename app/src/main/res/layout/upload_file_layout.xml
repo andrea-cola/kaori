@@ -54,24 +54,15 @@
         app:layout_constraintTop_toBottomOf="@id/professors" />
 
     <Button
-        android:id="@+id/button_save"
-        style="@style/KaoriButton"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/default_margin"
-        android:text="Pubblica le modifiche"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/course"/>
-
-    <Button
         android:id="@+id/button_ok"
         style="@style/KaoriButton"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="@dimen/default_margin"
         android:text="Scegli il file da caricare"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_save"/>
+        app:layout_constraintTop_toBottomOf="@+id/course" />
 
 </android.support.constraint.ConstraintLayout>

@@ -65,6 +65,7 @@ public class EditCoursesFragment extends Fragment {
 
         buttonOk.setOnClickListener(view -> saveData());
 
+
         autoCompleteTextViewList = new ArrayList<>();
         fieldsList = new ArrayList<>();
         selectedCourses = new ArrayList<>();

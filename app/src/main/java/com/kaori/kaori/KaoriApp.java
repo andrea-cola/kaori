@@ -1,5 +1,6 @@
 package com.kaori.kaori;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -73,12 +74,6 @@ public class KaoriApp extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        shouldDisplayHomeUp();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.message_action_bar, menu);
         return super.onCreateOptionsMenu(menu);
@@ -97,7 +92,7 @@ public class KaoriApp extends AppCompatActivity {
             onBackPressed();
             return true;
         } else {
-            return true;
+            return super.onOptionsItemSelected(item);
         }
     }
 
@@ -118,6 +113,12 @@ public class KaoriApp extends AppCompatActivity {
 
     public void hideBottomBar(boolean flag){
         findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        shouldDisplayHomeUp();
     }
 
     /**
@@ -159,5 +160,4 @@ public class KaoriApp extends AppCompatActivity {
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
     }
-
 }

@@ -14,6 +14,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.Model.Professor;
 import com.kaori.kaori.R;
@@ -41,6 +44,7 @@ public class UploadFragment extends Fragment {
      */
     private final String BACK_STATE_NAME = getClass().getName();
     private final static int PICK_PDF_CODE = 2342;
+    private final String GS_URL = "gs://kaori-c5a43.appspot.com";
 
     /**
      * Views from layout
@@ -48,19 +52,21 @@ public class UploadFragment extends Fragment {
     private ChipGroup examsChipGroup, professorChipGroup;
     private EditText mTitle, mAuthor, mComment, mLink, mStatus;
     private FirebaseFirestore db;
-    private String exam, professor, tag;
+    private StorageReference storage;
+    private String tag;
     private Material newMaterial;
     private List<Professor> professors;
     private RadioGroup radioGroup;
     private View view;
-    private boolean isMaterialModified = false, validFields[] = new boolean[2];
+    private boolean isMaterialModified;
+    private boolean validFields[] = new boolean[2];
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.upload_layout, container, false);
         db = FirebaseFirestore.getInstance();
-
+        storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
         initializeView();
         loadProfessors();
 
@@ -109,7 +115,7 @@ public class UploadFragment extends Fragment {
     }
 
     private void preset(){
-        radioGroup.setEnabled(false);
+        radioGroup.setVisibility(View.INVISIBLE);
         radioGroup.setAlpha(0.5f);
 
         if(newMaterial.getType().equalsIgnoreCase(Constants.LIBRO)) {
@@ -137,6 +143,7 @@ public class UploadFragment extends Fragment {
     }
 
     private void initializeNewMaterial(){
+        isMaterialModified = false;
         newMaterial = new Material();
         newMaterial.setUser(DataManager.getInstance().getMiniUser());
         newMaterial.setCourse(DataManager.getInstance().getUser().getCourse());
@@ -149,11 +156,8 @@ public class UploadFragment extends Fragment {
         mComment = view.findViewById(R.id.course);
         mLink = view.findViewById(R.id.url);
         mStatus = view.findViewById(R.id.status);
-
-        if(!isMaterialModified && view.findViewById(R.id.button_save) != null)
-            view.findViewById(R.id.button_save).setVisibility(View.GONE);
-        else if(isMaterialModified && newMaterial.getType().equalsIgnoreCase(Constants.LIBRO))
-            view.findViewById(R.id.button_save).setOnClickListener(v -> {
+        if(isMaterialModified && newMaterial.getType().equalsIgnoreCase(Constants.LIBRO))
+            view.findViewById(R.id.button_ok).setOnClickListener(v -> {
                 if (mTitle.getText().toString().equals("") || mComment.getText().toString().equals("")){
                     Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
                 } else {
@@ -202,12 +206,15 @@ public class UploadFragment extends Fragment {
      * This method create the new material with file type
      */
     private void createNewFile(String url){
+        StorageReference reference = storage
+                .child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + newMaterial.getTitle().toLowerCase() + ".pdf");
+        if(isMaterialModified)
+            reference.delete()
+                    .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error creating new document: " + e.toString()));
         newMaterial.setTitle(String.valueOf(mTitle.getText()));
         newMaterial.setComment(String.valueOf(mComment.getText()));
         newMaterial.setType(tag);
         newMaterial.setUrl(url);
-        Log.d(Constants.TAG, "CIAONE " + url );
-
         endProcess();
     }
 
@@ -219,6 +226,7 @@ public class UploadFragment extends Fragment {
             newMaterial.setTitle(String.valueOf(mTitle.getText()));
             newMaterial.setType(tag);
             newMaterial.setUrl(String.valueOf(mLink.getText()));
+            newMaterial.setComment(String.valueOf(mComment.getText()));
             endProcess();
         } else {
             Toast.makeText(getContext(), "Url non valido", Toast.LENGTH_SHORT).show();
@@ -321,6 +329,7 @@ public class UploadFragment extends Fragment {
     public void isMaterialModified(Material m){
         isMaterialModified = true;
         newMaterial = m;
+        newMaterial.setModified(true);
     }
 
     /**

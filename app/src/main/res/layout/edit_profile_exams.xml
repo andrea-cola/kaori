@@ -50,7 +50,7 @@
                 android:id="@+id/button_ok"
                 style="@style/KaoriButton"
                 android:layout_width="match_parent"
-                android:text="@string/title_register" />
+                android:text="@string/profile_save" />
 
         </LinearLayout>
 
