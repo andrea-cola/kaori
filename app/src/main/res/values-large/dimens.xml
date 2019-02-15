@@ -3,6 +3,5 @@
 
     <!-- Text -->
     <dimen name="default_text_size">20sp</dimen>
-    <dimen name="default_subtitle_text_size">18sp</dimen>
 
 </resources>
