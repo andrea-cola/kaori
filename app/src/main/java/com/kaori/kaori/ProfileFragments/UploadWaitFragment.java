@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -63,21 +64,20 @@ public class UploadWaitFragment extends Fragment {
 
     private void writeDatabase(Material material) {
         material.setTimestamp(Timestamp.now());
-        DocumentReference doc = FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS).document();
-        material.setId(doc.getId());
-        doc.set(material)
-            .addOnSuccessListener(documentReference -> goBackToPreviousFragment())
-            .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
+        CollectionReference materials = FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS);
+        if(!material.getModified())
+            material.setId(materials.document().getId());
+        materials.document(material.getId()).set(material)
+                .addOnSuccessListener(documentReference -> goBackToPreviousFragment())
+                .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error adding document: " + e.toString()));
     }
 
     private void uploadFileIntoStorage(String url) {
         StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + material.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));
-        Log.d(Constants.TAG, "CIAONE " + url);
 
         task.addOnSuccessListener(taskSnapshot -> {
             material.setUrl(taskSnapshot.getUploadSessionUri().toString());
-            Log.d(Constants.TAG, "CIAONE1 " + url);
             writeDatabase(material);
         }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
     }

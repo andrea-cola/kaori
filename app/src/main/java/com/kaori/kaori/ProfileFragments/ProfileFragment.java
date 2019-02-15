@@ -24,6 +24,7 @@ import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +86,7 @@ public class ProfileFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.profile_action_bar, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

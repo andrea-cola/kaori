@@ -102,11 +102,13 @@ public class EditFilesFragment extends Fragment {
         private List<Material> mDataset;
 
         class ListViewHolder extends RecyclerView.ViewHolder {
-            TextView mTextView;
+            TextView title;
+            TextView date;
 
             ListViewHolder(View v) {
                 super(v);
-                mTextView = v.findViewById(R.id.chat_user);
+                title = v.findViewById(R.id.chat_user);
+                date = v.findViewById(R.id.date);
             }
         }
 
@@ -128,7 +130,8 @@ public class EditFilesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-            holder.mTextView.setText(mDataset.get(position).getTitle());
+            holder.title.setText(mDataset.get(position).getTitle());
+            holder.date.setText(mDataset.get(position).getComment());
         }
 
         @Override
