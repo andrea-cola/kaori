@@ -145,7 +145,8 @@ public class FinderFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.user.setText(positions.get(i).getUser().getName());
-            holder.message.setText(positions.get(i).getLocation());
+            holder.activity.setText(positions.get(i).getActivity());
+            holder.position.setText(positions.get(i).getLocation());
             Glide.with(context).load(positions.get(i).getUser().getThumbnail())
                     .apply(RequestOptions.circleCropTransform()).into(holder.thumbnail);
         }
@@ -156,13 +157,14 @@ public class FinderFragment extends Fragment {
         }
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            private TextView user, message;
+            private TextView user, position, activity;
             private ImageView thumbnail;
 
             /*package-private*/ Holder (View view) {
                 super(view);
                 user = view.findViewById(R.id.itemUser);
-                message = view.findViewById(R.id.itemMessage);
+                position = view.findViewById(R.id.position);
+                activity = view.findViewById(R.id.activity);
                 thumbnail = view.findViewById(R.id.itemImage);
             }
         }

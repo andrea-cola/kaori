@@ -1,6 +1,5 @@
 package com.kaori.kaori.ProfileFragments;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,6 +40,7 @@ public class ProfileFragment extends Fragment {
         TextView mName = view.findViewById(R.id.profile_name);
         TextView mUniversity = view.findViewById(R.id.profile_university);
         TextView mCourseType = view.findViewById(R.id.profile_course_type);
+        TextView mMail = view.findViewById(R.id.profile_mail);
 
         // get the instance of Datahub
         DataManager hub = DataManager.getInstance();
@@ -60,6 +60,7 @@ public class ProfileFragment extends Fragment {
 
         // set the text in the text view.
         mName.setText(hub.getUser().getName());
+        mMail.setText(hub.getUser().getEmail());
         mUniversity.setText(hub.getUser().getUniversity());
         mCourseType.setText(hub.getUser().getCourse());
 
@@ -97,7 +98,7 @@ public class ProfileFragment extends Fragment {
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    //.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
         return true;

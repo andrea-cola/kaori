@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:animateLayoutChanges="true"
-    android:weightSum="1">
+    android:animateLayoutChanges="true">
 
-    <include layout="@layout/wait_layout" />
-
-    <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/spinner_courses_title"
-                android:layout_width="match_parent"
                 style="@style/KaoriSubTitleTextView"
+                android:layout_width="match_parent"
                 android:text="@string/spinner_title_courses" />
 
             <LinearLayout
@@ -56,4 +55,8 @@
 
     </ScrollView>
 
-</LinearLayout>
+    <include
+        layout="@layout/wait_layout"
+        android:visibility="visible" />
+
+</android.support.constraint.ConstraintLayout>

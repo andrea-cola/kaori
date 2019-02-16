@@ -65,7 +65,6 @@ public class EditCoursesFragment extends Fragment {
 
         buttonOk.setOnClickListener(view -> saveData());
 
-
         autoCompleteTextViewList = new ArrayList<>();
         fieldsList = new ArrayList<>();
         selectedCourses = new ArrayList<>();
@@ -171,11 +170,8 @@ public class EditCoursesFragment extends Fragment {
                     QuerySnapshot result = task.getResult();
                     if (task.isSuccessful() && result != null) {
                         importedCourses = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : result) {
-                            LogManager.getInstance().printConsoleMessage(String.valueOf(document.get("name")));
+                        for (QueryDocumentSnapshot document : result)
                             importedCourses.add(String.valueOf(document.get("name")));
-                        }
-
                         standardAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, importedCourses);
                         updateList();
                     }
