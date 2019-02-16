@@ -5,25 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/positionFAB"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:scaleType="center"
-        android:tint="@color/white"
-        app:backgroundTint="@color/colorPrimary"
-        app:elevation="3dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.974"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/user_recycler_view"
         android:layout_width="match_parent"
@@ -35,6 +16,23 @@
     <include layout="@layout/wait_layout" />
 
     <include layout="@layout/empty_view"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/positionFAB"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:scaleType="center"
+        android:tint="@color/white"
+        android:visibility="gone"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </android.support.constraint.ConstraintLayout>

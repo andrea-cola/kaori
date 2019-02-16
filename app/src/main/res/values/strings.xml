@@ -26,6 +26,9 @@
     <string name="profile_my_courses">My Courses</string>
     <string name="profile_save">Salva</string>
 
+    <!-- Finder fragment -->
+    <string name="finder_empty_view_text">Spiacenti, nessun utente attivo!</string>
+
     <!-- Search fragment -->
     <string name="search_empty_view_text">La ricerca ti aiuta a trovare velocemente i materiali di cui hai bisogno.</string>
 

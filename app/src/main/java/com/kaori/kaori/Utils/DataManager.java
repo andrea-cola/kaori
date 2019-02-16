@@ -20,8 +20,6 @@ public class DataManager {
 
     private boolean isAuthenticated;
     private User user;
-    private ArrayList<String> universities;
-    private ArrayList<String> courseTypes;
     private ArrayList<String> exams;
     private ArrayList<Material> feedElements;
     private ArrayList<Material> allMaterials;
@@ -29,18 +27,17 @@ public class DataManager {
     /**
      * Request options for Glide.
      */
-    private RequestOptions glideRequestOptions;
+    private RequestOptions getGlideRequestOptionsCenter;
     private RequestOptions getGlideRequestOptionsCircle;
 
     private DataManager(){
         isAuthenticated = false;
         user = new User();
-        universities = new ArrayList<>();
-        courseTypes = new ArrayList<>();
         exams = new ArrayList<>();
         feedElements = new ArrayList<>();
         allMaterials = new ArrayList<>();
-        glideRequestOptions = new RequestOptions()
+
+        getGlideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -76,23 +73,6 @@ public class DataManager {
         this.user = user;
     }
 
-
-    public ArrayList<String> getUniversities() {
-        return universities;
-    }
-
-    public void setUniversities(ArrayList<String> universities) {
-        this.universities = universities;
-    }
-
-    public ArrayList<String> getCourseTypes() {
-        return courseTypes;
-    }
-
-    public void setCourseType(ArrayList<String> courseType) {
-        this.courseTypes = courseType;
-    }
-
     public ArrayList<String> getExams() {
         return exams;
     }
@@ -101,12 +81,12 @@ public class DataManager {
         this.exams = exams;
     }
 
-    public RequestOptions getGlideRequestOptions() {
-        return glideRequestOptions;
-    }
-
     public RequestOptions getGetGlideRequestOptionsCircle() {
         return getGlideRequestOptionsCircle;
+    }
+
+    public RequestOptions getGetGlideRequestOptionsCenter() {
+        return getGlideRequestOptionsCenter;
     }
 
     public MiniUser getMiniUser(){

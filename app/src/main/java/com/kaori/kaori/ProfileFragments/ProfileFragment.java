@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,15 +22,10 @@ import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
-    private RecyclerView mExamsList;
 
     @Nullable
     @Override
@@ -42,32 +35,33 @@ public class ProfileFragment extends Fragment {
         ((KaoriApp)getActivity()).hideBottomBar(false);
 
         // get views from layout.
-        Button logout = view.findViewById(R.id.profile_button_logout);
+        Button logout = view.findViewById(R.id.profile_logout_button);
         ImageView profileImageView = view.findViewById(R.id.profile_image);
+        ImageView backgroundImageView = view.findViewById(R.id.background_image);
         TextView mName = view.findViewById(R.id.profile_name);
         TextView mUniversity = view.findViewById(R.id.profile_university);
         TextView mCourseType = view.findViewById(R.id.profile_course_type);
-        mExamsList = view.findViewById(R.id.profile_exams_list);
 
         // get the instance of Datahub
         DataManager hub = DataManager.getInstance();
 
         // load profile image
-        if(getContext() != null)
+        if(getContext() != null) {
             Glide.with(getContext())
                     .load(hub.getUser().getPhotosUrl())
                     .apply(hub.getGetGlideRequestOptionsCircle())
                     .into(profileImageView);
 
+            Glide.with(getContext())
+                    .load(hub.getUser().getPhotosUrl())
+                    .apply(hub.getGetGlideRequestOptionsCenter())
+                    .into(backgroundImageView);
+        }
+
         // set the text in the text view.
         mName.setText(hub.getUser().getName());
         mUniversity.setText(hub.getUser().getUniversity());
         mCourseType.setText(hub.getUser().getCourse());
-
-        // setup the recycler view
-        mExamsList.setHasFixedSize(true);
-        mExamsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        mExamsList.setAdapter(new ListAdapter());
 
         // add click listener to logout button
         logout.setOnClickListener(view12 -> {
@@ -78,6 +72,9 @@ public class ProfileFragment extends Fragment {
                 getActivity().finish();
             }
         });
+
+        view.findViewById(R.id.piano_di_studi).setOnClickListener(view1 -> invokeNextFragment(new EditCoursesFragment()));
+        view.findViewById(R.id.my_uploads).setOnClickListener(view1 -> invokeNextFragment(new EditFilesFragment()));
 
         return view;
     }
@@ -96,9 +93,6 @@ public class ProfileFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Invoke the next fragment.
-     */
     private boolean invokeNextFragment(Fragment fragment) {
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -107,47 +101,6 @@ public class ProfileFragment extends Fragment {
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
         return true;
-    }
-
-    /**
-     * Recycler view adapter.
-     */
-    private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
-
-        private List<String> mDataset;
-
-        /*package-private*/ class ListViewHolder extends RecyclerView.ViewHolder {
-            TextView mTextView;
-
-            ListViewHolder(View v) {
-                super(v);
-                mTextView = v.findViewById(R.id.chat_user);
-            }
-        }
-
-        private ListAdapter() {
-            mDataset = new ArrayList<>();
-            mDataset.add(getString(R.string.my_exams));
-            mDataset.add(getString(R.string.my_uploads));
-        }
-
-        @NonNull
-        @Override
-        public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
-            v.setOnClickListener(view -> invokeNextFragment(mExamsList.getChildLayoutPosition(v) == 0 ? new EditCoursesFragment() : new EditFilesFragment()));
-            return new ListViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-            holder.mTextView.setText(mDataset.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return mDataset.size();
-        }
     }
 
 }

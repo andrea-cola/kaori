@@ -60,7 +60,7 @@ public class SearchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.search_layout, container, false);
+        view = inflater.inflate(R.layout.search_fragment_layout, container, false);
         materials = new ArrayList<>();
 
         if(DataManager.getInstance().getAllMaterials().size() > 0)

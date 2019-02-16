@@ -51,16 +51,14 @@ public class FinderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.user_position_layout, container, false);
-        recyclerView = view.findViewById(R.id.user_recycler_view);
-        FloatingActionButton fab = view.findViewById(R.id.positionFAB);
+        view = inflater.inflate(R.layout.finder_fragment_layout, container, false);
 
-        // set up button listener.
-        fab.setOnClickListener(v -> invokeFragment(new SharePositionFragment()));
-
-        // setting the database
         db = FirebaseFirestore.getInstance();
         context = getContext();
+        positions = new ArrayList<>();
+
+        FloatingActionButton fab = view.findViewById(R.id.positionFAB);
+        fab.setOnClickListener(v -> invokeFragment(new SharePositionFragment()));
 
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 0);
@@ -68,13 +66,13 @@ public class FinderFragment extends Fragment {
         today.set(Calendar.SECOND, 0);
         now = today.getTime();
 
-        positions = new ArrayList<>();
-
-        // set up recycler view.
+        recyclerView = view.findViewById(R.id.user_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new RecyclerAdapter(positions);
         recyclerView.setAdapter(adapter);
+
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
 
         loadActivePositions();
 
@@ -95,8 +93,10 @@ public class FinderFragment extends Fragment {
                             }
                         }
                         view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        if(positions.size() == 0)
+                        if(positions.size() == 0) {
                             view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                            view.findViewById(R.id.positionFAB).setVisibility(View.VISIBLE);
+                        }
                     } else
                         LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
 
@@ -121,7 +121,7 @@ public class FinderFragment extends Fragment {
      */
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        List<Position> positions;
+        private List<Position> positions;
 
         /*package-private*/ RecyclerAdapter(List<Position> positions){
             this.positions = positions;
@@ -159,11 +159,10 @@ public class FinderFragment extends Fragment {
         }
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView user;
-            TextView message;
-            ImageView thumbnail;
+            private TextView user, message;
+            private ImageView thumbnail;
 
-            Holder (View view) {
+            /*package-private*/ Holder (View view) {
                 super(view);
                 user = view.findViewById(R.id.itemUser);
                 message = view.findViewById(R.id.itemMessage);
