@@ -13,7 +13,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include layout="@layout/wait_layout" />
+    <include layout="@layout/wait_layout"
+        android:visibility="gone" />
 
     <include layout="@layout/empty_view"
         android:visibility="gone" />

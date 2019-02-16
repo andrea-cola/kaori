@@ -93,9 +93,9 @@ public class FinderFragment extends Fragment {
                             }
                         }
                         view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        view.findViewById(R.id.positionFAB).setVisibility(View.VISIBLE);
                         if(positions.size() == 0) {
                             view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                            view.findViewById(R.id.positionFAB).setVisibility(View.VISIBLE);
                         }
                     } else
                         LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
@@ -145,10 +145,7 @@ public class FinderFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.user.setText(positions.get(i).getUser().getName());
-
-            String s = Constants.STATEMENT + positions.get(i).getLocation();
-            holder.message.setText(s);
-
+            holder.message.setText(positions.get(i).getLocation());
             Glide.with(context).load(positions.get(i).getUser().getThumbnail())
                     .apply(RequestOptions.circleCropTransform()).into(holder.thumbnail);
         }

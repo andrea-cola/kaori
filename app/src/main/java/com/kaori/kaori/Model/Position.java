@@ -8,16 +8,17 @@ public class Position {
     private String positionID;
     private MiniUser user;
     private GeoPoint geoPoint;
-    private String location;
+    private String location, activity;
     private Timestamp timestamp;
 
-    public Position(){ }
+    public Position() {}
 
-    public Position(MiniUser user, GeoPoint geoPoint, String location, Timestamp timestamp){
+    public Position(MiniUser user, GeoPoint geoPoint, String activity, String location, Timestamp timestamp){
         this.user = user;
         this.geoPoint = geoPoint;
         this.location = location;
         this.timestamp = timestamp;
+        this.activity = activity;
     }
 
     public GeoPoint getGeoPoint() {
@@ -58,5 +59,13 @@ public class Position {
 
     public void setPositionID(String positionID) {
         this.positionID = positionID;
+    }
+
+    public String getActivity() {
+        return activity;
+    }
+
+    public void setActivity(String activity) {
+        this.activity = activity;
     }
 }

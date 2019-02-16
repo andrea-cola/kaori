@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,7 +62,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private static final String idMap = "mapbox-dc";
     private static final double longPolimi = 9.22771728762848;
     private static final double latPolimi = 45.478547684301645;
-    private final String BACK_STATE_NAME = getClass().getName();
 
     /**
      * Elements from view
@@ -69,9 +69,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private MapView mapView;
     private View view;
     private Button shareButton;
-    private TextView nameView;
-    private CardView searchCard;
-    private CardView shareCard;
+    private TextView pos;
+    private CardView searchCard, shareCard;
+    private EditText activityEdit;
 
     /**
      * Variables
@@ -117,17 +117,16 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      */
     private void setUpView(){
         shareButton = view.findViewById(R.id.shareButton);
-        nameView = view.findViewById(R.id.positionName);
-        shareCard = view.findViewById(R.id.shareCardView);
+        pos = view.findViewById(R.id.position);
         searchCard = view.findViewById(R.id.searchCardView);
-
-        shareCard.setVisibility(View.INVISIBLE);
+        shareCard = view.findViewById(R.id.shareCard);
+        activityEdit = view.findViewById(R.id.editText2);
     }
 
     /**
      * This method sets up the elements' listeners of this fragment
      */
-    private void setUpButtons(){
+    private void setUpButtons() {
         searchCard.setOnClickListener(v -> {
             Intent intent = new PlaceAutocomplete.IntentBuilder()
                     .accessToken(Mapbox.getAccessToken())
@@ -142,14 +141,15 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         });
 
         shareButton.setOnClickListener(v -> {
-            if(shareButton.isEnabled()) {
-                Double latitude = ((Point)feature.geometry()).latitude();
-                Double longitude = ((Point)feature.geometry()).longitude();
+            if (shareButton.isEnabled()) {
+                Double latitude = ((Point) feature.geometry()).latitude();
+                Double longitude = ((Point) feature.geometry()).longitude();
                 GeoPoint point = new GeoPoint(latitude, longitude);
                 String name = feature.placeName();
-                sharePosition(name, point);
+
+                sharePosition(name, point, String.valueOf(activityEdit.getText()));
                 Toast.makeText(getActivity(), "Your position is shared", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 Toast.makeText(getActivity(), "No place selected", Toast.LENGTH_SHORT).show();
             }
         });
@@ -177,7 +177,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
     /**
      * This method gets the location when the search of the position
-     * is returned from the intent
+     * is returned from the intent.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -204,7 +204,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                     .target(new LatLng(latitude, longitude))
                     .zoom(14)
                     .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 4000);
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 1000);
 
             mapboxMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitude, longitude))
@@ -215,12 +215,12 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
             PlaceAutocomplete.clearRecentHistory(getContext());
 
             shareCard.setVisibility(View.VISIBLE);
-            nameView.setText(feature.placeName().substring(0, 20).concat("..."));
+            pos.setText(feature.placeName());
         }
     }
 
-    private void sharePosition(String locationName, GeoPoint geoPoint){
-        Position position = new Position(DataManager.getInstance().getMiniUser(), geoPoint, locationName, Timestamp.now());
+    private void sharePosition(String locationName, GeoPoint geoPoint, String activity){
+        Position position = new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, locationName, Timestamp.now());
 
         OnCompleteListener onCompleteListener = task -> {
             if(task.isSuccessful())
