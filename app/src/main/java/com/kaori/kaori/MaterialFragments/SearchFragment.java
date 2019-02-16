@@ -131,8 +131,8 @@ public class SearchFragment extends Fragment {
      * Filtering the materials according to the chips clicked.
      */
     private void firebaseSearch(String sequence) {
+        subMaterials.clear();
         if(sequence.length() > 0) {
-            subMaterials.clear();
             recyclerAdapter.notifyDataSetChanged();
 
             for(Material m : materials)
@@ -144,9 +144,10 @@ public class SearchFragment extends Fragment {
                     recyclerAdapter.notifyDataSetChanged();
                 }
 
-            view.findViewById(R.id.empty_view).setVisibility(subMaterials.size() == 0 ? View.VISIBLE : View.GONE);
-        } else
-            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+            switchViews(subMaterials.size());
+        } else {
+            switchViews(0);
+        }
     }
 
     private boolean containsExams(Material m, String sequence){
@@ -166,6 +167,11 @@ public class SearchFragment extends Fragment {
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void switchViews(int x) {
+        view.findViewById(R.id.empty_view).setVisibility(x == 0 ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(x == 0 ? View.GONE : View.VISIBLE);
     }
 
     /**
