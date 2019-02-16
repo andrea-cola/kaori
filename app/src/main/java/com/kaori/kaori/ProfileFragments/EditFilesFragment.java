@@ -74,17 +74,22 @@ public class EditFilesFragment extends Fragment {
                 .get()
                 .addOnCompleteListener(task -> {
                     QuerySnapshot result = task.getResult();
-                    if (task.isSuccessful() && result != null)
+                    if (task.isSuccessful() && result != null){
                         for (QueryDocumentSnapshot document : result) {
                             String uid = document.toObject(Material.class).getUser().getUid();
-                            if(uid.equals(DataManager.getInstance().getUser().getUid())) {
+                            if (uid.equals(DataManager.getInstance().getUser().getUid())) {
                                 myUploads.add(document.toObject(Material.class));
-                                adapter.notifyDataSetChanged();
                             }
                         }
-                    else
-                        LogManager.getInstance().showVisualError(null,"Impossibile caricare i corsi, riprovare.");
-                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        if (myUploads.size() == 0)
+                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    } else {
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                        LogManager.getInstance().showVisualError(null, "Impossibile caricare i corsi, riprovare.");
+                    }
                 });
     }
 
@@ -139,5 +144,4 @@ public class EditFilesFragment extends Fragment {
             return mDataset.size();
         }
     }
-
 }

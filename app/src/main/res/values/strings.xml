@@ -7,12 +7,12 @@
     <string name="app_name">Kaori</string>
     <string name="title_home">Feed</string>
     <string name="title_hub">Material</string>
-    <string name="title_my_profile">Profile</string>
+    <string name="title_my_profile">Profilo</string>
     <string name="title_study_with_me">Finder</string>
-    <string name="title_welcome">Your uni life has a new friend.</string>
+    <string name="title_welcome">La tua università ha un nuovo amico</string>
 
     <!-- subtitles -->
-    <string name="subtitle_exams_list">Your courses</string>
+    <string name="subtitle_exams_list">I tuoi corsi</string>
 
     <string name="title_login">Ho già un account</string>
     <string name="title_register">Sono un nuovo utente</string>
@@ -22,8 +22,8 @@
     <string name="title_register_google">Crea account con Google</string>
     <string name="title_register_email">Crea account con la mail</string>
 
-    <string name="profile_about_me">About Me</string>
-    <string name="profile_my_courses">My Courses</string>
+    <string name="profile_about_me">Su di me</string>
+    <string name="profile_my_courses">I miei corsi</string>
     <string name="profile_save">Salva</string>
 
     <string name="firebase_web_host" translatable="false">kaori-c5a43.firebaseapp.com</string>
@@ -33,32 +33,32 @@
     <string name="mapbox_acces_token">pk.eyJ1IjoibWF0dGVvZGFjY28iLCJhIjoiY2pwMDVxbTBzMnNkMDNwbGtraHlpaG8zZCJ9.YfMp_jZ94UDom64UKGiVQA</string>
     <string name="mapbox_location_permission_explanation">For a better service, allow permissions</string>
     <string name="mapbox_permission_not_granted">Permission not granted</string>
-    <string name="search_hint">Search here</string>
-    <string name="search_image">Search</string>
+    <string name="search_hint">Cerca qui</string>
+    <string name="search_image">Cerca</string>
 
-    <string name="camera_popup_title">Choose an option:</string>
-    <string name="camera_popup_option1">From camera</string>
-    <string name="camera_popup_option2">From gallery</string>
+    <string name="camera_popup_title">Scegli una opzione:</string>
+    <string name="camera_popup_option1">Dalla camera</string>
+    <string name="camera_popup_option2">Dalla galleria</string>
 
     <string name="button_cancel">Cancel</string>
-    <string name="button_add_course">Add course</string>
-    <string name="button_edit_courses">Edit courses</string>
-    <string name="spinner_title_courses">Your exams</string>
-    <string name="spinner_title_course_type">Your course type</string>
-    <string name="spinner_title_uni">Your university</string>
-    <string name="spinner_title_new_exam">Add the exam</string>
+    <string name="button_add_course">Aggiungi corso</string>
+    <string name="button_edit_courses">Modifica corsi</string>
+    <string name="spinner_title_courses">I tuoi esami</string>
+    <string name="spinner_title_course_type">Il tuo corso di studi</string>
+    <string name="spinner_title_uni">La tua università</string>
+    <string name="spinner_title_new_exam">Aggiungi esami</string>
 
     <string name="preferences_master_login">master_login</string>
     <string name="preferences_master_login_uid">master_login_uid</string>
     <string name="preferences_master_login_username">master_login_username</string>
 
-    <string name="share_button">Share</string>
+    <string name="share_button">Condividi</string>
     <string name="upload_button">Upload</string>
-    <string name="upload_your_pdf">Upload your pdf</string>
-    <string name="write_the_title">Write the title</string>
-    <string name="no_results">No Results</string>
-    <string name="upload_a_link">Upload a link</string>
-    <string name="upload_a_file_or_your_notes">Upload a file or your notes</string>
+    <string name="upload_your_pdf">Carica il tuo pdf</string>
+    <string name="write_the_title">Scrivi il titolo</string>
+    <string name="no_results">Nessun risultato</string>
+    <string name="upload_a_link">Carica un link</string>
+    <string name="upload_a_file_or_your_notes">Carica un file o le tue note</string>
     <string name="download">Download</string>
 
     <!-- Profile fragments strings -->

@@ -6,8 +6,7 @@
     android:layout_width="match_parent"
     android:fillViewport="true" >
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -20,6 +19,7 @@
             android:layout_marginStart="@dimen/default_margin"
             android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
             android:layout_marginEnd="@dimen/default_margin"
+            android:contentDescription="TODO"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,6 @@
         <TextView
             android:id="@+id/profile_name"
             style="@style/KaoriTextView"
-            android:layout_marginEnd="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_image" />
@@ -61,6 +60,7 @@
         <Button
             android:id="@+id/profile_button_logout"
             style="@style/KaoriButton"
+            android:layout_marginBottom="32dp"
             android:text="@string/title_logout"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

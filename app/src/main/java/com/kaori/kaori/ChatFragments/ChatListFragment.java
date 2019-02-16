@@ -89,12 +89,16 @@ public class ChatListFragment extends Fragment {
                 .collection(Constants.DB_COLL_MESSAGES)
                 .orderBy(Constants.FIELD_LAST_MESSAGE)
                 .addSnapshotListener((value, e) -> {
-                    if(value != null)
+                    if (value != null){
                         for (DocumentChange doc : value.getDocumentChanges()) {
                             handleDocumentChange(doc.getType(), doc.getDocument().toObject(Chat.class));
                             view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
                         }
-                    else
+                        if (value.getDocuments().size()<2){
+                            LogManager.getInstance().printConsoleError("CIAONE1");
+                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                        }
+                    } else
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                 });
     }
