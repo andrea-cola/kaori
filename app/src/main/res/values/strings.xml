@@ -26,6 +26,12 @@
     <string name="profile_my_courses">I miei corsi</string>
     <string name="profile_save">Salva</string>
 
+    <!-- Search fragment -->
+    <string name="search_empty_view_text">La ricerca ti aiuta a trovare velocemente i materiali di cui hai bisogno.</string>
+
+    <!-- Empty view text -->
+    <string name="empty_view_text">Nessun risultato disponibile.</string>
+
     <string name="firebase_web_host" translatable="false">kaori-c5a43.firebaseapp.com</string>
     <string name="facebook_app_id" translatable="false">1537422876359009</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1537422876359009</string>

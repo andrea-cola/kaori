@@ -50,6 +50,7 @@ public class SearchFragment extends Fragment {
     private ArrayList<Material> subMaterials;
     private RecyclerAdapter recyclerAdapter;
     private RecyclerView recyclerView;
+    private TextView emptyTextView;
 
     /**
      * Class constructor
@@ -105,6 +106,8 @@ public class SearchFragment extends Fragment {
         recyclerAdapter = new RecyclerAdapter(subMaterials);
         recyclerView.setAdapter(recyclerAdapter);
         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+        emptyTextView = view.findViewById(R.id.empty_view).findViewById(R.id.empty_view_text);
+        emptyTextView.setText(R.string.search_empty_view_text);
     }
 
     /**
@@ -144,9 +147,9 @@ public class SearchFragment extends Fragment {
                     recyclerAdapter.notifyDataSetChanged();
                 }
 
-            switchViews(subMaterials.size());
+            switchViews(subMaterials.size(), true);
         } else {
-            switchViews(0);
+            switchViews(0, false);
         }
     }
 
@@ -169,7 +172,8 @@ public class SearchFragment extends Fragment {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void switchViews(int x) {
+    private void switchViews(int x, boolean flag) {
+        emptyTextView.setText(flag ? R.string.empty_view_text : R.string.search_empty_view_text);
         view.findViewById(R.id.empty_view).setVisibility(x == 0 ? View.VISIBLE : View.GONE);
         recyclerView.setVisibility(x == 0 ? View.GONE : View.VISIBLE);
     }
