@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +42,6 @@ public class SearchFragment extends Fragment {
      */
     private View view;
     private SearchView searchView;
-    private FloatingActionButton filterButton;
 
     /**
      * Variables
@@ -216,11 +214,9 @@ public class SearchFragment extends Fragment {
         /**
          * Private adapter for the RecyclerView
          */
-        class Holder extends RecyclerView.ViewHolder {
-            View mView;
-            TextView title;
-            TextView author;
-            TextView course;
+        /*package-private*/ class Holder extends RecyclerView.ViewHolder {
+            private View mView;
+            private TextView title, author, course;
 
             private Holder(View itemView) {
                 super(itemView);

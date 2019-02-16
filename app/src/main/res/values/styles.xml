@@ -72,9 +72,4 @@
         <item name="android:text">@string/app_name</item>
     </style>
 
-    <style name="KaoriSearchView" parent="Widget.AppCompat.SearchView">
-        <item name="android:tint">@color/colorPrimary</item>
-        <item name="android:textColorPrimary">@color/colorPrimary</item>
-    </style>
-
 </resources>

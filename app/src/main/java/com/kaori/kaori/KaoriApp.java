@@ -26,32 +26,26 @@ import com.kaori.kaori.Utils.LogManager;
 public class KaoriApp extends AppCompatActivity {
 
     /**
-     * Constants.
-     */
-    private final String BACK_STATE_NAME = getClass().getName();
-
-    /**
      * Listener used to handle selections in the bottom bar.
      * Each branch of the switch handle the selection of one icon in the bar.
      */
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = item -> {
-                switch (item.getItemId()) {
-                    case R.id.navigation_home:
-                        bottomBarFragmentCall(new FeedFragment());
-                        return true;
-                    case R.id.navigation_hub:
-                        bottomBarFragmentCall(new SearchFragment());
-                        return true;
-                    case R.id.navigation_study_with_me:
-                        bottomBarFragmentCall(new FinderFragment());
-                        return true;
-                    case R.id.navigation_my_profile:
-                        bottomBarFragmentCall(new ProfileFragment());
-                        return true;
-                }
-                return false;
-            };
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
+        switch (item.getItemId()) {
+            case R.id.navigation_home:
+                entryPointFragmentCall(new FeedFragment());
+                return true;
+            case R.id.navigation_hub:
+                entryPointFragmentCall(new SearchFragment());
+                return true;
+            case R.id.navigation_study_with_me:
+                entryPointFragmentCall(new FinderFragment());
+                return true;
+            case R.id.navigation_my_profile:
+                entryPointFragmentCall(new ProfileFragment());
+                return true;
+        }
+        return false;
+    };
 
     /**
      * On create method override.
@@ -82,9 +76,6 @@ public class KaoriApp extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * Check the selection of the menu option.
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_message) {
@@ -99,32 +90,15 @@ public class KaoriApp extends AppCompatActivity {
         }
     }
 
-    /**
-     * This method overrides the empty_image one, letting the user get
-     * back to the previous fragment by clicking on the arrow on the top of the screen.
-     */
     @Override
-    public boolean onSupportNavigateUp() {
-        getSupportFragmentManager().popBackStack();
-        return true;
+    public void onBackPressed() {
+        super.onBackPressed();
+        shouldDisplayHomeUp();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    /**
-     * Method used to hide the bottom bar when it is useless.
-     */
-    public void hideBottomBar(boolean flag){
-        findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        shouldDisplayHomeUp();
     }
 
     /**
@@ -137,23 +111,19 @@ public class KaoriApp extends AppCompatActivity {
     }
 
     /**
+     * Method used to hide the bottom bar when it is useless.
+     */
+    public void hideBottomBar(boolean flag){
+        findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
+    }
+
+    /**
      * Enable Up button only if there are entries in the back stack.
      * I set the limit to 1 because we do not want to return to empty activity.
      */
     public void shouldDisplayHomeUp(){
-        getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
-    }
-
-    /**
-     * This method handles the invocation of a new fragment
-     * when the user clicks on the bottom bar.
-     */
-    private void bottomBarFragmentCall(Fragment fragment){
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+        if(getSupportActionBar() != null)
+            getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
     }
 
     /**
@@ -161,6 +131,8 @@ public class KaoriApp extends AppCompatActivity {
      * It invokes the first fragment.
      */
     private void entryPointFragmentCall(Fragment fragment){
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        shouldDisplayHomeUp();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
