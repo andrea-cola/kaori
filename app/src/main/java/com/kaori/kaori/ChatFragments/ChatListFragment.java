@@ -15,7 +15,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.MiniUser;
@@ -89,12 +93,19 @@ public class ChatListFragment extends Fragment {
                 .collection(Constants.DB_COLL_MESSAGES)
                 .orderBy(Constants.FIELD_LAST_MESSAGE)
                 .addSnapshotListener((value, e) -> {
-                    if(value != null)
+                    if (value != null){
                         for (DocumentChange doc : value.getDocumentChanges()) {
                             handleDocumentChange(doc.getType(), doc.getDocument().toObject(Chat.class));
                             view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
                         }
-                    else
+                        boolean notmine = true;
+                        for (DocumentSnapshot doc : value.getDocuments()){
+                            if(containsMyUid(doc.toObject(Chat.class).getUsers()))
+                               notmine = false;
+                        }
+                        if(notmine)
+                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    } else
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                 });
     }

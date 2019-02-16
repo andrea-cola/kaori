@@ -215,7 +215,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
             PlaceAutocomplete.clearRecentHistory(getContext());
 
             shareCard.setVisibility(View.VISIBLE);
-            nameView.setText(feature.placeName().substring(0, 15).concat("..."));
+            nameView.setText(feature.placeName().substring(0, 20).concat("..."));
         }
     }
 
