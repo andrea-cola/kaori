@@ -6,56 +6,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <SearchView
+    <android.support.v7.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
         android:layout_height="55dp"
         android:layout_marginTop="8dp"
-        android:iconifiedByDefault="false"
         android:queryHint="Search here"
+        app:iconifiedByDefault="false"
+        app:searchIcon="@drawable/ic_search_red_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryBackground="@android:color/transparent" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/searchList"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:dividerHeight="2dp"
         android:background="@color/white"
+        android:dividerHeight="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchChipGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-    <android.support.design.chip.ChipGroup
-        android:id="@+id/searchChipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+    <View
+        android:id="@+id/view4"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchView" />
 
-    <!--<android.support.design.widget.FloatingActionButton
-        android:id="@+id/filterFAB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_filter_list_black_24dp" /> -->
-
     <include
+        android:id="@+id/empty_view"
         layout="@layout/empty_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -63,6 +53,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchView" />
+        app:layout_constraintTop_toBottomOf="@id/view4" />
 
 </android.support.constraint.ConstraintLayout>

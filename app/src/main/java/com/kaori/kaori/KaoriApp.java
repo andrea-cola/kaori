@@ -1,6 +1,5 @@
 package com.kaori.kaori;
 
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +19,10 @@ import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
+/**
+ * This is the main activity of the app.
+ * Kaori App handles the flow to the fragments.
+ */
 public class KaoriApp extends AppCompatActivity {
 
     /**
@@ -111,6 +114,9 @@ public class KaoriApp extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Method used to hide the bottom bar when it is useless.
+     */
     public void hideBottomBar(boolean flag){
         findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
     }

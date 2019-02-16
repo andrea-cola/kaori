@@ -9,11 +9,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,6 +28,9 @@ import com.kaori.kaori.Utils.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Search Fragment is used to search materials.
+ */
 public class SearchFragment extends Fragment {
 
     /**
@@ -51,7 +54,7 @@ public class SearchFragment extends Fragment {
     private RecyclerView recyclerView;
 
     /**
-     * Constructor
+     * Class constructor
      */
     public SearchFragment(){ }
 
@@ -65,12 +68,16 @@ public class SearchFragment extends Fragment {
             materials = DataManager.getInstance().getAllMaterials();
         else
             downloadMaterialFromDatabase();
+
         setupView();
         setupButtons();
 
         return view;
     }
 
+    /**
+     * Method used to download material from the database.
+     */
     private void downloadMaterialFromDatabase(){
         FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MATERIALS)
@@ -94,7 +101,6 @@ public class SearchFragment extends Fragment {
         subMaterials = new ArrayList<>();
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.searchList);
-        //filterButton = view.findViewById(R.id.filterFAB);
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -120,13 +126,11 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
-
-        //filterButton.setOnClickListener(v -> invokeFragment(new FilterFragment()));
     }
 
     /**
-     * This method is used to search the title in the db
-     * Filtering the materials according to the chips clicked
+     * This method is used to search the title in the db.
+     * Filtering the materials according to the chips clicked.
      */
     private void firebaseSearch(String sequence) {
         if(sequence.length() > 0) {
@@ -181,7 +185,7 @@ public class SearchFragment extends Fragment {
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        List<Material> materials;
+        private List<Material> materials;
 
         /*package-private*/ RecyclerAdapter(List<Material> materials){
             this.materials = materials;
@@ -201,7 +205,7 @@ public class SearchFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            holder.setDetails(materials.get(i).getTitle(), materials.get(i).getCourse());
+            holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName(), materials.get(i).getExams().get(0) != null ? materials.get(i).getExams().get(0) : materials.get(i).getCourse());
         }
 
         @Override
@@ -214,20 +218,23 @@ public class SearchFragment extends Fragment {
          */
         class Holder extends RecyclerView.ViewHolder {
             View mView;
-            TextView book_title;
-            TextView book_author;
+            TextView title;
+            TextView author;
+            TextView course;
 
             private Holder(View itemView) {
                 super(itemView);
                 mView = itemView;
             }
 
-            private void setDetails(String bookTitle, String bookAuthor){
-                book_title = mView.findViewById(R.id.itemTitle);
-                book_author = mView.findViewById(R.id.itemAuthor);
+            private void setDetails(String t, String a, String c){
+                title = mView.findViewById(R.id.title);
+                author = mView.findViewById(R.id.author);
+                course = mView.findViewById(R.id.course);
 
-                book_title.setText(bookTitle);
-                book_author.setText(bookAuthor);
+                title.setText(t);
+                author.setText(a);
+                course.setText(c);
             }
         }
     }
