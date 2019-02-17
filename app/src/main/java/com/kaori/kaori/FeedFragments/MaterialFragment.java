@@ -120,7 +120,6 @@ public class MaterialFragment extends Fragment {
     private void setFileLayout(){
         Button downloadButton = view.findViewById(R.id.button);
         TextView edittext = view.findViewById(R.id.feedbackEdittext);
-        LogManager.getInstance().printConsoleError("CIAONE " + mMaterial.getUrl());
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
