@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/position"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
@@ -21,6 +21,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="13sp"
+        app:layout_constraintWidth_default="wrap"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
@@ -75,9 +76,10 @@
 
     <ImageView
         android:id="@+id/imageView4"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
+        android:layout_width="0dp"
+        android:layout_height="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/itemImage"
+        app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="@+id/itemImage"
         app:srcCompat="@drawable/ic_brightness_1_black_24dp" />
 

@@ -17,6 +17,11 @@
         android:title="@string/title_study_with_me" />
 
     <item
+        android:id="@+id/navigation_book_centre"
+        android:icon="@drawable/ic_star_black_24dp"
+        android:title="@string/title_book_centre" />
+
+    <item
         android:id="@+id/navigation_my_profile"
         android:icon="@drawable/ic_person_black_24dp"
         android:title="@string/title_my_profile" />

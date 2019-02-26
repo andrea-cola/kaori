@@ -59,7 +59,7 @@ public class KaoriApp extends AppCompatActivity {
         LogManager.getInstance();
         LogManager.setView(findViewById(R.id.coordinator));
 
-        DataManager.getInstance();
+        DataManager.getInstance(this);
 
         setupToolbar();
 

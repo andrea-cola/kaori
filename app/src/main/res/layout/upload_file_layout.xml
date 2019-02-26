@@ -8,7 +8,6 @@
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="@dimen/default_height"
-        android:layout_marginTop="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"
         android:hint="Titolo del file"
@@ -16,26 +15,26 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <android.support.design.chip.ChipGroup
+    <TextView
         android:id="@+id/exams"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="@dimen/default_margin"
-        android:hint="Stato del file"
+        android:text="Nessun esame selezionato."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
-    <android.support.design.chip.ChipGroup
-        android:id="@+id/professors"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/exams_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        android:layout_marginStart="@dimen/default_margin"
-        android:layout_marginEnd="@dimen/default_margin"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        style="@style/KaoriButton"
+        android:text="Aggiungi esami"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/exams" />
 
@@ -51,7 +50,7 @@
         app:layout_constraintHeight_min="@dimen/default_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/professors" />
+        app:layout_constraintTop_toBottomOf="@id/exams_button" />
 
     <Button
         android:id="@+id/button_ok"

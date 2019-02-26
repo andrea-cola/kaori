@@ -43,6 +43,8 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void printConsoleError(String message){
+        if(message == null)
+            message = "Alert! The message is empty!";
         Log.e(Constants.TAG, message);
     }
 
@@ -51,6 +53,8 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void printConsoleMessage(String message){
+        if(message == null)
+            message = "Alert! The message is empty!";
         Log.d(Constants.TAG, message);
     }
 
@@ -60,6 +64,8 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void showVisualError(Exception e, String message){
+        if(message == null)
+            message = "Alert! The message is empty!";
         Log.e(Constants.TAG, e == null ? message : message + " -> " + e.getMessage());
 
         if(view != null) Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
@@ -71,6 +77,8 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void showVisualMessage(String message){
+        if(message == null)
+            message = "Alert! The message is empty!";
         Log.d(Constants.TAG, message);
 
         if(view != null) Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();

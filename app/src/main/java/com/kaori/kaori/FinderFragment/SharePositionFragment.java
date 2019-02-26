@@ -14,18 +14,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.gson.JsonObject;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -77,7 +76,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * Variables
      */
     private MapboxMap mapboxMap;
-    private CarmenFeature work;
     private FirebaseFirestore db;
     private CarmenFeature feature;
 
@@ -95,7 +93,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
         setUpView();
         db = FirebaseFirestore.getInstance();
-        addUserLocations();
+        //addUserLocations();
         setUpButtons();
 
         return view;
@@ -134,7 +132,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                             .backgroundColor(ResourcesCompat.getColor(getResources(), R.color.grey_light, null))
                             .limit(10)
                             .hint(getString(R.string.search_hint))
-                            .addInjectedFeature(work)
                             .build(PlaceOptions.MODE_CARDS))
                     .build(getActivity());
             startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE);
@@ -148,23 +145,11 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                 String name = feature.placeName();
 
                 sharePosition(name, point, String.valueOf(activityEdit.getText()));
-                Toast.makeText(getActivity(), "Your position is shared", Toast.LENGTH_SHORT).show();
+                LogManager.getInstance().showVisualMessage("Your position is shared");
             } else {
-                Toast.makeText(getActivity(), "No place selected", Toast.LENGTH_SHORT).show();
+                LogManager.getInstance().showVisualMessage("No place selected");
             }
         });
-    }
-
-    /**
-     * This method adds a preference location
-     */
-    private void addUserLocations() {
-        work = CarmenFeature.builder().text(polimi)
-                .placeName(leonardo)
-                .geometry(Point.fromLngLat(longPolimi, latPolimi))
-                .id(idMap)
-                .properties(new JsonObject())
-                .build();
     }
 
     /**

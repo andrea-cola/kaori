@@ -7,26 +7,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.chip.Chip;
-import android.support.design.chip.ChipGroup;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.Model.Material;
-import com.kaori.kaori.Model.Professor;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -49,41 +45,27 @@ public class UploadFragment extends Fragment {
     /**
      * Views from layout
      */
-    private ChipGroup examsChipGroup, professorChipGroup;
     private EditText mTitle, mAuthor, mComment, mLink, mStatus;
-    private FirebaseFirestore db;
     private StorageReference storage;
     private String tag;
     private Material newMaterial;
-    private List<Professor> professors;
     private RadioGroup radioGroup;
     private View view;
+    private List<String> exams;
+    private List<CheckBox> checkBoxes;
     private boolean isMaterialModified;
-    private boolean validFields[] = new boolean[2];
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.upload_layout, container, false);
-        db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
         initializeView();
-        loadProfessors();
+
+        exams = DataManager.getInstance().getExams();
+        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
         return view;
-    }
-
-    private void loadProfessors() {
-        professors = new ArrayList<>();
-        db.collection(Constants.DB_COLL_PROFESSORS)
-                .whereEqualTo(Constants.FIELD_UNIVERSITY, DataManager.getInstance().getUser().getUniversity())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null)
-                        for (QueryDocumentSnapshot document : task.getResult())
-                            professors.add(document.toObject(Professor.class));
-                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                });
     }
 
     private void initializeView() {
@@ -112,6 +94,8 @@ public class UploadFragment extends Fragment {
             radioGroup.check(R.id.radioButton);
         else
             preset();
+
+        view.findViewById(R.id.exams_button).setOnClickListener(view -> selectExams());
     }
 
     private void preset(){
@@ -159,7 +143,7 @@ public class UploadFragment extends Fragment {
         if(isMaterialModified && newMaterial.getType().equalsIgnoreCase(Constants.LIBRO))
             view.findViewById(R.id.button_ok).setOnClickListener(v -> {
                 if (mTitle.getText().toString().equals("") || mComment.getText().toString().equals("")){
-                    Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
+                    LogManager.getInstance().showVisualMessage("Hai lasciato dei campi vuoti");
                 } else {
                     createNewFile(newMaterial.getUrl());
                 }
@@ -172,7 +156,7 @@ public class UploadFragment extends Fragment {
     private void setUploadButton() {
         view.findViewById(R.id.button_ok).setOnClickListener(v -> {
             if (mTitle.getText().toString().equals("") || mComment.getText().toString().equals("")){
-                Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
+                LogManager.getInstance().showVisualMessage("Hai lasciato dei campi vuoti");
             } else {
                 if (tag.equalsIgnoreCase(Constants.LIBRO))
                     createNewBook();
@@ -189,7 +173,7 @@ public class UploadFragment extends Fragment {
      */
     private void createNewBook() {
         if (mAuthor.getText().toString().equals("") || mStatus.getText().toString().equals("")) {
-            Toast.makeText(getContext(), "Hai lasciato dei campi vuoti", Toast.LENGTH_SHORT).show();
+            LogManager.getInstance().showVisualMessage("Hai lasciato dei campi vuoti");
         } else {
             newMaterial.setTitle(String.valueOf(mTitle.getText()));
             newMaterial.addProfessor(String.valueOf(mAuthor.getText()));
@@ -205,7 +189,7 @@ public class UploadFragment extends Fragment {
     /**
      * This method create the new material with file type
      */
-    private void createNewFile(String url){
+    private void createNewFile(String url) {
         StorageReference reference = storage
                 .child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + newMaterial.getTitle().toLowerCase() + ".pdf");
         if(isMaterialModified)
@@ -261,7 +245,7 @@ public class UploadFragment extends Fragment {
      * This method adds to the Chip Group related to exams in the View chips with exams names
      */
     private void setExamChipGroup() {
-        examsChipGroup = view.findViewById(R.id.exams);
+        /*examsChipGroup = view.findViewById(R.id.exams_label);
         for (String e : DataManager.getInstance().getUser().getExams()) {
             Chip chip = setChip(e);
             if (chip != null) {
@@ -269,41 +253,9 @@ public class UploadFragment extends Fragment {
                 chip.setOnClickListener(view1 -> {
                     if (!newMaterial.getExams().contains(String.valueOf(chip.getText())))
                         newMaterial.addExam(String.valueOf(chip.getText()));
-
-                    if (tag.equalsIgnoreCase(Constants.FILE) && chip.isCheckedIconVisible()) {
-                        if (professorChipGroup==null) {
-                            professorChipGroup = view.findViewById(R.id.professors);
-                            setProfessorChipGroup(chip.getText().toString());
-                        }
-                        chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                            if (!buttonView.isChecked())
-                                professorChipGroup.removeAllViews();
-                            else
-                                setProfessorChipGroup(chip.getText().toString());
-
-                        });
-                    }
                 });
             }
-        }
-    }
-
-    /**
-     * This method adds to the Chip Group related to professor in the View chips with exams names
-     */
-    private void setProfessorChipGroup(String exam) {
-        for (Professor professor : professors) {
-            if (professor.getExam().equals(exam)) {
-                Chip chip = setChip(professor.getName());
-                professorChipGroup.addView(chip);
-                if (chip != null) {
-                    chip.setOnClickListener(view -> {
-                        if (!newMaterial.getProfessors().contains(String.valueOf(chip.getText())))
-                            newMaterial.addProfessor(String.valueOf(chip.getText()));
-                    });
-                }
-            }
-        }
+        }*/
     }
 
     /**
@@ -319,7 +271,6 @@ public class UploadFragment extends Fragment {
             chip.setCloseIconVisible(false);
             return chip;
         }
-        LogManager.getInstance().printConsoleError("CIAONE Error");
         return null;
     }
 
@@ -346,6 +297,22 @@ public class UploadFragment extends Fragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
+    }
+
+    private void selectExams(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.popup_exams, null);
+        LinearLayout checkboxSpace = dialogView.findViewById(R.id.checkboxSpace);
+        checkBoxes = new ArrayList<>();
+
+        for(int i = 0; i < exams.size(); i++){
+            checkBoxes.add(new CheckBox(getContext()));
+            checkboxSpace.addView(checkBoxes.get(checkBoxes.size()-1));
+        }
+
+        builder.setView(dialogView);
+        builder.create().show();
+
     }
 
 }

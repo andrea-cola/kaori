@@ -2,7 +2,6 @@ package com.kaori.kaori.FeedFragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +32,6 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.FileManager;
-import com.kaori.kaori.Utils.LogManager;
 
 import java.io.File;
 import java.util.List;
@@ -186,7 +183,7 @@ public class MaterialFragment extends Fragment {
         String exams = "";
         for(String e : mMaterial.getExams())
              exams = e + ", ";
-        ((TextView)view.findViewById(R.id.exams)).setText(exams.substring(0, exams.length() - 2));
+        ((TextView)view.findViewById(R.id.exams_label)).setText(exams.substring(0, exams.length() - 2));
     }
 
     private void show() {

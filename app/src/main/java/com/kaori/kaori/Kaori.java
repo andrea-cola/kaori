@@ -45,7 +45,7 @@ public class Kaori extends AppCompatActivity {
                 .build();
         FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
-        hub = DataManager.getInstance();
+        hub = DataManager.getInstance(this);
         hub.setAuthenticated(checkLoginStatus());
 
         Runnable r = () -> {

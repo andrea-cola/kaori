@@ -17,7 +17,7 @@ public class Material {
     private String title;
     private String type;
     private String url;
-    private Boolean isModified;
+    private Boolean modified;
     private List<Feedback> feedbacks;
 
     public Material(){
@@ -82,11 +82,11 @@ public class Material {
     }
 
     public void setModified(Boolean modified) {
-        isModified = modified;
+        this.modified = modified;
     }
 
     public Boolean getModified() {
-        return isModified;
+        return modified;
     }
 
     public void addExam(String exam){

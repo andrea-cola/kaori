@@ -15,85 +15,39 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Material;
-import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.apache.commons.collections4.ListUtils.intersection;
-
+/**
+ * Feed fragment: first option in the bottom bar menu.
+ */
 public class FeedFragment extends Fragment {
 
+    /**
+     * Constants.
+     */
     private final String BACK_STATE_NAME = getClass().getName();
-
-    private RecyclerView.Adapter mAdapter;
-    private ArrayList<Material> mMaterialList;
-    private User me;
-    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.feed_layout, container, false);
-        me = DataManager.getInstance().getUser();
-        initializeView(view);
-        downloadData();
-        return view;
-    }
+        View view = inflater.inflate(R.layout.feed_layout, container, false);
 
-    private void initializeView(View view){
-        mMaterialList = new ArrayList<>();
-
+        // view setup
         RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(layoutManager);
-        if(DataManager.getInstance().getFeedElements().size() > 0)
-            mAdapter = new RecyclerAdapter(DataManager.getInstance().getFeedElements());
-        else
-            mAdapter = new RecyclerAdapter(mMaterialList);
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new RecyclerAdapter(DataManager.getInstance().getFeedElements()));
 
-        if(DataManager.getInstance().getFeedElements().size() > 0)
-            view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-    }
+        // load feed
+        DataManager.getInstance().loadFeed(recyclerView, view);
 
-    private void downloadData(){
-        FirebaseFirestore.getInstance()
-                .collection(Constants.DB_COLL_MATERIALS)
-                .whereEqualTo(Constants.FIELD_COURSES, me.getCourse())
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            Material material = document.toObject(Material.class);
-                            if (examsIntersection(material.getExams(), me.getExams()))
-                                mMaterialList.add(material);
-                        }
-                        DataManager.getInstance().setFeedElements(mMaterialList);
-                        mAdapter.notifyDataSetChanged();
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        if(mMaterialList.size() == 0)
-                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    }
-                    else {
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                        LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
-                    }
-                });
-    }
-
-    private boolean examsIntersection(List<String> exams1, List<String> exams2){
-        return intersection(exams1, exams2).size() > 0;
+        return view;
     }
 
     private void invokeNextFragment(Fragment fragment) {

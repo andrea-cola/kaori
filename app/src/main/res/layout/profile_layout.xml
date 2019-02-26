@@ -181,9 +181,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/my_uploads"
-            app:layout_constraintHorizontal_bias="0.5"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView13">
 
@@ -228,13 +227,12 @@
             android:id="@+id/my_uploads"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/piano_di_studi"
-            app:layout_constraintTop_toBottomOf="@+id/textView13">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/piano_di_studi">
 
             <ImageView
                 android:id="@+id/circleImageView2"
@@ -257,6 +255,54 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="I miei upload"
+                app:layout_constraintBottom_toTopOf="@+id/view7"
+                app:layout_constraintEnd_toStartOf="@+id/circleImageView2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view7"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/my_saved"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/my_uploads">
+
+            <ImageView
+                android:id="@+id/circleImageView2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="6dp"
+                android:tint="@color/colorPrimary"
+                app:layout_constraintBottom_toTopOf="@+id/view7"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24dp" />
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Elementi salvati"
                 app:layout_constraintBottom_toTopOf="@+id/view7"
                 app:layout_constraintEnd_toStartOf="@+id/circleImageView2"
                 app:layout_constraintStart_toStartOf="parent"

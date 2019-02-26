@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment {
 
         // add click listener to logout button
         logout.setOnClickListener(view12 -> {
-            DataManager.getInstance().clean();
+            DataManager.getInstance().clean(getActivity());
             FirebaseAuth.getInstance().signOut();
             if(getActivity() != null && isAdded()) {
                 startActivity(new Intent(getActivity(), Kaori.class));

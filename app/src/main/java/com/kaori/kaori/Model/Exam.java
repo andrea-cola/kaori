@@ -1,6 +1,6 @@
 package com.kaori.kaori.Model;
 
-public class Exams {
+public class Exam {
 
     private String name;
     private String course;

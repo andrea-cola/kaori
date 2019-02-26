@@ -5,7 +5,8 @@
 
     <!-- titles -->
     <string name="app_name">Kaori</string>
-    <string name="title_home">Feed</string>
+    <string name="title_home">News</string>
+    <string name="title_book_centre">Books</string>
     <string name="title_hub">Material</string>
     <string name="title_my_profile">Profilo</string>
     <string name="title_study_with_me">Finder</string>
@@ -25,6 +26,9 @@
     <string name="profile_about_me">Su di me</string>
     <string name="profile_my_courses">I miei corsi</string>
     <string name="profile_save">Salva</string>
+
+    <!-- Feed fragment -->
+    <string name="feed_empty_view_text">Il tuo piano di studi è vuoto, modificalo per rimanare aggiornato.</string>
 
     <!-- Finder fragment -->
     <string name="finder_empty_view_text">Spiacenti, nessun utente attivo!</string>

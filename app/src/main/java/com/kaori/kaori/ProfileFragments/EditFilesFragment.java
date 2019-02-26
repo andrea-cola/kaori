@@ -41,6 +41,7 @@ public class EditFilesFragment extends Fragment {
     private List<Material> myUploads;
     private ListAdapter adapter;
     private RecyclerView recyclerView;
+    private TextView emptyTextView;
 
     @Nullable
     @Override
@@ -53,6 +54,8 @@ public class EditFilesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         view.findViewById(R.id.FAB).setOnClickListener(view -> invokeNextFragment(new UploadFragment()));
+        emptyTextView = view.findViewById(R.id.empty_view_text);
+        emptyTextView.setText("Ops, non hai alcuna condivisione.");
 
         myUploads = new ArrayList<>();
         adapter = new ListAdapter(myUploads);
