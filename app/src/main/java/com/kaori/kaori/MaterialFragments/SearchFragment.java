@@ -213,7 +213,8 @@ public class SearchFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName(), materials.get(i).getExams().get(0) != null ? materials.get(i).getExams().get(0) : materials.get(i).getCourse());
+            if(getItemCount()>0)
+                holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName()); // materials.get(i).getExams().get(0) != null ? materials.get(i).getExams().get(0) : materials.get(i).getCourse());
         }
 
         @Override
@@ -233,14 +234,14 @@ public class SearchFragment extends Fragment {
                 mView = itemView;
             }
 
-            private void setDetails(String t, String a, String c){
+            private void setDetails(String t, String a){ //, String c){
                 title = mView.findViewById(R.id.title);
                 author = mView.findViewById(R.id.author);
-                course = mView.findViewById(R.id.course);
+                //course = mView.findViewById(R.id.course);
 
                 title.setText(t);
                 author.setText(a);
-                course.setText(c);
+                //course.setText(c);
             }
         }
     }

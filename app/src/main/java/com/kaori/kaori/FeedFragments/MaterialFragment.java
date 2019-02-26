@@ -117,17 +117,17 @@ public class MaterialFragment extends Fragment {
     private void setFileLayout(){
         Button downloadButton = view.findViewById(R.id.button);
         TextView edittext = view.findViewById(R.id.feedbackEdittext);
-        downloadButton.setOnClickListener(v -> storage.child(Constants.STORAGE_PATH_UPLOADS + mMaterial.getUser().getName() + "_" + mMaterial.getTitle() + ".pdf").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(Uri uri) {
+            public void onClick(View v) {
                 String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
                 File pdfFile = new File(path);
-                if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), uri, getActivity(), getContext()).download())
+                if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), Uri.parse(mMaterial.getUrl()), getActivity(), getContext()).download())
                     show();
                 else
                     show();
             }
-        }));
+        });
 
         view.findViewById(R.id.feedbackButton).setOnClickListener(view -> {
             Feedback feedback = new Feedback();

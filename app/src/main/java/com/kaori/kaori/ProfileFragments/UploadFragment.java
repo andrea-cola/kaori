@@ -191,7 +191,7 @@ public class UploadFragment extends Fragment {
      */
     private void createNewFile(String url) {
         StorageReference reference = storage
-                .child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + newMaterial.getTitle().toLowerCase() + ".pdf");
+                .child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + String.valueOf(mTitle.getText()) + ".pdf");
         if(isMaterialModified)
             reference.delete()
                     .addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error creating new document: " + e.toString()));
