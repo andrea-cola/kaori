@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.kaori.kaori.HomeFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +37,11 @@ public class SearchFragment extends Fragment {
      * Views from layout
      */
     private View view;
-    private SearchView searchView;
 
     /**
      * Variables
      */
-    private ArrayList<Material> materials;
     private ArrayList<Material> subMaterials;
-    private RecyclerAdapter recyclerAdapter;
     private RecyclerView recyclerView;
     private TextView emptyTextView;
 
@@ -56,46 +54,31 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_fragment_layout, container, false);
-        materials = new ArrayList<>();
-
-        setupView();
-        setupButtons();
-
-        return view;
-    }
-
-    /**
-     * This method sets up the View
-     */
-    private void setupView(){
-        subMaterials = new ArrayList<>();
-        searchView = view.findViewById(R.id.searchView);
-        recyclerView = view.findViewById(R.id.searchList);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new RecyclerAdapter(subMaterials));
         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
         emptyTextView = view.findViewById(R.id.empty_view).findViewById(R.id.empty_view_text);
         emptyTextView.setText(R.string.search_empty_view_text);
-    }
 
-    /**
-     * This method sets up the buttons in the View
-     */
-    private void setupButtons(){
+        recyclerView = view.findViewById(R.id.searchList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        //recyclerView.setAdapter(new RecyclerAdapter(subMaterials));
+
+        SearchView searchView = view.findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                firebaseSearch(query);
                 hideKeyboard();
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                firebaseSearch(newText);
+            public boolean onQueryTextChange(String s) {
                 return false;
             }
+
         });
+
+        return view;
     }
 
     /**
@@ -103,8 +86,10 @@ public class SearchFragment extends Fragment {
      * Filtering the materials according to the chips clicked.
      */
     private void firebaseSearch(String sequence) {
-        subMaterials.clear();
-        if(sequence.length() > 0) {
+        //subMaterials.clear();
+        DataManager.getInstance().queryMaterials(sequence);
+
+        /*if(sequence.length() > 0) {
             recyclerAdapter.notifyDataSetChanged();
 
             for(Material m : materials)
@@ -119,7 +104,7 @@ public class SearchFragment extends Fragment {
             switchViews(subMaterials.size(), true);
         } else {
             switchViews(0, false);
-        }
+        }*/
     }
 
     private boolean containsExams(Material m, String sequence){

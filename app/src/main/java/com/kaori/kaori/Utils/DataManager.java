@@ -37,6 +37,7 @@ public class DataManager {
     private final static String URL_FEED = "feed/";
     private final static String URL_EXAMS = "exams/";
     private final static String URL_USER = "user/";
+    private final static String URL_SEARCH = "search/";
 
     /**
      * Singleton instance.
@@ -201,6 +202,21 @@ public class DataManager {
                 error -> {
                     LogManager.getInstance().printConsoleError(error.toString());
                     // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
+                });
+        queue.add(request);
+    }
+
+    public void queryMaterials(String query){
+        Uri url = Uri.parse(BASE_URL + URL_SEARCH + "?university=" + user.getUniversity() + "&query=" + query);
+        LogManager.getInstance().printConsoleMessage(url.toString());
+        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
+                response -> {
+                    //allExams = gson.fromJson(response, new TypeToken<ArrayList<String>>(){}.getType());
+                    LogManager.getInstance().printConsoleMessage(response);
+                },
+                error -> {
+                    //TODO
+                    LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
                 });
         queue.add(request);
     }
