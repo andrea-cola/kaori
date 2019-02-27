@@ -1,4 +1,4 @@
-package com.kaori.kaori.FeedFragments;
+package com.kaori.kaori.HomeFragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,10 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.BuildConfig;
 import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.KaoriChat;
@@ -53,7 +51,6 @@ public class MaterialFragment extends Fragment {
      * Variables.
      */
     private View view;
-    private StorageReference storage;
     private Material mMaterial;
     private RecyclerView recyclerView;
 
@@ -61,7 +58,7 @@ public class MaterialFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.material_layout, container, false);
-        storage = FirebaseStorage.getInstance().getReferenceFromUrl(REMOTE_STORAGE_PATH);
+        FirebaseStorage.getInstance().getReferenceFromUrl(REMOTE_STORAGE_PATH);
         initializeView();
 
         ((KaoriApp)getActivity()).shouldDisplayHomeUp();
@@ -117,16 +114,13 @@ public class MaterialFragment extends Fragment {
     private void setFileLayout(){
         Button downloadButton = view.findViewById(R.id.button);
         TextView edittext = view.findViewById(R.id.feedbackEdittext);
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
-                File pdfFile = new File(path);
-                if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), Uri.parse(mMaterial.getUrl()), getActivity(), getContext()).download())
-                    show();
-                else
-                    show();
-            }
+        downloadButton.setOnClickListener(v -> {
+            String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
+            File pdfFile = new File(path);
+            if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), Uri.parse(mMaterial.getUrl()), getActivity(), getContext()).download())
+                show();
+            else
+                show();
         });
 
         view.findViewById(R.id.feedbackButton).setOnClickListener(view -> {

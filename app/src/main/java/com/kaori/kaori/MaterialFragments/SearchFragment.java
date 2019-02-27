@@ -15,14 +15,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.kaori.kaori.FeedFragments.MaterialFragment;
+import com.kaori.kaori.HomeFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,34 +58,10 @@ public class SearchFragment extends Fragment {
         view = inflater.inflate(R.layout.search_fragment_layout, container, false);
         materials = new ArrayList<>();
 
-        if(DataManager.getInstance().getAllMaterials().size() > 0)
-            materials = DataManager.getInstance().getAllMaterials();
-        else
-            downloadMaterialFromDatabase();
-
         setupView();
         setupButtons();
 
         return view;
-    }
-
-    /**
-     * Method used to download material from the database.
-     */
-    private void downloadMaterialFromDatabase(){
-        FirebaseFirestore.getInstance()
-                .collection(Constants.DB_COLL_MATERIALS)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot document : task.getResult())
-                            materials.add(document.toObject(Material.class));
-                        DataManager.getInstance().setAllMaterials(materials);
-                    } else {
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                        LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
-                    }
-                });
     }
 
     /**
@@ -101,10 +72,8 @@ public class SearchFragment extends Fragment {
         searchView = view.findViewById(R.id.searchView);
         recyclerView = view.findViewById(R.id.searchList);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerAdapter = new RecyclerAdapter(subMaterials);
-        recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new RecyclerAdapter(subMaterials));
         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
         emptyTextView = view.findViewById(R.id.empty_view).findViewById(R.id.empty_view_text);
         emptyTextView.setText(R.string.search_empty_view_text);
@@ -214,7 +183,7 @@ public class SearchFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
             if(getItemCount()>0)
-                holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName()); // materials.get(i).getExams().get(0) != null ? materials.get(i).getExams().get(0) : materials.get(i).getCourse());
+                holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName()); // materials.get(i).getAllExams().get(0) != null ? materials.get(i).getAllExams().get(0) : materials.get(i).getCourse());
         }
 
         @Override

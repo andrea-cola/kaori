@@ -34,8 +34,15 @@ public class LogManager {
         return logManager;
     }
 
-    public static void setView(View v){
+    /**
+     * Return the instance of the log manager
+     * and set the Coordinator view.
+     */
+    public static LogManager getInstance(View v){
+        if(logManager == null)
+            logManager = new LogManager();
         view = v;
+        return logManager;
     }
 
     /**

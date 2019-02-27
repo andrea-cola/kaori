@@ -12,7 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.kaori.kaori.FeedFragments.FeedFragment;
+import com.kaori.kaori.HomeFragments.HomeFragment;
 import com.kaori.kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.MaterialFragments.SearchFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
@@ -32,12 +32,16 @@ public class KaoriApp extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
-                entryPointFragmentCall(new FeedFragment());
+                entryPointFragmentCall(new HomeFragment());
                 return true;
-            case R.id.navigation_hub:
+            case R.id.navigation_search:
                 entryPointFragmentCall(new SearchFragment());
                 return true;
-            case R.id.navigation_study_with_me:
+            case R.id.navigation_preferred
+                    :
+                entryPointFragmentCall(new SearchFragment());
+                return true;
+            case R.id.navigation_share:
                 entryPointFragmentCall(new FinderFragment());
                 return true;
             case R.id.navigation_my_profile:
@@ -56,9 +60,7 @@ public class KaoriApp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kaoriapp);
 
-        LogManager.getInstance();
-        LogManager.setView(findViewById(R.id.coordinator));
-
+        LogManager.getInstance(findViewById(R.id.coordinator));
         DataManager.getInstance(this);
 
         setupToolbar();
@@ -67,7 +69,7 @@ public class KaoriApp extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        entryPointFragmentCall(new FeedFragment());
+        entryPointFragmentCall(new HomeFragment());
     }
 
     @Override

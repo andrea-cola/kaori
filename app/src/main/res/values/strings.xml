@@ -5,11 +5,6 @@
 
     <!-- titles -->
     <string name="app_name">Kaori</string>
-    <string name="title_home">News</string>
-    <string name="title_book_centre">Books</string>
-    <string name="title_hub">Material</string>
-    <string name="title_my_profile">Profilo</string>
-    <string name="title_study_with_me">Finder</string>
     <string name="title_welcome">La tua università ha un nuovo amico</string>
 
     <!-- subtitles -->

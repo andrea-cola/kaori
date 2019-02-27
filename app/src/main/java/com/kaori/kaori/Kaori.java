@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.kaori.kaori.Model.User;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
@@ -18,11 +17,6 @@ import com.kaori.kaori.Utils.LogManager;
  * Splash screen activity.
  */
 public class Kaori extends AppCompatActivity {
-
-    /**
-     * Variables.
-     */
-    private DataManager hub;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,29 +32,28 @@ public class Kaori extends AppCompatActivity {
      * If auth=false => start the app
      */
     private void setup(){
-        LogManager.getInstance();
-
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                 .setPersistenceEnabled(false)
                 .build();
         FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
-        hub = DataManager.getInstance(this);
-        hub.setAuthenticated(checkLoginStatus());
+        LogManager.getInstance();
+        DataManager.getInstance(this);
 
-        Runnable r = () -> {
-            if(hub.isAuthenticated())
-                downloadUserProfile();
-            else
-                startKaoriLogin();
-        };
-        new Handler().postDelayed(r, Constants.SPLASH_SCREEN_WAITING_TIME);
+        new Handler().postDelayed(
+                () -> {
+                    LogManager.getInstance().printConsoleMessage("Kaori started.");
+                    if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                        downloadUserProfile();
+                    else
+                        startLogin();
+        }, Constants.SPLASH_SCREEN_WAITING_TIME);
     }
 
     /**
      * Start the login activity.
      */
-    private void startKaoriLogin(){
+    public void startLogin(){
         startActivity(new Intent(this, KaoriLogin.class));
         finish();
     }
@@ -68,35 +61,16 @@ public class Kaori extends AppCompatActivity {
     /**
      * Start the app activity.
      */
-    private void startKaoriApp(){
+    public void startApp(){
         startActivity(new Intent(this, KaoriApp.class));
         finish();
-    }
-
-    /**
-     * Check if the user is authenticated.
-     */
-    private boolean checkLoginStatus(){
-        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
     /**
      * Download the user from the database and run the main activity.
      */
     private void downloadUserProfile(){
-        FirebaseFirestore
-            .getInstance()
-            .collection(Constants.DB_COLL_USERS)
-            .whereEqualTo("uid", FirebaseAuth.getInstance().getCurrentUser().getUid())
-            .get()
-            .addOnCompleteListener(task -> {
-                if(task.getResult().getDocuments().size() > 0) {
-                    hub.setUser(task.getResult().getDocuments().get(0).toObject(User.class));
-                    startKaoriApp();
-                } else {
-                    startKaoriLogin();
-                }
-            });
+        DataManager.getInstance().loadUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), this);
     }
 
 }

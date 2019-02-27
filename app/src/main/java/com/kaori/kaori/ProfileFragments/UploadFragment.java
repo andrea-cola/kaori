@@ -62,7 +62,7 @@ public class UploadFragment extends Fragment {
         storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
         initializeView();
 
-        exams = DataManager.getInstance().getExams();
+        exams = DataManager.getInstance().getAllExams();
         view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
         return view;
@@ -246,12 +246,12 @@ public class UploadFragment extends Fragment {
      */
     private void setExamChipGroup() {
         /*examsChipGroup = view.findViewById(R.id.exams_label);
-        for (String e : DataManager.getInstance().getUser().getExams()) {
+        for (String e : DataManager.getInstance().getUser().getAllExams()) {
             Chip chip = setChip(e);
             if (chip != null) {
                 examsChipGroup.addView(chip);
                 chip.setOnClickListener(view1 -> {
-                    if (!newMaterial.getExams().contains(String.valueOf(chip.getText())))
+                    if (!newMaterial.getAllExams().contains(String.valueOf(chip.getText())))
                         newMaterial.addExam(String.valueOf(chip.getText()));
                 });
             }

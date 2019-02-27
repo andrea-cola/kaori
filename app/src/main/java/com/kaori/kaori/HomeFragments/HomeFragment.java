@@ -1,4 +1,4 @@
-package com.kaori.kaori.FeedFragments;
+package com.kaori.kaori.HomeFragments;
 
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -26,7 +26,7 @@ import java.util.Objects;
 /**
  * Feed fragment: first option in the bottom bar menu.
  */
-public class FeedFragment extends Fragment {
+public class HomeFragment extends Fragment {
 
     /**
      * Constants.
