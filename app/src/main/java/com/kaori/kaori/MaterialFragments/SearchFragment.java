@@ -19,8 +19,8 @@ import com.kaori.kaori.HomeFragments.MaterialFragment;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,35 +38,22 @@ public class SearchFragment extends Fragment {
      */
     private View view;
 
-    /**
-     * Variables
-     */
-    private ArrayList<Material> subMaterials;
-    private RecyclerView recyclerView;
-    private TextView emptyTextView;
-
-    /**
-     * Class constructor
-     */
-    public SearchFragment(){ }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.search_fragment_layout, container, false);
         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-        emptyTextView = view.findViewById(R.id.empty_view).findViewById(R.id.empty_view_text);
-        emptyTextView.setText(R.string.search_empty_view_text);
 
-        recyclerView = view.findViewById(R.id.searchList);
+        RecyclerView recyclerView = view.findViewById(R.id.searchList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        //recyclerView.setAdapter(new RecyclerAdapter(subMaterials));
+        recyclerView.setAdapter(new RecyclerAdapter(DataManager.getInstance().getSearchElements()));
 
         SearchView searchView = view.findViewById(R.id.searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                firebaseSearch(query);
+                LogManager.getInstance().printConsoleMessage("Query submitted");
+                DataManager.getInstance().queryMaterials(query, recyclerView, view.findViewById(R.id.empty_view));
                 hideKeyboard();
                 return false;
             }
@@ -81,55 +68,9 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-    /**
-     * This method is used to search the title in the db.
-     * Filtering the materials according to the chips clicked.
-     */
-    private void firebaseSearch(String sequence) {
-        //subMaterials.clear();
-        DataManager.getInstance().queryMaterials(sequence);
-
-        /*if(sequence.length() > 0) {
-            recyclerAdapter.notifyDataSetChanged();
-
-            for(Material m : materials)
-                if (m.getTitle().toLowerCase().contains(sequence.toLowerCase())
-                        || m.getCourse().toLowerCase().contains(sequence.toLowerCase())
-                        || containsExams(m, sequence)
-                        || containsProfessor(m, sequence)) {
-                    subMaterials.add(m);
-                    recyclerAdapter.notifyDataSetChanged();
-                }
-
-            switchViews(subMaterials.size(), true);
-        } else {
-            switchViews(0, false);
-        }*/
-    }
-
-    private boolean containsExams(Material m, String sequence){
-        for(String e : m.getExams())
-            if(e.toLowerCase().contains(sequence.toLowerCase()))
-                return true;
-        return false;
-    }
-
-    private boolean containsProfessor(Material m, String sequence){
-        for(String e : m.getProfessors())
-            if(e.toLowerCase().contains(sequence.toLowerCase()))
-                return true;
-        return false;
-    }
-
     private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
-
-    private void switchViews(int x, boolean flag) {
-        emptyTextView.setText(flag ? R.string.empty_view_text : R.string.search_empty_view_text);
-        view.findViewById(R.id.empty_view).setVisibility(x == 0 ? View.VISIBLE : View.GONE);
-        recyclerView.setVisibility(x == 0 ? View.GONE : View.VISIBLE);
     }
 
     /**
@@ -156,19 +97,17 @@ public class SearchFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerAdapter.Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item, parent, false);
-            v.setOnClickListener(view -> {
-                MaterialFragment materialFragment = new MaterialFragment();
-                materialFragment.setMaterial(this.materials.get(recyclerView.getChildAdapterPosition(v)));
-                invokeFragment(materialFragment);
-            });
-            return new RecyclerAdapter.Holder(v);
+            return new RecyclerAdapter.Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.search_list_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            if(getItemCount()>0)
-                holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName()); // materials.get(i).getAllExams().get(0) != null ? materials.get(i).getAllExams().get(0) : materials.get(i).getCourse());
+            holder.setDetails(materials.get(i).getTitle(), materials.get(i).getUser().getName());
+            holder.mView.setOnClickListener(view -> {
+                MaterialFragment materialFragment = new MaterialFragment();
+                materialFragment.setMaterial(materials.get(i));
+                invokeFragment(materialFragment);
+            });
         }
 
         @Override

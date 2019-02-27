@@ -56,6 +56,7 @@ public class DataManager {
     private User user; // the current logged in user.
     private ArrayList<Material> feedElements; // materials showed in the feed.
     private ArrayList<String> allExams; // all exams compatible with my graduation course and university.
+    private ArrayList<Material> searchElements;
 
     /**
      * Request options for Glide.
@@ -67,6 +68,7 @@ public class DataManager {
         user = new User();
         allExams = new ArrayList<>();
         feedElements = new ArrayList<>();
+        searchElements = new ArrayList<>();
 
         getGlideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -130,6 +132,10 @@ public class DataManager {
 
     public ArrayList<Material> getFeedElements() {
         return feedElements;
+    }
+
+    public ArrayList<Material> getSearchElements() {
+        return searchElements;
     }
 
     private String urlGeneratorFeedRequest(String url, List<String> params){
@@ -206,16 +212,26 @@ public class DataManager {
         queue.add(request);
     }
 
-    public void queryMaterials(String query){
+    public void queryMaterials(String query, RecyclerView list, View emptyView){
         Uri url = Uri.parse(BASE_URL + URL_SEARCH + "?university=" + user.getUniversity() + "&query=" + query);
-        LogManager.getInstance().printConsoleMessage(url.toString());
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
                 response -> {
-                    //allExams = gson.fromJson(response, new TypeToken<ArrayList<String>>(){}.getType());
-                    LogManager.getInstance().printConsoleMessage(response);
+                    searchElements.clear();
+                    searchElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+
+                    if(searchElements.size() > 0) {
+                        list.getAdapter().notifyDataSetChanged();
+                        emptyView.setVisibility(View.GONE);
+                    }
+                    else {
+                        ((TextView)emptyView.findViewById(R.id.empty_view_text)).setText(R.string.search_empty_view_text);
+                        emptyView.setVisibility(View.VISIBLE);
+                    }
                 },
                 error -> {
                     //TODO
+                    ((TextView)emptyView.findViewById(R.id.empty_view_text)).setText(R.string.search_empty_view_text);
+                    emptyView.setVisibility(View.VISIBLE);
                     LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
                 });
         queue.add(request);

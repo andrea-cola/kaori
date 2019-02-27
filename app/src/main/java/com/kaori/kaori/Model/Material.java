@@ -10,6 +10,7 @@ public class Material {
     private String id;
     private MiniUser user;
     private String comment;
+    private String university;
     private String course;
     private List<String> professors;
     private List<String> exams;
@@ -129,5 +130,13 @@ public class Material {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(String university) {
+        this.university = university;
     }
 }
