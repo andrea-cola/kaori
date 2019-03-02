@@ -22,7 +22,9 @@ import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Singleton class that represent a store
@@ -169,7 +171,50 @@ public class DataManager {
     }
 
     /**
-     * Load all allExams from the database.
+     * Load the element of the feed.
+     * @param list where the elements are loaded.
+     */
+    public void loadMyDocs(RecyclerView list, View view){
+        StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
+                response -> {
+                    feedElements.clear();
+                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+                    list.getAdapter().notifyDataSetChanged();
+                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+
+                    if(feedElements.size() == 0) {
+                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    }
+                },
+                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        queue.add(request);
+    }
+
+    /**
+     * Load the element of the feed.
+     * @param list where the elements are loaded.
+     */
+    public void loadMyBooks(RecyclerView list, View view){
+        StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
+                response -> {
+                    feedElements.clear();
+                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+                    list.getAdapter().notifyDataSetChanged();
+                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+
+                    if(feedElements.size() == 0) {
+                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    }
+                },
+                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        queue.add(request);
+    }
+
+    /**
+     * Load all allExams from the database taking into account
+     * the university and the course of the user.
      */
     private void loadAllExams(){
         Uri url = Uri.parse(BASE_URL + URL_EXAMS + "?university=" + user.getUniversity() + "&course=" + user.getCourse());
@@ -212,6 +257,9 @@ public class DataManager {
         queue.add(request);
     }
 
+    /**
+     * Makes a search in the database.
+     */
     public void queryMaterials(String query, RecyclerView list, View emptyView){
         Uri url = Uri.parse(BASE_URL + URL_SEARCH + "?university=" + user.getUniversity() + "&query=" + query);
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
@@ -234,6 +282,34 @@ public class DataManager {
                     emptyView.setVisibility(View.VISIBLE);
                     LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
                 });
+        queue.add(request);
+    }
+
+    /**
+     * Write the user in the database.
+     */
+    public void updateUser() {
+        Uri url = Uri.parse(BASE_URL + URL_USER);
+        LogManager.getInstance().printConsoleError(url.toString());
+        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
+                response -> {
+                    if(response.equalsIgnoreCase("1"))
+                        LogManager.getInstance().showVisualMessage("Piano di studi modificato.");
+                    else
+                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                },
+                error -> {
+                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
+                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String>  params = new HashMap<>();
+                params.put("user", gson.toJson(user));
+                params.put("uid", user.getUid());
+                return params;
+            }
+        };
         queue.add(request);
     }
 

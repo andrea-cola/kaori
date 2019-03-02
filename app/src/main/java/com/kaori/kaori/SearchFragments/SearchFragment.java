@@ -1,4 +1,4 @@
-package com.kaori.kaori.MaterialFragments;
+package com.kaori.kaori.SearchFragments;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;

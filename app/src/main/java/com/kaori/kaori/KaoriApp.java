@@ -14,7 +14,8 @@ import android.view.View;
 
 import com.kaori.kaori.HomeFragments.HomeFragment;
 import com.kaori.kaori.FinderFragment.FinderFragment;
-import com.kaori.kaori.MaterialFragments.SearchFragment;
+import com.kaori.kaori.MyMaterialFragments.MyMaterialFragment;
+import com.kaori.kaori.SearchFragments.SearchFragment;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
@@ -37,9 +38,8 @@ public class KaoriApp extends AppCompatActivity {
             case R.id.navigation_search:
                 entryPointFragmentCall(new SearchFragment());
                 return true;
-            case R.id.navigation_preferred
-                    :
-                entryPointFragmentCall(new SearchFragment());
+            case R.id.navigation_preferred:
+                entryPointFragmentCall(new MyMaterialFragment());
                 return true;
             case R.id.navigation_share:
                 entryPointFragmentCall(new FinderFragment());

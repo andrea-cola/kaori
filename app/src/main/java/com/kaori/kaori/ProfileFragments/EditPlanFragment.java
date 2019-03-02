@@ -18,12 +18,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
@@ -33,7 +29,7 @@ import java.util.List;
 /**
  * Fragment that allows to edit the attended exams.
  */
-public class EditCoursesFragment extends Fragment {
+public class EditPlanFragment extends Fragment {
 
     /**
      * Constants.
@@ -47,7 +43,7 @@ public class EditCoursesFragment extends Fragment {
     private Context context;
     private View view;
     private Button buttonOk;
-    private List<String> importedCourses, selectedCourses;
+    private List<String> selectedCourses;
     private LayoutInflater i;
     private ArrayAdapter standardAdapter;
     private LinearLayout addingSpace;
@@ -71,7 +67,8 @@ public class EditCoursesFragment extends Fragment {
         context = getContext();
         i = inflater;
 
-        loadExams();
+        standardAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, DataManager.getInstance().getAllExams());
+        updateList();
 
         return view;
     }
@@ -87,7 +84,7 @@ public class EditCoursesFragment extends Fragment {
      */
     private void addAutoCompleteTextView(String e) {
         if (autoCompleteTextViewList.size() == 0 || !autoCompleteTextViewList.get(autoCompleteTextViewList.size() - 1).getText().toString().isEmpty()) {
-            if (autoCompleteTextViewList.size() < importedCourses.size()) {
+            if (autoCompleteTextViewList.size() < DataManager.getInstance().getAllExams().size()) {
                 View acwLayout = i.inflate(R.layout.autocompletetextview, null, false);
                 AutoCompleteTextView acw = acwLayout.findViewById(R.id.autocompleteview);
                 acw.setAdapter(standardAdapter);
@@ -111,7 +108,7 @@ public class EditCoursesFragment extends Fragment {
                 attachListeners(acw);
             } else
                 LogManager.getInstance().showVisualMessage("Non è possible aggiungere altri esami.");
-        }else
+        } else
             LogManager.getInstance().showVisualMessage("Compila il campo vuoto.");
     }
 
@@ -158,31 +155,6 @@ public class EditCoursesFragment extends Fragment {
     }
 
     /**
-     * Load all the exams taking into account the university
-     * and the course of the user.
-     */
-    private void loadExams() {
-        FirebaseFirestore.getInstance().collection(Constants.DB_COLL_EXAMS)
-                .whereEqualTo(Constants.FIELD_UNIVERSITY, DataManager.getInstance().getUser().getUniversity())
-                .whereEqualTo(Constants.FIELD_COURSES, DataManager.getInstance().getUser().getCourse())
-                .get()
-                .addOnCompleteListener(task -> {
-                    QuerySnapshot result = task.getResult();
-                    if (task.isSuccessful() && result != null) {
-                        importedCourses = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : result)
-                            importedCourses.add(String.valueOf(document.get("name")));
-                        standardAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, importedCourses);
-                        updateList();
-                    }
-                    else {
-                        LogManager.getInstance().showVisualError(null,"Impossibile caricare i corsi, riprovare.");
-                        endProcess(false);
-                    }
-                });
-    }
-
-    /**
      * Add fields as the exams already set in the database.
      */
     private void updateList(){
@@ -199,18 +171,8 @@ public class EditCoursesFragment extends Fragment {
     private void saveData() {
         User user = DataManager.getInstance().getUser();
         user.setExams(selectedCourses);
-
-        view.findViewById(R.id.wait_layout).setVisibility(View.VISIBLE);
-
-        FirebaseFirestore.getInstance().collection(Constants.DB_COLL_USERS)
-                .document(user.getUid()).set(user)
-                .addOnSuccessListener(aVoid -> {
-                    LogManager.getInstance().printConsoleMessage("saveData:written");
-                    endProcess(true);
-                })
-                .addOnFailureListener(e -> {
-                    LogManager.getInstance().showVisualError(e, "saveData:fail");
-                });
+        DataManager.getInstance().updateUser();
+        endProcess(true);
     }
 
     /**
