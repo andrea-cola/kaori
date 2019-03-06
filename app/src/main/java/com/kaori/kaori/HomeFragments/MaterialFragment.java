@@ -167,7 +167,7 @@ public class MaterialFragment extends Fragment {
 
     private void initializeSubView(){
         ((TextView)view.findViewById(R.id.title)).setText(mMaterial.getTitle());
-        ((TextView)view.findViewById(R.id.course)).setText(mMaterial.getCourse());
+        ((TextView)view.findViewById(R.id.note)).setText(mMaterial.getCourse());
         ((TextView)view.findViewById(R.id.author)).setText(mMaterial.getUser().getName());
         ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat2.format(mMaterial.getTimestamp().toDate()));
 

@@ -16,6 +16,7 @@ public class Book {
     private MiniUser user;
     private ArrayList<String> courses;
     private Timestamp timestamp;
+    private String course;
 
     public Book(){
         courses = new ArrayList<>();
@@ -99,5 +100,13 @@ public class Book {
 
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getCourse() {
+        return course;
+    }
+
+    public void setCourse(String course) {
+        this.course = course;
     }
 }

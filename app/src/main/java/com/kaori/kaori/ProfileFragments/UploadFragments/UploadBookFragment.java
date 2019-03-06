@@ -105,6 +105,7 @@ public class UploadBookFragment extends Fragment {
         book.setNote(String.valueOf(note.getText()));
         book.setUser(DataManager.getInstance().getMiniUser());
         book.setCourses(examsList);
+        book.setCourse(DataManager.getInstance().getUser().getCourse());
 
         DataManager.getInstance().uploadBook(book); // upload on server
 
