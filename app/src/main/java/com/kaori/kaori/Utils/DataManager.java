@@ -69,7 +69,8 @@ public class DataManager {
     private ArrayList<String> allExams; // all exams compatible with my graduation course and university.
     private ArrayList<String> allUniversities; // all universities.
     private ArrayList<Course> allCourses; // all courses.
-    private ArrayList<Material> searchElements;
+    private ArrayList<Material> searchElements; // list used in search fragment to update quickly the listview
+    private ArrayList<Material> myFiles; // list of all my materials.
 
     /**
      * Request options for Glide.
@@ -84,6 +85,7 @@ public class DataManager {
         allCourses = new ArrayList<>();
         feedElements = new ArrayList<>();
         searchElements = new ArrayList<>();
+        myFiles = new ArrayList<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -164,6 +166,10 @@ public class DataManager {
                 url = url + "&exams=" + params.get(i);
         }
         return url;
+    }
+
+    public ArrayList<Material> getMyFiles() {
+        return myFiles;
     }
 
     /**
@@ -338,6 +344,9 @@ public class DataManager {
         queue.add(request);
     }
 
+    /**
+     * Update the user in the database.
+     */
     private void updateUser(){
         Uri url = Uri.parse(BASE_URL + URL_USER);
         LogManager.getInstance().printConsoleError(url.toString());
@@ -364,7 +373,8 @@ public class DataManager {
     }
 
     /**
-     * Write the user in the database.
+     * Update the user in the database, but if bitmap is different from
+     * null is load the bitmap in the Firebase storage.
      */
     public void updateUser(Bitmap bitmap) {
         if(bitmap != null)
@@ -373,7 +383,10 @@ public class DataManager {
             updateUser();
     }
 
-    public void loadImageIntoView(Object uri, ImageView imageView, Context context){
+    /**
+     * Use Glide to load the image into the Imageview.
+     */
+    public void loadImageIntoView(Object uri, ImageView imageView, Context context) {
         if(context != null)
             Glide.with(context)
                     .load(uri)
@@ -381,7 +394,10 @@ public class DataManager {
                     .into(imageView);
     }
 
-    private void uploadImageOnServer(Bitmap bitmap){
+    /**
+     * Upload the image in the Firebase storage.
+     */
+    private void uploadImageOnServer(Bitmap bitmap) {
         LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -395,6 +411,32 @@ public class DataManager {
                 updateUser(null);
             }))
             .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, "Il tuo profilo non è stato aggiornato."));
+    }
+
+    /**
+     * Load user uploads from the database.
+     */
+    public void loadMyFiles(RecyclerView list, View view) {
+        String url = BASE_URL + URL_SEARCH + "?uid=" + user.getUid();
+        StringRequest request = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    myFiles = gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType());
+                    if(myFiles != null && myFiles.size() > 0) {
+                        list.getAdapter().notifyDataSetChanged();
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        LogManager.getInstance().printConsoleMessage("Files loaded.");
+                    }
+                    else {
+                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                        LogManager.getInstance().printConsoleMessage("Files not loaded.");
+                    }
+                },
+                error -> {
+                    LogManager.getInstance().printConsoleError(error.toString());
+                    // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
+                });
+        queue.add(request);
     }
 
 }

@@ -14,86 +14,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EditFilesFragment extends Fragment {
 
-    /**
-     * Constants.
-     */
     private final String BACK_STATE_NAME = getClass().getName();
-
-    /**
-     * Variables.
-     */
-    private View view;
-    private List<Material> myUploads;
-    private ListAdapter adapter;
     private RecyclerView recyclerView;
-    private TextView emptyTextView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.edit_profile_uploads, container, false);
+        View view1 = inflater.inflate(R.layout.edit_profile_uploads, container, false);
         setHasOptionsMenu(true);
-        ((KaoriApp)getActivity()).hideBottomBar(true);
 
-        recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView = view1.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new ListAdapter(DataManager.getInstance().getMyFiles()));
 
-        view.findViewById(R.id.FAB).setOnClickListener(view -> invokeNextFragment(new UploadFragment()));
-        emptyTextView = view.findViewById(R.id.empty_view_text);
+        view1.findViewById(R.id.FAB).setOnClickListener(view -> invokeNextFragment(new UploadFragment()));
+        TextView emptyTextView = view1.findViewById(R.id.empty_view_text);
         emptyTextView.setText("Ops, non hai alcuna condivisione.");
 
-        myUploads = new ArrayList<>();
-        adapter = new ListAdapter(myUploads);
-        recyclerView.setAdapter(adapter);
+        DataManager.getInstance().loadMyFiles(recyclerView, view1);
 
-        loadExams();
-
-        return view;
+        return view1;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.empty_menu, menu);
-    }
-
-    private void loadExams() {
-        FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS)
-                .get()
-                .addOnCompleteListener(task -> {
-                    QuerySnapshot result = task.getResult();
-                    if (task.isSuccessful() && result != null){
-                        for (QueryDocumentSnapshot document : result) {
-                            String uid = document.toObject(Material.class).getUser().getUid();
-                            if (uid.equals(DataManager.getInstance().getUser().getUid())) {
-                                myUploads.add(document.toObject(Material.class));
-                            }
-                        }
-                        adapter.notifyDataSetChanged();
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        if (myUploads.size() == 0)
-                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    } else {
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                        LogManager.getInstance().showVisualError(null, "Impossibile caricare i corsi, riprovare.");
-                    }
-                });
     }
 
     private void invokeNextFragment(Fragment fragment) {
@@ -109,18 +63,7 @@ public class EditFilesFragment extends Fragment {
 
         private List<Material> mDataset;
 
-        class ListViewHolder extends RecyclerView.ViewHolder {
-            TextView title;
-            TextView date;
-
-            ListViewHolder(View v) {
-                super(v);
-                title = v.findViewById(R.id.chat_user);
-                date = v.findViewById(R.id.date);
-            }
-        }
-
-        ListAdapter(List<Material> materials) {
+        /*package-private*/  ListAdapter(List<Material> materials) {
             mDataset = materials;
         }
 
@@ -145,6 +88,17 @@ public class EditFilesFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mDataset.size();
+        }
+
+        /*package-private*/ class ListViewHolder extends RecyclerView.ViewHolder {
+            TextView title;
+            TextView date;
+
+            /*package-private*/  ListViewHolder(View v) {
+                super(v);
+                title = v.findViewById(R.id.chat_user);
+                date = v.findViewById(R.id.date);
+            }
         }
     }
 }
