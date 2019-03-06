@@ -76,7 +76,7 @@
             app:layout_constraintTop_toBottomOf="@+id/password" />
 
         <Button
-            android:id="@+id/button_ok"
+            android:id="@+id/button"
             style="@style/KaoriButton"
             android:layout_marginBottom="32dp"
             android:text="@string/title_registration_end"
@@ -100,7 +100,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_ok"
+            app:layout_constraintTop_toBottomOf="@+id/button"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_if_circle_facebook__317752" />
 
@@ -118,7 +118,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/button_fake_facebook"
-            app:layout_constraintTop_toBottomOf="@+id/button_ok"
+            app:layout_constraintTop_toBottomOf="@+id/button"
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_if_google_1298745" />
 

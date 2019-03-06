@@ -1,4 +1,4 @@
-package com.kaori.kaori.ProfileFragments;
+package com.kaori.kaori.ProfileFragments.UploadFragments;
 
 import android.app.FragmentTransaction;
 import android.net.Uri;
@@ -17,7 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -35,7 +36,7 @@ public class UploadWaitFragment extends Fragment {
      */
     private StorageReference storage;
     private String tag;
-    private Material material;
+    private Document material;
 
     /**
      * Override of the method onCreateView.
@@ -54,12 +55,12 @@ public class UploadWaitFragment extends Fragment {
         return view;
     }
 
-    public void setParameters(String tag, Material material) {
+    public void setParameters(String tag, Document material) {
         this.tag = tag;
         this.material = material;
     }
 
-    private void writeDatabase(Material material) {
+    private void writeDatabase(Document material) {
         material.setTimestamp(Timestamp.now());
         CollectionReference materials = FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS);
         if(!material.getModified())

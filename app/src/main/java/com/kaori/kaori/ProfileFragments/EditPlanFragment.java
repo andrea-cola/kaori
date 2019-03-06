@@ -57,7 +57,7 @@ public class EditPlanFragment extends Fragment {
         setHasOptionsMenu(true);
         addingSpace = view.findViewById(R.id.adding_space);
         view.findViewById(R.id.button_add_field).setOnClickListener(view -> addAutoCompleteTextView(null));
-        buttonOk = view.findViewById(R.id.button_ok);
+        buttonOk = view.findViewById(R.id.button);
 
         buttonOk.setOnClickListener(view -> saveData());
 

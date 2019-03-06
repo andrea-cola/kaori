@@ -46,7 +46,7 @@ public class LoginFragment extends Fragment {
         buttonFacebookLogin.setReadPermissions("email", "public_profile");
 
         // get views from the layout.
-        Button loginButton = view.findViewById(R.id.button_ok);
+        Button loginButton = view.findViewById(R.id.button);
         TextView forgottenPassword = view.findViewById(R.id.password_forgotten);
         ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
         ImageView mGoogle = view.findViewById(R.id.button_google);

@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
         });
 
         view.findViewById(R.id.piano_di_studi).setOnClickListener(view1 -> invokeNextFragment(new EditPlanFragment()));
-        view.findViewById(R.id.my_uploads).setOnClickListener(view1 -> invokeNextFragment(new EditFilesFragment()));
+        view.findViewById(R.id.my_uploads).setOnClickListener(view1 -> invokeNextFragment(new MyFilesFragment()));
 
         return view;
     }

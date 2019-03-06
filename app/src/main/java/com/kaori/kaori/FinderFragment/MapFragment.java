@@ -85,7 +85,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapboxMap.setInfoWindowAdapter(marker -> {
             View v = getLayoutInflater().inflate(R.layout.mapbox_custom_info_window, null);
             ((TextView)v.findViewById(R.id.name)).setText(position.getUser().getName());
-            v.findViewById(R.id.button_ok).setOnClickListener(view -> {
+            v.findViewById(R.id.button).setOnClickListener(view -> {
                 Intent intent = new Intent(getActivity(), KaoriChat.class);
                 intent.putExtra("user", position.getUser());
                 startActivity(intent);

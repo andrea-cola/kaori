@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 
@@ -38,9 +38,9 @@ public class MyDocsFragment extends Fragment {
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        List<Material> materials;
+        List<Document> materials;
 
-        /*package-private*/ RecyclerAdapter(List<Material> materials){
+        /*package-private*/ RecyclerAdapter(List<Document> materials){
             this.materials = materials;
         }
 

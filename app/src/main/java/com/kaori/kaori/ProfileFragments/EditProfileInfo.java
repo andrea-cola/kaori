@@ -56,7 +56,7 @@ public class EditProfileInfo extends Fragment {
         profileImageView = view1.findViewById(R.id.profile_image);
         mUniversity = view1.findViewById(R.id.profile_university);
         mCourse = view1.findViewById(R.id.profile_course);
-        Button mButtonOk = view1.findViewById(R.id.button_ok);
+        Button mButtonOk = view1.findViewById(R.id.button);
         FloatingActionButton floatingActionButton = view1.findViewById(R.id.floatingActionButton);
 
         // load profile image

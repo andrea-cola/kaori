@@ -5,15 +5,15 @@ import com.google.firebase.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Material {
+public class Document {
 
-    private String id;
-    private MiniUser user;
-    private String comment;
+    private String id; // id of the document
+    private MiniUser user; // owner user of the document
+    private String note; // note of the owner user
     private String university;
     private String course;
-    private List<String> professors;
     private List<String> exams;
+    private List<String> professors;
     private Timestamp timestamp;
     private String title;
     private String type;
@@ -21,17 +21,17 @@ public class Material {
     private Boolean modified;
     private List<Feedback> feedbacks;
 
-    public Material(){
+    public Document(){
         exams = new ArrayList<>();
         professors = new ArrayList<>();
     }
 
-    public String getComment() {
-        return comment;
+    public String getNote() {
+        return note;
     }
 
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getType() {
@@ -139,4 +139,5 @@ public class Material {
     public void setUniversity(String university) {
         this.university = university;
     }
+
 }

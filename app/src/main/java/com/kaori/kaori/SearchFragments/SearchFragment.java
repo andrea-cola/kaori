@@ -16,7 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.kaori.kaori.HomeFragments.MaterialFragment;
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
@@ -88,9 +88,9 @@ public class SearchFragment extends Fragment {
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        private List<Material> materials;
+        private List<Document> materials;
 
-        /*package-private*/ RecyclerAdapter(List<Material> materials){
+        /*package-private*/ RecyclerAdapter(List<Document> materials){
             this.materials = materials;
         }
 

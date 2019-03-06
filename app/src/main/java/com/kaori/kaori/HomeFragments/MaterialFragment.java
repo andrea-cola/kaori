@@ -24,7 +24,7 @@ import com.kaori.kaori.BuildConfig;
 import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Feedback;
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -50,7 +50,7 @@ public class MaterialFragment extends Fragment {
      * Variables.
      */
     private View view;
-    private Material mMaterial;
+    private Document mMaterial;
     private RecyclerView recyclerView;
 
     @NonNull
@@ -68,7 +68,7 @@ public class MaterialFragment extends Fragment {
     /**
      * Let the previous fragment to set the material to be shown.
      */
-    public void setMaterial(Material material){
+    public void setMaterial(Document material){
         this.mMaterial = material;
     }
 

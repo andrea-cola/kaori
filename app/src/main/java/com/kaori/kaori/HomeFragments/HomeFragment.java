@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -64,9 +64,9 @@ public class HomeFragment extends Fragment {
         private final int FILE = 1;
         private final int URL = 2;
 
-        List<Material> materials;
+        List<Document> materials;
 
-        /*package-private*/ RecyclerAdapter(List<Material> materials){
+        /*package-private*/ RecyclerAdapter(List<Document> materials){
             this.materials = materials;
         }
 
@@ -136,7 +136,7 @@ public class HomeFragment extends Fragment {
                 title = view.findViewById(R.id.title);
                 author = view.findViewById(R.id.author);
                 info = view.findViewById(R.id.info);
-                status = view.findViewById(R.id.status);
+                status = view.findViewById(R.id.note);
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
                 authorIcon = view.findViewById(R.id.authorImage);

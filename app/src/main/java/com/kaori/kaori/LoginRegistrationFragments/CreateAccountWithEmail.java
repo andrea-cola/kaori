@@ -62,7 +62,7 @@ public class CreateAccountWithEmail extends Fragment {
         View view = inflater.inflate(R.layout.reg2, container, false);
 
         FloatingActionButton floatingActionButton = view.findViewById(R.id.floatingActionButton);
-        createNewAccount = view.findViewById(R.id.button_ok);
+        createNewAccount = view.findViewById(R.id.button);
         name = view.findViewById(R.id.name);
         password = view.findViewById(R.id.password);
         mail = view.findViewById(R.id.username);

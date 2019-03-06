@@ -71,7 +71,7 @@
             app:layout_constraintTop_toBottomOf="@+id/profile_university" />
 
         <Button
-            android:id="@+id/button_ok"
+            android:id="@+id/button"
             style="@style/KaoriButton"
             android:text="@string/profile_save"
             app:layout_constraintBottom_toBottomOf="parent"

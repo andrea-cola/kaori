@@ -21,8 +21,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaori.kaori.Kaori;
+import com.kaori.kaori.Model.Book;
 import com.kaori.kaori.Model.Course;
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
@@ -46,6 +47,7 @@ public class DataManager {
     private final static String URL_FEED = "feed/";
     private final static String URL_EXAMS = "exams/";
     private final static String URL_USER = "user/";
+    private final static String URL_BOOK = "book/";
     private final static String URL_SEARCH = "search/";
     private final static String URL_UNIVERSITIES = "universities/";
     private final static String URL_COURSES = "courses/";
@@ -65,12 +67,12 @@ public class DataManager {
      * Data.
      */
     private User user; // the current logged in user.
-    private ArrayList<Material> feedElements; // materials showed in the feed.
+    private ArrayList<Document> feedElements; // materials showed in the feed.
     private ArrayList<String> allExams; // all exams compatible with my graduation course and university.
     private ArrayList<String> allUniversities; // all universities.
     private ArrayList<Course> allCourses; // all courses.
-    private ArrayList<Material> searchElements; // list used in search fragment to update quickly the listview
-    private ArrayList<Material> myFiles; // list of all my materials.
+    private ArrayList<Document> searchElements; // list used in search fragment to update quickly the listview
+    private ArrayList<Document> myFiles; // list of all my materials.
 
     /**
      * Request options for Glide.
@@ -117,10 +119,6 @@ public class DataManager {
         return user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public ArrayList<String> getAllExams() {
         return allExams;
     }
@@ -133,17 +131,17 @@ public class DataManager {
         dataManager = new DataManager(context);
     }
 
-    public void postComment(Material material) {
+    public void postComment(Document material) {
         FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS)
                 .document(material.getId())
                 .set(material);
     }
 
-    public ArrayList<Material> getFeedElements() {
+    public ArrayList<Document> getFeedElements() {
         return feedElements;
     }
 
-    public ArrayList<Material> getSearchElements() {
+    public ArrayList<Document> getSearchElements() {
         return searchElements;
     }
 
@@ -168,7 +166,7 @@ public class DataManager {
         return url;
     }
 
-    public ArrayList<Material> getMyFiles() {
+    public ArrayList<Document> getMyFiles() {
         return myFiles;
     }
 
@@ -180,7 +178,7 @@ public class DataManager {
         StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
                 response -> {
                     feedElements.clear();
-                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
                     list.getAdapter().notifyDataSetChanged();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
@@ -201,7 +199,7 @@ public class DataManager {
         StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
                 response -> {
                     feedElements.clear();
-                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
                     list.getAdapter().notifyDataSetChanged();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
@@ -222,7 +220,7 @@ public class DataManager {
         StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
                 response -> {
                     feedElements.clear();
-                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
                     list.getAdapter().notifyDataSetChanged();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
@@ -324,7 +322,7 @@ public class DataManager {
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
                 response -> {
                     searchElements.clear();
-                    searchElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType()));
+                    searchElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
 
                     if(searchElements.size() > 0) {
                         list.getAdapter().notifyDataSetChanged();
@@ -418,9 +416,12 @@ public class DataManager {
      */
     public void loadMyFiles(RecyclerView list, View view) {
         String url = BASE_URL + URL_SEARCH + "?uid=" + user.getUid();
+        LogManager.getInstance().printConsoleMessage(url);
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    myFiles = gson.fromJson(response, new TypeToken<ArrayList<Material>>(){}.getType());
+                    myFiles.clear();
+                    myFiles.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+                    LogManager.getInstance().printConsoleMessage(myFiles.toString());
                     if(myFiles != null && myFiles.size() > 0) {
                         list.getAdapter().notifyDataSetChanged();
                         view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
@@ -436,6 +437,30 @@ public class DataManager {
                     LogManager.getInstance().printConsoleError(error.toString());
                     // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
                 });
+        queue.add(request);
+    }
+
+    /**
+     * Update the user in the database.
+     */
+    public void uploadBook(Book book){
+        Uri url = Uri.parse(BASE_URL + URL_BOOK);
+        LogManager.getInstance().printConsoleError(url.toString());
+        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
+                response -> {
+                    LogManager.getInstance().printConsoleMessage(response);
+                },
+                error -> {
+                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
+                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String>  params = new HashMap<>();
+                params.put("book", gson.toJson(book));
+                return params;
+            }
+        };
         queue.add(request);
     }
 

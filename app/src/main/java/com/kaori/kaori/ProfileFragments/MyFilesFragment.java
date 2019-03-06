@@ -14,34 +14,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.kaori.kaori.Model.Material;
+import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.ProfileFragments.UploadFragments.UploadFragment;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 
 import java.util.List;
 
-public class EditFilesFragment extends Fragment {
+public class MyFilesFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
-    private RecyclerView recyclerView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view1 = inflater.inflate(R.layout.edit_profile_uploads, container, false);
+        View view = inflater.inflate(R.layout.edit_profile_uploads, container, false);
         setHasOptionsMenu(true);
 
-        recyclerView = view1.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new ListAdapter(DataManager.getInstance().getMyFiles()));
+        recyclerView.setAdapter(new ListAdapter());
 
-        view1.findViewById(R.id.FAB).setOnClickListener(view -> invokeNextFragment(new UploadFragment()));
-        TextView emptyTextView = view1.findViewById(R.id.empty_view_text);
+        DataManager.getInstance().loadMyFiles(recyclerView, view);
+
+        view.findViewById(R.id.FAB).setOnClickListener(v -> invokeNextFragment(new UploadFragment()));
+        TextView emptyTextView = view.findViewById(R.id.empty_view_text);
         emptyTextView.setText("Ops, non hai alcuna condivisione.");
 
-        DataManager.getInstance().loadMyFiles(recyclerView, view1);
-
-        return view1;
+        return view;
     }
 
     @Override
@@ -61,41 +61,42 @@ public class EditFilesFragment extends Fragment {
 
     private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
-        private List<Material> mDataset;
+        private List<Document> materials;
 
-        /*package-private*/  ListAdapter(List<Material> materials) {
-            mDataset = materials;
+        /*package-private*/ ListAdapter() {
+            materials = DataManager.getInstance().getMyFiles();
         }
 
         @NonNull
         @Override
         public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false);
-            v.setOnClickListener(view -> {
-                UploadFragment uploadBookFragment = new UploadFragment();
-                uploadBookFragment.isMaterialModified(mDataset.get(recyclerView.getChildAdapterPosition(v)));
-                invokeNextFragment(uploadBookFragment);
-            });
-            return new ListViewHolder(v);
+            return new ListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-            holder.title.setText(mDataset.get(position).getTitle());
-            holder.date.setText(mDataset.get(position).getComment());
+            holder.title.setText(materials.get(position).getTitle());
+            holder.date.setText(materials.get(position).getNote());
+            holder.view.setOnClickListener(view -> {
+                UploadFragment uploadBookFragment = new UploadFragment();
+                //uploadBookFragment.isMaterialModified(materials.get(position));
+                invokeNextFragment(uploadBookFragment);
+            });
         }
 
         @Override
         public int getItemCount() {
-            return mDataset.size();
+            return materials.size();
         }
 
         /*package-private*/ class ListViewHolder extends RecyclerView.ViewHolder {
             TextView title;
             TextView date;
+            View view;
 
-            /*package-private*/  ListViewHolder(View v) {
+            /*package-private*/ ListViewHolder(View v) {
                 super(v);
+                view = v;
                 title = v.findViewById(R.id.chat_user);
                 date = v.findViewById(R.id.date);
             }

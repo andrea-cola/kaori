@@ -38,7 +38,7 @@ public class CreateAccount extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.reg1, container, false);
 
-        Button buttonCreateNewAccount = view.findViewById(R.id.button_ok);
+        Button buttonCreateNewAccount = view.findViewById(R.id.button);
         Button buttonFakeFacebook = view.findViewById(R.id.button_fake_facebook);
         Button buttonGoogle = view.findViewById(R.id.button_fake_google);
         buttonFacebook = view.findViewById(R.id.button_facebook);

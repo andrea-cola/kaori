@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@id/url" />
 
     <Button
-        android:id="@+id/exams_button"
+        android:id="@+id/button_exams"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -62,10 +62,10 @@
         app:layout_constraintHeight_min="@dimen/default_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/exams_button" />
+        app:layout_constraintTop_toBottomOf="@id/button_exams" />
 
     <Button
-        android:id="@+id/button_ok"
+        android:id="@+id/button"
         style="@style/KaoriButton"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/default_margin"
