@@ -60,10 +60,6 @@ public class HomeFragment extends Fragment {
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        private final int LIBRO = 0;
-        private final int FILE = 1;
-        private final int URL = 2;
-
         List<Document> materials;
 
         /*package-private*/ RecyclerAdapter(List<Document> materials){
@@ -82,18 +78,6 @@ public class HomeFragment extends Fragment {
             holder.author.setText(materials.get(i).getUser().getName());
             holder.status.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
             holder.date.setText(Constants.dateFormat2.format(materials.get(i).getTimestamp().toDate()));
-            holder.type.setText(materials.get(i).getType());
-
-            if (getItemViewType(i) == LIBRO) {
-                holder.materialIcon.setImageResource(R.drawable.book_icon);
-                holder.comments.setText(materials.get(i).getProfessors().get(0));
-            } else if(getItemViewType(i) == FILE) {
-                holder.materialIcon.setImageResource(R.drawable.document_icon);
-                holder.comments.setText((materials.get(i).getFeedbacks() != null ? materials.get(i).getFeedbacks().size() : "0") + " commenti");
-            } else {
-                holder.materialIcon.setImageResource(R.drawable.link_icon);
-                holder.comments.setText((materials.get(i).getFeedbacks() != null ? materials.get(i).getFeedbacks().size() : "0") + " commenti");
-            }
 
             String info = "";
             for(String ex : materials.get(i).getExams())
@@ -107,18 +91,6 @@ public class HomeFragment extends Fragment {
                 materialFragment.setMaterial(materials.get(i));
                 invokeNextFragment(materialFragment);
             });
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            switch (materials.get(position).getType()) {
-                case Constants.LIBRO:
-                    return LIBRO;
-                case Constants.FILE:
-                    return FILE;
-                default:
-                    return URL;
-            }
         }
 
         @Override

@@ -1,6 +1,5 @@
 package com.kaori.kaori.HomeFragments;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,8 +22,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.kaori.kaori.BuildConfig;
 import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.KaoriChat;
-import com.kaori.kaori.Model.Feedback;
 import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.Model.Feedback;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -77,7 +76,7 @@ public class MaterialFragment extends Fragment {
      */
     private void initializeView(){
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
-        if(getActivity() != null) {
+        /*if(getActivity() != null) {
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (mMaterial.getType().equalsIgnoreCase(Constants.LIBRO)) {
                 linearLayout.addView(inflater.inflate(R.layout.libro_layout, null));
@@ -90,7 +89,7 @@ public class MaterialFragment extends Fragment {
                 setLinkLayout();
             }
             initializeSubView();
-        }
+        }*/
     }
 
     /**
@@ -98,7 +97,6 @@ public class MaterialFragment extends Fragment {
      */
     private void setBookLayout(){
         TextView author = view.findViewById(R.id.author);
-        author.setText(mMaterial.getProfessors().get(0));
         if(!mMaterial.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
             view.findViewById(R.id.button).setOnClickListener(view -> {
                 Intent intent = new Intent(getActivity(), KaoriChat.class);
