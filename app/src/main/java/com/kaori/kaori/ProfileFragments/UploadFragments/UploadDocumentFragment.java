@@ -1,6 +1,7 @@
 package com.kaori.kaori.ProfileFragments.UploadFragments;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
@@ -74,12 +76,16 @@ public class UploadDocumentFragment extends Fragment {
      * This method create the new material with file type
      */
     private void createNewFile(String url) {
-        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + String.valueOf(document.getTitle()) + ".pdf");
-        if(document.getModified())
-            reference.delete().addOnFailureListener(e -> LogManager.getInstance().printConsoleError("Error deleting the old document."));
-        document.setUrl(url);
-        DataManager.getInstance().uploadDocument(document);
-        endProcess();
+        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
+        UploadTask task = reference.putFile(Uri.parse(url));
+
+        task.addOnSuccessListener(taskSnapshot -> {
+            document.setUrl(taskSnapshot.getUploadSessionUri().toString());
+            LogManager.getInstance().showVisualMessage("Ok");
+            document.setUrl(taskSnapshot.getUploadSessionUri().toString());
+            DataManager.getInstance().uploadDocument(document);
+            endProcess();
+        }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
     /**

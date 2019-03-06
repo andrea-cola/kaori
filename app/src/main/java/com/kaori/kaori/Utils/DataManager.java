@@ -482,7 +482,7 @@ public class DataManager {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String>  params = new HashMap<>();
-                params.put("book", gson.toJson(document));
+                params.put("document", gson.toJson(document));
                 return params;
             }
         };
