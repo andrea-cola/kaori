@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.Timestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.kaori.kaori.BuildConfig;
@@ -192,14 +191,6 @@ public class MaterialFragment extends Fragment {
         }
     }
 
-    private void loadImage(ImageView imageView, String url){
-        if(getContext() != null)
-            Glide.with(getContext())
-                    .load(url)
-                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                    .into(imageView);
-    }
-
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
         private List<Feedback> feedbackList;
@@ -217,7 +208,7 @@ public class MaterialFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
             holder.timestamp.setText(Constants.dateFormat2.format(feedbackList.get(i).getTimestamp().toDate()));
-            loadImage(holder.userImage, feedbackList.get(i).getUser().getThumbnail());
+            DataManager.getInstance().loadImageIntoView(feedbackList.get(i).getUser().getThumbnail(), holder.userImage, getContext());
             holder.content.setText(feedbackList.get(i).getText());
         }
 

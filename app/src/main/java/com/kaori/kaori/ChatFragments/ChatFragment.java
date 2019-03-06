@@ -14,7 +14,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -62,10 +61,7 @@ public class ChatFragment extends Fragment {
 
         userName.setText(otherUser.getName());
 
-        Glide.with(getContext())
-                .load(otherUser.getThumbnail())
-                .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                .into(userImage);
+        DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), userImage, getContext());
 
         // add listener to the button that sends messages.
         addOnClickListener();
@@ -206,10 +202,7 @@ public class ChatFragment extends Fragment {
             if(getItemViewType(position) == MY_MESSAGE || getItemViewType(position) == OTHER_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
 
-                Glide.with(getContext())
-                        .load(m.getSender().getThumbnail())
-                        .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                        .into(((MyViewHolderMessage)holder).userImage);
+                DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), ((MyViewHolderMessage)holder).userImage, getContext());
 
                 ((MyViewHolderMessage)holder).content.setText(m.getMessage());
                 ((MyViewHolderMessage)holder).timestamp.setText(Constants.dateFormat3.format(m.getTimestamp().toDate()));

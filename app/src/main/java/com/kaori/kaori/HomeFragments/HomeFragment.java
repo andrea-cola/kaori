@@ -14,14 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Feed fragment: first option in the bottom bar menu.
@@ -102,10 +100,7 @@ public class HomeFragment extends Fragment {
                 info = info + ex + ", ";
             holder.info.setText(info.substring(0, info.length()-2));
 
-            Glide.with(Objects.requireNonNull(getContext()))
-                    .load(materials.get(i).getUser().getThumbnail())
-                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                    .into(holder.authorIcon);
+            DataManager.getInstance().loadImageIntoView(materials.get(i).getUser().getThumbnail(), holder.authorIcon, getContext());
 
             holder.cardView.setOnClickListener(v -> {
                 MaterialFragment materialFragment = new MaterialFragment();

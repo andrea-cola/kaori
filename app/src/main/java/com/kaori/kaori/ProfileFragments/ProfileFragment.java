@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriApp;
@@ -47,15 +46,8 @@ public class ProfileFragment extends Fragment {
 
         // load profile image
         if(getContext() != null) {
-            Glide.with(getContext())
-                    .load(hub.getUser().getPhotosUrl())
-                    .apply(hub.getGetGlideRequestOptionsCircle())
-                    .into(profileImageView);
-
-            Glide.with(getContext())
-                    .load(hub.getUser().getPhotosUrl())
-                    .apply(hub.getGetGlideRequestOptionsCenter())
-                    .into(backgroundImageView);
+            DataManager.getInstance().loadImageIntoView(hub.getUser().getPhotosUrl(), profileImageView, getContext());
+            DataManager.getInstance().loadImageIntoView(hub.getUser().getPhotosUrl(), backgroundImageView, getContext());
         }
 
         // set the text in the text view.

@@ -1,26 +1,33 @@
 package com.kaori.kaori.Utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaori.kaori.Kaori;
+import com.kaori.kaori.Model.Course;
 import com.kaori.kaori.Model.Material;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +47,8 @@ public class DataManager {
     private final static String URL_EXAMS = "exams/";
     private final static String URL_USER = "user/";
     private final static String URL_SEARCH = "search/";
+    private final static String URL_UNIVERSITIES = "universities/";
+    private final static String URL_COURSES = "courses/";
 
     /**
      * Singleton instance.
@@ -58,32 +67,36 @@ public class DataManager {
     private User user; // the current logged in user.
     private ArrayList<Material> feedElements; // materials showed in the feed.
     private ArrayList<String> allExams; // all exams compatible with my graduation course and university.
+    private ArrayList<String> allUniversities; // all universities.
+    private ArrayList<Course> allCourses; // all courses.
     private ArrayList<Material> searchElements;
 
     /**
      * Request options for Glide.
      */
-    private RequestOptions getGlideRequestOptionsCenter;
-    private RequestOptions getGlideRequestOptionsCircle;
+    private RequestOptions glideRequestOptionsCenter;
+    private RequestOptions glideRequestOptionsCircle;
 
     private DataManager(Context context) {
         user = new User();
         allExams = new ArrayList<>();
+        allUniversities = new ArrayList<>();
+        allCourses = new ArrayList<>();
         feedElements = new ArrayList<>();
         searchElements = new ArrayList<>();
 
-        getGlideRequestOptionsCenter = new RequestOptions()
-                .centerCrop()
-                .placeholder(R.drawable.placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL);
-        //.error(R.drawable.placeholder);
-
-        getGlideRequestOptionsCircle = new RequestOptions()
+        glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .circleCrop();
-        //.error(R.drawable.placeholder);
+                .error(R.drawable.placeholder);
+
+        glideRequestOptionsCircle = new RequestOptions()
+                .centerCrop()
+                .placeholder(R.drawable.placeholder)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .circleCrop()
+                .error(R.drawable.placeholder);
 
         queue = Volley.newRequestQueue(context);
     }
@@ -110,14 +123,6 @@ public class DataManager {
         return allExams;
     }
 
-    public RequestOptions getGetGlideRequestOptionsCircle() {
-        return getGlideRequestOptionsCircle;
-    }
-
-    public RequestOptions getGetGlideRequestOptionsCenter() {
-        return getGlideRequestOptionsCenter;
-    }
-
     public MiniUser getMiniUser() {
         return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl(), user.getTokenID());
     }
@@ -138,6 +143,18 @@ public class DataManager {
 
     public ArrayList<Material> getSearchElements() {
         return searchElements;
+    }
+
+    public ArrayList<String> getAllUniversities() {
+        return allUniversities;
+    }
+
+    public ArrayList<String> getAllCourses(String university) {
+        ArrayList<String> courses = new ArrayList<>();
+        for(Course c : allCourses)
+            if(c.getUniversity().equalsIgnoreCase(university))
+                courses.add(c.getName());
+        return courses;
     }
 
     private String urlGeneratorFeedRequest(String url, List<String> params){
@@ -213,7 +230,7 @@ public class DataManager {
     }
 
     /**
-     * Load all allExams from the database taking into account
+     * Load all exams from the database taking into account
      * the university and the course of the user.
      */
     private void loadAllExams(){
@@ -231,6 +248,40 @@ public class DataManager {
     }
 
     /**
+     * Load all universities from the database.
+     */
+    private void loadAllUniversities(){
+        Uri url = Uri.parse(BASE_URL + URL_UNIVERSITIES);
+        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
+                response -> {
+                    allUniversities = gson.fromJson(response, new TypeToken<ArrayList<String>>(){}.getType());
+                    LogManager.getInstance().printConsoleMessage("All universites are loaded." + "\n" + allUniversities.toString());
+                },
+                error -> {
+                    //TODO
+                    LogManager.getInstance().printConsoleError("All Universities: " + error.toString() + " " + error.networkResponse.statusCode);
+                });
+        queue.add(request);
+    }
+
+    /**
+     * Load all courses from the database.
+     */
+    private void loadAllCourses(){
+        Uri url = Uri.parse(BASE_URL + URL_COURSES);
+        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
+                response -> {
+                    allCourses = gson.fromJson(response, new TypeToken<ArrayList<Course>>(){}.getType());
+                    LogManager.getInstance().printConsoleMessage("All courses are loaded." + "\n" + allCourses.toString());
+                },
+                error -> {
+                    //TODO
+                    LogManager.getInstance().printConsoleError("All Courses: " + error.toString() + " " + error.networkResponse.statusCode);
+                });
+        queue.add(request);
+    }
+
+    /**
      * Load the profile when the app starts.
      * @param uid of the logged user.
      * @param kaori activity to run KaoriApp.
@@ -242,6 +293,8 @@ public class DataManager {
                     user = gson.fromJson(response, new TypeToken<User>(){}.getType());
                     if(user != null) {
                         loadAllExams();
+                        loadAllUniversities();
+                        loadAllCourses();
                         LogManager.getInstance().printConsoleMessage("Profile loaded.");
                         kaori.startApp();
                     }
@@ -285,10 +338,7 @@ public class DataManager {
         queue.add(request);
     }
 
-    /**
-     * Write the user in the database.
-     */
-    public void updateUser() {
+    private void updateUser(){
         Uri url = Uri.parse(BASE_URL + URL_USER);
         LogManager.getInstance().printConsoleError(url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
@@ -311,6 +361,40 @@ public class DataManager {
             }
         };
         queue.add(request);
+    }
+
+    /**
+     * Write the user in the database.
+     */
+    public void updateUser(Bitmap bitmap) {
+        if(bitmap != null)
+            uploadImageOnServer(bitmap);
+        else
+            updateUser();
+    }
+
+    public void loadImageIntoView(Object uri, ImageView imageView, Context context){
+        if(context != null)
+            Glide.with(context)
+                    .load(uri)
+                    .apply(glideRequestOptionsCircle)
+                    .into(imageView);
+    }
+
+    private void uploadImageOnServer(Bitmap bitmap){
+        LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+
+        StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
+        mStorage.putBytes(baos.toByteArray()).addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl()
+            .addOnSuccessListener(uri -> {
+                LogManager.getInstance().printConsoleMessage("Il tuo profilo è stato aggiornato.");
+                user.setPhotosUrl(uri.toString());
+                updateUser(null);
+            }))
+            .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, "Il tuo profilo non è stato aggiornato."));
     }
 
 }

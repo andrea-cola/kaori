@@ -13,20 +13,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,14 +190,7 @@ public class ChatListFragment extends Fragment {
             MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(myUid);
             holder.chatUser.setText(otherUser.getName());
             holder.chatDate.setText(Constants.dateFormat2.format(mDataset.get(position).getLastMessageSent().toDate()));
-
-            LogManager.getInstance().printConsoleMessage(otherUser.getThumbnail());
-
-            // load asynchronously the image
-            Glide.with(fragment)
-                    .load(otherUser.getThumbnail())
-                    .apply(DataManager.getInstance().getGetGlideRequestOptionsCircle())
-                    .into(holder.chatImage);
+            DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());
         }
 
         @Override
