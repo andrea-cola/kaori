@@ -13,6 +13,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.Timestamp;
 import com.kaori.kaori.Model.Book;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
@@ -96,6 +97,7 @@ public class UploadBookFragment extends Fragment {
         note = view.findViewById(R.id.note);
 
         Book book = new Book();
+        book.setTimestamp(Timestamp.now());
         book.setTitle(String.valueOf(title.getText()));
         book.setAuthor(String.valueOf(author.getText()));
         book.setEditor(String.valueOf(editor.getText()));

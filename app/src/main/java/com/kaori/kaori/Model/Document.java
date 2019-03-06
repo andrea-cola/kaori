@@ -13,17 +13,14 @@ public class Document {
     private String university;
     private String course;
     private List<String> exams;
-    private List<String> professors;
-    private Timestamp timestamp;
-    private String title;
-    private String type;
-    private String url;
-    private Boolean modified;
-    private List<Feedback> feedbacks;
+    private Timestamp timestamp; // creation timestamp
+    private String title; // title of the document
+    private String url; // storage url of the document
+    private Boolean modified; // state if the document has been modified by the owner
+    private List<Feedback> feedbacks; // list of users' feedbacks
 
     public Document(){
         exams = new ArrayList<>();
-        professors = new ArrayList<>();
     }
 
     public String getNote() {
@@ -32,14 +29,6 @@ public class Document {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public void setTimestamp(Timestamp timestamp) {
@@ -92,18 +81,6 @@ public class Document {
 
     public void addExam(String exam){
         exams.add(exam);
-    }
-
-    public void addProfessor(String professor){
-        professors.add(professor);
-    }
-
-    public List<String> getProfessors() {
-        return professors;
-    }
-
-    public void setProfessors(List<String> professors) {
-        this.professors = professors;
     }
 
     public List<String> getExams() {

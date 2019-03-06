@@ -51,6 +51,7 @@ public class DataManager {
     private final static String URL_SEARCH = "search/";
     private final static String URL_UNIVERSITIES = "universities/";
     private final static String URL_COURSES = "courses/";
+    private final static String URL_DOC = "document/";
 
     /**
      * Singleton instance.
@@ -458,6 +459,30 @@ public class DataManager {
             protected Map<String, String> getParams() {
                 Map<String, String>  params = new HashMap<>();
                 params.put("book", gson.toJson(book));
+                return params;
+            }
+        };
+        queue.add(request);
+    }
+
+    /**
+     * Update the user in the database.
+     */
+    public void uploadDocument(Document document){
+        Uri url = Uri.parse(BASE_URL + URL_DOC);
+        LogManager.getInstance().printConsoleError(url.toString());
+        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
+                response -> {
+                    LogManager.getInstance().printConsoleMessage(response);
+                },
+                error -> {
+                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
+                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String>  params = new HashMap<>();
+                params.put("book", gson.toJson(document));
                 return params;
             }
         };

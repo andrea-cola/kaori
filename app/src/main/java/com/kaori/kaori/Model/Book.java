@@ -1,5 +1,7 @@
 package com.kaori.kaori.Model;
 
+import com.google.firebase.Timestamp;
+
 import java.util.ArrayList;
 
 public class Book {
@@ -13,6 +15,7 @@ public class Book {
     private String note;
     private MiniUser user;
     private ArrayList<String> courses;
+    private Timestamp timestamp;
 
     public Book(){
         courses = new ArrayList<>();
@@ -88,5 +91,13 @@ public class Book {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 }
