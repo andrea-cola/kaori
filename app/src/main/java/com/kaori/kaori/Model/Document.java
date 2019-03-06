@@ -18,6 +18,13 @@ public class Document {
     private String url; // storage url of the document
     private Boolean modified; // state if the document has been modified by the owner
     private List<Feedback> feedbacks; // list of users' feedbacks
+    private int type;
+
+    //book fields
+    private String author;
+    private String editor;
+    private float price;
+    private String thumbnail; // TODO
 
     public Document(){
         exams = new ArrayList<>();
@@ -117,4 +124,43 @@ public class Document {
         this.university = university;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getEditor() {
+        return editor;
+    }
+
+    public void setEditor(String editor) {
+        this.editor = editor;
+    }
+
+    public float getPrice() {
+        return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getThumbnail() {
+        return thumbnail;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 }

@@ -14,9 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
-import com.kaori.kaori.Model.Book;
+import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class UploadBookFragment extends Fragment {
         price = view.findViewById(R.id.price);
         note = view.findViewById(R.id.note);
 
-        Book book = new Book();
+        Document book = new Document();
         book.setTimestamp(Timestamp.now());
         book.setTitle(String.valueOf(title.getText()));
         book.setAuthor(String.valueOf(author.getText()));
@@ -104,11 +105,13 @@ public class UploadBookFragment extends Fragment {
         book.setPrice(Float.parseFloat(price.getText().toString()));
         book.setNote(String.valueOf(note.getText()));
         book.setUser(DataManager.getInstance().getMiniUser());
-        book.setCourses(examsList);
+        book.setExams(examsList);
         book.setCourse(DataManager.getInstance().getUser().getCourse());
+        book.setModified(false);
+        book.setUniversity(DataManager.getInstance().getUser().getUniversity());
+        book.setType(Constants.BOOK);
 
-        DataManager.getInstance().uploadBook(book); // upload on server
-
+        DataManager.getInstance().uploadDocument(book); // upload on server
         endProcess();
 
         // TODO: aggiungere immagine di copertina

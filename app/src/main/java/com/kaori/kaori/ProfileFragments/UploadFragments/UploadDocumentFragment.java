@@ -67,6 +67,7 @@ public class UploadDocumentFragment extends Fragment {
         document.setCourse(DataManager.getInstance().getUser().getCourse());
         document.setUniversity(DataManager.getInstance().getUser().getUniversity());
         document.setExams(examsList);
+        document.setType(Constants.FILE);
         document.setModified(false);
 
         getFile();

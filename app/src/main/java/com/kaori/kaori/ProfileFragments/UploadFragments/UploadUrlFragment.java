@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
@@ -102,6 +103,7 @@ public class UploadUrlFragment extends Fragment {
             document.setCourse(DataManager.getInstance().getUser().getCourse());
             document.setUniversity(DataManager.getInstance().getUser().getUniversity());
             document.setExams(examsList);
+            document.setType(Constants.URL);
             document.setModified(false);
 
             DataManager.getInstance().uploadDocument(document);

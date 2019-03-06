@@ -21,7 +21,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaori.kaori.Kaori;
-import com.kaori.kaori.Model.Book;
 import com.kaori.kaori.Model.Course;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.Model.MiniUser;
@@ -438,30 +437,6 @@ public class DataManager {
                     LogManager.getInstance().printConsoleError(error.toString());
                     // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
                 });
-        queue.add(request);
-    }
-
-    /**
-     * Update the user in the database.
-     */
-    public void uploadBook(Book book){
-        Uri url = Uri.parse(BASE_URL + URL_BOOK);
-        LogManager.getInstance().printConsoleError(url.toString());
-        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
-                response -> {
-                    LogManager.getInstance().printConsoleMessage(response);
-                },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
-                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String>  params = new HashMap<>();
-                params.put("book", gson.toJson(book));
-                return params;
-            }
-        };
         queue.add(request);
     }
 

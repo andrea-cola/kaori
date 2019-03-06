@@ -78,9 +78,7 @@ public class MyFilesFragment extends Fragment {
             holder.title.setText(materials.get(position).getTitle());
             holder.date.setText(materials.get(position).getNote());
             holder.view.setOnClickListener(view -> {
-                UploadFragment uploadBookFragment = new UploadFragment();
-                //uploadBookFragment.isMaterialModified(materials.get(position));
-                invokeNextFragment(uploadBookFragment);
+
             });
         }
 
