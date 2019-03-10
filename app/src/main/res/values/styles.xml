@@ -8,17 +8,16 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textSize">@dimen/default_text_size</item>
-        
     </style>
 
     <style name="KaoriButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:background">@color/colorPrimary</item>
         <item name="android:backgroundTint">@color/colorPrimary</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:gravity">center</item>
+        <item name="android:layout_height">56dp</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:layout_marginTop">@dimen/default_margin</item>
         <item name="android:layout_marginStart">@dimen/default_margin</item>

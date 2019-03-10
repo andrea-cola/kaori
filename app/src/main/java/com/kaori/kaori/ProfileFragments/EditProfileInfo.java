@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -86,20 +87,21 @@ public class EditProfileInfo extends Fragment {
         mUniversity.setAdapter(adapterUniversity);
         mUniversity.setSelection(universities.indexOf(university));
 
-        ArrayAdapter adapter2 = new ArrayAdapter<>(getContext(), R.layout.spinner_item, courses);
-        adapter2.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        mCourse.setAdapter(adapter2);
+        ArrayAdapter adapterCourses = new ArrayAdapter<>(getContext(), R.layout.spinner_item, courses);
+        adapterCourses.setNotifyOnChange(true);
+        adapterCourses.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        mCourse.setAdapter(adapterCourses);
         mCourse.setSelection(courses.indexOf(course));
 
         mUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if(!university.equalsIgnoreCase(mUniversity.getItemAtPosition(i).toString())) {
-                    university = mUniversity.getItemAtPosition(i).toString();
-                    courses = DataManager.getInstance().getAllCourses(university);
-                    adapter2.notifyDataSetChanged();
-                    mCourse.setSelection(0);
-                }
+                university = adapterView.getItemAtPosition(i).toString();
+                courses = DataManager.getInstance().getAllCourses(university);
+                mUniversity.getSelectedItem();
+                adapterCourses.clear();
+                adapterCourses.addAll(courses);
+                mCourse.setSelection(courses.indexOf(course), true);
             }
 
             @Override
