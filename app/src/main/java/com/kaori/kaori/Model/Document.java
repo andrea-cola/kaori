@@ -19,6 +19,7 @@ public class Document {
     private Boolean modified; // state if the document has been modified by the owner
     private List<Feedback> feedbacks; // list of users' feedbacks
     private int type;
+    private Boolean starred;
 
     //book fields
     private String author;
@@ -29,6 +30,7 @@ public class Document {
     public Document(){
         id = "";
         exams = new ArrayList<>();
+        starred = false;
     }
 
     public String getNote() {
@@ -163,5 +165,13 @@ public class Document {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public Boolean getStarred() {
+        return starred;
+    }
+
+    public void setStarred(Boolean starred) {
+        this.starred = starred;
     }
 }

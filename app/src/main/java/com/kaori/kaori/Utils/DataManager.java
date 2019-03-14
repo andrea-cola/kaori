@@ -177,6 +177,7 @@ public class DataManager {
     public void loadFeed(RecyclerView list, View view){
         StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
                 response -> {
+
                     feedElements.clear();
                     feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
                     list.getAdapter().notifyDataSetChanged();

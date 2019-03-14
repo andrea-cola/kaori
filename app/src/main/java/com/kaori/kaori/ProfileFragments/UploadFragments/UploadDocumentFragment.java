@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.Timestamp;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
@@ -76,6 +77,7 @@ public class UploadDocumentFragment extends Fragment {
         document.setExams(examsList);
         document.setType(Constants.FILE);
         document.setModified(false);
+        document.setTimestamp(Timestamp.now());
 
         getFile();
     }

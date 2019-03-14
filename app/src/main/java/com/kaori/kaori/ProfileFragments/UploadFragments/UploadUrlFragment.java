@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.Timestamp;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
@@ -26,7 +27,6 @@ import java.util.List;
 
 public class UploadUrlFragment extends Fragment {
 
-    private View view;
     private TextView exams, title, note, link;
     private List<String> examsList;
     private Document oldDocument;
@@ -34,7 +34,7 @@ public class UploadUrlFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.upload_link_layout, null);
+        View view = inflater.inflate(R.layout.upload_link_layout, null);
         view.findViewById(R.id.button).setOnClickListener(v -> createNewLink());
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
 
@@ -123,6 +123,7 @@ public class UploadUrlFragment extends Fragment {
             document.setExams(examsList);
             document.setType(Constants.URL);
             document.setModified(false);
+            document.setTimestamp(Timestamp.now());
 
             DataManager.getInstance().uploadDocument(document);
             endProcess();

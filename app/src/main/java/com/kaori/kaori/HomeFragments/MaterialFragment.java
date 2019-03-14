@@ -1,5 +1,6 @@
 package com.kaori.kaori.HomeFragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -76,20 +77,20 @@ public class MaterialFragment extends Fragment {
      */
     private void initializeView(){
         LinearLayout linearLayout = view.findViewById(R.id.linearLayout);
-        /*if(getActivity() != null) {
+        if(getActivity() != null) {
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            if (mMaterial.getType().equalsIgnoreCase(Constants.LIBRO)) {
+            if (mMaterial.getType() == Constants.BOOK) {
                 linearLayout.addView(inflater.inflate(R.layout.libro_layout, null));
                 setBookLayout();
-            } else if (mMaterial.getType().equalsIgnoreCase(Constants.FILE)) {
+            } else if (mMaterial.getType() == Constants.FILE) {
                 linearLayout.addView(inflater.inflate(R.layout.file_layout, null));
                 setFileLayout();
-            } else if (mMaterial.getType().equalsIgnoreCase(Constants.URL)) {
+            } else if (mMaterial.getType() == Constants.URL) {
                 linearLayout.addView(inflater.inflate(R.layout.link_layout, null));
                 setLinkLayout();
             }
             initializeSubView();
-        }*/
+        }
     }
 
     /**
