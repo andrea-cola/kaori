@@ -46,7 +46,6 @@ public class DataManager {
     private final static String URL_FEED = "feed/";
     private final static String URL_EXAMS = "exams/";
     private final static String URL_USER = "user/";
-    private final static String URL_BOOK = "book/";
     private final static String URL_SEARCH = "search/";
     private final static String URL_UNIVERSITIES = "universities/";
     private final static String URL_COURSES = "courses/";
@@ -188,6 +187,7 @@ public class DataManager {
                     }
                 },
                 error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -209,6 +209,7 @@ public class DataManager {
                     }
                 },
                 error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -230,6 +231,7 @@ public class DataManager {
                     }
                 },
                 error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -248,6 +250,7 @@ public class DataManager {
                 //TODO
                 LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
             });
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -265,6 +268,7 @@ public class DataManager {
                     //TODO
                     LogManager.getInstance().printConsoleError("All Universities: " + error.toString() + " " + error.networkResponse.statusCode);
                 });
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -282,6 +286,7 @@ public class DataManager {
                     //TODO
                     LogManager.getInstance().printConsoleError("All Courses: " + error.toString() + " " + error.networkResponse.statusCode);
                 });
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -311,6 +316,7 @@ public class DataManager {
                     LogManager.getInstance().printConsoleError(error.toString());
                     // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
                 });
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -339,6 +345,7 @@ public class DataManager {
                     emptyView.setVisibility(View.VISIBLE);
                     LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
                 });
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -367,6 +374,7 @@ public class DataManager {
                 return params;
             }
         };
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -437,6 +445,7 @@ public class DataManager {
                     LogManager.getInstance().printConsoleError(error.toString());
                     // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
                 });
+        request.setShouldCache(false);
         queue.add(request);
     }
 
@@ -445,10 +454,13 @@ public class DataManager {
      */
     public void uploadDocument(Document document){
         Uri url = Uri.parse(BASE_URL + URL_DOC);
-        LogManager.getInstance().printConsoleError(url.toString());
+        LogManager.getInstance().printConsoleMessage(url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
                 response -> {
-                    LogManager.getInstance().printConsoleMessage(response);
+                    if(response.equalsIgnoreCase("1"))
+                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
+                    else
+                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
                 },
                 error -> {
                     LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
@@ -461,6 +473,7 @@ public class DataManager {
                 return params;
             }
         };
+        request.setShouldCache(false);
         queue.add(request);
     }
 

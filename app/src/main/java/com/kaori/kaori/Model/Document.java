@@ -27,6 +27,7 @@ public class Document {
     private String thumbnail; // TODO
 
     public Document(){
+        id = "";
         exams = new ArrayList<>();
     }
 

@@ -29,8 +29,9 @@ import java.util.List;
 public class UploadBookFragment extends Fragment {
 
     private View view;
-    private TextView exams;
-    private ArrayList<String> examsList;
+    private TextView exams, title, author, editor, price, note;
+    private List<String> examsList;
+    private Document oldBook;
 
     @Nullable
     @Override
@@ -40,9 +41,22 @@ public class UploadBookFragment extends Fragment {
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
         exams = view.findViewById(R.id.exams);
 
+        title = view.findViewById(R.id.title);
+        author = view.findViewById(R.id.author);
+        editor = view.findViewById(R.id.editor);
+        price = view.findViewById(R.id.price);
+        note = view.findViewById(R.id.note);
+
         examsList = new ArrayList<>();
 
+        if(oldBook != null)
+            preset();
+
         return view;
+    }
+
+    public void setOldBook(Document document){
+        this.oldBook = document;
     }
 
     /**
@@ -86,17 +100,24 @@ public class UploadBookFragment extends Fragment {
         dialog.show();
     }
 
+    private void preset(){
+        title.setText(oldBook.getTitle());
+        author.setText(oldBook.getAuthor());
+        editor.setText(oldBook.getEditor());
+        price.setText(Float.toString(oldBook.getPrice()));
+        note.setText(oldBook.getNote());
+
+        String tmp = oldBook.getExams().get(0);
+        for(int i = 1; i < oldBook.getExams().size(); i++)
+            tmp = ", " + oldBook.getExams().get(i);
+        exams.setText(tmp);
+        examsList = oldBook.getExams();
+    }
+
     /**
      * This method create the new material with book type
      */
     private void createNewBook() {
-        TextView title, author, editor, price, note;
-        title = view.findViewById(R.id.title);
-        author = view.findViewById(R.id.author);
-        editor = view.findViewById(R.id.editor);
-        price = view.findViewById(R.id.price);
-        note = view.findViewById(R.id.note);
-
         Document book = new Document();
         book.setTimestamp(Timestamp.now());
         book.setTitle(String.valueOf(title.getText()));
@@ -112,7 +133,7 @@ public class UploadBookFragment extends Fragment {
         book.setType(Constants.BOOK);
 
         DataManager.getInstance().uploadDocument(book); // upload on server
-        endProcess();
+        //endProcess();
 
         // TODO: aggiungere immagine di copertina
     }

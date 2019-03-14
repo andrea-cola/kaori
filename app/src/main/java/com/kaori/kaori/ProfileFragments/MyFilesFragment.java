@@ -15,8 +15,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.ProfileFragments.UploadFragments.UploadBookFragment;
+import com.kaori.kaori.ProfileFragments.UploadFragments.UploadDocumentFragment;
 import com.kaori.kaori.ProfileFragments.UploadFragments.UploadFragment;
+import com.kaori.kaori.ProfileFragments.UploadFragments.UploadUrlFragment;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
 import java.util.List;
@@ -78,7 +82,15 @@ public class MyFilesFragment extends Fragment {
             holder.title.setText(materials.get(position).getTitle());
             holder.date.setText(materials.get(position).getNote());
             holder.view.setOnClickListener(view -> {
-
+                if(materials.get(position).getType() == Constants.BOOK) {
+                    UploadBookFragment f = new UploadBookFragment();
+                    f.setOldBook(materials.get(position));
+                    invokeNextFragment(f);
+                }
+                else if(materials.get(position).getType() == Constants.URL)
+                    invokeNextFragment(new UploadUrlFragment());
+                else
+                    invokeNextFragment(new UploadDocumentFragment());
             });
         }
 
