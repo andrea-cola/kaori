@@ -27,8 +27,9 @@ import java.util.List;
 public class UploadUrlFragment extends Fragment {
 
     private View view;
-    private TextView exams;
-    private ArrayList<String> examsList;
+    private TextView exams, title, note, link;
+    private List<String> examsList;
+    private Document oldDocument;
 
     @Nullable
     @Override
@@ -37,10 +38,33 @@ public class UploadUrlFragment extends Fragment {
         view.findViewById(R.id.button).setOnClickListener(v -> createNewLink());
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
 
+        title = view.findViewById(R.id.title);
+        note = view.findViewById(R.id.note);
+        link = view.findViewById(R.id.url);
+
         exams = view.findViewById(R.id.exams);
         examsList = new ArrayList<>();
 
+        if(oldDocument != null)
+            preset();
+
         return view;
+    }
+
+    public void setOldDocument(Document document){
+        this.oldDocument = document;
+    }
+
+    private void preset(){
+        title.setText(oldDocument.getTitle());
+        note.setText(oldDocument.getNote());
+        link.setText(oldDocument.getUrl());
+
+        String tmp = oldDocument.getExams().get(0);
+        for(int i = 1; i < oldDocument.getExams().size(); i++)
+            tmp = tmp + ", " + oldDocument.getExams().get(i);
+        exams.setText(tmp);
+        examsList = oldDocument.getExams();
     }
 
     /**
@@ -63,7 +87,7 @@ public class UploadUrlFragment extends Fragment {
         builder.setView(dialogView);
         dialog = builder.create();
 
-            dialogView.findViewById(R.id.button).setOnClickListener(v -> {
+        dialogView.findViewById(R.id.button).setOnClickListener(v -> {
             exams.setText("Nessun esame selezionato");
             examsList.clear();
             boolean flag = true;
@@ -88,12 +112,6 @@ public class UploadUrlFragment extends Fragment {
      * This method create the new material with link type
      */
     private void createNewLink(){
-        TextView title, note, link;
-
-        title = view.findViewById(R.id.title);
-        note = view.findViewById(R.id.note);
-        link = view.findViewById(R.id.url);
-
         if (Patterns.WEB_URL.matcher(link.getText()).matches()){
             Document document = new Document();
             document.setTitle(String.valueOf(title.getText()));

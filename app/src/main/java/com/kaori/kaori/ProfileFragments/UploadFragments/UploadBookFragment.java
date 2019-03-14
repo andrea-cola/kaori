@@ -28,7 +28,6 @@ import java.util.List;
  */
 public class UploadBookFragment extends Fragment {
 
-    private View view;
     private TextView exams, title, author, editor, price, note;
     private List<String> examsList;
     private Document oldBook;
@@ -36,7 +35,7 @@ public class UploadBookFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.upload_libro_layout, null);
+        View view = inflater.inflate(R.layout.upload_libro_layout, null);
         view.findViewById(R.id.button).setOnClickListener(v -> createNewBook());
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
         exams = view.findViewById(R.id.exams);
@@ -85,12 +84,12 @@ public class UploadBookFragment extends Fragment {
             boolean flag = true;
             for(int i = 0; i < checkBoxes.size(); i++){
                 if(checkBoxes.get(i).isChecked()) {
-                    if(flag)
-                        exams.setText(DataManager.getInstance().getAllExams().get(i));
-                    else {
+                    if(flag) {
                         flag = false;
-                        exams.setText(exams.getText() + ", " + DataManager.getInstance().getAllExams().get(i));
+                        exams.setText(DataManager.getInstance().getAllExams().get(i));
                     }
+                    else
+                        exams.setText(exams.getText() + ", " + DataManager.getInstance().getAllExams().get(i));
                     examsList.add(DataManager.getInstance().getAllExams().get(i));
                 }
             }
@@ -109,7 +108,7 @@ public class UploadBookFragment extends Fragment {
 
         String tmp = oldBook.getExams().get(0);
         for(int i = 1; i < oldBook.getExams().size(); i++)
-            tmp = ", " + oldBook.getExams().get(i);
+            tmp = tmp + ", " + oldBook.getExams().get(i);
         exams.setText(tmp);
         examsList = oldBook.getExams();
     }
@@ -133,7 +132,7 @@ public class UploadBookFragment extends Fragment {
         book.setType(Constants.BOOK);
 
         DataManager.getInstance().uploadDocument(book); // upload on server
-        //endProcess();
+        endProcess();
 
         // TODO: aggiungere immagine di copertina
     }

@@ -87,10 +87,16 @@ public class MyFilesFragment extends Fragment {
                     f.setOldBook(materials.get(position));
                     invokeNextFragment(f);
                 }
-                else if(materials.get(position).getType() == Constants.URL)
-                    invokeNextFragment(new UploadUrlFragment());
-                else
-                    invokeNextFragment(new UploadDocumentFragment());
+                else if(materials.get(position).getType() == Constants.URL) {
+                    UploadUrlFragment f = new UploadUrlFragment();
+                    f.setOldDocument(materials.get(position));
+                    invokeNextFragment(f);
+                }
+                else {
+                    UploadDocumentFragment f = new UploadDocumentFragment();
+                    f.setOldDocument(materials.get(position));
+                    invokeNextFragment(f);
+                }
             });
         }
 

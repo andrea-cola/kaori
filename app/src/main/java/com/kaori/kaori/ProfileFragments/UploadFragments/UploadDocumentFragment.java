@@ -1,7 +1,6 @@
 package com.kaori.kaori.ProfileFragments.UploadFragments;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,9 +14,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
@@ -32,34 +28,45 @@ import static android.app.Activity.RESULT_OK;
 
 public class UploadDocumentFragment extends Fragment {
 
-    private final String GS_URL = "gs://kaori-c5a43.appspot.com";
     private final int PICK_PDF_CODE = 4564;
-    private Document document;
-    private StorageReference storage;
-    private TextView exams;
-    private ArrayList<String> examsList;
-    private View view;
+    private Document oldDocument, document;
+    private TextView exams, title, note;
+    private List<String> examsList;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.upload_file_layout, null);
+        View view = inflater.inflate(R.layout.upload_file_layout, null);
         view.findViewById(R.id.button).setOnClickListener(v -> createDocument());
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
-        exams = view.findViewById(R.id.exams);
 
-        storage = FirebaseStorage.getInstance().getReferenceFromUrl(GS_URL);
+        exams = view.findViewById(R.id.exams);
+        title = view.findViewById(R.id.title);
+        note = view.findViewById(R.id.note);
+
         examsList = new ArrayList<>();
+        if(oldDocument != null)
+            preset();
 
         return view;
     }
 
+    public void setOldDocument(Document document){
+        this.oldDocument = document;
+    }
+
+    private void preset(){
+        title.setText(oldDocument.getTitle());
+        note.setText(oldDocument.getNote());
+
+        String tmp = oldDocument.getExams().get(0);
+        for(int i = 1; i < oldDocument.getExams().size(); i++)
+            tmp = tmp + ", " + oldDocument.getExams().get(i);
+        exams.setText(tmp);
+        examsList = oldDocument.getExams();
+    }
+
     private void createDocument(){
-        TextView title, note;
-
-        title = view.findViewById(R.id.title);
-        note = view.findViewById(R.id.note);
-
         document = new Document();
         document.setTitle(title.getText().toString());
         document.setUser(DataManager.getInstance().getMiniUser());
@@ -71,22 +78,6 @@ public class UploadDocumentFragment extends Fragment {
         document.setModified(false);
 
         getFile();
-    }
-
-    /**
-     * This method create the new material with file type
-     */
-    private void createNewFile(String url) {
-        StorageReference reference = storage.child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
-        UploadTask task = reference.putFile(Uri.parse(url));
-
-        task.addOnSuccessListener(taskSnapshot -> {
-            document.setUrl(taskSnapshot.getUploadSessionUri().toString());
-            LogManager.getInstance().showVisualMessage("Ok");
-            document.setUrl(taskSnapshot.getUploadSessionUri().toString());
-            DataManager.getInstance().uploadDocument(document);
-            endProcess();
-        }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
     /**
@@ -104,8 +95,10 @@ public class UploadDocumentFragment extends Fragment {
      */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null)
-            createNewFile(data.getData().toString());
+        if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            DataManager.getInstance().uploadFileOnTheServer(data.getData().toString(), document);
+            endProcess();
+        }
         else
             LogManager.getInstance().showVisualMessage("Non hai selezionato nessun file.");
     }
@@ -148,12 +141,12 @@ public class UploadDocumentFragment extends Fragment {
             boolean flag = true;
             for(int i = 0; i < checkBoxes.size(); i++){
                 if(checkBoxes.get(i).isChecked()) {
-                    if(flag)
-                        exams.setText(DataManager.getInstance().getAllExams().get(i));
-                    else {
+                    if(flag) {
                         flag = false;
-                        exams.setText(exams.getText() + ", " + DataManager.getInstance().getAllExams().get(i));
+                        exams.setText(DataManager.getInstance().getAllExams().get(i));
                     }
+                    else
+                        exams.setText(exams.getText() + ", " + DataManager.getInstance().getAllExams().get(i));
                     examsList.add(DataManager.getInstance().getAllExams().get(i));
                 }
             }

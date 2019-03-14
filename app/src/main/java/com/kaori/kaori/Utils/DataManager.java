@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaori.kaori.Kaori;
@@ -417,6 +418,19 @@ public class DataManager {
                 updateUser(null);
             }))
             .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, "Il tuo profilo non è stato aggiornato."));
+    }
+
+    /**
+     * This method upload a file on the server.
+     */
+    public void uploadFileOnTheServer(String url, Document document){
+        StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
+        UploadTask task = reference.putFile(Uri.parse(url));
+
+        task.addOnSuccessListener(taskSnapshot -> {
+            document.setUrl(taskSnapshot.getUploadSessionUri().toString());
+            uploadDocument(document);
+        }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
     /**
