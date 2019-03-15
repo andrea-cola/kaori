@@ -45,6 +45,7 @@ public class DataManager {
      */
     private final static String BASE_URL = "http://kaori.andreacola.io/api/";
     private final static String URL_FEED = "feed/";
+    private final static String URL_STARRED = "starred/";
     private final static String URL_EXAMS = "exams/";
     private final static String URL_USER = "user/";
     private final static String URL_SEARCH = "search/";
@@ -73,6 +74,8 @@ public class DataManager {
     private ArrayList<Course> allCourses; // all courses.
     private ArrayList<Document> searchElements; // list used in search fragment to update quickly the listview
     private ArrayList<Document> myFiles; // list of all my materials.
+    private ArrayList<Document> starredDocuments;
+    private ArrayList<Document> starredBooks;
 
     /**
      * Request options for Glide.
@@ -88,6 +91,8 @@ public class DataManager {
         feedElements = new ArrayList<>();
         searchElements = new ArrayList<>();
         myFiles = new ArrayList<>();
+        starredDocuments = new ArrayList<>();
+        starredBooks = new ArrayList<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -197,42 +202,44 @@ public class DataManager {
      * Load the element of the feed.
      * @param list where the elements are loaded.
      */
-    public void loadMyDocs(RecyclerView list, View view){
-        StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
+    public void loadStarredDocs(RecyclerView list, View view){
+        String url = BASE_URL + URL_STARRED + "?uid=" + user.getUid() + "&type=2";
+        StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    feedElements.clear();
-                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+                    LogManager.getInstance().printConsoleError(response);
+                    starredDocuments.clear();
+                    starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+
                     list.getAdapter().notifyDataSetChanged();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
-                    if(feedElements.size() == 0) {
+                    if(starredDocuments.size() == 0) {
                         ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                     }
                 },
-                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse));
         request.setShouldCache(false);
         queue.add(request);
     }
 
-    /**
-     * Load the element of the feed.
-     * @param list where the elements are loaded.
-     */
-    public void loadMyBooks(RecyclerView list, View view){
-        StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
+    public void loadStarredBooks(RecyclerView list, View view){
+        String url = BASE_URL + URL_STARRED + "?uid=" + user.getUid() + "&type=1";
+        StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    feedElements.clear();
-                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+                    LogManager.getInstance().printConsoleError(response);
+                    starredBooks.clear();
+                    starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+
                     list.getAdapter().notifyDataSetChanged();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
 
-                    if(feedElements.size() == 0) {
+                    if(starredBooks.size() == 0) {
                         ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                     }
                 },
-                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse));
         request.setShouldCache(false);
         queue.add(request);
     }
@@ -492,4 +499,11 @@ public class DataManager {
         queue.add(request);
     }
 
+    public ArrayList<Document> getStarredDocuments() {
+        return starredDocuments;
+    }
+
+    public ArrayList<Document> getStarredBooks() {
+        return starredBooks;
+    }
 }

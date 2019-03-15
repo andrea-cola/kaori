@@ -130,6 +130,7 @@ public class UploadBookFragment extends Fragment {
         book.setModified(false);
         book.setUniversity(DataManager.getInstance().getUser().getUniversity());
         book.setType(Constants.BOOK);
+        book.setSubtype(Constants.BOOK);
 
         DataManager.getInstance().uploadDocument(book); // upload on server
         endProcess();

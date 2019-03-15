@@ -18,7 +18,8 @@ public class Document {
     private String url; // storage url of the document
     private Boolean modified; // state if the document has been modified by the owner
     private List<Feedback> feedbacks; // list of users' feedbacks
-    private int type;
+    private int type; //book or document
+    private int subtype; // book || file or url
     private Boolean starred;
 
     //book fields
@@ -173,5 +174,13 @@ public class Document {
 
     public void setStarred(Boolean starred) {
         this.starred = starred;
+    }
+
+    public int getSubtype() {
+        return subtype;
+    }
+
+    public void setSubtype(int subtype) {
+        this.subtype = subtype;
     }
 }

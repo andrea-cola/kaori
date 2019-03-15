@@ -76,6 +76,7 @@ public class UploadDocumentFragment extends Fragment {
         document.setUniversity(DataManager.getInstance().getUser().getUniversity());
         document.setExams(examsList);
         document.setType(Constants.FILE);
+        document.setSubtype(Constants.FILE);
         document.setModified(false);
         document.setTimestamp(Timestamp.now());
 

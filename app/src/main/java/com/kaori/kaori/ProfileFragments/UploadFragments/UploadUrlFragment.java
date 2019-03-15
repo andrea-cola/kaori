@@ -121,7 +121,8 @@ public class UploadUrlFragment extends Fragment {
             document.setCourse(DataManager.getInstance().getUser().getCourse());
             document.setUniversity(DataManager.getInstance().getUser().getUniversity());
             document.setExams(examsList);
-            document.setType(Constants.URL);
+            document.setType(Constants.FILE);
+            document.setSubtype(Constants.URL);
             document.setModified(false);
             document.setTimestamp(Timestamp.now());
 

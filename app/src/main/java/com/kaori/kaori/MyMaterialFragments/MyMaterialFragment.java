@@ -55,7 +55,7 @@ public class MyMaterialFragment extends Fragment {
                 case 0:
                     return new MyDocsFragment();
                 case 1:
-                    return new Fragment();
+                    return new MyBooksFragment();
                 default:
                     return null;
             }
