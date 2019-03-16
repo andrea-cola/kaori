@@ -43,7 +43,7 @@ public class UploadDocumentFragment extends Fragment {
 
         exams = view.findViewById(R.id.exams);
         title = view.findViewById(R.id.title);
-        note = view.findViewById(R.id.note);
+        note = view.findViewById(R.id.course);
 
         examsList = new ArrayList<>();
         if(oldDocument != null)

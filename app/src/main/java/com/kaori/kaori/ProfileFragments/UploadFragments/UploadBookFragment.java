@@ -44,7 +44,7 @@ public class UploadBookFragment extends Fragment {
         author = view.findViewById(R.id.author);
         editor = view.findViewById(R.id.editor);
         price = view.findViewById(R.id.price);
-        note = view.findViewById(R.id.note);
+        note = view.findViewById(R.id.course);
 
         examsList = new ArrayList<>();
 

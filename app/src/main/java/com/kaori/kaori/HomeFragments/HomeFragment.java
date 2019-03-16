@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment {
                 title = view.findViewById(R.id.title);
                 author = view.findViewById(R.id.author);
                 info = view.findViewById(R.id.info);
-                status = view.findViewById(R.id.note);
+                status = view.findViewById(R.id.course);
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
                 authorIcon = view.findViewById(R.id.authorImage);
