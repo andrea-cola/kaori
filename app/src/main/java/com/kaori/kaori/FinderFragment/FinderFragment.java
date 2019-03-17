@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,8 +56,7 @@ public class FinderFragment extends Fragment {
         context = getContext();
         positions = new ArrayList<>();
 
-        FloatingActionButton fab = view.findViewById(R.id.positionFAB);
-        fab.setOnClickListener(v -> invokeFragment(new SharePositionFragment()));
+        view.findViewById(R.id.positionFAB).setOnClickListener(v -> invokeFragment(new SharePositionFragment()));
 
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 0);

@@ -15,14 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
@@ -43,8 +39,6 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
-import java.util.UUID;
-
 /**
  * This class represent the layout to share the user position
  */
@@ -56,11 +50,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     private static final String geojsonSourceLayerId = "geojsonSourceLayerId";
     private static final String symbolIconId = "symbolIconId";
-    private static final String leonardo = "Piazzale Leonardo da Vinci 32";
-    private static final String polimi = "Politecnico di Milano";
     private static final String idMap = "mapbox-dc";
-    private static final double longPolimi = 9.22771728762848;
-    private static final double latPolimi = 45.478547684301645;
 
     /**
      * Elements from view
@@ -76,9 +66,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * Variables
      */
     private MapboxMap mapboxMap;
-    private FirebaseFirestore db;
     private CarmenFeature feature;
-
 
     @Nullable
     @Override
@@ -86,14 +74,16 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
 
         view = inflater.inflate(R.layout.share_position, container, false);
+        shareButton = view.findViewById(R.id.shareButton);
+        pos = view.findViewById(R.id.position);
+        searchCard = view.findViewById(R.id.searchCardView);
+        shareCard = view.findViewById(R.id.shareCard);
+        activityEdit = view.findViewById(R.id.editText2);
+
         mapView = view.findViewById(R.id.shareMapView);
         mapView.onCreate(savedInstanceState);
-
         mapView.getMapAsync(this);
 
-        setUpView();
-        db = FirebaseFirestore.getInstance();
-        //addUserLocations();
         setUpButtons();
 
         return view;
@@ -103,22 +93,10 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * This method is called when the map is ready
      */
     @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
-
-        setUpSource();
-        setUpLayer();
-    }
-
-    /**
-     * This method sets up the elements of the view
-     */
-    private void setUpView(){
-        shareButton = view.findViewById(R.id.shareButton);
-        pos = view.findViewById(R.id.position);
-        searchCard = view.findViewById(R.id.searchCardView);
-        shareCard = view.findViewById(R.id.shareCard);
-        activityEdit = view.findViewById(R.id.editText2);
+    public void onMapReady(MapboxMap m) {
+        this.mapboxMap = m;
+        setupSource();
+        setupLayer();
     }
 
     /**
@@ -189,7 +167,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                     .target(new LatLng(latitude, longitude))
                     .zoom(14)
                     .build();
-            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 1000);
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
 
             mapboxMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitude, longitude))
@@ -206,12 +184,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
     private void sharePosition(String locationName, GeoPoint geoPoint, String activity){
         Position position = new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, locationName, Timestamp.now());
-
-        OnCompleteListener onCompleteListener = task -> {
-            if(task.isSuccessful())
-                invokeNextFragment();
-        };
-
+        /*
         CollectionReference ref = db.collection(Constants.DB_COLL_POSITIONS);
         ref.whereEqualTo("user.uid", position.getUser().getUid())
             .addSnapshotListener((value, e) -> {
@@ -224,12 +197,13 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                         ref.document(position.getPositionID()).set(position).addOnCompleteListener(onCompleteListener);
                     }
             });
+            */
     }
 
     /**
      * This method sets up the resources
      */
-    private void setUpSource() {
+    private void setupSource() {
         GeoJsonSource geoJsonSource = new GeoJsonSource(geojsonSourceLayerId);
         mapboxMap.addSource(geoJsonSource);
     }
@@ -237,7 +211,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     /**
      * This method sets up the layer
      */
-    private void setUpLayer() {
+    private void setupLayer() {
         SymbolLayer selectedLocationSymbolLayer = new SymbolLayer("SYMBOL_LAYER_ID", geojsonSourceLayerId);
         selectedLocationSymbolLayer.withProperties(PropertyFactory.iconImage(symbolIconId));
         mapboxMap.addLayer(selectedLocationSymbolLayer);
