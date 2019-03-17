@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -97,7 +99,6 @@ public class MaterialFragment extends Fragment {
      * Set book sub layout.
      */
     private void setBookLayout(){
-        TextView author = view.findViewById(R.id.author);
         if(!mMaterial.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
             view.findViewById(R.id.button).setOnClickListener(view -> {
                 Intent intent = new Intent(getActivity(), KaoriChat.class);
@@ -111,7 +112,7 @@ public class MaterialFragment extends Fragment {
      */
     private void setFileLayout(){
         Button downloadButton = view.findViewById(R.id.button);
-        TextView edittext = view.findViewById(R.id.feedbackEdittext);
+        TextView editText = view.findViewById(R.id.feedbackEditText);
         downloadButton.setOnClickListener(v -> {
             String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
             File pdfFile = new File(path);
@@ -123,7 +124,7 @@ public class MaterialFragment extends Fragment {
 
         view.findViewById(R.id.feedbackButton).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
-            feedback.setText(edittext.getText().toString());
+            feedback.setText(editText.getText().toString());
             feedback.setTimestamp(Timestamp.now());
             feedback.setUser(DataManager.getInstance().getMiniUser());
             mMaterial.getFeedbacks().add(feedback);
@@ -131,19 +132,21 @@ public class MaterialFragment extends Fragment {
 
             DataManager.getInstance().postComment(mMaterial);
         });
-
         recyclerView = view.findViewById(R.id.feedbackList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
-        recyclerView.setAdapter(recyclerAdapter);
+        if(!mMaterial.getFeedbacks().isEmpty()) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
+            recyclerView.setAdapter(recyclerAdapter);
+        }else{
+
+        }
+
     }
 
     private void setLinkLayout(){
-        TextView edittext = view.findViewById(R.id.feedbackEdittext);
-        TextView author = view.findViewById(R.id.author);
-        author.setText(mMaterial.getUser().getName());
+        TextView editText = view.findViewById(R.id.feedbackEditText);
 
-        view.findViewById(R.id.button).setOnClickListener(view->{
+        view.findViewById(R.id.button).setOnClickListener(view -> {
             Uri link = Uri.parse("http://" + mMaterial.getUrl());
             Intent intent = new Intent(Intent.ACTION_VIEW, link);
             startActivity(intent);
@@ -151,7 +154,7 @@ public class MaterialFragment extends Fragment {
 
         view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
-            feedback.setText(edittext.getText().toString());
+            feedback.setText(editText.getText().toString());
             feedback.setTimestamp(Timestamp.now());
             feedback.setUser(DataManager.getInstance().getMiniUser());
             mMaterial.getFeedbacks().add(feedback);
@@ -168,14 +171,23 @@ public class MaterialFragment extends Fragment {
 
     private void initializeSubView(){
         ((TextView)view.findViewById(R.id.title)).setText(mMaterial.getTitle());
-        ((TextView)view.findViewById(R.id.note)).setText(mMaterial.getCourse());
+        ((TextView)view.findViewById(R.id.course)).setText(mMaterial.getCourse());
         ((TextView)view.findViewById(R.id.author)).setText(mMaterial.getUser().getName());
+        ((TextView)view.findViewById(R.id.note)).setText(mMaterial.getNote());
         ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat2.format(mMaterial.getTimestamp().toDate()));
+
+         CheckBox star = view.findViewById(R.id.checkStar);
+         star.setOnCheckedChangeListener((buttonView, isChecked) -> {
+             if(mMaterial.getType()==1)
+                 DataManager.getInstance().updateStarredBook(mMaterial, isChecked);
+             else
+                 DataManager.getInstance().updateStarredDocument(mMaterial, isChecked);
+         });
 
         String exams = "";
         for(String e : mMaterial.getExams())
              exams = e + ", ";
-        ((TextView)view.findViewById(R.id.exams_label)).setText(exams.substring(0, exams.length() - 2));
+        ((TextView)view.findViewById(R.id.exams)).setText(exams.substring(0, exams.length() - 2));
     }
 
     private void show() {

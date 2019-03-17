@@ -244,6 +244,14 @@ public class DataManager {
         queue.add(request);
     }
 
+    public void updateStarredDocument(Document document, boolean starred){
+
+    }
+
+    public void updateStarredBook(Document book, boolean starred){
+
+    }
+
     /**
      * Load all exams from the database taking into account
      * the university and the course of the user.

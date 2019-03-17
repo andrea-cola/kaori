@@ -52,7 +52,7 @@
             card_view:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/note"
+            android:id="@+id/course"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
@@ -74,7 +74,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:background="@color/colorPrimary"
-            card_view:layout_constraintBottom_toTopOf="@+id/note"
+            card_view:layout_constraintBottom_toTopOf="@+id/course"
             card_view:layout_constraintEnd_toStartOf="@+id/author"
             card_view:layout_constraintTop_toTopOf="parent" />
 
@@ -88,7 +88,7 @@
             android:text="TextView"
             android:textAlignment="center"
             android:textSize="14sp"
-            card_view:layout_constraintBottom_toTopOf="@+id/note"
+            card_view:layout_constraintBottom_toTopOf="@+id/course"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/authorImage"
             card_view:layout_constraintVertical_chainStyle="packed" />
@@ -162,7 +162,7 @@
             android:layout_marginBottom="16dp"
             android:text="TextView"
             android:textSize="14sp"
-            card_view:layout_constraintBottom_toTopOf="@+id/note"
+            card_view:layout_constraintBottom_toTopOf="@+id/course"
             card_view:layout_constraintEnd_toEndOf="@+id/view3"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/info" />
