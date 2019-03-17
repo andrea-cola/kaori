@@ -21,6 +21,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 
 import java.util.List;
 
@@ -28,11 +29,6 @@ import java.util.List;
  * This fragment shows the shared relative positions of the users
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
-
-    /**
-     * Elements from view
-     */
-    private View view;
 
     /**
      * Variables
@@ -47,13 +43,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      */
     private final String snippet = "Contact me";
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if(getContext() != null) {
             Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
-            view = inflater.inflate(R.layout.map_layout, container, false);
+            View view = inflater.inflate(R.layout.map_layout, container, false);
 
             mapView = view.findViewById(R.id.mapView);
             mapView.onCreate(savedInstanceState);
@@ -107,11 +102,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(MapboxMap mapboxMap){
         this.mapboxMap = mapboxMap;
+        mapboxMap.setStyle(Style.OUTDOORS);
         moveCamera();
         setUpMarkers();
     }
 
     @Override
+    @SuppressWarnings( {"MissingPermission"})
     public void onStart() {
         super.onStart();
         mapView.onStart();
@@ -152,4 +149,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
+
 }

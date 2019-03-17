@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
@@ -21,6 +22,8 @@ import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -30,33 +33,36 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
 import com.mapbox.mapboxsdk.plugins.places.autocomplete.model.PlaceOptions;
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import java.util.List;
+
 /**
  * This class represent the layout to share the user position
  */
-public class SharePositionFragment extends Fragment implements OnMapReadyCallback {
+public class SharePositionFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
 
     /**
      * Constants
      */
     private static final int REQUEST_CODE_AUTOCOMPLETE = 1;
     private static final String geojsonSourceLayerId = "geojsonSourceLayerId";
-    private static final String symbolIconId = "symbolIconId";
-    private static final String idMap = "mapbox-dc";
 
     /**
      * Elements from view
      */
     private MapView mapView;
-    private View view;
     private Button shareButton;
     private TextView pos;
     private CardView searchCard, shareCard;
@@ -67,13 +73,14 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      */
     private MapboxMap mapboxMap;
     private CarmenFeature feature;
+    private PermissionsManager permissionsManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
 
-        view = inflater.inflate(R.layout.share_position, container, false);
+        View view = inflater.inflate(R.layout.share_position, container, false);
         shareButton = view.findViewById(R.id.shareButton);
         pos = view.findViewById(R.id.position);
         searchCard = view.findViewById(R.id.searchCardView);
@@ -95,8 +102,49 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(MapboxMap m) {
         this.mapboxMap = m;
-        setupSource();
-        setupLayer();
+        mapboxMap.setStyle(Style.OUTDOORS, new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+                enableLocationComponent(style);
+            }
+        });
+    }
+
+    @SuppressWarnings({"MissingPermission"})
+    private void enableLocationComponent(Style style) {
+        // Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
+            // Get an instance of the component
+            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+            // Activate with options
+            locationComponent.activateLocationComponent(getContext(), style);
+            // Enable to make component visible
+            locationComponent.setLocationComponentEnabled(true);
+            // Set the component's camera mode
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+            // Set the component's render mode
+            locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            Double locLatitude = locationComponent.getLastKnownLocation().getLatitude();
+            Double locLongitude = locationComponent.getLastKnownLocation().getLongitude();
+
+            CameraPosition newCameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(locLatitude, locLongitude))
+                    .zoom(14)
+                    .build();
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
+
+            mapboxMap.addMarker(new MarkerOptions()
+                    .setSnippet("Sono qui")
+                    .position(new LatLng(locLatitude, locLongitude)));
+
+            shareCard.setVisibility(View.VISIBLE);
+            pos.setText("La mia posizione attuale");
+
+        } else {
+            permissionsManager = new PermissionsManager(this);
+            permissionsManager.requestLocationPermissions(getActivity());
+        }
     }
 
     /**
@@ -131,14 +179,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     }
 
     /**
-     * This method invokes the book fragment when the card is clicked
-     */
-    private void invokeNextFragment() {
-        if(getActivity() != null)
-            getActivity().getSupportFragmentManager().popBackStackImmediate();
-    }
-
-    /**
      * This method gets the location when the search of the position
      * is returned from the intent.
      */
@@ -157,7 +197,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                     new Feature[]{Feature.fromJson(feature.toJson())});
 
             // Retrieve and update the source designated for showing a selected location's symbol layer icon
-            GeoJsonSource source = mapboxMap.getSourceAs(geojsonSourceLayerId);
+            GeoJsonSource source = mapboxMap.getStyle().getSourceAs(geojsonSourceLayerId);
             if (source != null) {
                 source.setGeoJson(featureCollection);
             }
@@ -198,23 +238,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                     }
             });
             */
-    }
-
-    /**
-     * This method sets up the resources
-     */
-    private void setupSource() {
-        GeoJsonSource geoJsonSource = new GeoJsonSource(geojsonSourceLayerId);
-        mapboxMap.addSource(geoJsonSource);
-    }
-
-    /**
-     * This method sets up the layer
-     */
-    private void setupLayer() {
-        SymbolLayer selectedLocationSymbolLayer = new SymbolLayer("SYMBOL_LAYER_ID", geojsonSourceLayerId);
-        selectedLocationSymbolLayer.withProperties(PropertyFactory.iconImage(symbolIconId));
-        mapboxMap.addLayer(selectedLocationSymbolLayer);
     }
 
     @Override
@@ -260,4 +283,24 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+        Toast.makeText(getContext(), R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+    @Override
+    public void onPermissionResult(boolean granted) {
+        if (granted) {
+            mapboxMap.getStyle(style -> enableLocationComponent(style));
+        } else {
+            Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
+            getActivity().finish();
+        }
+    }
 }

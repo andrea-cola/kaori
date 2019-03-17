@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:mapbox="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -71,6 +72,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,8 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/searchCardView"
         mapbox:mapbox_cameraTargetLat="45.478286"
         mapbox:mapbox_cameraTargetLng="9.228248"
-        mapbox:mapbox_cameraZoom="15"
-        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10" />
+        mapbox:mapbox_cameraZoom="15" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/shareCard"
@@ -87,13 +88,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="256dp"
         android:background="@color/white"
         android:visibility="gone"
         app:cardElevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shareMapView">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/popup"
@@ -111,7 +113,7 @@
 
 
             <TextView
-                android:id="@+id/position"
+                android:id="@+id/text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -125,7 +127,7 @@
                 app:layout_constraintTop_toBottomOf="@id/view3" />
 
             <TextView
-                android:id="@+id/textView15"
+                android:id="@+id/position"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -134,8 +136,7 @@
                 android:text="La tua posizione"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/position" />
-
+                app:layout_constraintTop_toBottomOf="@id/text" />
 
             <TextView
                 android:id="@+id/textView17"
@@ -149,7 +150,7 @@
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView15" />
+                app:layout_constraintTop_toBottomOf="@+id/position" />
 
             <EditText
                 android:id="@+id/editText2"

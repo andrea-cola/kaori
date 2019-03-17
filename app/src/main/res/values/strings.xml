@@ -85,5 +85,7 @@
     <string name="native_error">Login fallito. Riprova.</string>
     <string name="facebook_error">Login con Facebook fallito. Riprova.</string>
     <string name="firebase_error">Login con Firebase fallito. Riprova.</string>
+    <string name="user_location_permission_explanation">User location permission</string>
+    <string name="user_location_permission_not_granted">Location permission not granted</string>
 
 </resources>
