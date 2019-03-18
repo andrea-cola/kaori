@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
         recyclerView.setAdapter(new RecyclerAdapter(DataManager.getInstance().getFeedElements()));
 
         // load feed
-        DataManager.getInstance().loadFeed(recyclerView, view);
+        DataManager.getInstance().downloadFeed(recyclerView, view);
 
         return view;
     }

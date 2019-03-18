@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -30,9 +30,9 @@ import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,7 +78,7 @@ public class DataManager {
     private ArrayList<Document> myFiles; // list of all my materials.
     private ArrayList<Document> starredDocuments;
     private ArrayList<Document> starredBooks;
-    private Position position;
+    private ArrayList<Position> currentActivePositions; // list of all current active positions.
 
     /**
      * Request options for Glide.
@@ -96,6 +96,7 @@ public class DataManager {
         myFiles = new ArrayList<>();
         starredDocuments = new ArrayList<>();
         starredBooks = new ArrayList<>();
+        currentActivePositions = new ArrayList<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -113,6 +114,10 @@ public class DataManager {
         queue = Volley.newRequestQueue(context);
     }
 
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* SINGLETON CONSTRUCTORS ------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------------------------ */
+
     public static DataManager getInstance(){
         return dataManager;
     }
@@ -122,6 +127,10 @@ public class DataManager {
             dataManager = new DataManager(context);
         return dataManager;
     }
+
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* SETTER AND GETTERS ----------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------------------------ */
 
     public User getUser() {
         return user;
@@ -133,16 +142,6 @@ public class DataManager {
 
     public MiniUser getMiniUser() {
         return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl(), user.getTokenID());
-    }
-
-    public void clean(Context context) {
-        dataManager = new DataManager(context);
-    }
-
-    public void postComment(Document material) {
-        FirebaseFirestore.getInstance().collection(Constants.DB_COLL_MATERIALS)
-                .document(material.getId())
-                .set(material);
     }
 
     public ArrayList<Document> getFeedElements() {
@@ -165,162 +164,157 @@ public class DataManager {
         return courses;
     }
 
-    private String urlGeneratorFeedRequest(String url, List<String> params){
-        if(params != null && params.size() > 0){
-            url = url + "?exams=" + params.get(0);
-            for (int i = 1; i < params.size(); i++)
-                url = url + "&exams=" + params.get(i);
-        }
-        return url;
-    }
-
     public ArrayList<Document> getMyFiles() {
         return myFiles;
     }
 
-    /**
-     * Load the element of the feed.
-     * @param list where the elements are loaded.
-     */
-    public void loadFeed(RecyclerView list, View view){
-        StringRequest request = new StringRequest(Request.Method.GET, urlGeneratorFeedRequest(BASE_URL + URL_FEED, user.getExams()),
-                response -> {
-
-                    feedElements.clear();
-                    feedElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-                    list.getAdapter().notifyDataSetChanged();
-                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-
-                    if(feedElements.size() == 0) {
-                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    }
-                },
-                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
-        request.setShouldCache(false);
-        queue.add(request);
+    public ArrayList<Document> getStarredDocuments() {
+        return starredDocuments;
     }
 
-    /**
-     * Load the starred documents.
-     * @param list where the elements are loaded.
-     */
-    public void loadStarredDocs(RecyclerView list, View view){
-        String url = BASE_URL + URL_STARRED + "?uid=" + user.getUid() + "&type=2";
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    LogManager.getInstance().printConsoleError(response);
-                    starredDocuments.clear();
-                    starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-
-                    list.getAdapter().notifyDataSetChanged();
-                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-
-                    if(starredDocuments.size() == 0) {
-                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    }
-                },
-                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse));
-        request.setShouldCache(false);
-        queue.add(request);
+    public ArrayList<Document> getStarredBooks() {
+        return starredBooks;
     }
 
-    /**
-     * Load the
-     * @param list
-     * @param view
-     */
-    public void loadStarredBooks(RecyclerView list, View view){
-        String url = BASE_URL + URL_STARRED + "?uid=" + user.getUid() + "&type=1";
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    LogManager.getInstance().printConsoleError(response);
-                    starredBooks.clear();
-                    starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* GENERIC FUNCTIONS ------------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------------------------------ */
 
-                    list.getAdapter().notifyDataSetChanged();
-                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-
-                    if(starredBooks.size() == 0) {
-                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    }
-                },
-                error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse));
-        request.setShouldCache(false);
-        queue.add(request);
+    public void clean(Context context) {
+        dataManager = new DataManager(context);
     }
 
-    /**
-     * Load all exams from the database taking into account
-     * the university and the course of the user.
-     */
-    private void loadAllExams(){
-        Uri url = Uri.parse(BASE_URL + URL_EXAMS + "?university=" + user.getUniversity() + "&course=" + user.getCourse());
-        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
-            response -> {
-                allExams = gson.fromJson(response, new TypeToken<ArrayList<String>>(){}.getType());
-                LogManager.getInstance().printConsoleMessage("All exams are loaded.");
-            },
-            error -> {
-                //TODO
-                LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
-            });
-        request.setShouldCache(false);
-        queue.add(request);
+    private String urlGenerator(String url, String... params){
+        if(params != null && params.length > 0){
+            url = url + "?p0=" + params[0];
+            for (int i = 1; i < params.length; i++)
+                url = url + "&p" + i + "=" + params[i];
+        }
+        return url;
     }
 
-    /**
-     * Load all universities from the database.
-     */
-    private void loadAllUniversities(){
-        Uri url = Uri.parse(BASE_URL + URL_UNIVERSITIES);
-        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
+    public void updateUser(Bitmap bitmap) {
+        if(bitmap != null)
+            uploadImageOnServer(bitmap);
+        else
+            uploadUser();
+    }
+
+    public void loadImageIntoView(Object uri, ImageView imageView, Context context) {
+        if(context != null)
+            Glide.with(context)
+                    .load(uri)
+                    .apply(glideRequestOptionsCircle)
+                    .into(imageView);
+    }
+
+    private void makePostRequest(final Uri url, final Object... objects) {
+        LogManager.getInstance().printConsoleMessage(url.toString());
+        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
                 response -> {
-                    allUniversities = gson.fromJson(response, new TypeToken<ArrayList<String>>(){}.getType());
-                    LogManager.getInstance().printConsoleMessage("All universites are loaded." + "\n" + allUniversities.toString());
+                    if(response.equalsIgnoreCase("1"))
+                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
+                    else
+                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
                 },
                 error -> {
-                    //TODO
-                    LogManager.getInstance().printConsoleError("All Universities: " + error.toString() + " " + error.networkResponse.statusCode);
-                });
+                    LogManager.getInstance().printConsoleError(error.networkResponse + "");
+                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String>  params = new HashMap<>();
+                for(int i = 0; i < objects.length; i++)
+                    params.put("o" + i, gson.toJson(objects[i]));
+                return params;
+            }
+        };
         request.setShouldCache(false);
         queue.add(request);
     }
 
-    /**
-     * Load all courses from the database.
-     */
-    private void loadAllCourses(){
-        Uri url = Uri.parse(BASE_URL + URL_COURSES);
-        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
-                response -> {
-                    allCourses = gson.fromJson(response, new TypeToken<ArrayList<Course>>(){}.getType());
-                    LogManager.getInstance().printConsoleMessage("All courses are loaded." + "\n" + allCourses.toString());
-                },
-                error -> {
-                    //TODO
-                    LogManager.getInstance().printConsoleError("All Courses: " + error.toString() + " " + error.networkResponse.statusCode);
-                });
+    private void makeAdvancedGetRequest(final Uri url, final RecyclerView viewList, View view, ArrayList list, Type type) {
+        Response.Listener<String> listener = response -> {
+                    list.clear();
+                    list.addAll(gson.fromJson(response, type));
+
+                    viewList.getAdapter().notifyDataSetChanged();
+                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+
+                    if (list.size() == 0) {
+                        //TODO: personalizzare
+                        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    }
+                };
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        makeGetRequest(url, listener, errorListener);
+    }
+
+    private void makeSimpleGetRequest(final Uri url, ArrayList list, Type type) {
+        Response.Listener<String> listener = response -> {
+            list.clear();
+            list.addAll(gson.fromJson(response, type));
+        };
+        Response.ErrorListener errorListener = error -> {};
+        makeGetRequest(url, listener, errorListener);
+    }
+
+    private void makeGetRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener){
+        StringRequest request = new StringRequest(Request.Method.GET, url.toString(), listener, errorListener);
         request.setShouldCache(false);
         queue.add(request);
     }
 
-    /**
-     * Load the profile when the app starts.
-     * @param uid of the logged user.
-     * @param kaori activity to run KaoriApp.
-     */
-    public void loadUserProfile(String uid, Kaori kaori){
-        String url = BASE_URL + URL_USER + "?uid=" + uid;
-        StringRequest request = new StringRequest(Request.Method.GET, url,
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* GET FUNCTIONS ---------------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------------------------ */
+
+    public void downloadFeed(RecyclerView list, View view) {
+        String url = BASE_URL + URL_FEED;
+        if (user.getExams().size() > 0){
+            url = url + "?exams=" + user.getExams().get(0);
+            for (int i = 1; i < user.getExams().size(); i++)
+                url = url + "&exams=" + user.getExams().get(i);
+        }
+
+        makeAdvancedGetRequest(Uri.parse(url), list, view, feedElements, new TypeToken<ArrayList<Document>>() {}.getType());
+    }
+
+    public void downloadStarredDocs(RecyclerView list, View view){
+        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
+        makeAdvancedGetRequest(Uri.parse(url), list, view, starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
+    }
+
+    public void downloadStarredBooks(RecyclerView list, View view){
+        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "1");
+        makeAdvancedGetRequest(Uri.parse(url), list, view, starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
+    }
+
+    private void downloadAllExams(){
+        String url = urlGenerator(BASE_URL + URL_EXAMS, user.getUniversity(), user.getCourse());
+        makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>(){}.getType());
+    }
+
+    private void downloadAllUniversities(){
+        String url = urlGenerator(BASE_URL + URL_EXAMS);
+        makeSimpleGetRequest(Uri.parse(url), allUniversities, new TypeToken<ArrayList<String>>(){}.getType());
+    }
+
+    private void downloadAllCourses(){
+        String url = urlGenerator(BASE_URL + URL_COURSES);
+        makeSimpleGetRequest(Uri.parse(url), allCourses, new TypeToken<ArrayList<String>>(){}.getType());
+    }
+
+    public void downloadUserProfile(String uid, Kaori kaori){
+        String url = urlGenerator(BASE_URL + URL_USER, uid);
+        makeGetRequest(Uri.parse(url),
                 response -> {
                     user = gson.fromJson(response, new TypeToken<User>(){}.getType());
                     if(user != null) {
-                        loadAllExams();
-                        loadAllUniversities();
-                        loadAllCourses();
+                        downloadAllExams();
+                        downloadAllUniversities();
+                        downloadAllCourses();
                         LogManager.getInstance().printConsoleMessage("Profile loaded.");
                         kaori.startApp();
                     }
@@ -333,93 +327,41 @@ public class DataManager {
                     LogManager.getInstance().printConsoleError(error.toString());
                     // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
                 });
-        request.setShouldCache(false);
-        queue.add(request);
     }
 
-    /**
-     * Makes a search in the database.
-     */
-    public void queryMaterials(String query, RecyclerView list, View emptyView){
-        Uri url = Uri.parse(BASE_URL + URL_SEARCH + "?university=" + user.getUniversity() + "&query=" + query);
-        StringRequest request = new StringRequest(Request.Method.GET, url.toString(),
-                response -> {
-                    searchElements.clear();
-                    searchElements.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-
-                    if(searchElements.size() > 0) {
-                        list.getAdapter().notifyDataSetChanged();
-                        emptyView.setVisibility(View.GONE);
-                    }
-                    else {
-                        ((TextView)emptyView.findViewById(R.id.empty_view_text)).setText(R.string.search_empty_view_text);
-                        emptyView.setVisibility(View.VISIBLE);
-                    }
-                },
-                error -> {
-                    //TODO
-                    ((TextView)emptyView.findViewById(R.id.empty_view_text)).setText(R.string.search_empty_view_text);
-                    emptyView.setVisibility(View.VISIBLE);
-                    LogManager.getInstance().printConsoleError("All Exams: " + error.toString() + " " + error.networkResponse.statusCode);
-                });
-        request.setShouldCache(false);
-        queue.add(request);
+    public void queryMaterials(String query, RecyclerView list, View view){
+        String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUniversity(), query);
+        makeAdvancedGetRequest(Uri.parse(url), list, view, searchElements, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
-    /**
-     * Update the user in the database.
-     */
-    private void updateUser(){
+    public void downloadMyFiles(RecyclerView list, View view) {
+        String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUid());
+        makeAdvancedGetRequest(Uri.parse(url), list, view, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
+    }
+
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* POST FUNCTIONS --------------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------------------------ */
+
+    private void uploadUser(){
         Uri url = Uri.parse(BASE_URL + URL_USER);
-        LogManager.getInstance().printConsoleError(url.toString());
-        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
-                response -> {
-                    if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage("Piano di studi modificato.");
-                    else
-                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
-                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String>  params = new HashMap<>();
-                params.put("user", gson.toJson(user));
-                params.put("uid", user.getUid());
-                return params;
-            }
-        };
-        request.setShouldCache(false);
-        queue.add(request);
+        makePostRequest(url, user);
     }
 
-    /**
-     * Update the user in the database, but if bitmap is different from
-     * null is load the bitmap in the Firebase storage.
-     */
-    public void updateUser(Bitmap bitmap) {
-        if(bitmap != null)
-            uploadImageOnServer(bitmap);
-        else
-            updateUser();
+    public void uploadDocument(Document document){
+        Uri url = Uri.parse(BASE_URL + URL_DOC);
+        makePostRequest(url, document);
     }
 
-    /**
-     * Use Glide to load the image into the Imageview.
-     */
-    public void loadImageIntoView(Object uri, ImageView imageView, Context context) {
-        if(context != null)
-            Glide.with(context)
-                    .load(uri)
-                    .apply(glideRequestOptionsCircle)
-                    .into(imageView);
+    public void uploadPosition(Position position){
+        Uri url = Uri.parse(BASE_URL + URL_POSITION);
+        makePostRequest(url, position);
     }
 
-    /**
-     * Upload the image in the Firebase storage.
-     */
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* STORAGE FUNCTIONS ------------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------------------------------ */
+
     private void uploadImageOnServer(Bitmap bitmap) {
         LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer");
 
@@ -428,17 +370,14 @@ public class DataManager {
 
         StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
         mStorage.putBytes(baos.toByteArray()).addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl()
-            .addOnSuccessListener(uri -> {
-                LogManager.getInstance().printConsoleMessage("Il tuo profilo è stato aggiornato.");
-                user.setPhotosUrl(uri.toString());
-                updateUser(null);
-            }))
-            .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, "Il tuo profilo non è stato aggiornato."));
+                .addOnSuccessListener(uri -> {
+                    LogManager.getInstance().printConsoleMessage("Il tuo profilo è stato aggiornato.");
+                    user.setPhotosUrl(uri.toString());
+                    updateUser(null);
+                }))
+                .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, "Il tuo profilo non è stato aggiornato."));
     }
 
-    /**
-     * This method upload a file on the server.
-     */
     public void uploadFileOnTheServer(String url, Document document){
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));
@@ -449,97 +388,4 @@ public class DataManager {
         }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
-    /**
-     * Load user uploads from the database.
-     */
-    public void loadMyFiles(RecyclerView list, View view) {
-        String url = BASE_URL + URL_SEARCH + "?uid=" + user.getUid();
-        LogManager.getInstance().printConsoleMessage(url);
-        StringRequest request = new StringRequest(Request.Method.GET, url,
-                response -> {
-                    myFiles.clear();
-                    myFiles.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-                    LogManager.getInstance().printConsoleMessage(myFiles.toString());
-                    if(myFiles != null && myFiles.size() > 0) {
-                        list.getAdapter().notifyDataSetChanged();
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        LogManager.getInstance().printConsoleMessage("Files loaded.");
-                    }
-                    else {
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                        LogManager.getInstance().printConsoleMessage("Files not loaded.");
-                    }
-                },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.toString());
-                    // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
-                });
-        request.setShouldCache(false);
-        queue.add(request);
-    }
-
-    /**
-     * Update the user in the database.
-     */
-    public void uploadDocument(Document document){
-        Uri url = Uri.parse(BASE_URL + URL_DOC);
-        LogManager.getInstance().printConsoleMessage(url.toString());
-        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
-                response -> {
-                    if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
-                    else
-                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
-                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String>  params = new HashMap<>();
-                params.put("document", gson.toJson(document));
-                return params;
-            }
-        };
-        request.setShouldCache(false);
-        queue.add(request);
-    }
-
-    /**
-     * Upload the position in the database.
-     */
-    public void uploadPosition(Position position){
-        Uri url = Uri.parse(BASE_URL + URL_POSITION);
-        LogManager.getInstance().printConsoleMessage(url.toString());
-        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
-                response -> {
-                    if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
-                    else
-                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
-                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String>  params = new HashMap<>();
-                params.put("position", gson.toJson(position));
-                return params;
-            }
-        };
-        request.setShouldCache(false);
-        queue.add(request);
-    }
-
-    public ArrayList<Document> getStarredDocuments() {
-        return starredDocuments;
-    }
-
-    public ArrayList<Document> getStarredBooks() {
-        return starredBooks;
-    }
 }

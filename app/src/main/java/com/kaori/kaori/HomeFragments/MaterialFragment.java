@@ -129,7 +129,8 @@ public class MaterialFragment extends Fragment {
             mMaterial.getFeedbacks().add(feedback);
             recyclerView.getAdapter().notifyDataSetChanged();
 
-            DataManager.getInstance().postComment(mMaterial);
+            // TODO
+            //DataManager.getInstance().postComment(mMaterial);
         });
         recyclerView = view.findViewById(R.id.feedbackList);
         if(!mMaterial.getFeedbacks().isEmpty()) {
@@ -159,7 +160,8 @@ public class MaterialFragment extends Fragment {
             mMaterial.getFeedbacks().add(feedback);
             recyclerView.getAdapter().notifyDataSetChanged();
 
-            DataManager.getInstance().postComment(mMaterial);
+            //TODO
+            //DataManager.getInstance().postComment(mMaterial);
         });
 
         recyclerView = view.findViewById(R.id.feedbackList);

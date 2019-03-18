@@ -53,7 +53,7 @@ public class SearchFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 LogManager.getInstance().printConsoleMessage("Query submitted");
-                DataManager.getInstance().queryMaterials(query, recyclerView, view.findViewById(R.id.empty_view));
+                DataManager.getInstance().queryMaterials(query, recyclerView, view);
                 hideKeyboard();
                 return false;
             }

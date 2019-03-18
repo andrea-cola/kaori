@@ -70,7 +70,7 @@ public class Kaori extends AppCompatActivity {
      * Download the user from the database and run the main activity.
      */
     private void downloadUserProfile(){
-        DataManager.getInstance().loadUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), this);
+        DataManager.getInstance().downloadUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), this);
     }
 
 }

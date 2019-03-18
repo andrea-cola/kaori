@@ -39,7 +39,7 @@ public class MyFilesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ListAdapter());
 
-        DataManager.getInstance().loadMyFiles(recyclerView, view);
+        DataManager.getInstance().downloadMyFiles(recyclerView, view);
 
         view.findViewById(R.id.FAB).setOnClickListener(v -> invokeNextFragment(new UploadFragment()));
         TextView emptyTextView = view.findViewById(R.id.empty_view_text);

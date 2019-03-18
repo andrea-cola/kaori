@@ -27,7 +27,7 @@ public class MyBooksFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new StarredAdapter(DataManager.getInstance().getStarredBooks(), Constants.BOOK));
 
-        DataManager.getInstance().loadStarredBooks(recyclerView, view);
+        DataManager.getInstance().downloadStarredBooks(recyclerView, view);
         return view;
     }
 

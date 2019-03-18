@@ -27,7 +27,7 @@ public class MyDocsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new StarredAdapter(DataManager.getInstance().getStarredDocuments(), Constants.FILE));
 
-        DataManager.getInstance().loadStarredDocs(recyclerView, view);
+        DataManager.getInstance().downloadStarredDocs(recyclerView, view);
         return view;
     }
 
