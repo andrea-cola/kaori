@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -178,10 +177,10 @@ public class MaterialFragment extends Fragment {
 
          CheckBox star = view.findViewById(R.id.checkStar);
          star.setOnCheckedChangeListener((buttonView, isChecked) -> {
-             if(mMaterial.getType()==1)
+             /*if(mMaterial.getType()==1)
                  DataManager.getInstance().updateStarredBook(mMaterial, isChecked);
              else
-                 DataManager.getInstance().updateStarredDocument(mMaterial, isChecked);
+                 DataManager.getInstance().updateStarredDocument(mMaterial, isChecked);*/
          });
 
         String exams = "";

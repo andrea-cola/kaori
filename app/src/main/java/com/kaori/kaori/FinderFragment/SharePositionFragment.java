@@ -16,7 +16,6 @@ import com.google.firebase.firestore.GeoPoint;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -109,10 +108,12 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         }
     }
 
+    /**
+     * Save the position in database and return to the previous fragment.
+     */
     private void sharePosition(GeoPoint geoPoint, String activity){
-        Position position = new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now());
-        LogManager.getInstance().printConsoleError("Arrivato.");
-        DataManager.getInstance().uploadPosition(position);
+        DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now()));
+        getFragmentManager().popBackStackImmediate();
     }
 
     @Override
@@ -175,7 +176,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
             mapboxMap.getStyle(style -> enableLocationComponent(style));
         } else {
             Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            getActivity().finish();
+            getFragmentManager().popBackStackImmediate();
         }
     }
 }
