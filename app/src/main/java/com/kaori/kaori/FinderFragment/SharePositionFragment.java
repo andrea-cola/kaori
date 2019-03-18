@@ -1,7 +1,13 @@
 package com.kaori.kaori.FinderFragment;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,6 +22,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -38,8 +45,6 @@ import java.util.List;
  */
 public class SharePositionFragment extends Fragment implements OnMapReadyCallback, PermissionsListener {
 
-    private static final String geojsonSourceLayerId = "geojsonSourceLayerId";
-
     /**
      * Elements from view
      */
@@ -60,10 +65,23 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
         View view = inflater.inflate(R.layout.share_position, container, false);
         activityEdit = view.findViewById(R.id.editText2);
-
         mapView = view.findViewById(R.id.shareMapView);
-        mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(this);
+
+        LocationManager lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
+        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("Devi attivare il GPS per la posizione")
+                    .setPositiveButton("OK", (d, which)-> {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        d.cancel();
+                    })
+                    .setNegativeButton("NO", (d, which)-> d.dismiss())
+                    .show();
+        }else{
+            mapView.onCreate(savedInstanceState);
+            mapView.getMapAsync(this);
+        }
 
         view.findViewById(R.id.shareButton).setOnClickListener(v -> {
             GeoPoint point = new GeoPoint(latitude, longitude);
@@ -168,7 +186,6 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
 
     @Override
     public void onPermissionResult(boolean granted) {
