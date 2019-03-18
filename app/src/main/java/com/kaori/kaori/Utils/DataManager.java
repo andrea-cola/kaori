@@ -246,8 +246,10 @@ public class DataManager {
                         ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
                         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
                     }
+
+                    LogManager.getInstance().printConsoleMessage("Completed.");
                 };
-        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode));
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode);
         makeGetRequest(url, listener, errorListener);
     }
 
@@ -255,8 +257,9 @@ public class DataManager {
         Response.Listener<String> listener = response -> {
             list.clear();
             list.addAll(gson.fromJson(response, type));
+            LogManager.getInstance().printConsoleMessage("Completed.");
         };
-        Response.ErrorListener errorListener = error -> {};
+        Response.ErrorListener errorListener = error -> { LogManager.getInstance().printConsoleError("Error."); };
         makeGetRequest(url, listener, errorListener);
     }
 
@@ -271,6 +274,7 @@ public class DataManager {
     /* ------------------------------------------------------------------------------------------------------ */
 
     public void downloadFeed(RecyclerView list, View view) {
+        LogManager.getInstance().printConsoleMessage("downloadFeed");
         String url = BASE_URL + URL_FEED;
         if (user.getExams().size() > 0){
             url = url + "?exams=" + user.getExams().get(0);
@@ -292,21 +296,25 @@ public class DataManager {
     }
 
     private void downloadAllExams(){
+        LogManager.getInstance().printConsoleError("downloadAllExams");
         String url = urlGenerator(BASE_URL + URL_EXAMS, user.getUniversity(), user.getCourse());
         makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>(){}.getType());
     }
 
     private void downloadAllUniversities(){
-        String url = urlGenerator(BASE_URL + URL_EXAMS);
+        LogManager.getInstance().printConsoleError("downloadAllUniversities");
+        String url = urlGenerator(BASE_URL + URL_UNIVERSITIES);
         makeSimpleGetRequest(Uri.parse(url), allUniversities, new TypeToken<ArrayList<String>>(){}.getType());
     }
 
     private void downloadAllCourses(){
+        LogManager.getInstance().printConsoleError("downloadAllCourses");
         String url = urlGenerator(BASE_URL + URL_COURSES);
-        makeSimpleGetRequest(Uri.parse(url), allCourses, new TypeToken<ArrayList<String>>(){}.getType());
+        makeSimpleGetRequest(Uri.parse(url), allCourses, new TypeToken<ArrayList<Course>>(){}.getType());
     }
 
     public void downloadUserProfile(String uid, Kaori kaori){
+        LogManager.getInstance().printConsoleError("downloadUserProfile");
         String url = urlGenerator(BASE_URL + URL_USER, uid);
         makeGetRequest(Uri.parse(url),
                 response -> {
@@ -315,11 +323,11 @@ public class DataManager {
                         downloadAllExams();
                         downloadAllUniversities();
                         downloadAllCourses();
-                        LogManager.getInstance().printConsoleMessage("Profile loaded.");
+                        LogManager.getInstance().printConsoleMessage("Completed.");
                         kaori.startApp();
                     }
                     else {
-                        LogManager.getInstance().printConsoleMessage("Profile not loaded.");
+                        LogManager.getInstance().printConsoleError("Profile not loaded.");
                         kaori.startLogin();
                     }
                 },
