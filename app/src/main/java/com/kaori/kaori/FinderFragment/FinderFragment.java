@@ -143,7 +143,7 @@ public class FinderFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.user.setText(positions.get(i).getUser().getName());
             holder.activity.setText(positions.get(i).getActivity());
-            holder.position.setText(positions.get(i).getLocation());
+            //holder.position.setText(positions.get(i).getLocation());
             Glide.with(context).load(positions.get(i).getUser().getThumbnail())
                     .apply(RequestOptions.circleCropTransform()).into(holder.thumbnail);
         }

@@ -5,20 +5,17 @@ import com.google.firebase.firestore.GeoPoint;
 
 public class Position {
 
-    private String positionID;
+    private String id; // id of the position, that is equal to the used id (uid).
     private MiniUser user;
-    private GeoPoint geoPoint;
-    private String location, activity;
-    private Timestamp timestamp;
+    private GeoPoint geoPoint; // position of the user.
+    private String description; // what the user is doing in that position.
+    private Timestamp timestamp; // time when the position is published.
 
-    public Position() {}
-
-    public Position(MiniUser user, GeoPoint geoPoint, String activity, String location, Timestamp timestamp){
+    public Position(MiniUser user, GeoPoint geoPoint, String description, Timestamp timestamp){
         this.user = user;
         this.geoPoint = geoPoint;
-        this.location = location;
         this.timestamp = timestamp;
-        this.activity = activity;
+        this.description = description;
     }
 
     public GeoPoint getGeoPoint() {
@@ -37,14 +34,6 @@ public class Position {
         this.user = user;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
     public Timestamp getTimestamp() {
         return timestamp;
     }
@@ -53,19 +42,19 @@ public class Position {
         this.timestamp = timestamp;
     }
 
-    public String getPositionID() {
-        return positionID;
+    public String getId() {
+        return id;
     }
 
-    public void setPositionID(String positionID) {
-        this.positionID = positionID;
+    public void setId(String positionID) {
+        this.id = positionID;
     }
 
     public String getActivity() {
-        return activity;
+        return description;
     }
 
     public void setActivity(String activity) {
-        this.activity = activity;
+        this.description = activity;
     }
 }

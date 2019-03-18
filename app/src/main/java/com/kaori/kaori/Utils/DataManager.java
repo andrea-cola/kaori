@@ -25,6 +25,7 @@ import com.kaori.kaori.Kaori;
 import com.kaori.kaori.Model.Course;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.Model.MiniUser;
+import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 
@@ -52,6 +53,7 @@ public class DataManager {
     private final static String URL_UNIVERSITIES = "universities/";
     private final static String URL_COURSES = "courses/";
     private final static String URL_DOC = "document/";
+    private final static String URL_POSITION = "position/";
 
     /**
      * Singleton instance.
@@ -76,6 +78,7 @@ public class DataManager {
     private ArrayList<Document> myFiles; // list of all my materials.
     private ArrayList<Document> starredDocuments;
     private ArrayList<Document> starredBooks;
+    private Position position;
 
     /**
      * Request options for Glide.
@@ -199,7 +202,7 @@ public class DataManager {
     }
 
     /**
-     * Load the element of the feed.
+     * Load the starred documents.
      * @param list where the elements are loaded.
      */
     public void loadStarredDocs(RecyclerView list, View view){
@@ -223,6 +226,11 @@ public class DataManager {
         queue.add(request);
     }
 
+    /**
+     * Load the
+     * @param list
+     * @param view
+     */
     public void loadStarredBooks(RecyclerView list, View view){
         String url = BASE_URL + URL_STARRED + "?uid=" + user.getUid() + "&type=1";
         StringRequest request = new StringRequest(Request.Method.GET, url,
@@ -242,14 +250,6 @@ public class DataManager {
                 error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse));
         request.setShouldCache(false);
         queue.add(request);
-    }
-
-    public void updateStarredDocument(Document document, boolean starred){
-
-    }
-
-    public void updateStarredBook(Document book, boolean starred){
-
     }
 
     /**
@@ -500,6 +500,34 @@ public class DataManager {
             protected Map<String, String> getParams() {
                 Map<String, String>  params = new HashMap<>();
                 params.put("document", gson.toJson(document));
+                return params;
+            }
+        };
+        request.setShouldCache(false);
+        queue.add(request);
+    }
+
+    /**
+     * Upload the position in the database.
+     */
+    public void uploadPosition(Position position){
+        Uri url = Uri.parse(BASE_URL + URL_POSITION);
+        LogManager.getInstance().printConsoleMessage(url.toString());
+        StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
+                response -> {
+                    if(response.equalsIgnoreCase("1"))
+                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
+                    else
+                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                },
+                error -> {
+                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
+                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String>  params = new HashMap<>();
+                params.put("position", gson.toJson(position));
                 return params;
             }
         };
