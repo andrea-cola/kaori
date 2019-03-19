@@ -81,12 +81,13 @@ public class ChatListFragment extends Fragment {
     }
 
     /**
+     * TODO
      * Load all the chats from the database.
      */
     private void loadAllChats(){
         FirebaseFirestore.getInstance()
-                .collection(Constants.DB_COLL_MESSAGES)
-                .orderBy(Constants.FIELD_LAST_MESSAGE)
+                .collection("messages")
+                .orderBy("lastMessageSent")
                 .addSnapshotListener((value, e) -> {
                     if (value != null){
                         for (DocumentChange doc : value.getDocumentChanges()) {

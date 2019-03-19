@@ -1,5 +1,7 @@
 package com.kaori.kaori.Model;
 
+import com.kaori.kaori.Utils.Constants;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +15,20 @@ public class User implements Serializable {
     private String course;
     private String uid;
     private List<String> exams;
-    private String tokenID;
+    private List<String> tokenIDs;
+    private int authMethod;
 
-    public User(){ }
+    public User(){
+        exams = new ArrayList<>();
+        tokenIDs = new ArrayList<>();
+        email = "";
+        name = "";
+        photosUrl = Constants.STORAGE_DEFAULT_PROFILE_IMAGE;
+        university = "";
+        course = "";
+        uid = "";
+        authMethod = Constants.NATIVE;
+    }
 
     public String getEmail() {
         return email;
@@ -42,8 +55,6 @@ public class User implements Serializable {
     }
 
     public List<String> getExams() {
-        if(exams ==  null)
-            exams = new ArrayList<>();
         return exams;
     }
 
@@ -75,11 +86,23 @@ public class User implements Serializable {
         this.uid = uid;
     }
 
-    public String getTokenID() {
-        return tokenID;
+    public List<String> getTokenIDs() {
+        return tokenIDs;
     }
 
-    public void setTokenID(String tokenID) {
-        this.tokenID = tokenID;
+    public void setTokenIDs(List<String> tokenIDs) {
+        this.tokenIDs = tokenIDs;
+    }
+
+    public void addTokenID(String tokenID) {
+        tokenIDs.add(tokenID);
+    }
+
+    public int getAuthMethod() {
+        return authMethod;
+    }
+
+    public void setAuthMethod(int authMethod) {
+        this.authMethod = authMethod;
     }
 }

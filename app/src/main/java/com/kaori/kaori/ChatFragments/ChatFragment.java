@@ -15,17 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -90,7 +85,7 @@ public class ChatFragment extends Fragment {
 
     private void sendMessage(Message m) {
         // get document reference.
-        DocumentReference documentReference = FirebaseFirestore
+        /*DocumentReference documentReference = FirebaseFirestore
                 .getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
                 .document(chat.getChatID());
@@ -104,7 +99,7 @@ public class ChatFragment extends Fragment {
                 .set(m)
                 .addOnFailureListener(e -> {
                     LogManager.getInstance().showVisualMessage("Invio fallito. Riprovare.");
-                }));
+                }));*/
     }
 
     private void addOnClickListener(){
@@ -124,7 +119,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void readMessages(){
-        FirebaseFirestore.getInstance()
+        /*FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_MESSAGES)
                 .document(chat.getChatID())
                 .collection(Constants.DB_SUBCOLL_MESSAGES)
@@ -143,7 +138,7 @@ public class ChatFragment extends Fragment {
                                 mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                             }
                         }
-                });
+                });*/
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {

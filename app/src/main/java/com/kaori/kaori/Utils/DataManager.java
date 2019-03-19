@@ -35,10 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Singleton class that represent a store
- * for the most important and common data.
- */
 public class DataManager {
 
     /**
@@ -54,20 +50,29 @@ public class DataManager {
     private final static String URL_COURSES = "courses/";
     private final static String URL_DOC = "document/";
     private final static String URL_POSITION = "position/";
+    private final static String URL_CHECK = "checkAuth/";
+
+    /**
+     * TODO: da mettere in strings.xml
+     * Success messages.
+     */
+    private final String feedMessage = "Download feed completato.";
+
+    /**
+     * TODO: da mettere in strings.xml
+     * Error messages.
+     */
+    private final String feedError = "Download feed fallito";
 
     /**
      * Singleton instance.
      */
     private static DataManager dataManager;
-
-    /**
-     * Volley utils.
-     */
     private Gson gson = new Gson();
     private RequestQueue queue;
 
     /**
-     * Data.
+     * Data variables.
      */
     private User user; // the current logged in user.
     private ArrayList<Document> feedElements; // materials showed in the feed.
@@ -141,7 +146,12 @@ public class DataManager {
     }
 
     public MiniUser getMiniUser() {
-        return new MiniUser(user.getUid(), user.getName(), user.getPhotosUrl(), user.getTokenID());
+        MiniUser miniUser = new MiniUser();
+        miniUser.setName(user.getName());
+        miniUser.setUid(user.getUid());
+        miniUser.setThumbnail(user.getPhotosUrl());
+        miniUser.setTokenID(user.getTokenIDs());
+        return miniUser;
     }
 
     public ArrayList<Document> getFeedElements() {
@@ -195,7 +205,7 @@ public class DataManager {
 
     public void updateUser(Bitmap bitmap) {
         if(bitmap != null)
-            uploadImageOnServer(bitmap);
+            uploadProfileImageOnServer(bitmap);
         else
             uploadUser();
     }
@@ -208,8 +218,23 @@ public class DataManager {
                     .into(imageView);
     }
 
+    private void makeCustomPostRequest(final Uri url, final Response.Listener<String> listener, final Response.ErrorListener errorListener, Object... params){
+        LogManager.getInstance().printConsoleMessage("Post -> " + url.toString());
+        StringRequest request = new StringRequest(Request.Method.POST, url.toString(), listener, errorListener) {
+            @Override
+            protected Map<String, String> getParams() {
+                HashMap<String, String> p = new HashMap<>();
+                for(int i = 0; i < params.length; i++)
+                    p.put("p" + i, gson.toJson(params[i]));
+                return p;
+            }
+        };
+        request.setShouldCache(false);
+        queue.add(request);
+    }
+
     private void makePostRequest(final Uri url, final Object... objects) {
-        LogManager.getInstance().printConsoleMessage(url.toString());
+        LogManager.getInstance().printConsoleMessage("Post -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
                 response -> {
                     if(response.equalsIgnoreCase("1"))
@@ -234,6 +259,7 @@ public class DataManager {
     }
 
     private void makeAdvancedGetRequest(final Uri url, final RecyclerView viewList, View view, ArrayList list, Type type) {
+        LogManager.getInstance().printConsoleMessage("Get -> " + url.toString());
         Response.Listener<String> listener = response -> {
                     list.clear();
                     list.addAll(gson.fromJson(response, type));
@@ -254,6 +280,7 @@ public class DataManager {
     }
 
     private void makeSimpleGetRequest(final Uri url, ArrayList list, Type type) {
+        LogManager.getInstance().printConsoleMessage("Get -> " + url.toString());
         Response.Listener<String> listener = response -> {
             list.clear();
             list.addAll(gson.fromJson(response, type));
@@ -347,6 +374,16 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), list, view, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
+    public void downloadCurrentActivePositions(RecyclerView list, View view) {
+        String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
+        makeAdvancedGetRequest(Uri.parse(url), list, view, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
+    }
+
+    public void checkIfTheUserAlreadyExists(String email, int method, Response.Listener<String> listener, Response.ErrorListener errorListener){
+        String url = urlGenerator(BASE_URL + URL_CHECK, email, String.valueOf(method));
+        makeGetRequest(Uri.parse(url), listener, errorListener);
+    }
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* POST FUNCTIONS --------------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
@@ -366,12 +403,17 @@ public class DataManager {
         makePostRequest(url, position);
     }
 
+    public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener){
+        String url = BASE_URL + URL_USER;
+        makeCustomPostRequest(Uri.parse(url), listener, errorListener, user);
+    }
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* STORAGE FUNCTIONS ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------------------------ */
 
-    private void uploadImageOnServer(Bitmap bitmap) {
-        LogManager.getInstance().printConsoleMessage("uploadProfileImageOnTheServer");
+    private void uploadProfileImageOnServer(Bitmap bitmap) {
+        LogManager.getInstance().printConsoleMessage("Upload -> image");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -387,6 +429,7 @@ public class DataManager {
     }
 
     public void uploadFileOnTheServer(String url, Document document){
+        LogManager.getInstance().printConsoleMessage("Upload -> file");
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));
 

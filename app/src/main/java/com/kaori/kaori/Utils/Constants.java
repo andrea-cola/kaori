@@ -22,29 +22,8 @@ public class Constants {
     public static final int MY_CAMERA_PERMISSION_CODE = 100;
 
     /**
-     * Database constants.
+     * Document types.
      */
-    public static final String DB_COLL_UNIVERSITIES = "universities";
-    public static final String DB_COLL_COURSE_TYPES = "courses";
-    public static final String DB_COLL_POSITIONS = "positions";
-    public static final String DB_COLL_MATERIALS = "materials";
-    public static final String DB_COLL_EXAMS = "exams";
-    public static final String DB_COLL_COURSES = "courses";
-    public static final String DB_COLL_USERS = "users";
-    public static final String DB_COLL_PROFESSORS = "professors";
-    public static final String DB_COLL_MESSAGES = "messages";
-    public static final String DB_SUBCOLL_MESSAGES = "chat";
-    public static final String FIELD_UNIVERSITY = "university";
-    public static final String FIELD_COURSES = "course";
-    public static final String FIELD_TIMESTAMP = "timestamp";
-    public static final String FIELD_TOKEN = "tokenID";
-    public static final String FIELD_EXAM = "exam";
-    public static final String FIELD_NAME = "name";
-    public static final String FIELD_AUTHOR = "author";
-    public static final String FIELD_TITLE = "title";
-    public static final String FIELD_LAST_MESSAGE = "lastMessageSent";
-    public static final String FIELD_MINI_USER = "miniUser";
-    public static final String FIELD_UID = "uid";
     public static final int BOOK = 1;
     public static final int FILE = 2;
     public static final int URL = 3;
@@ -74,6 +53,9 @@ public class Constants {
     public static final int CAMERA_REQUEST = 3;
     public static final int LOGIN = 0;
     public static final int SIGNIN = 1;
+    public static final int FACEBOOK = 10;
+    public static final int GOOGLE = 11;
+    public static final int NATIVE = 12;
 
     /**
      * Registration messages.

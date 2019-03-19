@@ -3,9 +3,9 @@ package com.kaori.kaori.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Handler;
 
+import com.android.volley.Response;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -23,17 +23,13 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriLogin;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * This class handles the login and the signInWithEmail of the user in the app.
@@ -46,22 +42,15 @@ public class SignInManager {
     private static SignInManager signInManager;
     private static Context context;
     private boolean facebookSignInStarted;
-    private User user;
-    private String password;
-    private FirebaseFirestore mDatabase;
     private FirebaseAuth mAuth;
-    private Bitmap profileImageBitmap;
     private CallbackManager callbackManager;
-    private String loginError;
 
     /**
      * Class constructor.
      */
     private SignInManager() {
-        mDatabase = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         facebookSignInStarted = false;
-        loginError = "";
     }
 
     /**
@@ -148,17 +137,13 @@ public class SignInManager {
     /**
      * This method is used in native sign in with email and password.
      */
-    public void signInWithEmail(User user, String password, Bitmap bitmap){
-        this.user = user;
-        this.password = password;
-        this.profileImageBitmap = bitmap;
-
+    public void signInWithEmail(User user, String password, byte[] bitmap){
+        // get the token id for notifications
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (!task.isSuccessful())
-                return;
-            user.setTokenID(task.getResult().getToken());
-
-            authWithEmail();
+            LogManager.getInstance().printConsoleMessage("Getting the token...");
+            if (task.isSuccessful())
+                user.addTokenID(task.getResult().getToken());
+            authWithEmail(user, password, bitmap);
         });
     }
 
@@ -211,23 +196,18 @@ public class SignInManager {
     /**
      * Sign in the user throw Firebase Auth.
      */
-    private void authWithEmail() {
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                            user.setUid(task.getResult().getUser().getUid());
+    private void authWithEmail(User user, String password, byte[] profileImageBitmap) {
+        LogManager.getInstance().printConsoleMessage("Native auth...");
 
-                            if (profileImageBitmap != null)
-                                uploadProfileImageOnTheServer();
-                            else {
-                                user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
-                                uploadNewUserOnTheServer();
-                            }
-                    } else {
-                        LogManager.getInstance().showVisualError(task.getException(), context.getString(R.string.native_error));
-                        endSignIn(false);
-                    }
-                });
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), password).addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                        user.setUid(task.getResult().getUser().getUid());
+                        uploadNewUser(user, profileImageBitmap);
+                } else {
+                    LogManager.getInstance().showVisualError(task.getException(), context.getString(R.string.native_error));
+                    endSignIn(false);
+                }
+            });
     }
 
     /**
@@ -244,12 +224,8 @@ public class SignInManager {
         }
     }
 
-    /**
-     * It takes in input a Firebase User and return a User to pass
-     * to the next fragment.
-     */
     private void createNewUserAndSignIn(FirebaseUser firebaseUser){
-        user = new User();
+        User user = new User();
         user.setEmail(firebaseUser.getEmail());
         user.setName(firebaseUser.getDisplayName());
         user.setUid(firebaseUser.getUid());
@@ -260,40 +236,31 @@ public class SignInManager {
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
             if (!task.isSuccessful())
                 return;
-
-            user.setTokenID(task.getResult().getToken());
-
-            uploadNewUserOnTheServer();
+            user.addTokenID(task.getResult().getToken());
+            //updateUserDatabase();
         });
     }
 
-    /**
-     * This method writes the user in the database.
-     */
-    private void uploadNewUserOnTheServer(){
-        mDatabase.collection(Constants.DB_COLL_USERS).document(user.getUid())
-                .set(user)
-                .addOnSuccessListener(aVoid -> {
-                    endSignIn(true);
-                })
-                .addOnFailureListener(e -> {
-                    LogManager.getInstance().showVisualError(e, context.getString(R.string.generic_error));
-                    endSignIn(false);
-                });
+    private void updateUserDatabase(User user){
+        Response.Listener<String> listener = response -> {
+            if(response.equalsIgnoreCase("1")) {
+                endSignIn(true);
+            }
+            else {
+                endSignIn(false);
+            }
+        };
+        Response.ErrorListener errorListener = error -> endSignIn(false);
+        DataManager.getInstance().createNewUser(user, listener, errorListener);
     }
 
-    /**
-     * This method uploads the image in the Firebase storage.
-     */
-    private void uploadProfileImageOnTheServer(){
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        profileImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-
+    private void uploadNewUser(User user, byte[] profileImageBitmap){
         final StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
-        UploadTask uploadTask = mStorage.putBytes(baos.toByteArray());
-        uploadTask.addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
+        mStorage.putBytes(profileImageBitmap).addOnSuccessListener(
+                taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
+                    LogManager.getInstance().showVisualMessage("Immagine caricata");
                     user.setPhotosUrl(uri.toString());
-                    uploadNewUserOnTheServer();
+                    updateUserDatabase(user);
                 }))
                 .addOnFailureListener(e -> {
                     LogManager.getInstance().showVisualError(e, context.getString(R.string.generic_error));
@@ -301,11 +268,6 @@ public class SignInManager {
                 });
     }
 
-    /**
-     * This method is called whenever the process is terminated.
-     * If successful restart the app, if not it only dismisses the
-     * dialog.
-     */
     private void endSignIn(boolean isSuccess){
         if (isSuccess && context != null) {
             LogManager.getInstance().showVisualMessage(context.getString(R.string.signin_success));

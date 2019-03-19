@@ -17,12 +17,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,27 +75,7 @@ public class FinderFragment extends Fragment {
     }
 
     private void loadActivePositions(){
-        db.collection(Constants.DB_COLL_POSITIONS)
-                .orderBy(Constants.FIELD_TIMESTAMP)
-                .whereGreaterThan(Constants.FIELD_TIMESTAMP, now)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful() && task.getResult() != null) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (!document.getString("user.uid").equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
-                                positions.add(document.toObject(Position.class));
-                                adapter.notifyDataSetChanged();
-                            }
-                        }
-                        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        view.findViewById(R.id.positionFAB).setVisibility(View.VISIBLE);
-                        if(positions.size() == 0) {
-                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                        }
-                    } else
-                        LogManager.getInstance().showVisualError(task.getException(), getString(R.string.generic_error));
-
-        });
+        DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
     }
 
     /**

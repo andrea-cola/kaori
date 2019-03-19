@@ -1,16 +1,15 @@
 package com.kaori.kaori;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
-import com.kaori.kaori.LoginRegistrationFragments.CreateAccount;
 import com.kaori.kaori.LoginRegistrationFragments.LoginFragment;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
@@ -25,7 +24,6 @@ public class KaoriLogin extends AppCompatActivity {
     /**
      * Variables.
      */
-    private final String BACK_STATE_NAME = getClass().getName();
     private LoginManager loginManager;
     private SignInManager signInManager;
 
@@ -35,27 +33,13 @@ public class KaoriLogin extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
+        setContentView(R.layout.activity_kaorilogin);
 
-        // instantiate the managers for login and sign in.
         loginManager = LoginManager.getInstance(this);
         signInManager = SignInManager.getInstance(this);
         LogManager.getInstance(findViewById(R.id.coordinator));
 
-        // set click listeners
-        findViewById(R.id.login_button).setOnClickListener(view -> invokeNextFragment(new LoginFragment()));
-        findViewById(R.id.signin_button).setOnClickListener(view -> invokeNextFragment(new CreateAccount()));
-    }
-
-    /**
-     * Method used to invoke a new fragment.
-     */
-    private void invokeNextFragment(Fragment f) {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.main_layout, f)
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .addToBackStack(BACK_STATE_NAME)
-                .commit();
+        entryPointFragmentCall(new LoginFragment());
     }
 
     /**
@@ -79,6 +63,17 @@ public class KaoriLogin extends AppCompatActivity {
             loginManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
         else
             super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * This methods is called by the application when it is opened.
+     * It invokes the first fragment.
+     */
+    private void entryPointFragmentCall(Fragment fragment){
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .commit();
     }
 
 }

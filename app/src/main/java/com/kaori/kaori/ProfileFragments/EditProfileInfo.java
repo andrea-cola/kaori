@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
@@ -32,7 +31,6 @@ import com.kaori.kaori.Utils.LogManager;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import static com.kaori.kaori.Utils.Constants.CAMERA_REQUEST;
 import static com.kaori.kaori.Utils.Constants.MY_CAMERA_PERMISSION_CODE;
 
 /**
@@ -146,11 +144,7 @@ public class EditProfileInfo extends Fragment {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CAMERA_REQUEST && BitmapFactory.decodeFile(String.valueOf(imagePicker.getFilePath()), new BitmapFactory.Options()) != null) {
-            profileImageViewBitmap = imagePicker.editImage(imagePicker.getFilePath().toString());
-            DataManager.getInstance().loadImageIntoView(profileImageViewBitmap, profileImageView, getContext());
-        }
-        else if(requestCode == Constants.PICK_IMAGE && data != null && data.getData() != null) {
+        if(requestCode == Constants.PICK_IMAGE && data != null && data.getData() != null) {
             try {
                 profileImageViewBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
                 DataManager.getInstance().loadImageIntoView(profileImageViewBitmap, profileImageView, getContext());

@@ -20,13 +20,9 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriLogin;
-import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.R;
 
 /**
@@ -223,7 +219,7 @@ public class LoginManager {
     }
 
     private void updateTokens(String token){
-        FirebaseFirestore.getInstance()
+        /*FirebaseFirestore.getInstance()
                 .collection(Constants.DB_COLL_USERS)
                 .document(mAuth.getUid())
                 .update(Constants.FIELD_TOKEN, token);
@@ -241,7 +237,7 @@ public class LoginManager {
                             messages.document(c.getChatID()).set(c);
                         }
                     }
-                });
+                });*/
     }
 
 }

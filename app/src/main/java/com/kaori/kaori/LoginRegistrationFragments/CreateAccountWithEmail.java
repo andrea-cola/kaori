@@ -1,215 +1,151 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.Response;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.ImagePicker;
 import com.kaori.kaori.Utils.LogManager;
+import com.kaori.kaori.Utils.SignInManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.kaori.kaori.Utils.Constants.CAMERA_REQUEST;
 import static com.kaori.kaori.Utils.Constants.MY_CAMERA_PERMISSION_CODE;
 
-/**
- * This class is responsible for the second step of account creation.
- */
 public class CreateAccountWithEmail extends Fragment {
 
     /**
      * Constants.
      */
     private final String BACK_STATE_NAME = getClass().getName();
+    private final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{4,}$";
+    private final String NAME_PATTERN = "^[a-zA-Z ]*$";
 
     /**
      * Variables.
      */
-    private boolean[] validFields = new boolean[3];
-    private User user;
-    private CircleImageView profileImage;
-    private EditText name, password, mail;
-    private Button createNewAccount;
-    private Bitmap profileImageBitmap;
+    private boolean[] validFields = new boolean[3]; // validity state of the fields
+    private byte[] image;
     private ImagePicker imagePicker;
+    private Button button;
+    private View view;
 
-    /**
-     * Override of the inherited method.
-     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.reg2, container, false);
-
-        FloatingActionButton floatingActionButton = view.findViewById(R.id.floatingActionButton);
-        createNewAccount = view.findViewById(R.id.button);
-        name = view.findViewById(R.id.name);
-        password = view.findViewById(R.id.password);
-        mail = view.findViewById(R.id.username);
-        profileImage = view.findViewById(R.id.reg_image_profile);
-
-        user = new User();
-        user.setPhotosUrl(Constants.STORAGE_DEFAULT_PROFILE_IMAGE);
+        view = inflater.inflate(R.layout.registration, container, false);
+        EditText mName = view.findViewById(R.id.name);
+        EditText mPassword = view.findViewById(R.id.password);
+        EditText mMail = view.findViewById(R.id.username);
+        button = view.findViewById(R.id.button);
 
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
             validFields[i] = false;
 
-        // add listener to changes in EditText.
-        setEditTextWatchers();
-
+        // instantiate the image picker.
         imagePicker = new ImagePicker(getActivity(), this);
-        // add the action to the FAB.
-        floatingActionButton.setOnClickListener(view1 -> imagePicker.showChoicePopup());
 
-        createNewAccount.setEnabled(false);
-        createNewAccount.setOnClickListener(view12 -> updateUserAndLogin());
+        // add the action to FAB and to button
+        view.findViewById(R.id.floatingActionButton).setOnClickListener(view1 -> imagePicker.showChoicePopup());
+        button.setOnClickListener(view12 -> validateFields(mName, mMail, mPassword));
 
         return view;
     }
 
-    /**
-     * Update the user information before passing to the next
-     * fragment.
-     */
-    private void updateUserAndLogin() {
-        user.setName(name.getText().toString());
-        user.setEmail(mail.getText().toString());
+    private void validateFields(EditText mName, EditText mMail, EditText mPassword) {
+        String name, mail, password;
+        name = mName.getText().toString();
+        mail = mMail.getText().toString();
+        password = mPassword.getText().toString();
 
-        Object[] o = new Object[3];
-        o[0] = user;
-        o[1] = String.valueOf(password.getText());
-        o[2] = profileImageBitmap;
-
-        LoginWaitFragment loginWaitFragment = new LoginWaitFragment();
-        loginWaitFragment.setParameters(Constants.SIGNIN, AuthMethods.NATIVE, o);
-
-        if(getActivity() != null && isAdded())
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_layout, loginWaitFragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
+        if(nameValidation(name) && emailValidation(mail) && passwordValidation(password) && imageValidation(image))
+            updateUserAndSignin(name, mail, password);
     }
 
-    /**
-     * Checks that all the fields are valid and then
-     * set the button clickable.
-     */
-    private void updateButtonState() {
-        boolean flag = true;
-        for (boolean validField : validFields) flag = flag && validField;
-        createNewAccount.setAlpha(flag ? 1 : 0.5f);
-        createNewAccount.setEnabled(flag);
+    private boolean nameValidation(final String name){
+        if(!Pattern.compile(NAME_PATTERN).matcher(name).matches()){
+            LogManager.getInstance().showVisualMessage("Indirizzo mMail non valido.");
+            return false;
+        }
+        return true;
     }
 
-    /**
-     * Set the watchers for all the edit text.
-     * The watchers are responsible for checking the
-     * correctness of what is entered by the user.
-     */
-    private void setEditTextWatchers() {
-        name.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.length() < 1) {
-                    name.setError("Hai lasciato il campo vuoto.");
-                    validFields[0] = false;
-                } else
-                    validFields[0] = true;
-                updateButtonState();
-            }
-        });
-
-        mail.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(editable.toString()).matches()) {
-                    mail.setError("Indirizzo mail non valido.");
-                    validFields[1] = false;
-                } else
-                    validFields[1] = true;
-                updateButtonState();
-            }
-        });
-
-        password.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // do nothing.
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.length() < 6) {
-                    password.setError("Password di almeno 6 caratteri.");
-                    validFields[2] = false;
-                } else
-                    validFields[2] = true;
-                updateButtonState();
-            }
-        });
+    private boolean emailValidation(final String email){
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            LogManager.getInstance().showVisualMessage("Indirizzo mMail non valido.");
+            return false;
+        }
+        return true;
     }
 
-    /**
-     * Handles the result coming from the activity that choose the image.
-     */
+    private boolean passwordValidation(final String password){
+        if (!Pattern.compile(PASSWORD_PATTERN).matcher(password).matches()) {
+            LogManager.getInstance().showVisualMessage("Password non valido.");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean imageValidation(final byte[] bitmap){
+        if(bitmap == null) {
+            LogManager.getInstance().showVisualMessage("Nessuna immagine selezionata.");
+            return false;
+        }
+        return true;
+    }
+
+    private void updateUserAndSignin(final String name, final String mail, final String password) {
+        LogManager.getInstance().printConsoleMessage("updateUserAndSignin");
+        view.findViewById(R.id.wait_layout).setVisibility(View.VISIBLE);
+        User user = new User();
+        user.setName(name);
+        user.setEmail(mail);
+        user.setAuthMethod(Constants.NATIVE);
+
+        Response.Listener<String> listener = response -> {
+            LogManager.getInstance().showVisualMessage(response);
+            if(response.equalsIgnoreCase("1000"))
+                SignInManager.getInstance().signInWithEmail(user, password, image);
+            else
+                LogManager.getInstance().showVisualMessage("L'utente esiste già.");
+        };
+        Response.ErrorListener errorListener = error -> {
+            LogManager.getInstance().showVisualMessage("Errore nella creazione dell'utente.");
+        };
+
+        DataManager.getInstance().checkIfTheUserAlreadyExists(mail, Constants.NATIVE, listener, errorListener);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CAMERA_REQUEST) {
-            profileImageBitmap = imagePicker.editImage(String.valueOf(imagePicker.getFilePath()));
-            profileImage.setImageBitmap(profileImageBitmap);
-        }
-        else if(data != null && data.getData() != null && requestCode == Constants.PICK_IMAGE)
+        if(requestCode == Constants.PICK_IMAGE && data != null && data.getData() != null)
             try {
                 if(getActivity() != null) {
-                    profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
+                    CircleImageView profileImage = view.findViewById(R.id.reg_image_profile);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    Bitmap profileImageBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
                     profileImage.setImageBitmap(profileImageBitmap);
+                    profileImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    image = stream.toByteArray();
                 }
             } catch (FileNotFoundException e) {
                 LogManager.getInstance().showVisualError(e, getString(R.string.file_not_found));
@@ -218,18 +154,11 @@ public class CreateAccountWithEmail extends Fragment {
             LogManager.getInstance().showVisualError(null, getString(R.string.no_image_selected));
     }
 
-    /**
-     * Handle the camera permissions.
-     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_CAMERA_PERMISSION_CODE)
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                imagePicker.showChoicePopup();
-            else
-                // TODO: eliminare
-                LogManager.getInstance().printConsoleError("Permessi non dati.");
+            imagePicker.showChoicePopup();
     }
 
 }

@@ -11,11 +11,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.DataManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +22,11 @@ public class Messaging extends FirebaseMessagingService {
 
     @Override
     public void onNewToken(String token) {
-        if(DataManager.getInstance().getUser() != null)
+        /*if(DataManager.getInstance().getUser() != null)
             FirebaseFirestore.getInstance()
                     .collection(Constants.DB_COLL_USERS)
                     .document(DataManager.getInstance().getUser().getUid())
-                    .update(Constants.FIELD_TOKEN, token);
+                    .update(Constants.FIELD_TOKEN, token);*/
     }
 
     @Override

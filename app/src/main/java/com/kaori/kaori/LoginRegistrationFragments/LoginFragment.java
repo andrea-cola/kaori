@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.facebook.login.widget.LoginButton;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.AuthMethods;
 import com.kaori.kaori.Utils.Constants;
 
 /**
@@ -39,7 +38,7 @@ public class LoginFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.login2, container, false);
+        View view = inflater.inflate(R.layout.login, container, false);
 
         // get true facebook button and setup the button.
         buttonFacebookLogin = view.findViewById(R.id.button_facebook);
@@ -47,7 +46,7 @@ public class LoginFragment extends Fragment {
 
         // get views from the layout.
         Button loginButton = view.findViewById(R.id.button);
-        TextView forgottenPassword = view.findViewById(R.id.password_forgotten);
+        TextView registration = view.findViewById(R.id.registration);
         ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
         ImageView mGoogle = view.findViewById(R.id.button_google);
         EditText mUsername = view.findViewById(R.id.username);
@@ -58,22 +57,20 @@ public class LoginFragment extends Fragment {
                 Object[] params = new Object[2];
                 params[0] = mUsername.getText().toString();
                 params[1] = mPassword.getText().toString();
-                startLogin(AuthMethods.NATIVE, params);
+                startLogin(Constants.NATIVE, params);
         });
 
         // add listener to the facebook button.
         mFacebook.setOnClickListener(view13 -> {
             Object[] params = new Object[1];
             params[0] = buttonFacebookLogin;
-            startLogin(AuthMethods.FACEBOOK, params);
+            startLogin(Constants.FACEBOOK, params);
         });
 
         // add listener to the google button.
-        mGoogle.setOnClickListener(view14 -> startLogin(AuthMethods.GOOGLE, null));
+        mGoogle.setOnClickListener(view14 -> startLogin(Constants.GOOGLE, null));
 
-        // add listener to the forgotten button.
-        // TODO
-        forgottenPassword.setOnClickListener(view12 -> onForgottenPassword());
+        registration.setOnClickListener(view12 -> invokeNextFragment(new CreateAccountWithEmail()));
 
         return view;
     }
@@ -81,14 +78,24 @@ public class LoginFragment extends Fragment {
     /**
      * Pass to the next fragment and start the login process.
      */
-    private void startLogin(AuthMethods authMethod, Object[] params){
+    private void startLogin(int authMethod, Object[] params){
         LoginWaitFragment loginWaitFragment = new LoginWaitFragment();
-        loginWaitFragment.setParameters(Constants.LOGIN, authMethod, params);
+        //loginWaitFragment.setParameters(Constants.LOGIN, authMethod, params);
 
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null) {
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_layout, loginWaitFragment)
+                    .replace(R.id.container, loginWaitFragment)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .commit();
+        }
+    }
+
+    private void invokeNextFragment(Fragment fragment){
+        if(getActivity() != null && getActivity().getSupportFragmentManager() != null) {
+            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .commit();
         }
