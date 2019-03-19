@@ -35,7 +35,6 @@ public class CreateAccountWithEmail extends Fragment {
     /**
      * Constants.
      */
-    private final String BACK_STATE_NAME = getClass().getName();
     private final String PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{4,}$";
     private final String NAME_PATTERN = "^[a-zA-Z ]*$";
 
@@ -45,7 +44,6 @@ public class CreateAccountWithEmail extends Fragment {
     private boolean[] validFields = new boolean[3]; // validity state of the fields
     private byte[] image;
     private ImagePicker imagePicker;
-    private Button button;
     private View view;
 
     @Nullable
@@ -55,7 +53,7 @@ public class CreateAccountWithEmail extends Fragment {
         EditText mName = view.findViewById(R.id.name);
         EditText mPassword = view.findViewById(R.id.password);
         EditText mMail = view.findViewById(R.id.username);
-        button = view.findViewById(R.id.button);
+        Button button = view.findViewById(R.id.button);
 
         // set to false all the field validity flags.
         for (int i = 0; i < validFields.length; i++)
@@ -114,7 +112,6 @@ public class CreateAccountWithEmail extends Fragment {
     }
 
     private void updateUserAndSignin(final String name, final String mail, final String password) {
-        LogManager.getInstance().printConsoleMessage("updateUserAndSignin");
         view.findViewById(R.id.wait_layout).setVisibility(View.VISIBLE);
         User user = new User();
         user.setName(name);
@@ -128,6 +125,7 @@ public class CreateAccountWithEmail extends Fragment {
             else
                 LogManager.getInstance().showVisualMessage("L'utente esiste già.");
         };
+
         Response.ErrorListener errorListener = error -> {
             LogManager.getInstance().showVisualMessage("Errore nella creazione dell'utente.");
         };

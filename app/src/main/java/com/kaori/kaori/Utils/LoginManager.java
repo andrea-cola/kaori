@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 
+import com.android.volley.Response;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -25,71 +25,43 @@ import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriLogin;
 import com.kaori.kaori.R;
 
-/**
- * This class handles the login process.
- */
 public class LoginManager {
 
-    /**
-     * Variables.
-     */
     private static LoginManager loginManager;
     private static Context context;
     private FirebaseAuth mAuth;
     private CallbackManager mCallbackManager;
     private String loginError;
 
-    /**
-     * Constants.
-     */
     private final String WRONG_CREDENTIALS = "Le credenziali sono errate";
     private final String LOGIN_FAILED = "Login fallito. Riprova.";
     private boolean facebookSignInStarted;
 
-    /**
-     * Class constructor.
-     */
     private LoginManager(){
         mAuth = FirebaseAuth.getInstance();
         loginError = "";
         facebookSignInStarted = false;
     }
 
-    /**
-     * Return the instance of the Login Manager.
-     */
     public static LoginManager getInstance(){
         if(loginManager == null)
             loginManager = new LoginManager();
         return loginManager;
     }
 
-    /**
-     * This method is used to change the context of the login manager
-     * and retrieve the instance.
-     */
     public static LoginManager getInstance(Context c){
         context = c;
         return getInstance();
     }
 
-    /**
-     * Return the flag relative to facebook sign in started.
-     */
     public boolean getSignInFacebookStarted(){
         return this.facebookSignInStarted;
     }
 
-    /**
-     * Getter of CallbackManager.
-     */
     public CallbackManager getCallbackManager(){
         return this.mCallbackManager;
     }
 
-    /**
-     * Handles the login with email.
-     */
     public void loginWithEmail(String username, String password){
         LogManager.getInstance().printConsoleMessage("loginWithEmail");
         mAuth.signInWithEmailAndPassword(username, password)
@@ -107,14 +79,10 @@ public class LoginManager {
                 });
     }
 
-    /**
-     * Set up the Facebook signInWithEmail and perform a click on the real button.
-     */
     public void loginWithFacebook(LoginButton loginButton){
         LogManager.getInstance().printConsoleMessage("loginWithFacebook");
         this.facebookSignInStarted = true;
-        mCallbackManager = CallbackManager.Factory.create();
-        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+        loginButton.registerCallback(CallbackManager.Factory.create(), new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 LogManager.getInstance().printConsoleMessage("loginWithFacebook:success");
@@ -134,14 +102,43 @@ public class LoginManager {
                 loginError = LOGIN_FAILED;
                 endLogin(false);
             }
-
         });
         loginButton.performClick();
     }
 
-    /**
-     * Set up the Google signInWithEmail.
-     */
+    private void firebaseAuthWithFacebook(AccessToken token) {
+        Response.Listener<String> listener = response -> {
+            if(response.equalsIgnoreCase("1000")) // l'utente va registrato
+                endLogin(true);
+            else if(response.equalsIgnoreCase("1001")) // login ok
+                endLogin(true);
+            else {
+                //logout e ritorno alla home TODO
+                LogManager.getInstance().showVisualMessage(response);
+                mAuth.signOut();
+                endLogin(false);
+            }
+        };
+        Response.ErrorListener errorListener = error -> {
+            LogManager.getInstance().showVisualMessage("Errore durante l'autenticazione.");
+            mAuth.signOut();
+            endLogin(false);
+        };
+
+        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook");
+        mAuth.signInWithCredential(FacebookAuthProvider.getCredential(token.getToken()))
+                .addOnCompleteListener((Activity)context, task -> {
+                    if (task.isSuccessful()) {
+                        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:success");
+                        DataManager.getInstance().checkIfTheUserAlreadyExists(task.getResult().getUser().getEmail(), Constants.FACEBOOK, listener, errorListener);
+                    } else {
+                        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:failure");
+                        loginError = LOGIN_FAILED;
+                        endLogin(false);
+                    }
+                });
+    }
+
     public void loginWithGoogle(){
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(context.getString(R.string.default_web_client_id))
@@ -152,9 +149,6 @@ public class LoginManager {
         ((KaoriLogin)context).startActivityForResult(signInIntent, 0);
     }
 
-    /**
-     * Hande the Google response.
-     */
     public void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         LogManager.getInstance().printConsoleMessage("loginWithGoogle");
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -171,29 +165,6 @@ public class LoginManager {
                 });
     }
 
-    /**
-     * Handle the Facebook response.
-     */
-    private void firebaseAuthWithFacebook(@NonNull AccessToken token) {
-        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook");
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mAuth.signInWithCredential(credential).addOnCompleteListener((Activity)context, task -> {
-                    if (task.isSuccessful()) {
-                        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:success");
-                        endLogin(true);
-                    } else {
-                        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:failure");
-                        loginError = LOGIN_FAILED;
-                        endLogin(false);
-                    }
-                });
-    }
-
-    /**
-     * This method is called whenever the process is terminated.
-     * If successful restart the app, if not it only dismisses the
-     * dialog.
-     */
     private void endLogin(boolean isSuccess){
         if(this.facebookSignInStarted)
             facebookSignInStarted = false;

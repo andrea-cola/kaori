@@ -17,6 +17,7 @@ public class LogManager {
      */
     private static LogManager logManager;
     private static View view;
+    private static View waitView;
 
     /**
      * Private constructor.
@@ -38,11 +39,20 @@ public class LogManager {
      * Return the instance of the log manager
      * and set the Coordinator view.
      */
-    public static LogManager getInstance(View v){
+    public static LogManager getInstance(View v, View v2){
         if(logManager == null)
             logManager = new LogManager();
         view = v;
+        waitView = v2;
         return logManager;
+    }
+
+    public void showWaitView(){
+        waitView.setVisibility(View.VISIBLE);
+    }
+
+    public void hideWaitView(){
+        waitView.setVisibility(View.GONE);
     }
 
     /**

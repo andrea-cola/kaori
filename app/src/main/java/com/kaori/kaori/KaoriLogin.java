@@ -37,7 +37,7 @@ public class KaoriLogin extends AppCompatActivity {
 
         loginManager = LoginManager.getInstance(this);
         signInManager = SignInManager.getInstance(this);
-        LogManager.getInstance(findViewById(R.id.coordinator));
+        LogManager.getInstance(findViewById(R.id.coordinator), findViewById(R.id.wait_layout));
 
         entryPointFragmentCall(new LoginFragment());
     }
