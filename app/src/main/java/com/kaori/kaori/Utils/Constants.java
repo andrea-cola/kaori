@@ -35,8 +35,6 @@ public class Constants {
     public static final String INTERNAL_STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + File.separator;
     public static final String STORAGE_PATH_PROFILE_IMAGES = "profile_images/";
     public static final String STORAGE_PATH_UPLOADS = "uploads/";
-    public static final String DATABASE_PATH_UPLOADS = "uploads";
-    public static final String KAORI_SHARED_PREFERENCES = "kaori_shared";
     public static final String STORAGE_DEFAULT_PROFILE_IMAGE = "https://firebasestorage.googleapis.com/v0/b/kaori-c5a43.appspot.com/o/profile_images%2Fdefault.png?alt=media&token=643f78ef-1681-43ae-bf52-e98d173849b4";
 
     /**
@@ -50,9 +48,6 @@ public class Constants {
     public static final int GOOGLE_LOGIN_REQUEST = 0;
     public static final int GOOGLE_SIGNIN_REQUEST = 1;
     public static final int PICK_IMAGE = 2;
-    public static final int CAMERA_REQUEST = 3;
-    public static final int LOGIN = 0;
-    public static final int SIGNIN = 1;
     public static final int FACEBOOK = 10;
     public static final int GOOGLE = 11;
     public static final int NATIVE = 12;
@@ -67,20 +62,15 @@ public class Constants {
     public static final String NEW_USER_CREATION_ERROR = "Errore durante la creazione del nuovo utente.";
 
     /**
-     * Registration messages.
-     */
-    public static final String DIALOG_TITLE_CONFIRM = "Sei sicuro di procedere?";
-    public static final String DIALOG_MESSAGE_CONFIRM = "Premendo Ok completerai la tua registazione e riceverai una mail di conferma. Premendo su ANNULLA potrai modificare i tuoi dati.";
-
-    /**
      * Finder fragments constants.
      */
-    public static final String STATEMENT = "Ciao, sto studiando qui: \n";
-
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
     public static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
     public static final SimpleDateFormat dateFormat3 = new SimpleDateFormat("HH:mm", Locale.ITALY);
 
+    /**
+     * Functions.
+     */
     public static String translateResponseCode(int code){
         if(code == FACEBOOK)
             return "Facebook";

@@ -150,7 +150,7 @@ import org.json.JSONException;
                 tokenID = task.getResult().getToken();
 
             User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(),
-                    firebaseUser.getPhotoUrl().toString(), tokenID, method);
+                    firebaseUser.getPhotoUrl().toString() + "?height=500", tokenID, method);
             DataManager.getInstance().createNewUser(user, response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
         });
     }

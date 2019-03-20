@@ -50,7 +50,7 @@ public class ProfileFragment extends Fragment {
         // load profile image
         if(getContext() != null) {
             DataManager.getInstance().loadImageIntoView(hub.getUser().getPhotosUrl(), profileImageView, getContext());
-            DataManager.getInstance().loadImageIntoView(hub.getUser().getPhotosUrl(), backgroundImageView, getContext());
+            DataManager.getInstance().loadImageIntoBackgroundView(hub.getUser().getPhotosUrl(), backgroundImageView, getContext());
         }
 
         // set the text in the text view.

@@ -219,6 +219,14 @@ public class DataManager {
                     .into(imageView);
     }
 
+    public void loadImageIntoBackgroundView(Object uri, ImageView imageView, Context context) {
+        if(context != null)
+            Glide.with(context)
+                    .load(uri)
+                    .apply(glideRequestOptionsCenter)
+                    .into(imageView);
+    }
+
     private void makeCustomPostRequest(final Uri url, final Response.Listener<String> listener, final Response.ErrorListener errorListener, Object... params){
         LogManager.getInstance().printConsoleMessage("Post -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(), listener, errorListener) {
