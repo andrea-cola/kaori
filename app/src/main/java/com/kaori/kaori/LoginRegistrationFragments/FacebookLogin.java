@@ -10,6 +10,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -81,7 +82,7 @@ import com.kaori.kaori.Utils.LogManager;
                 .addOnCompleteListener((Activity)context, task -> {
                     if (task.isSuccessful()) {
                         LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:success");
-                        validateLogin(task.getResult().getUser(), Constants.FACEBOOK);
+                        validateLogin(task.getResult().getUser());
                     } else {
                         LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:failure");
                         //loginError = LOGIN_FAILED;
@@ -90,25 +91,31 @@ import com.kaori.kaori.Utils.LogManager;
                 });
     }
 
-    private void validateLogin(FirebaseUser firebaseUser, int method){
+    private void validateLogin(FirebaseUser firebaseUser){
         Response.Listener<String> listener = response -> {
-            if(response.equalsIgnoreCase("1000")) {
+            int code = Integer.parseInt(response);
+            if(code == Constants.USER_NOT_EXISTS) {
                 LogManager.getInstance().printConsoleMessage("L'utente va registrato");
-                registerNewUser(firebaseUser, method);
+                registerNewUser(firebaseUser, Constants.FACEBOOK);
             }
-            else if(response.equalsIgnoreCase("1001")) {
+            else if(code == Constants.USER_EXISTS_AND_CORRECT_METHOD) {
                 LogManager.getInstance().printConsoleMessage("Login effettuato.");
+                endLogin(true);
             }
             else {
-                //logout e ritorno alla home TODO
+                //logout e ritorno alla home
+                // TODO: dire all'utente che metodo ha usato la volta precedente,
+                // TODO: basta confrontare il code
                 LogManager.getInstance().printConsoleMessage(response);
                 FirebaseAuth.getInstance().signOut();
+                endLogin(false);
             }
         };
 
         Response.ErrorListener errorListener = error -> {
-            LogManager.getInstance().showVisualMessage("Errore durante l'autenticazione.");
+            LogManager.getInstance().showVisualMessage("Errore durante l'autenticazione. " + error);
             FirebaseAuth.getInstance().signOut();
+            LoginManager.getInstance().logOut();
             endLogin(false);
         };
 
@@ -128,6 +135,7 @@ import com.kaori.kaori.Utils.LogManager;
         });
     }
 
+    // TODO: sistemare mettendo i messaggi completi per fare capire all'utente cosa succede.
     private void endLogin(boolean isSuccess){
         if(this.facebookSignInStarted)
             facebookSignInStarted = false;

@@ -56,6 +56,8 @@ public class Constants {
     public static final int FACEBOOK = 10;
     public static final int GOOGLE = 11;
     public static final int NATIVE = 12;
+    public static final int USER_NOT_EXISTS = 1000;
+    public static final int USER_EXISTS_AND_CORRECT_METHOD = 1001;
 
     /**
      * Registration messages.

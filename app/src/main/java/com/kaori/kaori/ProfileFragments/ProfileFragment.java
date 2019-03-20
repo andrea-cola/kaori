@@ -15,11 +15,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.KaoriApp;
 import com.kaori.kaori.R;
+import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 public class ProfileFragment extends Fragment {
 
@@ -58,8 +61,17 @@ public class ProfileFragment extends Fragment {
 
         // add click listener to logout button
         logout.setOnClickListener(view12 -> {
-            DataManager.getInstance().clean(getActivity());
             FirebaseAuth.getInstance().signOut();
+
+            // logout also from facebook
+            if(DataManager.getInstance().getUser().getAuthMethod() == Constants.FACEBOOK) {
+                LogManager.getInstance().printConsoleMessage("Facebook logout");
+                LoginManager.getInstance().logOut();
+            }
+
+            // flush data manager
+            DataManager.getInstance().clean(getActivity());
+
             if(getActivity() != null && isAdded()) {
                 startActivity(new Intent(getActivity(), Kaori.class));
                 getActivity().finish();
