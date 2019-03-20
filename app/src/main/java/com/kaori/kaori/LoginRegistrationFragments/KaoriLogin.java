@@ -1,4 +1,4 @@
-package com.kaori.kaori;
+package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
-import com.kaori.kaori.LoginRegistrationFragments.LoginFragment;
+import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
 import com.kaori.kaori.Utils.LoginManager;
@@ -57,12 +57,8 @@ public class KaoriLogin extends AppCompatActivity {
             }
         else if (requestCode == Constants.GOOGLE_SIGNIN_REQUEST)
             signInManager.handleGoogleSignIn(GoogleSignIn.getSignedInAccountFromIntent(data));
-        else if (signInManager.getSignInFacebookStarted())
-            signInManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
-        else if (loginManager.getSignInFacebookStarted())
-            loginManager.getCallbackManager().onActivityResult(requestCode, resultCode, data);
         else
-            super.onActivityResult(requestCode, resultCode, data);
+            FacebookLogin.getInstance().getCallbackManager().onActivityResult(requestCode, resultCode, data);
     }
 
     /**

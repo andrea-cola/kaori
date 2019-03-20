@@ -27,7 +27,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.kaori.kaori.Kaori;
-import com.kaori.kaori.KaoriLogin;
+import com.kaori.kaori.LoginRegistrationFragments.KaoriLogin;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 

@@ -1,6 +1,7 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,7 @@ public class LoginFragment extends Fragment {
 
     private LoginButton buttonFacebookLogin;
     private LoginManager loginManager;
+    private int method;
 
     @Nullable
     @Override
@@ -83,11 +85,20 @@ public class LoginFragment extends Fragment {
     }
 
     private void facebookLogin() {
-        loginManager.loginWithFacebook(buttonFacebookLogin);
+        method = Constants.FACEBOOK;
+        FacebookLogin.initialize(getContext(), buttonFacebookLogin);
+        FacebookLogin.getInstance().loginWithFacebook();
+        //loginManager.loginWithFacebook(buttonFacebookLogin);
     }
 
     private void googleLogin() {
-
+        loginManager.loginWithGoogle();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LogManager.getInstance().printConsoleMessage("entrati in LoginFragment");
+        if(method == Constants.FACEBOOK)
+            FacebookLogin.getInstance().getCallbackManager().onActivityResult(requestCode, resultCode, data);
+    }
 }
