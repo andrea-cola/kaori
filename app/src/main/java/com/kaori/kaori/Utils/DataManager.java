@@ -51,6 +51,7 @@ public class DataManager {
     private final static String URL_DOC = "document/";
     private final static String URL_POSITION = "position/";
     private final static String URL_CHECK = "checkAuth/";
+    private final static String URL_PROVIDER_VALIDATION = "providerValidation/";
 
     /**
      * TODO: da mettere in strings.xml
@@ -379,8 +380,13 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), list, view, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
     }
 
-    public void checkIfTheUserAlreadyExists(String email, int method, Response.Listener<String> listener, Response.ErrorListener errorListener){
-        String url = urlGenerator(BASE_URL + URL_CHECK, email, String.valueOf(method));
+    public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email){
+        String url = urlGenerator(BASE_URL + URL_CHECK, email);
+        makeGetRequest(Uri.parse(url), listener, errorListener);
+    }
+
+    public void createValidationProviderRequest(Response.Listener<String> listener, Response.ErrorListener errorListener, String email, int method){
+        String url = urlGenerator(BASE_URL + URL_PROVIDER_VALIDATION, email, String.valueOf(method));
         makeGetRequest(Uri.parse(url), listener, errorListener);
     }
 

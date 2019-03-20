@@ -13,19 +13,11 @@ import com.google.android.gms.common.api.ApiException;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
-import com.kaori.kaori.Utils.LoginManager;
-import com.kaori.kaori.Utils.SignInManager;
 
 /**
  * Activity responsible for the Login and Signin.
  */
 public class KaoriLogin extends AppCompatActivity {
-
-    /**
-     * Variables.
-     */
-    private LoginManager loginManager;
-    private SignInManager signInManager;
 
     /**
      * OnCreate override.
@@ -34,9 +26,6 @@ public class KaoriLogin extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kaorilogin);
-
-        loginManager = LoginManager.getInstance(this);
-        signInManager = SignInManager.getInstance(this);
         LogManager.getInstance(findViewById(R.id.coordinator), findViewById(R.id.wait_layout));
 
         entryPointFragmentCall(new LoginFragment());
@@ -51,12 +40,10 @@ public class KaoriLogin extends AppCompatActivity {
         if (requestCode == Constants.GOOGLE_LOGIN_REQUEST)
             try {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);
-                loginManager.firebaseAuthWithGoogle(account);
+                GoogleLogin.getInstance().validateProvider(account);
             } catch (ApiException e) {
                 LogManager.getInstance().showVisualError(e, getString(R.string.google_error));
             }
-        else if (requestCode == Constants.GOOGLE_SIGNIN_REQUEST)
-            signInManager.handleGoogleSignIn(GoogleSignIn.getSignedInAccountFromIntent(data));
         else
             FacebookLogin.getInstance().getCallbackManager().onActivityResult(requestCode, resultCode, data);
     }

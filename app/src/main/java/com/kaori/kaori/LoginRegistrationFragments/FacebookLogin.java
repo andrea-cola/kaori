@@ -3,6 +3,7 @@ package com.kaori.kaori.LoginRegistrationFragments;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 
 import com.android.volley.Response;
@@ -10,6 +11,7 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -23,13 +25,14 @@ import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
+import org.json.JSONException;
+
 /*package-private*/ class FacebookLogin {
 
-    private boolean facebookSignInStarted;
+    private static FacebookLogin instance;
     private CallbackManager mCallbackManager;
     private Context context;
     private LoginButton loginButton;
-    private static FacebookLogin instance;
 
     private FacebookLogin(Context context, LoginButton loginButton) {
         this.context = context;
@@ -49,114 +52,125 @@ import com.kaori.kaori.Utils.LogManager;
     }
 
     /*package-private*/ void loginWithFacebook(){
-        LogManager.getInstance().printConsoleMessage("loginWithFacebook");
-        this.facebookSignInStarted = true;
+        LogManager.getInstance().printConsoleMessage("Facebook login -> step 1");
         mCallbackManager = CallbackManager.Factory.create();
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                LogManager.getInstance().printConsoleMessage("loginWithFacebook:success");
-                firebaseAuthWithFacebook(loginResult.getAccessToken());
+                getFacebookEmail(loginResult);
             }
 
             @Override
             public void onCancel() {
-                LogManager.getInstance().printConsoleMessage("loginWithFacebook:cancel");
-                //loginError = LOGIN_FAILED;
-                endLogin(false);
+                endLogin(false, null);
             }
 
             @Override
             public void onError(FacebookException error) {
-                LogManager.getInstance().printConsoleMessage("loginWithFacebook:error");
-                //loginError = LOGIN_FAILED;
-                endLogin(false);
+                endLogin(false, Constants.FACEBOOK_ERROR);
             }
         });
         loginButton.performClick();
     }
 
+    private void getFacebookEmail(LoginResult loginResult){
+        LogManager.getInstance().printConsoleMessage("Facebook login -> step 2");
+        GraphRequest request = GraphRequest.newMeRequest(
+                loginResult.getAccessToken(),
+                (object, response) -> {
+                    try {
+                        validateProvider(object.getString("email"), loginResult.getAccessToken());
+                    } catch (JSONException e) {
+                        endLogin(false, Constants.GENERIC_ERROR);
+                    }
+                });
+        Bundle params = new Bundle();
+        params.putString("fields", "email");
+        request.setParameters(params);
+        request.executeAsync();
+        request.executeAsync();
+    }
+
+    private void validateProvider(String email, AccessToken token) {
+        LogManager.getInstance().printConsoleMessage("Facebook login -> step 3");
+        DataManager.getInstance().createValidationProviderRequest(
+                response -> {
+                    if(Integer.parseInt(response) == 1)
+                        firebaseAuthWithFacebook(token);
+                    else {
+                        LoginManager.getInstance().logOut();
+                        endLogin(false, Constants.WRONG_PROVIDER + Constants.translateResponseCode(Integer.parseInt(response)));
+                    }
+                },
+                error -> {
+                    LoginManager.getInstance().logOut();
+                    endLogin(false, Constants.GENERIC_ERROR);
+                },
+                email,
+                Constants.FACEBOOK);
+    }
+
     private void firebaseAuthWithFacebook(AccessToken token) {
-        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook");
+        LogManager.getInstance().printConsoleMessage("Facebook login -> step 4");
         FirebaseAuth.getInstance().signInWithCredential(FacebookAuthProvider.getCredential(token.getToken()))
                 .addOnCompleteListener((Activity)context, task -> {
-                    if (task.isSuccessful()) {
-                        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:success");
+                    if (task.isSuccessful() && task.getResult() != null)
                         validateLogin(task.getResult().getUser());
-                    } else {
-                        LogManager.getInstance().printConsoleMessage("firebaseAuthWithFacebook:failure");
-                        //loginError = LOGIN_FAILED;
-                        endLogin(false);
+                    else {
+                        LoginManager.getInstance().logOut();
+                        FirebaseAuth.getInstance().signOut();
+                        endLogin(false, Constants.GENERIC_ERROR);
                     }
                 });
     }
 
     private void validateLogin(FirebaseUser firebaseUser){
+        LogManager.getInstance().printConsoleMessage("Facebook login -> step 5");
         Response.Listener<String> listener = response -> {
-            int code = Integer.parseInt(response);
-            if(code == Constants.USER_NOT_EXISTS) {
-                LogManager.getInstance().printConsoleMessage("L'utente va registrato");
-                registerNewUser(firebaseUser, Constants.FACEBOOK);
-            }
-            else if(code == Constants.USER_EXISTS_AND_CORRECT_METHOD) {
-                LogManager.getInstance().printConsoleMessage("Login effettuato.");
-                endLogin(true);
-            }
-            else {
-                //logout e ritorno alla home
-                // TODO: dire all'utente che metodo ha usato la volta precedente,
-                // TODO: basta confrontare il code
-                LogManager.getInstance().printConsoleMessage(response);
-                FirebaseAuth.getInstance().signOut();
-                endLogin(false);
-            }
+            if(Integer.parseInt(response) == Constants.USER_EXISTS)
+                endLogin(true, null);
+            else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
+                registerNewUser(firebaseUser, Constants.GOOGLE);
         };
 
         Response.ErrorListener errorListener = error -> {
-            LogManager.getInstance().showVisualMessage("Errore durante l'autenticazione. " + error);
-            FirebaseAuth.getInstance().signOut();
             LoginManager.getInstance().logOut();
-            endLogin(false);
+            FirebaseAuth.getInstance().signOut();
+            endLogin(false, Constants.GENERIC_ERROR);
         };
 
-        DataManager.getInstance().checkIfTheUserAlreadyExists(firebaseUser.getEmail(), Constants.FACEBOOK, listener, errorListener);
+        DataManager.getInstance().checkIfTheUserAlreadyExists(listener, errorListener, firebaseUser.getEmail());
     }
 
     private void registerNewUser(FirebaseUser firebaseUser, int method) {
+        LogManager.getInstance().printConsoleMessage("Facebook login -> step 5.1");
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            LogManager.getInstance().printConsoleMessage("Getting the token...");
             String tokenID = "";
-            if (task.isSuccessful())
+            if (task.isSuccessful() && task.getResult() != null)
                 tokenID = task.getResult().getToken();
 
             User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(),
                     firebaseUser.getPhotoUrl().toString(), tokenID, method);
-            DataManager.getInstance().createNewUser(user, response1 -> endLogin(true), error -> endLogin(false));
+            DataManager.getInstance().createNewUser(user, response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
         });
     }
 
-    // TODO: sistemare mettendo i messaggi completi per fare capire all'utente cosa succede.
-    private void endLogin(boolean isSuccess){
-        if(this.facebookSignInStarted)
-            facebookSignInStarted = false;
+    private void endLogin(boolean isSuccess, final String message){
+        if (isSuccess)
+            invokeActivity();
+        else {
+            if(message != null)
+                LogManager.getInstance().showVisualMessage(message);
+            LogManager.getInstance().hideWaitView();
+        }
+    }
 
-        if (isSuccess && context != null) {
-            FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-                if (!task.isSuccessful()) {
-                    LogManager.getInstance().printConsoleError(task.getException().getMessage() + "getInstanceId failed");
-                    return;
-                }
-                context.startActivity(new Intent(context, Kaori.class));
-                ((Activity) context).finish();
-            });
-        }
-        else if(!isSuccess && context != null) {
-            LogManager.getInstance().showVisualError(null, "Errore nel FacebookLogin");
-            (new Handler()).postDelayed(() -> {
-                context.startActivity(new Intent(context, KaoriLogin.class));
-                ((Activity)context).finish();
-            }, 3000);
-        }
+    private void invokeActivity(){
+        LogManager.getInstance().showVisualMessage(Constants.LOGIN_SUCCESS);
+        (new Handler()).postDelayed(() -> {
+            context.startActivity(new Intent(context, Kaori.class));
+            ((Activity)context).finish();
+        }, 3000);
     }
 
 }

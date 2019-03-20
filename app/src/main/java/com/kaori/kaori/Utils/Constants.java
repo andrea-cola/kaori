@@ -56,8 +56,15 @@ public class Constants {
     public static final int FACEBOOK = 10;
     public static final int GOOGLE = 11;
     public static final int NATIVE = 12;
-    public static final int USER_NOT_EXISTS = 1000;
-    public static final int USER_EXISTS_AND_CORRECT_METHOD = 1001;
+    public static final int USER_NOT_EXISTS = 0;
+    public static final int USER_EXISTS= 1;
+    public static final String WRONG_PROVIDER = "Login fallito. L'ultima volta hai usato ";
+    public static final String GENERIC_ERROR = "Impossibile contattare il server";
+    public static final String WRONG_CREDENTIALS = "Le tue credenziali sono errate";
+    public static final String USER_NOT_EXISTS_ERROR = "Non sei registrato";
+    public static final String LOGIN_SUCCESS = "Login effettuato";
+    public static final String FACEBOOK_ERROR = "Impossibile contattare Facebook.";
+    public static final String NEW_USER_CREATION_ERROR = "Errore durante la creazione del nuovo utente.";
 
     /**
      * Registration messages.
@@ -73,5 +80,14 @@ public class Constants {
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ITALY);
     public static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
     public static final SimpleDateFormat dateFormat3 = new SimpleDateFormat("HH:mm", Locale.ITALY);
+
+    public static String translateResponseCode(int code){
+        if(code == FACEBOOK)
+            return "Facebook";
+        else if(code == GOOGLE)
+            return "Google";
+        else
+            return "email e password";
+    }
 
 }

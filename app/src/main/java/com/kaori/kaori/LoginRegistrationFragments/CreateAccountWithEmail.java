@@ -130,7 +130,7 @@ public class CreateAccountWithEmail extends Fragment {
             LogManager.getInstance().showVisualMessage("Errore nella creazione dell'utente.");
         };
 
-        DataManager.getInstance().checkIfTheUserAlreadyExists(mail, Constants.NATIVE, listener, errorListener);
+        DataManager.getInstance().checkIfTheUserAlreadyExists(listener, errorListener, mail);
     }
 
     @Override

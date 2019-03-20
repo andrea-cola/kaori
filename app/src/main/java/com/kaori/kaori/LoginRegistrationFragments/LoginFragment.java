@@ -1,7 +1,6 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,31 +14,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.Response;
 import com.facebook.login.widget.LoginButton;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
-import com.kaori.kaori.Utils.LoginManager;
 
 public class LoginFragment extends Fragment {
 
-    private LoginButton buttonFacebookLogin;
-    private LoginManager loginManager;
-    private int method;
+    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.login, container, false);
-        loginManager = LoginManager.getInstance();
-
-        // get true facebook button and setup the button.
-        buttonFacebookLogin = view.findViewById(R.id.button_facebook);
-        buttonFacebookLogin.setReadPermissions("email", "public_profile");
-
-        // get views from the layout.
+        view = inflater.inflate(R.layout.login, container, false);
         Button mNative = view.findViewById(R.id.button);
         TextView registration = view.findViewById(R.id.registration);
         ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
@@ -47,8 +33,7 @@ public class LoginFragment extends Fragment {
         EditText mUsername = view.findViewById(R.id.username);
         EditText mPassword = view.findViewById(R.id.password);
 
-        registration.setOnClickListener(view12 -> invokeNextFragment(new CreateAccountWithEmail()));
-
+        registration.setOnClickListener(v -> invokeNextFragment(new CreateAccountWithEmail()));
         mNative.setOnClickListener(v -> nativeLogin(mUsername.getText().toString(), mPassword.getText().toString()));
         mFacebook.setOnClickListener(v -> facebookLogin());
         mGoogle.setOnClickListener(v -> googleLogin());
@@ -67,38 +52,24 @@ public class LoginFragment extends Fragment {
     }
 
     private void nativeLogin(String mail, String password) {
-        Response.Listener<String> listener = response -> {
-            if(response.equalsIgnoreCase("1000"))
-                LogManager.getInstance().showVisualMessage("L'utente non esiste, devi registrarti");
-            else if(response.equalsIgnoreCase("1001"))
-                loginManager.loginWithEmail(mail, password);
-            else
-                LogManager.getInstance().showVisualMessage("Hai usato un metodo diverso per la registrazione.");
-        };
-
-        Response.ErrorListener errorListener = error -> {
-            LogManager.getInstance().printConsoleError(error.toString());
-            LogManager.getInstance().showVisualMessage("Errore nel login dell'utente.");
-        };
-
-        DataManager.getInstance().checkIfTheUserAlreadyExists(mail, Constants.NATIVE, listener, errorListener);
+        LogManager.getInstance().showWaitView();
+        NativeLogin.initialize(getContext());
+        NativeLogin.getInstance().validateProvider(mail, password);
     }
 
     private void facebookLogin() {
-        method = Constants.FACEBOOK;
+        LoginButton buttonFacebookLogin = view.findViewById(R.id.button_facebook);
+        buttonFacebookLogin.setReadPermissions("email", "public_profile");
+
+        LogManager.getInstance().showWaitView();
         FacebookLogin.initialize(getContext(), buttonFacebookLogin);
         FacebookLogin.getInstance().loginWithFacebook();
-        //loginManager.loginWithFacebook(buttonFacebookLogin);
     }
 
     private void googleLogin() {
-        loginManager.loginWithGoogle();
+        LogManager.getInstance().showWaitView();
+        GoogleLogin.initialize(getContext());
+        GoogleLogin.getInstance().loginWithGoogle();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LogManager.getInstance().printConsoleMessage("entrati in LoginFragment");
-        if(method == Constants.FACEBOOK)
-            FacebookLogin.getInstance().getCallbackManager().onActivityResult(requestCode, resultCode, data);
-    }
 }
