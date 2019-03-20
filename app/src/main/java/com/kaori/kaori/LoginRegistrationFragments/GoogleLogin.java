@@ -86,7 +86,7 @@ public class GoogleLogin {
         Response.Listener<String> listener = response -> {
             LogManager.getInstance().printConsoleMessage(response);
             if(Integer.parseInt(response) == Constants.USER_EXISTS)
-                endLogin(true, null);
+                updateTokenID(firebaseUser.getUid());
             else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
                 registerNewUser(firebaseUser, Constants.GOOGLE);
             else
@@ -129,6 +129,16 @@ public class GoogleLogin {
             context.startActivity(new Intent(context, Kaori.class));
             ((Activity)context).finish();
         }, 3000);
+    }
+
+    private void updateTokenID(String uid){
+        LogManager.getInstance().printConsoleMessage("Google login -> update token");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+            else
+                endLogin(true, null);
+        });
     }
 
 }

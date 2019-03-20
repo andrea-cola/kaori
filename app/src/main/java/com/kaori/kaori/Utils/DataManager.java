@@ -52,6 +52,7 @@ public class DataManager {
     private final static String URL_POSITION = "position/";
     private final static String URL_CHECK = "checkAuth/";
     private final static String URL_PROVIDER_VALIDATION = "providerValidation/";
+    private final static String URL_TOKEN = "token/";
 
     /**
      * TODO: da mettere in strings.xml
@@ -420,6 +421,11 @@ public class DataManager {
     public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener){
         String url = BASE_URL + URL_USER;
         makeCustomPostRequest(Uri.parse(url), listener, errorListener, user);
+    }
+
+    public void postToken(final String uid, final String token, Response.Listener<String> listener, Response.ErrorListener errorListener){
+        String url = BASE_URL + URL_TOKEN;
+        makeCustomPostRequest(Uri.parse(url), listener, errorListener, uid, token);
     }
 
     /* ------------------------------------------------------------------------------------------------------ */

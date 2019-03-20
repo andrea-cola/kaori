@@ -58,8 +58,9 @@ public class Constants {
     public static final String WRONG_CREDENTIALS = "Le tue credenziali sono errate";
     public static final String USER_NOT_EXISTS_ERROR = "Non sei registrato";
     public static final String LOGIN_SUCCESS = "Login effettuato";
-    public static final String FACEBOOK_ERROR = "Impossibile contattare Facebook.";
-    public static final String NEW_USER_CREATION_ERROR = "Errore durante la creazione del nuovo utente.";
+    public static final String FACEBOOK_ERROR = "Impossibile contattare Facebook";
+    public static final String NEW_USER_CREATION_ERROR = "Errore durante la creazione del nuovo utente";
+    public static final String USER_ALREADY_EXISTS = "L'utente è già esistente";
 
     /**
      * Finder fragments constants.

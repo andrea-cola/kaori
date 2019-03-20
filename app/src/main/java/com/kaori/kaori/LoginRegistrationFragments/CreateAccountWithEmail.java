@@ -13,14 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.android.volley.Response;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
-import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.ImagePicker;
 import com.kaori.kaori.Utils.LogManager;
-import com.kaori.kaori.Utils.SignInManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -112,25 +109,13 @@ public class CreateAccountWithEmail extends Fragment {
     }
 
     private void updateUserAndSignin(final String name, final String mail, final String password) {
-        view.findViewById(R.id.wait_layout).setVisibility(View.VISIBLE);
+        LogManager.getInstance().showWaitView();
         User user = new User();
         user.setName(name);
         user.setEmail(mail);
         user.setAuthMethod(Constants.NATIVE);
-
-        Response.Listener<String> listener = response -> {
-            LogManager.getInstance().showVisualMessage(response);
-            if(response.equalsIgnoreCase("1000"))
-                SignInManager.getInstance().signInWithEmail(user, password, image);
-            else
-                LogManager.getInstance().showVisualMessage("L'utente esiste già.");
-        };
-
-        Response.ErrorListener errorListener = error -> {
-            LogManager.getInstance().showVisualMessage("Errore nella creazione dell'utente.");
-        };
-
-        DataManager.getInstance().checkIfTheUserAlreadyExists(listener, errorListener, mail);
+        SignInManager.initialize(getContext());
+        SignInManager.getInstance().validateLogin(user, password, image);
     }
 
     @Override
