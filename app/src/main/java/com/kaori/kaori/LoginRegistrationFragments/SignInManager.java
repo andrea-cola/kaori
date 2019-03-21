@@ -42,7 +42,8 @@ class SignInManager {
         return instance;
     }
 
-    void validateLogin(User user, String password, byte[] bitmap){
+    void validateLogin(User user, String password, byte[] bitmap) {
+        LogManager.getInstance().printConsoleMessage("Sign in -> step 1");
         DataManager.getInstance().checkIfTheUserAlreadyExists(
                 response -> {
                     if(Integer.parseInt(response) == Constants.USER_EXISTS)
@@ -54,7 +55,8 @@ class SignInManager {
                 user.getEmail());
     }
 
-    private void signInWithEmail(User user, String password, byte[] bitmap){
+    private void signInWithEmail(User user, String password, byte[] bitmap) {
+        LogManager.getInstance().printConsoleMessage("Sign in -> step 2");
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
             if (task.isSuccessful())
                 user.addTokenID(task.getResult().getToken());
@@ -63,6 +65,7 @@ class SignInManager {
     }
 
     private void authWithEmail(User user, String password, byte[] profileImageBitmap) {
+        LogManager.getInstance().printConsoleMessage("Sign in -> step 3");
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(user.getEmail(), password).addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     user.setUid(task.getResult().getUser().getUid());
@@ -74,7 +77,8 @@ class SignInManager {
             });
     }
 
-    private void uploadNewUser(User user, byte[] profileImageBitmap){
+    private void uploadNewUser(User user, byte[] profileImageBitmap) {
+        LogManager.getInstance().printConsoleMessage("Sign in -> step 4");
         final StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
         mStorage.putBytes(profileImageBitmap).addOnSuccessListener(
                 taskSnapshot -> mStorage.getDownloadUrl().addOnSuccessListener(uri -> {
@@ -87,6 +91,7 @@ class SignInManager {
                 });
     }
     private void createNewUser(User user) {
+        LogManager.getInstance().printConsoleMessage("Sign in -> step 5");
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
             if (task.isSuccessful())
                 user.addTokenID(task.getResult().getToken());
@@ -94,7 +99,7 @@ class SignInManager {
         });
     }
 
-    private void updateUserDatabase(User user){
+    private void updateUserDatabase(User user) {
         Response.Listener<String> listener = response -> {
             if(response.equalsIgnoreCase("1"))
                 endSignIn(true, null);
@@ -107,7 +112,7 @@ class SignInManager {
         DataManager.getInstance().createNewUser(user, listener, errorListener);
     }
 
-    private void endSignIn(boolean isSuccess, final String message){
+    private void endSignIn(boolean isSuccess, final String message) {
         if (isSuccess)
             invokeActivity();
         else {
