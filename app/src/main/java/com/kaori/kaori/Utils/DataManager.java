@@ -93,6 +93,10 @@ public class DataManager {
     private RequestOptions glideRequestOptionsCenter;
     private RequestOptions glideRequestOptionsCircle;
 
+    /* ------------------------------------------------------------------------------------------------------ */
+    /* SINGLETON CONSTRUCTORS ------------------------------------------------------------------------------- */
+    /* ------------------------------------------------------------------------------------------------------ */
+
     private DataManager(Context context) {
         user = new User();
         allExams = new ArrayList<>();
@@ -121,10 +125,6 @@ public class DataManager {
         queue = Volley.newRequestQueue(context);
     }
 
-    /* ------------------------------------------------------------------------------------------------------ */
-    /* SINGLETON CONSTRUCTORS ------------------------------------------------------------------------------- */
-    /* ------------------------------------------------------------------------------------------------------ */
-
     public static DataManager getInstance(){
         return dataManager;
     }
@@ -152,7 +152,6 @@ public class DataManager {
         miniUser.setName(user.getName());
         miniUser.setUid(user.getUid());
         miniUser.setThumbnail(user.getPhotosUrl());
-        miniUser.setTokenID(user.getTokenIDs());
         return miniUser;
     }
 

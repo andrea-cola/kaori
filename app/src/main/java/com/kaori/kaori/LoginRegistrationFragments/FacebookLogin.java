@@ -33,10 +33,12 @@ import org.json.JSONException;
     private CallbackManager mCallbackManager;
     private Context context;
     private LoginButton loginButton;
+    private boolean facebookFlag;
 
     private FacebookLogin(Context context, LoginButton loginButton) {
         this.context = context;
         this.loginButton = loginButton;
+        facebookFlag = false;
     }
 
     /*package-private*/ static void initialize(Context context, LoginButton loginButton){
@@ -52,6 +54,7 @@ import org.json.JSONException;
     }
 
     /*package-private*/ void loginWithFacebook(){
+        facebookFlag = true;
         LogManager.getInstance().printConsoleMessage("Facebook login -> step 1");
         mCallbackManager = CallbackManager.Factory.create();
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
@@ -159,6 +162,7 @@ import org.json.JSONException;
         if (isSuccess)
             invokeActivity();
         else {
+            facebookFlag = false;
             if(message != null)
                 LogManager.getInstance().showVisualMessage(message);
             LogManager.getInstance().hideWaitView();
@@ -173,4 +177,7 @@ import org.json.JSONException;
         }, 3000);
     }
 
+    public boolean getFacebookFlag() {
+        return facebookFlag;
+    }
 }

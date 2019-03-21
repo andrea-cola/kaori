@@ -57,7 +57,7 @@ public class CreateAccountWithEmail extends Fragment {
             validFields[i] = false;
 
         // instantiate the image picker.
-        imagePicker = new ImagePicker(getActivity(), this);
+        imagePicker = new ImagePicker(this);
 
         // add the action to FAB and to button
         view.findViewById(R.id.floatingActionButton).setOnClickListener(view1 -> imagePicker.showChoicePopup());

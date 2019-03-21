@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
@@ -33,15 +32,8 @@ public class FinderFragment extends Fragment {
      */
     private final String BACK_STATE_NAME = getClass().getName();
 
-    /**
-     * Variables
-     */
-    private List<Position> positions;
-    private FirebaseFirestore db;
-    private RecyclerAdapter adapter;
     private RecyclerView recyclerView;
     private Context context;
-    private Date now;
     private View view;
 
     @Nullable
@@ -49,9 +41,8 @@ public class FinderFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.finder_fragment_layout, container, false);
 
-        db = FirebaseFirestore.getInstance();
         context = getContext();
-        positions = new ArrayList<>();
+        List<Position> positions = new ArrayList<>();
 
         view.findViewById(R.id.positionFAB).setOnClickListener(v -> invokeFragment(new SharePositionFragment()));
 
@@ -59,23 +50,19 @@ public class FinderFragment extends Fragment {
         today.set(Calendar.HOUR_OF_DAY, 0);
         today.set(Calendar.MINUTE, 0);
         today.set(Calendar.SECOND, 0);
-        now = today.getTime();
+        Date now = today.getTime();
 
         recyclerView = view.findViewById(R.id.user_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new RecyclerAdapter(positions);
+        RecyclerAdapter adapter = new RecyclerAdapter(positions);
         recyclerView.setAdapter(adapter);
 
         ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
 
-        loadActivePositions();
+        DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
 
         return view;
-    }
-
-    private void loadActivePositions(){
-        DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
     }
 
     /**

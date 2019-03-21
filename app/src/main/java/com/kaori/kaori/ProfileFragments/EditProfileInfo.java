@@ -70,7 +70,7 @@ public class EditProfileInfo extends Fragment {
 
         mButtonOk.setOnClickListener(v -> saveData());
         floatingActionButton.setOnClickListener(view -> {
-            imagePicker = new ImagePicker(getActivity(), this);
+            imagePicker = new ImagePicker(this);
             imagePicker.showChoicePopup();
         });
 

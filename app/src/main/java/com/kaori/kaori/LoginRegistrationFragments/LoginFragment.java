@@ -33,6 +33,14 @@ public class LoginFragment extends Fragment {
         EditText mUsername = view.findViewById(R.id.username);
         EditText mPassword = view.findViewById(R.id.password);
 
+        LoginButton buttonFacebookLogin = view.findViewById(R.id.button_facebook);
+        buttonFacebookLogin.setReadPermissions("email", "public_profile");
+        FacebookLogin.initialize(getContext(), buttonFacebookLogin);
+
+        GoogleLogin.initialize(getContext());
+
+        NativeLogin.initialize(getContext());
+
         registration.setOnClickListener(v -> invokeNextFragment(new CreateAccountWithEmail()));
         mNative.setOnClickListener(v -> nativeLogin(mUsername.getText().toString(), mPassword.getText().toString()));
         mFacebook.setOnClickListener(v -> facebookLogin());
@@ -53,22 +61,16 @@ public class LoginFragment extends Fragment {
 
     private void nativeLogin(String mail, String password) {
         LogManager.getInstance().showWaitView();
-        NativeLogin.initialize(getContext());
         NativeLogin.getInstance().validateProvider(mail, password);
     }
 
     private void facebookLogin() {
-        LoginButton buttonFacebookLogin = view.findViewById(R.id.button_facebook);
-        buttonFacebookLogin.setReadPermissions("email", "public_profile");
-
         LogManager.getInstance().showWaitView();
-        FacebookLogin.initialize(getContext(), buttonFacebookLogin);
         FacebookLogin.getInstance().loginWithFacebook();
     }
 
     private void googleLogin() {
         LogManager.getInstance().showWaitView();
-        GoogleLogin.initialize(getContext());
         GoogleLogin.getInstance().loginWithGoogle();
     }
 

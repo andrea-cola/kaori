@@ -1,19 +1,12 @@
 package com.kaori.kaori.Model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MiniUser implements Serializable  {
 
     private String uid;
-    private List<String> tokenID;
     private String name;
     private String thumbnail;
-
-    public MiniUser(){
-        tokenID = new ArrayList<>();
-    }
 
     public String getName() {
         return name;
@@ -39,11 +32,4 @@ public class MiniUser implements Serializable  {
         this.uid = uid;
     }
 
-    public List<String> getTokenID() {
-        return tokenID;
-    }
-
-    public void setTokenID(List<String> tokenID) {
-        this.tokenID = tokenID;
-    }
 }

@@ -45,7 +45,6 @@ public class ChatListFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private MiniUser otherUser;
     private View view;
-    private Fragment fragment;
 
     @Nullable
     @Override
@@ -55,8 +54,6 @@ public class ChatListFragment extends Fragment {
 
         if(getActivity() != null)
             ((KaoriChat)getActivity()).getSupportActionBar().show();
-
-        fragment = this;
 
         if(otherUser != null) {
             ChatFragment chatFragment = new ChatFragment();

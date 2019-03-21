@@ -32,11 +32,9 @@
 
     <include
         layout="@layout/wait_layout"
-        android:visibility="visible" />
-
-    <include
-        layout="@layout/empty_view"
         android:visibility="gone" />
+
+    <include layout="@layout/empty_view" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/positionFAB"
@@ -48,7 +46,6 @@
         android:focusable="true"
         android:scaleType="center"
         android:tint="@color/white"
-        android:visibility="gone"
         app:backgroundTint="@color/colorPrimary"
         app:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"

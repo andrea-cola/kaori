@@ -19,7 +19,7 @@ import com.kaori.kaori.Utils.LogManager;
 /**
  * This class handles the login and the signInWithEmail of the user in the app.
  */
-public class SignInManager {
+class SignInManager {
 
     /**
      * Variables.
