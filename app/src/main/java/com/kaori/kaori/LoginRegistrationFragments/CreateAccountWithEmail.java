@@ -114,8 +114,8 @@ public class CreateAccountWithEmail extends Fragment {
         user.setName(name);
         user.setEmail(mail);
         user.setAuthMethod(Constants.NATIVE);
-        SignInManager.initialize(getContext());
-        SignInManager.getInstance().validateLogin(user, password, image);
+        NativeSignin.initialize(getContext());
+        NativeSignin.getInstance().validateLogin(user, password, image);
     }
 
     @Override

@@ -252,14 +252,14 @@ public class DataManager {
                         LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
                 },
                 error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse + "");
+                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
                     LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
                 }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String>  params = new HashMap<>();
                 for(int i = 0; i < objects.length; i++)
-                    params.put("o" + i, gson.toJson(objects[i]));
+                    params.put("p" + i, gson.toJson(objects[i]));
                 return params;
             }
         };

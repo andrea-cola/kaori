@@ -16,29 +16,20 @@ import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
-/**
- * This class handles the login and the signInWithEmail of the user in the app.
- */
-class SignInManager {
+class NativeSignin {
 
-    /**
-     * Variables.
-     */
-    private static SignInManager instance;
+    private static NativeSignin instance;
     private Context context;
 
-    /**
-     * Class constructor.
-     */
-    private SignInManager(Context context) {
+    private NativeSignin(Context context) {
         this.context = context;
     }
 
     static void initialize(Context context) {
-        instance = new SignInManager(context);
+        instance = new NativeSignin(context);
     }
 
-    static SignInManager getInstance() {
+    static NativeSignin getInstance() {
         return instance;
     }
 
