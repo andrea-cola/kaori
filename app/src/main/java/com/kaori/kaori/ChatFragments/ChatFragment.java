@@ -88,7 +88,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void sendMessage(Message message) {
-        chat.setLastMessageSent(Timestamp.now());
+        chat.setLastMessageSent(Timestamp.now().getSeconds());
         DataManager.getInstance().uploadMessage(chat, message);
     }
 
@@ -190,7 +190,7 @@ public class ChatFragment extends Fragment {
                 DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), ((MyViewHolderMessage)holder).userImage, getContext());
 
                 ((MyViewHolderMessage)holder).content.setText(m.getMessage());
-                ((MyViewHolderMessage)holder).timestamp.setText(Constants.dateFormat3.format(m.getTimestamp().toDate()));
+                ((MyViewHolderMessage)holder).timestamp.setText(Constants.dateFormat3.format(m.getTimestamp()));
             } else
                 ((MyViewHolderDate)holder).date.setText(mDataset.get(position).toString());
         }

@@ -124,7 +124,7 @@ public class MaterialFragment extends Fragment {
         view.findViewById(R.id.feedbackButton).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
             feedback.setText(editText.getText().toString());
-            feedback.setTimestamp(Timestamp.now());
+            feedback.setTimestamp(Timestamp.now().getSeconds());
             feedback.setUser(DataManager.getInstance().getMiniUser());
             mMaterial.getFeedbacks().add(feedback);
             recyclerView.getAdapter().notifyDataSetChanged();
@@ -155,7 +155,7 @@ public class MaterialFragment extends Fragment {
         view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
             feedback.setText(editText.getText().toString());
-            feedback.setTimestamp(Timestamp.now());
+            feedback.setTimestamp(Timestamp.now().getSeconds());
             feedback.setUser(DataManager.getInstance().getMiniUser());
             mMaterial.getFeedbacks().add(feedback);
             recyclerView.getAdapter().notifyDataSetChanged();
@@ -175,7 +175,7 @@ public class MaterialFragment extends Fragment {
         ((TextView)view.findViewById(R.id.course)).setText(mMaterial.getCourse());
         ((TextView)view.findViewById(R.id.author)).setText(mMaterial.getUser().getName());
         ((TextView)view.findViewById(R.id.note)).setText(mMaterial.getNote());
-        ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat2.format(mMaterial.getTimestamp().toDate()));
+        ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat2.format(mMaterial.getTimestamp()));
 
          CheckBox star = view.findViewById(R.id.checkStar);
          star.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -219,7 +219,7 @@ public class MaterialFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            holder.timestamp.setText(Constants.dateFormat2.format(feedbackList.get(i).getTimestamp().toDate()));
+            holder.timestamp.setText(Constants.dateFormat2.format(feedbackList.get(i).getTimestamp()));
             DataManager.getInstance().loadImageIntoView(feedbackList.get(i).getUser().getThumbnail(), holder.userImage, getContext());
             holder.content.setText(feedbackList.get(i).getText());
         }

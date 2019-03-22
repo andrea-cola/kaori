@@ -124,7 +124,7 @@ public class UploadUrlFragment extends Fragment {
             document.setType(Constants.FILE);
             document.setSubtype(Constants.URL);
             document.setModified(false);
-            document.setTimestamp(Timestamp.now());
+            document.setTimestamp(Timestamp.now().getSeconds());
 
             DataManager.getInstance().uploadDocument(document);
             endProcess();

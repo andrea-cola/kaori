@@ -9,9 +9,9 @@ public class Position {
     private MiniUser user;
     private GeoPoint geoPoint; // position of the user.
     private String description; // what the user is doing in that position.
-    private Timestamp timestamp; // time when the position is published.
+    private long timestamp; // time when the position is published.
 
-    public Position(MiniUser user, GeoPoint geoPoint, String description, Timestamp timestamp){
+    public Position(MiniUser user, GeoPoint geoPoint, String description, long timestamp){
         this.user = user;
         this.geoPoint = geoPoint;
         this.timestamp = timestamp;
@@ -34,11 +34,11 @@ public class Position {
         this.user = user;
     }
 
-    public Timestamp getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

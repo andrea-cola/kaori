@@ -118,7 +118,7 @@ public class UploadBookFragment extends Fragment {
      */
     private void createNewBook() {
         Document book = new Document();
-        book.setTimestamp(Timestamp.now());
+        book.setTimestamp(Timestamp.now().getSeconds());
         book.setTitle(String.valueOf(title.getText()));
         book.setAuthor(String.valueOf(author.getText()));
         book.setEditor(String.valueOf(editor.getText()));

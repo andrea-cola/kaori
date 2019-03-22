@@ -9,16 +9,16 @@ import java.util.List;
 public class Chat implements Serializable {
 
     private String chatID;
-    private Timestamp lastMessageSent;
+    private long lastMessageSent;
     private List<MiniUser> users;
 
     public Chat(){ }
 
-    public Timestamp getLastMessageSent() {
+    public long getLastMessageSent() {
         return lastMessageSent;
     }
 
-    public void setLastMessageSent(Timestamp lastMessageSent) {
+    public void setLastMessageSent(long lastMessageSent) {
         this.lastMessageSent = lastMessageSent;
     }
 

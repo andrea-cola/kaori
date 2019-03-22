@@ -102,7 +102,7 @@ public class ChatListFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(DataManager.getInstance().getUser().getUid());
             holder.chatUser.setText(otherUser.getName());
-            holder.chatDate.setText(Constants.dateFormat2.format(mDataset.get(position).getLastMessageSent().toDate()));
+            holder.chatDate.setText(Constants.dateFormat2.format(mDataset.get(position).getLastMessageSent()));
             DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());
         }
 

@@ -13,7 +13,7 @@ public class Document {
     private String university;
     private String course;
     private List<String> exams;
-    private Timestamp timestamp; // creation timestamp
+    private long timestamp; // creation timestamp
     private String title; // title of the document
     private String url; // storage url of the document
     private Boolean modified; // state if the document has been modified by the owner
@@ -42,11 +42,11 @@ public class Document {
         this.note = note;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Timestamp getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
