@@ -399,17 +399,16 @@ public class DataManager {
             currentActivePositions.clear();
             currentActivePositions.addAll(gson.fromJson(response1, new TypeToken<ArrayList<Position>>(){}.getType()));
 
-            // today
+            // today date at 00:00:00
             Calendar date = new GregorianCalendar();
-// reset hour, minutes, seconds and millis
             date.set(Calendar.HOUR_OF_DAY, 0);
             date.set(Calendar.MINUTE, 0);
             date.set(Calendar.SECOND, 0);
             date.set(Calendar.MILLISECOND, 0);
 
-
+            // remove old positions
             for(Position p : currentActivePositions)
-                if(p.getTimestamp().toDate().after(date.getTime()))
+                if(p.getTimestamp().toDate().before(date.getTime()))
                     currentActivePositions.remove(p);
 
             view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
