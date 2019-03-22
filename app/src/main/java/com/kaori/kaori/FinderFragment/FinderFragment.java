@@ -1,8 +1,12 @@
 package com.kaori.kaori.FinderFragment;
 
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,8 +23,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,17 +38,16 @@ public class FinderFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private Context context;
-    private View view;
+    private LocationManager lm;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.finder_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.finder_fragment_layout, container, false);
 
         context = getContext();
-        List<Position> positions = new ArrayList<>();
 
-        view.findViewById(R.id.positionFAB).setOnClickListener(v -> invokeFragment(new SharePositionFragment()));
+        view.findViewById(R.id.positionFAB).setOnClickListener(v -> activateGPS());
 
         Calendar today = Calendar.getInstance();
         today.set(Calendar.HOUR_OF_DAY, 0);
@@ -52,26 +55,51 @@ public class FinderFragment extends Fragment {
         today.set(Calendar.SECOND, 0);
         Date now = today.getTime();
 
+        lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
         recyclerView = view.findViewById(R.id.user_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerAdapter adapter = new RecyclerAdapter(positions);
+        RecyclerAdapter adapter = new RecyclerAdapter(DataManager.getInstance().getCurrentActivePositions());
         recyclerView.setAdapter(adapter);
 
-        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
+        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
 
         DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
 
         return view;
     }
 
+    private void activateGPS(){
+        if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("Devi attivare il GPS per la posizione")
+                    .setPositiveButton("OK", (d, which)-> {
+                        startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
+                        d.dismiss();
+                    })
+                    .setNegativeButton("NO", (d, which)-> d.dismiss())
+                    .show();
+        } else
+            invokeFragment(new SharePositionFragment(), SharePositionFragment.class.getSimpleName());
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            invokeFragment(new SharePositionFragment(), SharePositionFragment.class.getSimpleName());
+        else
+            LogManager.getInstance().showVisualMessage("Non hai attivo il sensore GPS");
+    }
+
     /**
      * This method invokes the share position fragment when the floating action button is clicked
      */
-    private void invokeFragment(Fragment mapFragment) {
+    private void invokeFragment(Fragment mapFragment, String tag) {
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, mapFragment)
+                    .replace(R.id.container, mapFragment, tag)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
@@ -97,7 +125,7 @@ public class FinderFragment extends Fragment {
             view.setOnClickListener(view1 -> {
                 MapFragment mapFragment = new MapFragment();
                 mapFragment.setParameters(positions, recyclerView.getChildLayoutPosition(view));
-                invokeFragment(mapFragment);
+                invokeFragment(mapFragment, "tag");
             });
 
             return new Holder(view);

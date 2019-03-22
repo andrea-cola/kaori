@@ -188,6 +188,10 @@ public class DataManager {
         return starredBooks;
     }
 
+    public ArrayList<Position> getCurrentActivePositions() {
+        return currentActivePositions;
+    }
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* GENERIC FUNCTIONS ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------------------------ */
@@ -253,7 +257,7 @@ public class DataManager {
                         LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
                 },
                 error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse.statusCode + "");
+                    LogManager.getInstance().printConsoleError(error.networkResponse + "");
                     LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
                 }) {
             @Override
@@ -273,6 +277,8 @@ public class DataManager {
         Response.Listener<String> listener = response -> {
                     list.clear();
                     list.addAll(gson.fromJson(response, type));
+
+                    LogManager.getInstance().printConsoleMessage(response);
 
                     viewList.getAdapter().notifyDataSetChanged();
                     view.findViewById(R.id.wait_layout).setVisibility(View.GONE);

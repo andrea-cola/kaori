@@ -20,7 +20,6 @@
         mapbox:mapbox_cameraTargetLng="9.228248"
         mapbox:mapbox_cameraZoom="15" />
 
-
     <TextView
         android:id="@+id/textView17"
         android:layout_width="0dp"
