@@ -13,7 +13,8 @@
     <string name="title_login">Ho già un account</string>
     <string name="title_register">Sono un nuovo utente</string>
     <string name="title_logout">Esci dall\'account</string>
-    <string name="title_registration_end">Conferma</string>
+    <string name="title_confirm">Conferma</string>
+    <string name="title_registration">Registrati</string>
     <string name="title_register_facebook">Crea account con Facebook</string>
     <string name="title_register_google">Crea account con Google</string>
     <string name="title_register_email">Crea account con la mail</string>
