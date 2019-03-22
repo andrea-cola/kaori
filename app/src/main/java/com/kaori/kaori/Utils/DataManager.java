@@ -420,7 +420,7 @@ public class DataManager {
             // remove old positions
             for (Position p : currentActivePositions) {
                 Calendar mDate = new GregorianCalendar();
-                mDate.setTimeInMillis(p.getTimestamp());
+                mDate.setTimeInMillis(p.getTimestamp()*1000);
                 if (mDate.before(date.getTime()))
                     currentActivePositions.remove(p);
             }

@@ -15,8 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.kaori.kaori.Model.Chat;
@@ -115,7 +113,7 @@ public class ChatFragment extends Fragment {
                 .collection("messages")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, e) -> {
-                    if(value != null)
+                    /*if(value != null)
                         for (DocumentChange doc : value.getDocumentChanges()) {
                             if (doc.getType().equals(DocumentChange.Type.ADDED)) {
                                 Message m = doc.getDocument().toObject(Message.class);
@@ -127,7 +125,7 @@ public class ChatFragment extends Fragment {
                                 mAdapter.notifyDataSetChanged();
                                 mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                             }
-                        }
+                        }*/
                 });
     }
 

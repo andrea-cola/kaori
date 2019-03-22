@@ -25,8 +25,6 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class FinderFragment extends Fragment {
@@ -48,12 +46,6 @@ public class FinderFragment extends Fragment {
         context = getContext();
 
         view.findViewById(R.id.positionFAB).setOnClickListener(v -> activateGPS());
-
-        Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 0);
-        today.set(Calendar.MINUTE, 0);
-        today.set(Calendar.SECOND, 0);
-        Date now = today.getTime();
 
         lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
