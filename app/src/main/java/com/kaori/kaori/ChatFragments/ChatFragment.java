@@ -15,6 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
@@ -96,7 +100,7 @@ public class ChatFragment extends Fragment {
                 message.setMessage(String.valueOf(editText.getText()));
                 message.setReceiver(otherUser);
                 message.setSender(myUser);
-                message.setTimestamp(Timestamp.now());
+                message.setTimestamp(Timestamp.now().getSeconds());
 
                 sendMessage(message);
                 editText.setText("");
@@ -105,11 +109,11 @@ public class ChatFragment extends Fragment {
     }
 
     private void readMessages(){
-        /*FirebaseFirestore.getInstance()
-                .collection(Constants.DB_COLL_MESSAGES)
+        FirebaseFirestore.getInstance()
+                .collection("chats")
                 .document(chat.getChatID())
-                .collection(Constants.DB_SUBCOLL_MESSAGES)
-                .orderBy(Constants.FIELD_TIMESTAMP, Query.Direction.ASCENDING)
+                .collection("messages")
+                .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, e) -> {
                     if(value != null)
                         for (DocumentChange doc : value.getDocumentChanges()) {
@@ -124,7 +128,7 @@ public class ChatFragment extends Fragment {
                                 mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                             }
                         }
-                });*/
+                });
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
