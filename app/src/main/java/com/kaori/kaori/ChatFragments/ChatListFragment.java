@@ -67,6 +67,8 @@ public class ChatListFragment extends Fragment {
                     .commit();
     }
 
+
+
     /**
      * Recycler view adapter.
      */

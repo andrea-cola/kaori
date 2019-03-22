@@ -1,6 +1,5 @@
 package com.kaori.kaori.Model;
 
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
 public class Position {

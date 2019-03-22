@@ -346,7 +346,7 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), list, view, starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
-    private void downloadAllExams(){
+    public void downloadAllExams(){
         LogManager.getInstance().printConsoleError("downloadAllExams");
         String url = urlGenerator(BASE_URL + URL_EXAMS, user.getUniversity(), user.getCourse());
         makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>(){}.getType());

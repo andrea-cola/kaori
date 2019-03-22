@@ -172,6 +172,7 @@ public class EditPlanFragment extends Fragment {
         User user = DataManager.getInstance().getUser();
         user.setExams(selectedCourses);
         DataManager.getInstance().updateUser(null);
+        DataManager.getInstance().downloadAllExams();
         endProcess(true);
     }
 
