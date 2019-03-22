@@ -13,17 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.kaori.kaori.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,11 +34,7 @@ public class ChatListFragment extends Fragment {
     /**
      * Variables.
      */
-    private List<Chat> chatList;
-    private String myUid;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private MiniUser otherUser;
     private View view;
 
     @Nullable
@@ -52,92 +43,16 @@ public class ChatListFragment extends Fragment {
         view = inflater.inflate(R.layout.chat_list_layout, container, false);
         mRecyclerView = view.findViewById(R.id.chat_list);
 
-        if(getActivity() != null)
-            ((KaoriChat)getActivity()).getSupportActionBar().show();
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
-        if(otherUser != null) {
-            ChatFragment chatFragment = new ChatFragment();
-            chatFragment.newChatParams(otherUser);
-            otherUser = null;
-            invokeNextFragment(chatFragment);
-        } else {
-            chatList = new ArrayList<>();
-            mRecyclerView.setHasFixedSize(true);
-            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-            mRecyclerView.setLayoutManager(mLayoutManager);
-            myUid = DataManager.getInstance().getUser().getUid();
+        // specify an adapter (see also next example)
+        mRecyclerView.setAdapter(new ChatAdapter(DataManager.getInstance().getAllChats()));
 
-            // specify an adapter (see also next example)
-            mAdapter = new ChatAdapter(chatList);
-            mRecyclerView.setAdapter(mAdapter);
-
-            loadAllChats();
-        }
+        DataManager.getInstance().downloadMyChats(mRecyclerView, view);
 
         return view;
-    }
-
-    /**
-     * TODO
-     * Load all the chats from the database.
-     */
-    private void loadAllChats(){
-        FirebaseFirestore.getInstance()
-                .collection("messages")
-                .orderBy("lastMessageSent")
-                .addSnapshotListener((value, e) -> {
-                    if (value != null){
-                        for (DocumentChange doc : value.getDocumentChanges()) {
-                            handleDocumentChange(doc.getType(), doc.getDocument().toObject(Chat.class));
-                            view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-                        }
-                        boolean notmine = true;
-                        for (DocumentSnapshot doc : value.getDocuments()){
-                            if(containsMyUid(doc.toObject(Chat.class).getUsers()))
-                               notmine = false;
-                        }
-                        if(notmine)
-                            view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    } else
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                });
-    }
-
-    /**
-     * Handle the realtime update of the chats.
-     */
-    private void handleDocumentChange(DocumentChange.Type type, Chat c){
-        switch (type) {
-            case ADDED:
-                if(containsMyUid(c.getUsers())) {
-                    chatList.add(c);
-                    mAdapter.notifyDataSetChanged();
-                }
-                break;
-            case MODIFIED:
-
-                break;
-            case REMOVED:
-                if(containsMyUid(c.getUsers())) {
-                    chatList.remove(c);
-                    mAdapter.notifyDataSetChanged();
-                }
-                break;
-        }
-    }
-
-    /**
-     * Set the adversary user of the chat.
-     */
-    public void setOtherUser(MiniUser miniUser){
-        this.otherUser = miniUser;
-    }
-
-    /**
-     * Check if the chat contains my uid.
-     */
-    private boolean containsMyUid(List<MiniUser> users){
-        return users.get(0).getUid().equalsIgnoreCase(myUid) || users.get(1).getUid().equalsIgnoreCase(myUid);
     }
 
     /**
@@ -185,7 +100,7 @@ public class ChatListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(myUid);
+            MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(DataManager.getInstance().getUser().getUid());
             holder.chatUser.setText(otherUser.getName());
             holder.chatDate.setText(Constants.dateFormat2.format(mDataset.get(position).getLastMessageSent().toDate()));
             DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());

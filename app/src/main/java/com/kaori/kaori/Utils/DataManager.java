@@ -23,8 +23,10 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaori.kaori.Kaori;
+import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Course;
 import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.Model.User;
@@ -56,6 +58,8 @@ public class DataManager {
     private final static String URL_CHECK = "checkAuth/";
     private final static String URL_PROVIDER_VALIDATION = "providerValidation/";
     private final static String URL_TOKEN = "token/";
+    private final static String URL_MESSAGE = "message/";
+    private final static String URL_CHATS = "chats/";
 
     /**
      * TODO: da mettere in strings.xml
@@ -89,6 +93,7 @@ public class DataManager {
     private ArrayList<Document> starredDocuments;
     private ArrayList<Document> starredBooks;
     private ArrayList<Position> currentActivePositions; // list of all current active positions.
+    private ArrayList<Chat> allChats; // list of all my chats.
 
     /**
      * Request options for Glide.
@@ -111,6 +116,7 @@ public class DataManager {
         starredDocuments = new ArrayList<>();
         starredBooks = new ArrayList<>();
         currentActivePositions = new ArrayList<>();
+        allChats = new ArrayList<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -393,6 +399,11 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), list, view, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
+    public void downloadMyChats(RecyclerView list, View view) {
+        String url = urlGenerator(BASE_URL + URL_CHATS, user.getUid());
+        makeAdvancedGetRequest(Uri.parse(url), list, view, allChats, new TypeToken<ArrayList<Chat>>(){}.getType());
+    }
+
     public void downloadCurrentActivePositions(RecyclerView list, View view) {
         String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
         Response.Listener<String> response = response1 -> {
@@ -453,6 +464,11 @@ public class DataManager {
         makePostRequest(url, position);
     }
 
+    public void uploadMessage(Chat chat, Message message) {
+        Uri url = Uri.parse(BASE_URL + URL_MESSAGE);
+        makePostRequest(url, chat, message);
+    }
+
     public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener){
         String url = BASE_URL + URL_USER;
         makeCustomPostRequest(Uri.parse(url), listener, errorListener, user);
@@ -494,4 +510,7 @@ public class DataManager {
         }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
+    public ArrayList<Chat> getAllChats() {
+        return allChats;
+    }
 }

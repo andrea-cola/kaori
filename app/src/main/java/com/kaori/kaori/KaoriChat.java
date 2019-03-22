@@ -25,8 +25,6 @@ public class KaoriChat extends AppCompatActivity {
         }
 
         ChatListFragment chatListFragment = new ChatListFragment();
-        if(otherUser != null)
-            chatListFragment.setOtherUser(otherUser);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, chatListFragment)

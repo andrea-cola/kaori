@@ -83,23 +83,9 @@ public class ChatFragment extends Fragment {
                 otherUser = u;
     }
 
-    private void sendMessage(Message m) {
-        // get document reference.
-        /*DocumentReference documentReference = FirebaseFirestore
-                .getInstance()
-                .collection(Constants.DB_COLL_MESSAGES)
-                .document(chat.getChatID());
-
+    private void sendMessage(Message message) {
         chat.setLastMessageSent(Timestamp.now());
-
-        documentReference
-                .set(chat)
-                .addOnSuccessListener(aVoid -> documentReference.collection(Constants.DB_SUBCOLL_MESSAGES)
-                .document()
-                .set(m)
-                .addOnFailureListener(e -> {
-                    LogManager.getInstance().showVisualMessage("Invio fallito. Riprovare.");
-                }));*/
+        DataManager.getInstance().uploadMessage(chat, message);
     }
 
     private void addOnClickListener(){
