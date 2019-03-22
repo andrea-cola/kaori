@@ -83,17 +83,13 @@ class NativeSignin {
     }
     private void createNewUser(User user) {
         LogManager.getInstance().printConsoleMessage("Sign in -> step 5");
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (task.isSuccessful())
-                user.addTokenID(task.getResult().getToken());
-            updateUserDatabase(user);
-        });
+        updateUserDatabase(user);
     }
 
     private void updateUserDatabase(User user) {
         Response.Listener<String> listener = response -> {
             if(response.equalsIgnoreCase("1"))
-                endSignIn(true, null);
+                updateTokenID(user.getUid());
             else {
                 FirebaseAuth.getInstance().signOut();
                 endSignIn(false, Constants.GENERIC_ERROR);
@@ -119,6 +115,16 @@ class NativeSignin {
             context.startActivity(new Intent(context, Kaori.class));
             ((Activity)context).finish();
         }, 3000);
+    }
+
+    private void updateTokenID(String uid){
+        LogManager.getInstance().printConsoleMessage("Google login -> update token");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endSignIn(true, null), error -> endSignIn(false, Constants.NEW_USER_CREATION_ERROR));
+            else
+                endSignIn(true, null);
+        });
     }
 
 }

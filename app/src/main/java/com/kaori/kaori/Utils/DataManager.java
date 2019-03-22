@@ -16,6 +16,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -369,7 +370,8 @@ public class DataManager {
                 },
                 error -> {
                     LogManager.getInstance().printConsoleError(error.toString());
-                    // TODO: segnalare che l'utente non è stato caricato e quindi bisogna rifare.
+                    FirebaseAuth.getInstance().signOut();
+                    kaori.startLogin();
                 });
     }
 

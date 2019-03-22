@@ -104,13 +104,8 @@ public class GoogleLogin {
 
     private void registerNewUser(FirebaseUser firebaseUser, int method) {
         LogManager.getInstance().printConsoleMessage("Google login -> step 4.1");
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            String tokenID = "";
-            if (task.isSuccessful())
-                tokenID = task.getResult().getToken();
-            User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), firebaseUser.getPhotoUrl().toString(), tokenID, method);
-            DataManager.getInstance().createNewUser(user, response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
-        });
+        User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), firebaseUser.getPhotoUrl().toString(), method);
+        DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
     }
 
     private void endLogin(boolean isSuccess, final String message){

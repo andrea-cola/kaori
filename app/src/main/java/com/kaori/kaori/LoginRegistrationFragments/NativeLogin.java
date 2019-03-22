@@ -7,6 +7,7 @@ import android.os.Handler;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -33,10 +34,10 @@ import com.kaori.kaori.Utils.LogManager;
         LogManager.getInstance().printConsoleMessage("Email login -> step 1");
         DataManager.getInstance().createValidationProviderRequest(
                 response -> {
-                    LogManager.getInstance().printConsoleMessage("Email login -> step 1 : SUCCESS (response: " + response + ")");
                     if(Integer.parseInt(response) == 1)
                         loginWithEmail(email, password);
-                    endLogin(false, Constants.WRONG_PROVIDER + Constants.translateResponseCode(Integer.parseInt(response)));
+                    else
+                        endLogin(false, Constants.WRONG_PROVIDER + Constants.translateResponseCode(Integer.parseInt(response)));
                 },
                 error -> endLogin(false, Constants.GENERIC_ERROR),
                 email,
@@ -47,11 +48,10 @@ import com.kaori.kaori.Utils.LogManager;
         LogManager.getInstance().printConsoleMessage("Email login -> step 2");
         FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        LogManager.getInstance().printConsoleMessage("Email login -> step 2 : SUCCESS");
+                    if (task.isSuccessful() && task.getResult() != null) {
                         validateLogin(task.getResult().getUser());
                     } else {
-                        LogManager.getInstance().printConsoleMessage("Email login -> step 1 : FAIL (error: " + task.getException().toString() + ")");
+                        FirebaseAuth.getInstance().signOut();
                         endLogin(false, Constants.WRONG_CREDENTIALS);
                     }
                 });
@@ -61,8 +61,8 @@ import com.kaori.kaori.Utils.LogManager;
         DataManager.getInstance().checkIfTheUserAlreadyExists(
                 response -> {
                     if(Integer.parseInt(response) == Constants.USER_EXISTS)
-                        endLogin(true, null);
-                    else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
+                        updateTokenID(firebaseUser.getUid());
+                    else
                         endLogin(false, Constants.USER_NOT_EXISTS_ERROR);
                 },
                 error -> {
@@ -88,6 +88,16 @@ import com.kaori.kaori.Utils.LogManager;
             context.startActivity(new Intent(context, Kaori.class));
             ((Activity)context).finish();
         }, 3000);
+    }
+
+    private void updateTokenID(String uid){
+        LogManager.getInstance().printConsoleMessage("Facebook login -> update token");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+            else
+                endLogin(true, null);
+        });
     }
 
 }

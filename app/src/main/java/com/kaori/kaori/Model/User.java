@@ -30,16 +30,13 @@ public class User implements Serializable {
         authMethod = Constants.NATIVE;
     }
 
-    public User(String uid, String email, String name, String photosUrl, String tokenID, int authMethod){
+    public User(String uid, String email, String name, String photosUrl, int authMethod){
         this.uid = uid;
         this.email = email;
         this.name = name;
         this.photosUrl = photosUrl;
         this.authMethod = authMethod;
         this.tokenIDs = new ArrayList<>();
-        if(!tokenID.isEmpty())
-            this.tokenIDs.add(tokenID);
-
         this.exams = new ArrayList<>();
         this.university = "";
         this.course = "";

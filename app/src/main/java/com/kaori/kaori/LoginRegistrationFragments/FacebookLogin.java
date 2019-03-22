@@ -131,9 +131,11 @@ import org.json.JSONException;
         LogManager.getInstance().printConsoleMessage("Facebook login -> step 5");
         Response.Listener<String> listener = response -> {
             if(Integer.parseInt(response) == Constants.USER_EXISTS)
-                endLogin(true, null);
+                updateTokenID(firebaseUser.getUid());
             else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
                 registerNewUser(firebaseUser, Constants.GOOGLE);
+            else
+                endLogin(false, Constants.GENERIC_ERROR);
         };
 
         Response.ErrorListener errorListener = error -> {
@@ -147,15 +149,9 @@ import org.json.JSONException;
 
     private void registerNewUser(FirebaseUser firebaseUser, int method) {
         LogManager.getInstance().printConsoleMessage("Facebook login -> step 5.1");
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            String tokenID = "";
-            if (task.isSuccessful() && task.getResult() != null)
-                tokenID = task.getResult().getToken();
-
-            User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(),
-                    firebaseUser.getPhotoUrl().toString() + "?height=500", tokenID, method);
-            DataManager.getInstance().createNewUser(user, response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
-        });
+        User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(),
+                firebaseUser.getPhotoUrl().toString() + "?height=500", method);
+        DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
     }
 
     private void endLogin(boolean isSuccess, final String message){
@@ -177,7 +173,17 @@ import org.json.JSONException;
         }, 3000);
     }
 
-    public boolean getFacebookFlag() {
+    boolean getFacebookFlag() {
         return facebookFlag;
+    }
+
+    private void updateTokenID(String uid){
+        LogManager.getInstance().printConsoleMessage("Facebook login -> update token");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+            else
+                endLogin(true, null);
+        });
     }
 }
