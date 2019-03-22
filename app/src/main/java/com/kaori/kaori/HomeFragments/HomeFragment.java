@@ -77,7 +77,7 @@ public class HomeFragment extends Fragment {
             holder.title.setText(materials.get(i).getTitle());
             holder.author.setText(materials.get(i).getUser().getName());
             holder.status.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
-            holder.date.setText(Constants.dateFormat2.format(materials.get(i).getTimestamp().toDate()));
+            holder.date.setText(Constants.dateFormat2.format(materials.get(i).getTimestamp()));
 
             String info = "";
             for(String ex : materials.get(i).getExams())

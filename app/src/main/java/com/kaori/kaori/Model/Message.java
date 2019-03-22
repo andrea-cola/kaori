@@ -8,7 +8,7 @@ public class Message {
     private String message;
     private MiniUser sender;
     private MiniUser receiver;
-    private Timestamp timestamp;
+    private long timestamp;
 
     public Message() { }
 
@@ -28,11 +28,11 @@ public class Message {
         this.message = message;
     }
 
-    public Timestamp getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

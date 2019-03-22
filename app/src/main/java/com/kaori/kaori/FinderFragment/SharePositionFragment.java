@@ -103,7 +103,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * Save the position in database and return to the previous fragment.
      */
     private void sharePosition(GeoPoint geoPoint, String activity){
-        DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now()));
+        DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds()));
         getFragmentManager().popBackStackImmediate();
     }
 

@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class Feedback implements Serializable {
 
     private MiniUser user;
-    private Timestamp timestamp;
+    private long timestamp;
     private String text;
 
     public MiniUser getUser() {
@@ -18,11 +18,11 @@ public class Feedback implements Serializable {
         this.user = user;
     }
 
-    public Timestamp getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

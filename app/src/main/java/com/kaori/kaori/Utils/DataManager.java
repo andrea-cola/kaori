@@ -418,10 +418,12 @@ public class DataManager {
             date.set(Calendar.MILLISECOND, 0);
 
             // remove old positions
-            for(Position p : currentActivePositions)
-                if(p.getTimestamp().toDate().before(date.getTime()))
+            for (Position p : currentActivePositions) {
+                Calendar mDate = new GregorianCalendar();
+                mDate.setTimeInMillis(p.getTimestamp());
+                if (mDate.before(date.getTime()))
                     currentActivePositions.remove(p);
-
+            }
             view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
             list.getAdapter().notifyDataSetChanged();
 

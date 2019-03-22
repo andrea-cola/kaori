@@ -78,7 +78,7 @@ public class UploadDocumentFragment extends Fragment {
         document.setType(Constants.FILE);
         document.setSubtype(Constants.FILE);
         document.setModified(false);
-        document.setTimestamp(Timestamp.now());
+        document.setTimestamp(Timestamp.now().getSeconds());
 
         getFile();
     }
