@@ -85,7 +85,7 @@ public class FinderFragment extends Fragment {
                 noLocalize.setOnClickListener(v -> new AlertDialog.Builder(getActivity())
                         .setMessage(getString(R.string.dialog_disable_position))
                         .setPositiveButton("OK", (d, which) -> {
-                            DataManager.getInstance().deleteMyCurrentPosition();
+                            DataManager.getInstance().deletePosition();
                             invokeFragment(new FinderFragment(), FinderFragment.class.getSimpleName());
                             d.dismiss();
                         })

@@ -58,6 +58,7 @@ public class DataManager {
     private final static String URL_TOKEN = "token/";
     private final static String URL_MESSAGE = "message/";
     private final static String URL_CHATS = "chats/";
+    private final static String URL_POS_REMOVE = "positionDelete/";
 
     /**
      * TODO: da mettere in strings.xml
@@ -449,6 +450,14 @@ public class DataManager {
     public void postToken(final String uid, final String token, Response.Listener<String> listener, Response.ErrorListener errorListener){
         String url = BASE_URL + URL_TOKEN;
         makeCustomPostRequest(Uri.parse(url), listener, errorListener, uid, token);
+    }
+
+    public void deletePosition(){
+        for(Position pos : currentActivePositions)
+            if(pos.getId().equalsIgnoreCase(user.getUid())) {
+                String url = BASE_URL + URL_POS_REMOVE;
+                makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, pos.getId());
+            }
     }
 
     /* ------------------------------------------------------------------------------------------------------ */
