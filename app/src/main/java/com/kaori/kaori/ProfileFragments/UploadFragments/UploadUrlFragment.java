@@ -113,7 +113,11 @@ public class UploadUrlFragment extends Fragment {
      */
     private void createNewLink(){
         if (Patterns.WEB_URL.matcher(link.getText()).matches()){
-            Document document = new Document();
+            Document document;
+            if(oldDocument != null)
+                 document = oldDocument;
+            else
+                document = new Document();
             document.setTitle(String.valueOf(title.getText()));
             document.setUrl(String.valueOf(link.getText()));
             document.setNote(String.valueOf(note.getText()));

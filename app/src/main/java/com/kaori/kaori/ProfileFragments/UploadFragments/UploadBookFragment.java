@@ -117,7 +117,11 @@ public class UploadBookFragment extends Fragment {
      * This method create the new material with book type
      */
     private void createNewBook() {
-        Document book = new Document();
+        Document book;
+        if(oldBook != null)
+            book = oldBook;
+        else
+            book = new Document();
         book.setTimestamp(Timestamp.now().getSeconds());
         book.setTitle(String.valueOf(title.getText()));
         book.setAuthor(String.valueOf(author.getText()));

@@ -58,7 +58,6 @@ public class DataManager {
     private final static String URL_TOKEN = "token/";
     private final static String URL_MESSAGE = "message/";
     private final static String URL_CHATS = "chats/";
-    private final static String URL_CHAT = "chat/";
 
     /**
      * TODO: da mettere in strings.xml

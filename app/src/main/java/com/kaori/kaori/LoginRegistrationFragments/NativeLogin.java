@@ -91,10 +91,11 @@ import com.kaori.kaori.Utils.LogManager;
     }
 
     private void updateTokenID(String uid){
-        LogManager.getInstance().printConsoleMessage("Facebook login -> update token");
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (task.isSuccessful())
+            if (task.isSuccessful()) {
+                LogManager.getInstance().printConsoleMessage("Native login -> update token");
                 DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+            }
             else
                 endLogin(true, null);
         });

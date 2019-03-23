@@ -68,7 +68,8 @@ public class UploadDocumentFragment extends Fragment {
     }
 
     private void createDocument(){
-        document = new Document();
+        if(document == null)
+            document = new Document();
         document.setTitle(title.getText().toString());
         document.setUser(DataManager.getInstance().getMiniUser());
         document.setNote(note.getText().toString());
