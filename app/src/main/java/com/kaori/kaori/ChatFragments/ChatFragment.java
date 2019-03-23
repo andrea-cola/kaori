@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.kaori.kaori.Model.Chat;
@@ -25,6 +26,9 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,22 +67,36 @@ public class ChatFragment extends Fragment {
 
         DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), userImage, getContext());
 
-        //if(chat == null)
-          //  DataManager.getInstance().//continuare da qui e scaricare la chat
+        downloadChat(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
 
         addOnClickListener();
-
-        // if the chat is new, we don't need to load messages.
-        readMessages();
 
         return view;
     }
 
-    public void newChatParams(MiniUser receiverUser){
-        myUser = DataManager.getInstance().getMiniUser();
-        chat = new Chat();
-        chat.addUsers(myUser, receiverUser);
-        otherUser = receiverUser;
+    public void downloadChat(String chatID){
+        if(chat == null)
+            FirebaseFirestore.getInstance()
+                    .collection("chats")
+                    .document(chatID)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document.exists()) {
+                                chat = document.toObject(Chat.class);
+                            } else {
+                                chat = new Chat();
+                                chat.addUsers(myUser, otherUser);
+                                chat.setChatID(chatID);
+                            }
+                            readMessages();
+                        } else {
+                            // TODO: tornare alle chat.
+                        }
+                    });
+        else
+            readMessages();
     }
 
     public void setParams(MiniUser receiverUser){
@@ -94,10 +112,7 @@ public class ChatFragment extends Fragment {
         mSendMessage.setOnClickListener(view -> {
             if(editText.getText().length() > 0) {
                 Message message = new Message();
-                if(chat != null)
-                    message.setChatID(chat.getChatID());
-                else
-                    message.setChatID(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
+                message.setChatID(chat.getChatID());
                 message.setMessage(String.valueOf(editText.getText()));
                 message.setReceiver(otherUser);
                 message.setSender(myUser);
@@ -112,7 +127,7 @@ public class ChatFragment extends Fragment {
     private void readMessages(){
         FirebaseFirestore.getInstance()
                 .collection("chats")
-                .document(Chat.createChatID(myUser.getUid(), otherUser.getUid()))
+                .document(chat.getChatID())
                 .collection("messages")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, e) -> {
@@ -120,10 +135,11 @@ public class ChatFragment extends Fragment {
                         for (DocumentChange doc : value.getDocumentChanges()) {
                             if (doc.getType().equals(DocumentChange.Type.ADDED)) {
                                 Message m = doc.getDocument().toObject(Message.class);
-                                /*if(!dates.contains(Constants.dateFormat2.format(m.getTimestamp().toDate()))) {
-                                    dates.add(Constants.dateFormat2.format(m.getTimestamp().toDate()));
-                                    messages.add(Constants.dateFormat2.format(m.getTimestamp().toDate()));
-                                }*/
+                                Date date = new Date(m.getTimestamp()*1000L);
+                                if(!dates.contains(Constants.dateFormat2.format(date))) {
+                                    dates.add(Constants.dateFormat2.format(date));
+                                    messages.add(Constants.dateFormat2.format(date));
+                                }
                                 messages.add(m);
                                 mAdapter.notifyDataSetChanged();
                                 mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -173,8 +189,6 @@ public class ChatFragment extends Fragment {
 
         @Override
         public MyAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            // create a new view
-            View v;
             if(viewType == MY_MESSAGE)
                 return new MyViewHolderMessage(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_right, parent, false));
             else if(viewType == OTHER_MESSAGE)
@@ -185,13 +199,20 @@ public class ChatFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
-            if(getItemViewType(position) == MY_MESSAGE || getItemViewType(position) == OTHER_MESSAGE) {
+            if(getItemViewType(position) == MY_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
 
-                DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), ((MyViewHolderMessage)holder).userImage, getContext());
+                DataManager.getInstance().loadImageIntoView(myUser.getThumbnail(), ((MyViewHolderMessage) holder).userImage, getContext());
 
-                ((MyViewHolderMessage)holder).content.setText(m.getMessage());
-                ((MyViewHolderMessage)holder).timestamp.setText(Constants.dateFormat3.format(m.getTimestamp()));
+                ((MyViewHolderMessage) holder).content.setText(m.getMessage());
+                ((MyViewHolderMessage) holder).timestamp.setText(convert(m.getTimestamp()));
+            } else if (getItemViewType(position) == OTHER_MESSAGE) {
+                Message m = (Message) mDataset.get(position);
+
+                DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), ((MyViewHolderMessage) holder).userImage, getContext());
+
+                ((MyViewHolderMessage) holder).content.setText(m.getMessage());
+                ((MyViewHolderMessage) holder).timestamp.setText(convert(m.getTimestamp()));
             } else
                 ((MyViewHolderDate)holder).date.setText(mDataset.get(position).toString());
         }
@@ -210,6 +231,12 @@ public class ChatFragment extends Fragment {
             }
             return DATE_HEADER;
         }
+    }
+
+    private String convert(long timestamp){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        sdf.setTimeZone(Calendar.getInstance().getTimeZone());
+        return sdf.format(new Date(timestamp * 1000));
     }
 
 }
