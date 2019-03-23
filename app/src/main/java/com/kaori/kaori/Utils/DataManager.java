@@ -58,19 +58,6 @@ public class DataManager {
     private final static String URL_TOKEN = "token/";
     private final static String URL_MESSAGE = "message/";
     private final static String URL_CHATS = "chats/";
-    private final static String URL_CHAT = "chat/";
-
-    /**
-     * TODO: da mettere in strings.xml
-     * Success messages.
-     */
-    private final String feedMessage = "Download feed completato.";
-
-    /**
-     * TODO: da mettere in strings.xml
-     * Error messages.
-     */
-    private final String feedError = "Download feed fallito";
 
     /**
      * Singleton instance.
@@ -319,6 +306,13 @@ public class DataManager {
         queue.add(request);
     }
 
+    //TODO:CONTROLLARE
+    private void makeDeleteRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener){
+        StringRequest request = new StringRequest(Request.Method.DELETE, url.toString(), listener, errorListener);
+        request.setShouldCache(false);
+        queue.add(request);
+    }
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* GET FUNCTIONS ---------------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
@@ -406,6 +400,9 @@ public class DataManager {
     public void downloadCurrentActivePositions(RecyclerView list, View view) {
         String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
         makeAdvancedGetRequest(Uri.parse(url), list, view, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
+        if (currentActivePositions.contains(DataManager.getInstance().getUser().getPosition())){
+
+        }
     }
 
     public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email){
@@ -416,6 +413,14 @@ public class DataManager {
     public void createValidationProviderRequest(Response.Listener<String> listener, Response.ErrorListener errorListener, String email, int method){
         String url = urlGenerator(BASE_URL + URL_PROVIDER_VALIDATION, email, String.valueOf(method));
         makeGetRequest(Uri.parse(url), listener, errorListener);
+    }
+
+
+
+    //TODO: DELETE
+    public void deleteMyCurrentPosition(){
+        String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
+        //makeDeleteRequest(Uri.parse(url), listener, errorListener);
     }
 
     /* ------------------------------------------------------------------------------------------------------ */

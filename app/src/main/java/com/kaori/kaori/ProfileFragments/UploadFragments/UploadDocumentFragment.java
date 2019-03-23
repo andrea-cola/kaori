@@ -67,20 +67,27 @@ public class UploadDocumentFragment extends Fragment {
         examsList = oldDocument.getExams();
     }
 
-    private void createDocument(){
-        document = new Document();
-        document.setTitle(title.getText().toString());
-        document.setUser(DataManager.getInstance().getMiniUser());
-        document.setNote(note.getText().toString());
-        document.setCourse(DataManager.getInstance().getUser().getCourse());
-        document.setUniversity(DataManager.getInstance().getUser().getUniversity());
-        document.setExams(examsList);
-        document.setType(Constants.FILE);
-        document.setSubtype(Constants.FILE);
-        document.setModified(false);
-        document.setTimestamp(Timestamp.now().getSeconds());
+    private boolean checkDocumentParameter(){
+        return title.getText().length()>0 && note.getText().length()>0;
+    }
 
-        getFile();
+    private void createDocument(){
+        if(!checkDocumentParameter())
+            LogManager.getInstance().showVisualMessage(String.valueOf(R.string.error_upload_msg));
+        else {
+            document = new Document();
+            document.setTitle(title.getText().toString());
+            document.setUser(DataManager.getInstance().getMiniUser());
+            document.setNote(note.getText().toString());
+            document.setCourse(DataManager.getInstance().getUser().getCourse());
+            document.setUniversity(DataManager.getInstance().getUser().getUniversity());
+            document.setExams(examsList);
+            document.setType(Constants.FILE);
+            document.setSubtype(Constants.FILE);
+            document.setModified(false);
+            document.setTimestamp(Timestamp.now().getSeconds());
+            getFile();
+        }
     }
 
     /**

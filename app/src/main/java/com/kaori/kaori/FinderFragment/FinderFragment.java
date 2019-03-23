@@ -41,29 +41,60 @@ public class FinderFragment extends Fragment {
     private RecyclerView recyclerView;
     private Context context;
     private LocationManager lm;
+    private TextView noLocalize;
+    private RecyclerAdapter adapter;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.finder_fragment_layout, container, false);
-
+        View view = inflater.inflate(R.layout.finder_position_layout, container, false);
+        lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         context = getContext();
 
         view.findViewById(R.id.positionFAB).setOnClickListener(v -> activateGPS());
-
-        lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        noLocalize = view.findViewById(R.id.nolocalize);
 
         recyclerView = view.findViewById(R.id.user_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        RecyclerAdapter adapter = new RecyclerAdapter(DataManager.getInstance().getCurrentActivePositions());
+        adapter = new RecyclerAdapter(DataManager.getInstance().getCurrentActivePositions());
         recyclerView.setAdapter(adapter);
 
         ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
 
         DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
 
+        deactivePosition();
+
         return view;
+    }
+
+    private void deactivePosition() {
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED) {
+            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
+                    DataManager.getInstance().getUser().isPositioned()) {
+                noLocalize.setVisibility(View.VISIBLE);
+                noLocalize.setOnClickListener(v -> new AlertDialog.Builder(getActivity())
+                        .setMessage(getString(R.string.dialog_disable_position))
+                        .setPositiveButton("OK", (d, which) -> {
+                            DataManager.getInstance().deleteMyCurrentPosition();
+                            invokeFragment(new FinderFragment(), FinderFragment.class.getSimpleName());
+                            d.dismiss();
+                        })
+                        .setNegativeButton("NO", (d, which) -> d.dismiss())
+                        .show());
+            } else
+                noLocalize.setVisibility(View.INVISIBLE);
+        } else
+            noLocalize.setVisibility(View.INVISIBLE);
     }
 
     private void activateGPS(){
@@ -71,9 +102,9 @@ public class FinderFragment extends Fragment {
                 PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED) {
-            if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
                 new AlertDialog.Builder(getActivity())
-                        .setMessage("Devi attivare il GPS per la posizione")
+                        .setMessage(getString(R.string.dialog_enable_position))
                         .setPositiveButton("OK", (d, which)-> {
                             startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
                             d.dismiss();
@@ -92,7 +123,7 @@ public class FinderFragment extends Fragment {
         if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
             invokeFragment(new SharePositionFragment(), SharePositionFragment.class.getSimpleName());
         else
-            LogManager.getInstance().showVisualMessage("Non hai attivo il sensore GPS");
+            LogManager.getInstance().showVisualMessage(getString(R.string.position_not_active));
     }
 
     /**
@@ -122,7 +153,7 @@ public class FinderFragment extends Fragment {
         @NonNull
         @Override
         public Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            View view = LayoutInflater.from(getContext()).inflate(R.layout.user_position_item, parent, false);
+            View view = LayoutInflater.from(getContext()).inflate(R.layout.finder_position_item, parent, false);
 
             view.setOnClickListener(view1 -> {
                 MapFragment mapFragment = new MapFragment();
@@ -136,8 +167,8 @@ public class FinderFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.user.setText(positions.get(i).getUser().getName());
-            holder.activity.setText(positions.get(i).getActivity());
-            //holder.position.setText(positions.get(i).getLocation());
+            holder.activity.setText(getString(R.string.finder_item_studying) + positions.get(i).getActivity());
+            holder.position.setText(positions.get(i).getPlaceName());
             Glide.with(context).load(positions.get(i).getUser().getThumbnail())
                     .apply(RequestOptions.circleCropTransform()).into(holder.thumbnail);
         }
@@ -146,6 +177,7 @@ public class FinderFragment extends Fragment {
         public int getItemCount() {
             return positions.size();
         }
+
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             private TextView user, position, activity;
@@ -160,6 +192,4 @@ public class FinderFragment extends Fragment {
             }
         }
     }
-
 }
-

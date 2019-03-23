@@ -13,12 +13,14 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.common.io.Resources;
 import com.google.firebase.Timestamp;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.ProfileFragments.MyFilesFragment;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
+import com.kaori.kaori.Utils.LogManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,28 +115,37 @@ public class UploadBookFragment extends Fragment {
         examsList = oldBook.getExams();
     }
 
+    private boolean checkBookParameter(){
+        return title.getText().length()>0 && author.getText().length()>0 &&
+                editor.getText().length()>0 && price.getText().length()>0 &&
+                note.getText().length()>0;
+    }
+
     /**
      * This method create the new material with book type
      */
     private void createNewBook() {
-        Document book = new Document();
-        book.setTimestamp(Timestamp.now().getSeconds());
-        book.setTitle(String.valueOf(title.getText()));
-        book.setAuthor(String.valueOf(author.getText()));
-        book.setEditor(String.valueOf(editor.getText()));
-        book.setPrice(Float.parseFloat(price.getText().toString()));
-        book.setNote(String.valueOf(note.getText()));
-        book.setUser(DataManager.getInstance().getMiniUser());
-        book.setExams(examsList);
-        book.setCourse(DataManager.getInstance().getUser().getCourse());
-        book.setModified(false);
-        book.setUniversity(DataManager.getInstance().getUser().getUniversity());
-        book.setType(Constants.BOOK);
-        book.setSubtype(Constants.BOOK);
+        if(!checkBookParameter())
+            LogManager.getInstance().showVisualMessage(String.valueOf(R.string.error_upload_msg));
+        else {
+            Document book = new Document();
+            book.setTimestamp(Timestamp.now().getSeconds());
+            book.setTitle(String.valueOf(title.getText()));
+            book.setAuthor(String.valueOf(author.getText()));
+            book.setEditor(String.valueOf(editor.getText()));
+            book.setPrice(Float.parseFloat(price.getText().toString()));
+            book.setNote(String.valueOf(note.getText()));
+            book.setUser(DataManager.getInstance().getMiniUser());
+            book.setExams(examsList);
+            book.setCourse(DataManager.getInstance().getUser().getCourse());
+            book.setModified(false);
+            book.setUniversity(DataManager.getInstance().getUser().getUniversity());
+            book.setType(Constants.BOOK);
+            book.setSubtype(Constants.BOOK);
 
-        DataManager.getInstance().uploadDocument(book); // upload on server
-        endProcess();
-
+            DataManager.getInstance().uploadDocument(book); // upload on server
+            endProcess();
+        }
         // TODO: aggiungere immagine di copertina
     }
 

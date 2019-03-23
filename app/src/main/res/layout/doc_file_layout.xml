@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,11 +9,12 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/document_back"
         android:orientation="vertical"
         tools:layout_editor_absoluteY="25dp">
 
         <View
-            android:id="@+id/divider5"
+            android:id="@+id/divider6"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginStart="16dp"
@@ -24,23 +26,27 @@
             app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
         <LinearLayout
-            android:id="@+id/linearLayout9"
+            android:id="@+id/linearLayout8"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider5">
+            app:layout_constraintTop_toBottomOf="@+id/divider6">
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="0dp"
                 android:layout_marginStart="0dp"
+                android:layout_marginLeft="0dp"
                 android:fontFamily="@font/roboto_black"
-                android:text="Raccolta temi d'esame ACA 2019"
+                android:text="Esercizi integrali svolti"
+                android:textAlignment="viewStart"
                 android:textColor="@color/colorPrimary"
                 android:textSize="36sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,11 +56,11 @@
                 android:id="@+id/checkStar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
                 android:button="@drawable/star_check"
                 android:checked="false"
                 android:clickable="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.58"
                 app:layout_constraintStart_toEndOf="@+id/title"
                 tools:layout_editor_absoluteY="89dp" />
         </LinearLayout>
@@ -71,7 +77,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/linearLayout5"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
 
             <TextView
                 android:layout_width="match_parent"
@@ -91,7 +97,7 @@
 
         <LinearLayout
             android:id="@+id/linearLayout5"
-            android:layout_width="0dp"
+            android:layout_width="166dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
@@ -101,7 +107,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
 
             <TextView
                 android:layout_width="match_parent"
@@ -119,9 +125,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout6"
+            android:id="@+id/linearLayout7"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -129,11 +135,11 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
 
             <TextView
-                android:id="@+id/textView16"
+                android:id="@+id/textView18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
                 android:text="Corso"
                 android:textColor="@color/colorPrimary"
@@ -185,27 +191,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="0dp"
+                android:layout_marginRight="16dp"
                 android:text="Note dell'autore"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="850dp" />
+                tools:layout_editor_absoluteY="266dp" />
 
             <TextView
                 android:id="@+id/note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="0dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="4dp"
                 android:text="Il commento al libro."
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+                tools:layout_editor_absoluteX="211dp"
+                tools:layout_editor_absoluteY="285dp" />
 
         </LinearLayout>
 
@@ -213,15 +220,15 @@
             android:id="@+id/button"
             style="@style/KaoriButton"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="Open link"
+            android:text="Download"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
 
         <ImageView
             android:id="@+id/imageView5"
@@ -232,7 +239,7 @@
             app:layout_constraintDimensionRatio="h,1:1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/link_icon" />
+            app:srcCompat="@drawable/document_icon" />
 
         <TextView
             android:id="@+id/textView7"
@@ -241,7 +248,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:text="URL"
+            android:text="FILE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView5"
             app:layout_constraintTop_toTopOf="parent" />
@@ -251,7 +258,7 @@
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:background="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
@@ -277,9 +284,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="50dp"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -290,41 +296,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="Inserisci il tuo feedback"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/feedbackList" />
+            app:layout_constraintTop_toBottomOf="@id/feedbackList"/>
 
         <EditText
-            android:id="@+id/feedbackEdittext"
+            android:id="@+id/feedbackEditText"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/empty_view_text" />
+            app:layout_constraintTop_toBottomOf="@id/empty_view_text" />
 
         <Button
-            android:id="@+id/edittext_button"
+            android:id="@+id/feedbackButton"
             style="@style/KaoriButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
             android:text="Pubblica feedback"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.506"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/feedbackEdittext"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@id/feedbackEditText" />
 
     </android.support.constraint.ConstraintLayout>
 

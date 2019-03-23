@@ -17,6 +17,8 @@ public class User implements Serializable {
     private List<String> exams;
     private List<String> tokenIDs;
     private int authMethod;
+    private Position position;
+    private boolean isPositioned = false;
 
     public User(){
         exams = new ArrayList<>();
@@ -116,5 +118,18 @@ public class User implements Serializable {
 
     public void setAuthMethod(int authMethod) {
         this.authMethod = authMethod;
+    }
+
+    public void setPosition(Position position) {
+        this.isPositioned = true;
+        this.position = position;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public boolean isPositioned() {
+        return isPositioned;
     }
 }

@@ -9,12 +9,14 @@ public class Position {
     private GeoPoint geoPoint; // position of the user.
     private String description; // what the user is doing in that position.
     private long timestamp; // time when the position is published.
+    private String placeName;
 
-    public Position(MiniUser user, GeoPoint geoPoint, String description, long timestamp){
+    public Position(MiniUser user, GeoPoint geoPoint, String description, long timestamp, String placeName){
         this.user = user;
         this.geoPoint = geoPoint;
         this.timestamp = timestamp;
         this.description = description;
+        this.placeName = placeName;
     }
 
     public GeoPoint getGeoPoint() {
@@ -55,5 +57,13 @@ public class Position {
 
     public void setActivity(String activity) {
         this.description = activity;
+    }
+
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
     }
 }
