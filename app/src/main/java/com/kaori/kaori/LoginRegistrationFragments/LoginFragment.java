@@ -27,7 +27,7 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.login, container, false);
         Button mNative = view.findViewById(R.id.button);
-        TextView registration = view.findViewById(R.id.registration);
+        Button registration = view.findViewById(R.id.button2);
         ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
         ImageView mGoogle = view.findViewById(R.id.button_google);
         EditText mUsername = view.findViewById(R.id.username);
