@@ -108,6 +108,11 @@ public class UploadUrlFragment extends Fragment {
         dialog.show();
     }
 
+    private boolean checkUrlParameter(){
+        return title.getText().length()>0 && link.getText().length()>0 &&
+                note.getText().length()>0;
+    }
+
     /**
      * This method create the new material with link type
      */

@@ -81,13 +81,13 @@ public class MaterialFragment extends Fragment {
         if(getActivity() != null) {
             LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (mMaterial.getType() == Constants.BOOK) {
-                linearLayout.addView(inflater.inflate(R.layout.libro_layout, null));
+                linearLayout.addView(inflater.inflate(R.layout.doc_libro_layout, null));
                 setBookLayout();
             } else if (mMaterial.getType() == Constants.FILE) {
-                linearLayout.addView(inflater.inflate(R.layout.file_layout, null));
+                linearLayout.addView(inflater.inflate(R.layout.doc_file_layout, null));
                 setFileLayout();
             } else if (mMaterial.getType() == Constants.URL) {
-                linearLayout.addView(inflater.inflate(R.layout.link_layout, null));
+                linearLayout.addView(inflater.inflate(R.layout.doc_link_layout, null));
                 setLinkLayout();
             }
             initializeSubView();

@@ -10,27 +10,26 @@
         android:id="@+id/position"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="#BBB"
         android:fontFamily="@font/roboto_medium"
         android:padding="5dp"
-        android:paddingStart="30dp"
         android:text="Via Mottola Levati 12"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="13sp"
-        app:layout_constraintWidth_default="wrap"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.052"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
-        app:layout_constraintTop_toBottomOf="@+id/itemUser" />
+        app:layout_constraintTop_toBottomOf="@+id/activity"
+        app:layout_constraintWidth_default="wrap" />
 
     <ImageView
         android:id="@+id/itemImage"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
@@ -66,13 +65,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:text="Temi d'esame che tanto non vengono."
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/itemImage"
-        app:layout_constraintTop_toBottomOf="@+id/position" />
+        app:layout_constraintTop_toBottomOf="@+id/itemUser" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -83,30 +80,18 @@
         app:layout_constraintEnd_toEndOf="@+id/itemImage"
         app:srcCompat="@drawable/ic_brightness_1_black_24dp" />
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginBottom="3dp"
-        android:tint="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/position"
-        app:layout_constraintDimensionRatio="w,1:1"
-        app:layout_constraintStart_toStartOf="@+id/position"
-        app:layout_constraintTop_toTopOf="@+id/position"
-        app:srcCompat="@drawable/ic_location_on_black_24dp" />
-
     <View
         android:id="@+id/view8"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
         android:background="@color/com_facebook_button_background_color_focused_disabled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/position" />
 
 
 </android.support.constraint.ConstraintLayout>

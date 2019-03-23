@@ -20,6 +20,11 @@ import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -32,6 +37,12 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * This class represent the layout to share the user position
@@ -63,10 +74,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        view.findViewById(R.id.shareButton).setOnClickListener(v -> {
-            GeoPoint point = new GeoPoint(latitude, longitude);
-            sharePosition(point, String.valueOf(activityEdit.getText()));
-        });
+        view.findViewById(R.id.shareButton).setOnClickListener(v -> findPlace());
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
@@ -82,6 +90,28 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         onLocationChanged(location);
     }
 
+    private void findPlace(){
+        MapboxGeocoding geocoding = MapboxGeocoding.builder()
+                .accessToken(getString(R.string.mapbox_acces_token))
+                .query(Point.fromLngLat(longitude, latitude))
+                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+                .build();
+
+        geocoding.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                if(response.isSuccessful()){
+                    List<CarmenFeature> features = response.body().features();
+                    if(features.size()>0) {
+                        sharePosition(features.get(0).placeName().substring(0, features.get(0).placeName().indexOf(",")), new GeoPoint(latitude, longitude), String.valueOf(activityEdit.getText()));
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable t) { }
+        });
+    }
+
     @SuppressLint("MissingPermission")
     private void enableLocationComponent(Style style) {
         LocationComponent locationComponent = mapboxMap.getLocationComponent();
@@ -94,9 +124,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         longitude = locationComponent.getLastKnownLocation().getLongitude();
 
         CameraPosition newCameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(latitude, longitude))
-                .zoom(13)
-                .build();
+                        .target(new LatLng(latitude, longitude))
+                        .zoom(13)
+                        .build();
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
         mapboxMap.addMarker(new MarkerOptions().setSnippet("Sono qui").position(new LatLng(latitude, longitude)));
     }
@@ -104,8 +134,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     /**
      * Save the position in database and return to the previous fragment.
      */
-    private void sharePosition(GeoPoint geoPoint, String activity){
-        DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds()));
+    private void sharePosition(String placeName, GeoPoint geoPoint, String activity){
+        DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
+        DataManager.getInstance().getUser().setPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
         getFragmentManager().popBackStackImmediate();
     }
 
