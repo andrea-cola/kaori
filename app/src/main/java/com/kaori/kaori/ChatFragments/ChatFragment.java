@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.kaori.kaori.Model.Chat;
@@ -46,6 +47,8 @@ public class ChatFragment extends Fragment {
         mSendMessage = view.findViewById(R.id.send_button);
         mRecyclerView = view.findViewById(R.id.chat_list);
 
+        myUser = DataManager.getInstance().getMiniUser();
+
         messages = new LinkedList<>();
         dates = new LinkedList<>();
         mRecyclerView.setHasFixedSize(true);
@@ -60,7 +63,9 @@ public class ChatFragment extends Fragment {
 
         DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), userImage, getContext());
 
-        // add listener to the button that sends messages.
+        //if(chat == null)
+          //  DataManager.getInstance().//continuare da qui e scaricare la chat
+
         addOnClickListener();
 
         // if the chat is new, we don't need to load messages.
@@ -76,13 +81,8 @@ public class ChatFragment extends Fragment {
         otherUser = receiverUser;
     }
 
-    public void setParams(Chat c){
-        chat = c;
-        myUser = DataManager.getInstance().getMiniUser();
-
-        for(MiniUser u : c.getUsers())
-            if(!u.getUid().equalsIgnoreCase(myUser.getUid()))
-                otherUser = u;
+    public void setParams(MiniUser receiverUser){
+        otherUser = receiverUser;
     }
 
     private void sendMessage(Message message) {
@@ -94,7 +94,10 @@ public class ChatFragment extends Fragment {
         mSendMessage.setOnClickListener(view -> {
             if(editText.getText().length() > 0) {
                 Message message = new Message();
-                message.setChatID(chat.getChatID());
+                if(chat != null)
+                    message.setChatID(chat.getChatID());
+                else
+                    message.setChatID(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
                 message.setMessage(String.valueOf(editText.getText()));
                 message.setReceiver(otherUser);
                 message.setSender(myUser);
@@ -109,23 +112,23 @@ public class ChatFragment extends Fragment {
     private void readMessages(){
         FirebaseFirestore.getInstance()
                 .collection("chats")
-                .document(chat.getChatID())
+                .document(Chat.createChatID(myUser.getUid(), otherUser.getUid()))
                 .collection("messages")
                 .orderBy("timestamp", Query.Direction.ASCENDING)
                 .addSnapshotListener((value, e) -> {
-                    /*if(value != null)
+                    if(value != null)
                         for (DocumentChange doc : value.getDocumentChanges()) {
                             if (doc.getType().equals(DocumentChange.Type.ADDED)) {
                                 Message m = doc.getDocument().toObject(Message.class);
-                                if(!dates.contains(Constants.dateFormat2.format(m.getTimestamp().toDate()))) {
+                                /*if(!dates.contains(Constants.dateFormat2.format(m.getTimestamp().toDate()))) {
                                     dates.add(Constants.dateFormat2.format(m.getTimestamp().toDate()));
                                     messages.add(Constants.dateFormat2.format(m.getTimestamp().toDate()));
-                                }
+                                }*/
                                 messages.add(m);
                                 mAdapter.notifyDataSetChanged();
                                 mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                             }
-                        }*/
+                        }
                 });
     }
 

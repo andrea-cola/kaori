@@ -1,7 +1,5 @@
 package com.kaori.kaori.Model;
 
-import com.google.firebase.Timestamp;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +35,10 @@ public class Chat implements Serializable {
         String uid1, uid2;
         uid1 = users.get(0).getUid();
         uid2 = users.get(1).getUid();
+        return (uid1.compareTo(uid2) > 0) ? uid2 + "_" + uid1 : uid1 + "_" + uid2;
+    }
+
+    public static String createChatID(String uid1, String uid2){
         return (uid1.compareTo(uid2) > 0) ? uid2 + "_" + uid1 : uid1 + "_" + uid2;
     }
 

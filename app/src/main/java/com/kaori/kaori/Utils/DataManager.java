@@ -35,8 +35,6 @@ import com.kaori.kaori.R;
 import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -406,35 +404,7 @@ public class DataManager {
 
     public void downloadCurrentActivePositions(RecyclerView list, View view) {
         String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
-        Response.Listener<String> response = response1 -> {
-            currentActivePositions.clear();
-            currentActivePositions.addAll(gson.fromJson(response1, new TypeToken<ArrayList<Position>>(){}.getType()));
-
-            // today date at 00:00:00
-            Calendar date = new GregorianCalendar();
-            date.set(Calendar.HOUR_OF_DAY, 0);
-            date.set(Calendar.MINUTE, 0);
-            date.set(Calendar.SECOND, 0);
-            date.set(Calendar.MILLISECOND, 0);
-
-            // remove old positions
-            for (Position p : currentActivePositions) {
-                Calendar mDate = new GregorianCalendar();
-                mDate.setTimeInMillis(p.getTimestamp()*1000);
-                if (mDate.before(date.getTime()))
-                    currentActivePositions.remove(p);
-            }
-            view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
-            list.getAdapter().notifyDataSetChanged();
-
-            if (currentActivePositions.size() == 0) {
-                ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
-                view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-            }
-
-            LogManager.getInstance().printConsoleMessage("Completed.");
-        };
-        makeGetRequest(Uri.parse(url), response, error -> {});
+        makeAdvancedGetRequest(Uri.parse(url), list, view, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
     }
 
     public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email){

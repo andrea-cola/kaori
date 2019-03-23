@@ -44,6 +44,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private MapView mapView;
     private EditText activityEdit;
     private double latitude, longitude;
+    private Location location;
 
     /**
      * Variables
@@ -78,6 +79,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(MapboxMap m) {
         this.mapboxMap = m;
+        onLocationChanged(location);
     }
 
     @SuppressLint("MissingPermission")
@@ -152,10 +154,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
+        this.location = location;
         if(mapboxMap != null)
             mapboxMap.setStyle(Style.OUTDOORS, style -> enableLocationComponent(style));
-        else
-            onLocationChanged(location);
     }
 
     @Override
