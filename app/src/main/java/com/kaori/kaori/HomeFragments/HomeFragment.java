@@ -19,6 +19,7 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,7 +78,7 @@ public class HomeFragment extends Fragment {
             holder.title.setText(materials.get(i).getTitle());
             holder.author.setText(materials.get(i).getUser().getName());
             holder.status.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
-            holder.date.setText(Constants.dateFormat2.format(materials.get(i).getTimestamp()));
+            holder.date.setText(Constants.dateFormat2.format(new Date(materials.get(i).getTimestamp()*1000L)));
 
             String info = "";
             for(String ex : materials.get(i).getExams())
