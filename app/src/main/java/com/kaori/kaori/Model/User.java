@@ -132,4 +132,8 @@ public class User implements Serializable {
     public boolean isPositioned() {
         return isPositioned;
     }
+
+    public void setPositioned(boolean positioned) {
+        isPositioned = positioned;
+    }
 }

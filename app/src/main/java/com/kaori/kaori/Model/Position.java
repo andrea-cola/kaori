@@ -12,6 +12,7 @@ public class Position {
     private String placeName;
 
     public Position(MiniUser user, GeoPoint geoPoint, String description, long timestamp, String placeName){
+        this.id = user.getUid();
         this.user = user;
         this.geoPoint = geoPoint;
         this.timestamp = timestamp;

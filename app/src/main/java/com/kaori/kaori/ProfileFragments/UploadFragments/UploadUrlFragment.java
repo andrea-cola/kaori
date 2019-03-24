@@ -108,7 +108,7 @@ public class UploadUrlFragment extends Fragment {
         dialog.show();
     }
 
-    private boolean checkUrlParameter(){
+    private boolean checkUrlParameters(){
         return title.getText().length()>0 && link.getText().length()>0 &&
                 note.getText().length()>0;
     }
@@ -117,12 +117,16 @@ public class UploadUrlFragment extends Fragment {
      * This method create the new material with link type
      */
     private void createNewLink(){
-        if (Patterns.WEB_URL.matcher(link.getText()).matches()){
-            Document document;
-            if(oldDocument != null)
-                 document = oldDocument;
-            else
-                document = new Document();
+        Document document;
+        if(oldDocument != null)
+            document = oldDocument;
+        else
+            document = new Document();
+        if (!Patterns.WEB_URL.matcher(link.getText()).matches())
+            LogManager.getInstance().showVisualMessage(getString(R.string.error_link_upload_msg));
+        else if (!checkUrlParameters())
+            LogManager.getInstance().showVisualMessage(getString(R.string.error_upload_msg));
+        else {
             document.setTitle(String.valueOf(title.getText()));
             document.setUrl(String.valueOf(link.getText()));
             document.setNote(String.valueOf(note.getText()));
@@ -134,11 +138,9 @@ public class UploadUrlFragment extends Fragment {
             document.setSubtype(Constants.URL);
             document.setModified(false);
             document.setTimestamp(Timestamp.now().getSeconds());
-
             DataManager.getInstance().uploadDocument(document);
             endProcess();
-        } else
-            LogManager.getInstance().showVisualMessage("Url inserito non valido.");
+        }
     }
 
     /**

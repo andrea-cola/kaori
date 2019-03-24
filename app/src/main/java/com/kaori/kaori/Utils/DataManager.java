@@ -61,18 +61,6 @@ public class DataManager {
     private final static String URL_POS_REMOVE = "positionDelete/";
 
     /**
-     * TODO: da mettere in strings.xml
-     * Success messages.
-     */
-    private final String feedMessage = "Download feed completato.";
-
-    /**
-     * TODO: da mettere in strings.xml
-     * Error messages.
-     */
-    private final String feedError = "Download feed fallito";
-
-    /**
      * Singleton instance.
      */
     private static DataManager dataManager;
@@ -453,11 +441,11 @@ public class DataManager {
     }
 
     public void deletePosition(){
-        for(Position pos : currentActivePositions)
-            if(pos.getId().equalsIgnoreCase(user.getUid())) {
-                String url = BASE_URL + URL_POS_REMOVE;
-                makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, pos.getId());
-            }
+        if(this.getUser().isPositioned()) {
+            String url = BASE_URL + URL_POS_REMOVE;
+            makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, this.getUser().getUid());
+            this.getUser().setPositioned(false);
+        }
     }
 
     /* ------------------------------------------------------------------------------------------------------ */
