@@ -136,9 +136,9 @@ public class ChatFragment extends Fragment {
                             if (doc.getType().equals(DocumentChange.Type.ADDED)) {
                                 Message m = doc.getDocument().toObject(Message.class);
                                 Date date = new Date(m.getTimestamp()*1000L);
-                                if(!dates.contains(Constants.dateFormat2.format(date))) {
-                                    dates.add(Constants.dateFormat2.format(date));
-                                    messages.add(Constants.dateFormat2.format(date));
+                                if(!dates.contains(Constants.dateFormat.format(date))) {
+                                    dates.add(Constants.dateFormat.format(date));
+                                    messages.add(Constants.dateFormat.format(date));
                                 }
                                 messages.add(m);
                                 mAdapter.notifyDataSetChanged();

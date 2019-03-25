@@ -65,8 +65,8 @@ public class Constants {
     /**
      * Finder fragments constants.
      */
-    public static final SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
-
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
+    public static final long constantDate = 1000L;
     /**
      * Functions.
      */

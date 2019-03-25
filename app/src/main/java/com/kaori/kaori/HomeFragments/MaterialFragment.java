@@ -32,6 +32,7 @@ import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.FileManager;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import static com.kaori.kaori.Utils.Constants.REMOTE_STORAGE_PATH;
@@ -175,7 +176,7 @@ public class MaterialFragment extends Fragment {
         ((TextView)view.findViewById(R.id.course)).setText(mMaterial.getCourse());
         ((TextView)view.findViewById(R.id.author)).setText(mMaterial.getUser().getName());
         ((TextView)view.findViewById(R.id.note)).setText(mMaterial.getNote());
-        ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat2.format(mMaterial.getTimestamp()));
+        ((TextView)view.findViewById(R.id.date)).setText(Constants.dateFormat.format(new Date(mMaterial.getTimestamp()*Constants.constantDate)));
 
          CheckBox star = view.findViewById(R.id.checkStar);
          star.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -219,7 +220,7 @@ public class MaterialFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
-            holder.timestamp.setText(Constants.dateFormat2.format(feedbackList.get(i).getTimestamp()));
+            holder.timestamp.setText(Constants.dateFormat.format(feedbackList.get(i).getTimestamp()));
             DataManager.getInstance().loadImageIntoView(feedbackList.get(i).getUser().getThumbnail(), holder.userImage, getContext());
             holder.content.setText(feedbackList.get(i).getText());
         }
