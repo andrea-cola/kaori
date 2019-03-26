@@ -1,26 +1,30 @@
 <resources>
-
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowLightStatusBar">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/white</item>
+
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimaryRed</item>
+        <item name="colorControlHighlight">@color/colorPrimaryRed</item>
+        <item name="android:textColor">@color/defaultTextColor</item>
+
         <item name="android:fontFamily">@font/roboto_regular</item>
         <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="buttonStyle">@style/KaoriButton</item>
+        <item name="android:textViewStyle">@style/KaoriTextView</item>
     </style>
 
-    <style name="KaoriButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">@dimen/default_text_size</item>
-        <item name="android:layout_marginTop">@dimen/default_margin</item>
-        <item name="android:layout_marginStart">@dimen/default_margin</item>
-        <item name="android:layout_marginEnd">@dimen/default_margin</item>
+    <style name="KaoriButton">
         <item name="android:layout_height">@dimen/default_height</item>
         <item name="android:layout_width">0dp</item>
+        <item name="android:layout_marginStart">@dimen/default_margin</item>
+        <item name="android:layout_marginEnd">@dimen/default_margin</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="android:background">@drawable/rounded_edge</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -28,12 +32,16 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
     <style name="LoginTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlActivated">@color/colorPrimaryDark</item>
+        <item name="colorControlNormal">@color/colorPrimaryDark</item>
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
     </style>
 
     <style name="KaoriProgressBar" parent="ThemeOverlay.MaterialComponents.Light">
@@ -42,36 +50,40 @@
         <item name="android:layout_height">@dimen/default_height</item>
     </style>
 
-    <!-- Kaori standard TextView -->
+    <!-- TextView -->
     <style name="KaoriTextView" parent="@android:style/Widget.TextView">
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:layout_height">@dimen/default_height</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_marginTop">@dimen/default_margin</item>
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:text">@string/app_name</item>
+        <item name="android:colorFocusedHighlight">@color/colorPrimaryRed</item>
     </style>
 
-    <!-- Kaori standard TextView -->
+    <!-- TextView Subtitle-->
     <style name="KaoriSubTitleTextView" parent="@android:style/Widget.TextView">
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textStyle">bold</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_marginTop">@dimen/default_margin</item>
         <item name="android:layout_marginStart">@dimen/default_margin</item>
         <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:text">@string/app_name</item>
     </style>
 
-    <!-- Kaori standard TextView -->
-    <style name="KaoriRedSubTitleTextView" parent="@android:style/Widget.TextView">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/colorPrimary</item>
+    <style name="KaoriTextInputLayout" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+        <item name="android:textColorHint">@color/defaultTextColor</item>
+        <item name="boxCornerRadiusBottomEnd">50dp</item>
+        <item name="boxCornerRadiusTopEnd">50dp</item>
+        <item name="boxCornerRadiusBottomStart">50dp</item>
+        <item name="boxCornerRadiusTopStart">50dp</item>
+    </style>
+
+    <style name="KaoriHintText" parent="TextAppearance.Design.Hint">
+        <item name="android:textColor">@color/colorPrimaryRed</item>
     </style>
 
 </resources>

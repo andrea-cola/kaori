@@ -10,11 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.facebook.login.widget.LoginButton;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.LogManager;
 
@@ -27,8 +23,8 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.login, container, false);
         Button mNative = view.findViewById(R.id.button);
-        Button registration = view.findViewById(R.id.button2);
-        ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
+        //TODO: Button registration = view.findViewById(R.id.button2);
+        /*ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
         ImageView mGoogle = view.findViewById(R.id.button_google);
         EditText mUsername = view.findViewById(R.id.username);
         EditText mPassword = view.findViewById(R.id.password);
@@ -41,10 +37,10 @@ public class LoginFragment extends Fragment {
 
         NativeLogin.initialize(getContext());
 
-        registration.setOnClickListener(v -> invokeNextFragment(new CreateAccountWithEmail()));
-        mNative.setOnClickListener(v -> nativeLogin(mUsername.getText().toString(), mPassword.getText().toString()));
+        //TODO: registration.setOnClickListener(v -> invokeNextFragment(new CreateAccountWithEmail()));
+        //mNative.setOnClickListener(v -> nativeLogin(mUsername.getText().toString(), mPassword.getText().toString()));
         mFacebook.setOnClickListener(v -> facebookLogin());
-        mGoogle.setOnClickListener(v -> googleLogin());
+        mGoogle.setOnClickListener(v -> googleLogin());*/
 
         return view;
     }
