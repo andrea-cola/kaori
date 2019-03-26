@@ -3,14 +3,18 @@ package com.kaori.kaori;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.kaori.kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.HomeFragments.HomeFragment;
@@ -25,6 +29,9 @@ import com.kaori.kaori.Utils.LogManager;
  * Kaori App handles the flow to the fragments.
  */
 public class KaoriApp extends AppCompatActivity {
+
+    private DrawerLayout drawerLayout;
+    private ImageView toolbarImage;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -70,6 +77,20 @@ public class KaoriApp extends AppCompatActivity {
 
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         entryPointFragmentCall(new HomeFragment());
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(
+                menuItem -> {
+                    menuItem.setChecked(true);
+                    return true;
+                });
+        drawerLayout.closeDrawers();
+
+        toolbarImage = findViewById(R.id.toolbar_account_image);
+        toolbarImage.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
+        DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
     }
 
     @Override

@@ -1,47 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/coordinator"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/main_container"
-        android:fitsSystemWindows="true"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            android:background="@color/white"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
             <ImageView
-                android:layout_width="250dp"
-                android:layout_height="40dp"
+                android:id="@+id/toolbar_account_image"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="start"
+                app:srcCompat="@drawable/empty_image"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/logo" />
+                android:fontFamily="@font/roboto_black"
+                android:text="Home"
+                android:textColor="#000000"
+                android:textSize="24sp" />
 
         </android.support.v7.widget.Toolbar>
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:fillViewport="true"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="56dp"
+            android:fillViewport="true">
 
             <FrameLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white" />
+                android:layout_height="wrap_content" />
 
         </ScrollView>
 
@@ -49,10 +54,19 @@
             android:id="@+id/navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:labelVisibilityMode="unlabeled"
+            android:layout_gravity="bottom"
             app:itemIconSize="30dp"
+            app:labelVisibilityMode="unlabeled"
             app:menu="@menu/navigation" />
 
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/drawer_menu"
+        android:fitsSystemWindows="false" />
+
+</android.support.v4.widget.DrawerLayout>
