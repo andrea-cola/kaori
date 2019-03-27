@@ -41,6 +41,7 @@ public class GoogleLogin {
     }
 
     public void loginWithGoogle(){
+        App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         LogManager.getInstance().printConsoleMessage("Google login -> step 1");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(App.getStringFromRes(R.string.default_web_client_id))

@@ -15,9 +15,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kaori.kaori.App;
+import com.kaori.kaori.Constants;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.Services.DataManager;
 
 import java.util.Date;

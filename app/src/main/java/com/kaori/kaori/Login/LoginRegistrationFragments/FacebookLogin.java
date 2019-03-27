@@ -58,7 +58,7 @@ public class FacebookLogin {
         return facebookFlag;
     }
 
-    public void loginWithFacebook(){
+    public void loginWithFacebook() {
         LogManager.getInstance().printConsoleMessage("Facebook login -> step 1");
 
         App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
