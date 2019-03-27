@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Constants;
@@ -102,7 +103,7 @@ public class CreateAccountWithEmail extends Fragment {
     }
 
     private void updateUserAndSignin(final String name, final String mail, final String password) {
-        //TODO: LogManager.getInstance().showWaitView();
+        App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         User user = new User();
         user.setName(name);
         user.setEmail(mail);

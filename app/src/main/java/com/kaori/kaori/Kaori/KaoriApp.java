@@ -37,7 +37,7 @@ import com.kaori.kaori.Services.LogManager;
  */
 public class KaoriApp extends AppCompatActivity {
 
-    private Toolbar toolbar;
+    private TextView fragmentTitle;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -46,15 +46,19 @@ public class KaoriApp extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
+                fragmentTitle.setText(R.string.title_feed);
                 entryPointFragmentCall(new HomeFragment());
                 return true;
             case R.id.navigation_search:
+                fragmentTitle.setText(R.string.title_search);
                 entryPointFragmentCall(new SearchFragment());
                 return true;
             case R.id.navigation_preferred:
+                fragmentTitle.setText(R.string.title_starred);
                 entryPointFragmentCall(new MyMaterialFragment());
                 return true;
             case R.id.navigation_share:
+                fragmentTitle.setText(R.string.title_finder);
                 entryPointFragmentCall(new FinderFragment());
                 return true;
         }
@@ -72,7 +76,6 @@ public class KaoriApp extends AppCompatActivity {
 
         App.setWaitView(findViewById(R.id.wait_view));
         LogManager.initialize(findViewById(R.id.coordinator));
-        DataManager.initialize();
 
         setupToolbar();
 
@@ -126,6 +129,8 @@ public class KaoriApp extends AppCompatActivity {
         ((TextView) view.findViewById(R.id.uploads_cont)).setText(DataManager.getInstance().getMyFiles().size() + " uploads");
         ((TextView) view.findViewById(R.id.starred_book_cont)).setText(DataManager.getInstance().getStarredBooks().size()+" books");
         ((TextView) view.findViewById(R.id.starred_doc_count)).setText(DataManager.getInstance().getStarredDocuments().size()+" docs");
+        fragmentTitle = findViewById(R.id.toolbar_title);
+
     }
 
     @Override
@@ -163,7 +168,7 @@ public class KaoriApp extends AppCompatActivity {
      * Setup the toolbar.
      */
     private void setupToolbar(){
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
     }

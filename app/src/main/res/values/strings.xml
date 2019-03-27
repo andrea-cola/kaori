@@ -5,6 +5,11 @@
 
     <!-- titles -->
     <string name="app_name">Kaori</string>
+    <string name="title_feed">News</string>
+    <string name="title_search">Search</string>
+    <string name="title_starred">Starred</string>
+    <string name="title_finder">Finder</string>
+    <string name="title_profile">Profile</string>
     <string name="title_welcome">La tua università ha un nuovo amico</string>
 
     <string name="empty_text_chat">Nessuna chat attiva.</string>
