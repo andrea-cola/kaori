@@ -316,9 +316,31 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), list, starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
+    public void downloadStarredDocs(){
+        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
+        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
+        Response.Listener<String> listener = response -> {
+            starredDocuments.clear();
+            starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+        };
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
+        makeGetRequest(Uri.parse(url), listener, errorListener);
+    }
+
     public void downloadStarredBooks(RecyclerView list){
         String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "1");
         makeAdvancedGetRequest(Uri.parse(url), list, starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
+    }
+
+    public void downloadStarredBooks(){
+        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
+        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
+        Response.Listener<String> listener = response -> {
+            starredBooks.clear();
+            starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+        };
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
+        makeGetRequest(Uri.parse(url), listener, errorListener);
     }
 
     public void downloadAllExams(){
@@ -346,6 +368,9 @@ public class DataManager {
                         downloadAllExams();
                         downloadAllUniversities();
                         downloadAllCourses();
+                        downloadStarredBooks();
+                        downloadStarredDocs();
+                        downloadMyFiles();
                         mainActivity.startApp();
                     }
                     else
@@ -362,6 +387,17 @@ public class DataManager {
     public void downloadMyFiles(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUid());
         makeAdvancedGetRequest(Uri.parse(url), list, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
+    }
+
+    public void downloadMyFiles(){
+        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
+        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
+        Response.Listener<String> listener = response -> {
+            myFiles.clear();
+            myFiles.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
+        };
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
+        makeGetRequest(Uri.parse(url), listener, errorListener);
     }
 
     public void downloadMyChats(RecyclerView list) {

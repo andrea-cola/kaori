@@ -70,8 +70,6 @@ public class FinderFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         downloadActivePositions();
-        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_finder);
-        App.setEmptyView(view.findViewById(R.id.empty_view));
 
         deactivePosition();
 
@@ -128,8 +126,7 @@ public class FinderFragment extends Fragment {
 
                     recyclerView.getAdapter().notifyDataSetChanged();
                     if (currentActivePositions.size() == 0) {
-                        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_finder);
                     } else
                         deactivePosition();
                 },

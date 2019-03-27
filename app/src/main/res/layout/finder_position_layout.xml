@@ -46,8 +46,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
-    <include layout="@layout/empty_view"
-        android:visibility="gone" />
+    <include
+        layout="@layout/empty_view"
+        android:visibility="visible" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/positionFAB"
