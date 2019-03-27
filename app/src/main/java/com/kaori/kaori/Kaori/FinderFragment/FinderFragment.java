@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.kaori.kaori.App;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -65,9 +66,9 @@ public class FinderFragment extends Fragment {
         adapter = new RecyclerAdapter(DataManager.getInstance().getCurrentActivePositions());
         recyclerView.setAdapter(adapter);
 
-        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
-
-        DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_finder);
+        App.setEmptyView(view.findViewById(R.id.empty_view));
+        DataManager.getInstance().downloadCurrentActivePositions(recyclerView);
 
         deactivePosition();
 

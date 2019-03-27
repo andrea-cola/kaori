@@ -7,22 +7,27 @@ public class ViewManager {
     private View waitView;
     private View emptyView;
 
-    public void setViews(View waitView, View emptyView) {
+    public void setWaitView(View waitView) {
         this.waitView = waitView;
+    }
+
+    public void setEmptyView(View emptyView) {
         this.emptyView = emptyView;
     }
 
     public void setAuxiliarViewsStatus(int status) {
-        if(status < 0) {
-            waitView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-        } else if(status == 0) {
-            waitView.setVisibility(View.GONE);
-            waitView.setVisibility(View.VISIBLE);
-        } else {
-            waitView.setVisibility(View.GONE);
-            waitView.setVisibility(View.GONE);
-        }
+        int waitViewStatus = View.GONE;
+        int emptyViewStatus = View.GONE;
+
+        if(status < 0)
+            waitViewStatus = View.VISIBLE;
+        else if(status == 0)
+            emptyViewStatus = View.VISIBLE;
+
+        if(waitView != null)
+            waitView.setVisibility(waitViewStatus);
+        if(emptyView != null)
+            emptyView.setVisibility(emptyViewStatus);
     }
 
 }

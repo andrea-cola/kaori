@@ -7,6 +7,25 @@
     <string name="app_name">Kaori</string>
     <string name="title_welcome">La tua università ha un nuovo amico</string>
 
+    <string name="empty_text_chat">Nessuna chat attiva.</string>
+    <string name="empty_text_feed">Ops, sembra che non ci siano novità. Prova ad aggiungere nuovi corsi al tuo piano di studi.</string>
+    <string name="empty_text_search">Ops, sembra non ci siano risultati per la tua ricerca.</string>
+    <string name="empty_text_finder">Ops, sembra che nessuno stia studiando in questo momento.</string>
+    <string name="empty_text_my_files">Ops, sembra che tu non abbia caricato nessun documento.</string>
+    <string name="empty_text_my_books">Ops, sembra che tu non abbia nessun libro preferito.</string>
+    <string name="empty_text_my_docs">Ops, sembra che tu non abbia nessun documento preferito.</string>
+
+    <string name="upload_user_message">Utente aggiornato.</string>
+    <string name="upload_user_error">Utente non aggiornato. Riprova.</string>
+    <string name="upload_doc_message2">Documento aggiornato.</string>
+    <string name="upload_doc_error2">Documento non aggiornato. Riprova.</string>
+    <string name="upload_doc_message">Documento caricato.</string>
+    <string name="upload_doc_error">Documento non caricato. Riprova.</string>
+    <string name="upload_pos_message">Posizione aggiornata.</string>
+    <string name="upload_pos_error">Posizione non aggiornata. Riprova.</string>
+    <string name="upload_mess_message">Utente aggiornato.</string>
+    <string name="upload_mess_error">Messaggio non inviato. Riprova.</string>
+
     <!-- subtitles -->
     <string name="subtitle_exams_list">I tuoi corsi</string>
 

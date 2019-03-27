@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Kaori.ProfileFragments.UploadFragments.UploadBookFragment;
 import com.kaori.kaori.Kaori.ProfileFragments.UploadFragments.UploadFragment;
 import com.kaori.kaori.Model.Document;
@@ -39,11 +40,11 @@ public class MyFilesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new ListAdapter());
 
-        DataManager.getInstance().downloadMyFiles(recyclerView, view);
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_my_files);
+        App.setEmptyView(view.findViewById(R.id.empty_view));
+        DataManager.getInstance().downloadMyFiles(recyclerView);
 
         view.findViewById(R.id.FAB).setOnClickListener(v -> invokeNextFragment(new UploadFragment()));
-        TextView emptyTextView = view.findViewById(R.id.empty_view_text);
-        emptyTextView.setText("Ops, non hai alcuna condivisione.");
 
         return view;
     }

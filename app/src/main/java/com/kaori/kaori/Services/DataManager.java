@@ -5,9 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,7 +15,6 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -230,7 +227,7 @@ public class DataManager {
     }
 
     private void makeCustomPostRequest(final Uri url, final Response.Listener<String> listener, final Response.ErrorListener errorListener, Object... params){
-        LogManager.getInstance().printConsoleMessage("Post -> " + url.toString());
+        LogManager.getInstance().printConsoleMessage("POST -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(), listener, errorListener) {
             @Override
             protected Map<String, String> getParams() {
@@ -244,18 +241,16 @@ public class DataManager {
         queue.add(request);
     }
 
-    private void makePostRequest(final Uri url, final Object... objects) {
-        LogManager.getInstance().printConsoleMessage("Post -> " + url.toString());
+    private void makePostRequest(final Uri url, final String message, final String errorMessage, final Object... objects) {
+        LogManager.getInstance().printConsoleMessage("POST -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
                 response -> {
-                    if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
-                    else
-                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                    if(message != null)
+                        LogManager.getInstance().showVisualMessage(response.equalsIgnoreCase("1") ? message : errorMessage);
                 },
                 error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse + "");
-                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                    if(errorMessage != null)
+                        LogManager.getInstance().showVisualMessage(errorMessage);
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -269,37 +264,26 @@ public class DataManager {
         queue.add(request);
     }
 
-    private void makeAdvancedGetRequest(final Uri url, final RecyclerView viewList, View view, ArrayList list, Type type) {
-        LogManager.getInstance().printConsoleMessage("Get -> " + url.toString());
+    private void makeAdvancedGetRequest(final Uri url, final RecyclerView viewList, ArrayList list, Type type) {
+        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
         Response.Listener<String> listener = response -> {
                     list.clear();
                     list.addAll(gson.fromJson(response, type));
-
-                    LogManager.getInstance().printConsoleMessage(response);
-
                     viewList.getAdapter().notifyDataSetChanged();
-                    view.findViewById(R.id.wait_view).setVisibility(View.GONE);
 
-                    if (list.size() == 0) {
-                        //TODO: personalizzare
-                        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
-                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
-                    }
-
-                    LogManager.getInstance().printConsoleMessage("Completed.");
+                    App.setAuxiliarViewsStatus(list.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
                 };
-        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("Feed: " + error.toString() + " " + error.networkResponse.statusCode);
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
         makeGetRequest(url, listener, errorListener);
     }
 
     private void makeSimpleGetRequest(final Uri url, ArrayList list, Type type) {
-        LogManager.getInstance().printConsoleMessage("Get -> " + url.toString());
+        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
         Response.Listener<String> listener = response -> {
             list.clear();
             list.addAll(gson.fromJson(response, type));
-            LogManager.getInstance().printConsoleMessage("Completed.");
         };
-        Response.ErrorListener errorListener = error -> { LogManager.getInstance().printConsoleError("Error."); };
+        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
         makeGetRequest(url, listener, errorListener);
     }
 
@@ -313,8 +297,7 @@ public class DataManager {
     /* GET FUNCTIONS ---------------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
 
-    public void downloadFeed(RecyclerView list, View view) {
-        LogManager.getInstance().printConsoleMessage("downloadFeed");
+    public void downloadFeed(RecyclerView viewList) {
         String url = BASE_URL + URL_FEED;
         if (user.getExams().size() > 0){
             url = url + "?exams=" + user.getExams().get(0);
@@ -322,39 +305,36 @@ public class DataManager {
                 url = url + "&exams=" + user.getExams().get(i);
         }
 
-        makeAdvancedGetRequest(Uri.parse(url), list, view, feedElements, new TypeToken<ArrayList<Document>>() {}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), viewList, feedElements, new TypeToken<ArrayList<Document>>() {}.getType());
     }
 
-    public void downloadStarredDocs(RecyclerView list, View view){
+    public void downloadStarredDocs(RecyclerView list){
         String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
-        makeAdvancedGetRequest(Uri.parse(url), list, view, starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
-    public void downloadStarredBooks(RecyclerView list, View view){
+    public void downloadStarredBooks(RecyclerView list){
         String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "1");
-        makeAdvancedGetRequest(Uri.parse(url), list, view, starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
     public void downloadAllExams(){
-        LogManager.getInstance().printConsoleError("downloadAllExams");
         String url = urlGenerator(BASE_URL + URL_EXAMS, user.getUniversity(), user.getCourse());
         makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>(){}.getType());
     }
 
     private void downloadAllUniversities(){
-        LogManager.getInstance().printConsoleError("downloadAllUniversities");
         String url = urlGenerator(BASE_URL + URL_UNIVERSITIES);
         makeSimpleGetRequest(Uri.parse(url), allUniversities, new TypeToken<ArrayList<String>>(){}.getType());
     }
 
     private void downloadAllCourses(){
-        LogManager.getInstance().printConsoleError("downloadAllCourses");
         String url = urlGenerator(BASE_URL + URL_COURSES);
         makeSimpleGetRequest(Uri.parse(url), allCourses, new TypeToken<ArrayList<Course>>(){}.getType());
     }
 
     public void downloadUserProfile(String uid, MainActivity mainActivity){
-        LogManager.getInstance().printConsoleError("downloadUserProfile");
+        LogManager.getInstance().printConsoleMessage("downloadUserProfile");
         String url = urlGenerator(BASE_URL + URL_USER, uid);
         makeGetRequest(Uri.parse(url),
                 response -> {
@@ -363,39 +343,32 @@ public class DataManager {
                         downloadAllExams();
                         downloadAllUniversities();
                         downloadAllCourses();
-                        LogManager.getInstance().printConsoleMessage("Completed.");
                         mainActivity.startApp();
                     }
-                    else {
-                        LogManager.getInstance().printConsoleError("Profile not loaded.");
+                    else
                         mainActivity.startLogin();
-                    }
                 },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.toString());
-                    FirebaseAuth.getInstance().signOut();
-                    mainActivity.startLogin();
-                });
+                error -> mainActivity.recreate());
     }
 
-    public void queryMaterials(String query, RecyclerView list, View view){
+    public void queryMaterials(String query, RecyclerView list){
         String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUniversity(), query);
-        makeAdvancedGetRequest(Uri.parse(url), list, view, searchElements, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, searchElements, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
-    public void downloadMyFiles(RecyclerView list, View view) {
+    public void downloadMyFiles(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUid());
-        makeAdvancedGetRequest(Uri.parse(url), list, view, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
-    public void downloadMyChats(RecyclerView list, View view) {
+    public void downloadMyChats(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_CHATS, user.getUid());
-        makeAdvancedGetRequest(Uri.parse(url), list, view, allChats, new TypeToken<ArrayList<Chat>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, allChats, new TypeToken<ArrayList<Chat>>(){}.getType());
     }
 
-    public void downloadCurrentActivePositions(RecyclerView list, View view) {
+    public void downloadCurrentActivePositions(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
-        makeAdvancedGetRequest(Uri.parse(url), list, view, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
     }
 
     public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email){
@@ -414,22 +387,34 @@ public class DataManager {
 
     private void uploadUser(){
         Uri url = Uri.parse(BASE_URL + URL_USER);
-        makePostRequest(url, user);
+        makePostRequest(url,
+                App.getStringFromRes(R.string.upload_user_message),
+                App.getStringFromRes(R.string.upload_user_error),
+                user);
     }
 
-    public void uploadDocument(Document document){
+    public void uploadDocument(final Document document){
         Uri url = Uri.parse(BASE_URL + URL_DOC);
-        makePostRequest(url, document);
+        makePostRequest(url,
+                App.getStringFromRes(!document.getModified() ? R.string.upload_doc_message : R.string.upload_doc_message2),
+                App.getStringFromRes(!document.getModified() ? R.string.upload_doc_error : R.string.upload_doc_error2),
+                document);
     }
 
     public void uploadPosition(Position position){
         Uri url = Uri.parse(BASE_URL + URL_POSITION);
-        makePostRequest(url, position);
+        makePostRequest(url,
+                App.getStringFromRes(R.string.upload_pos_message),
+                App.getStringFromRes(R.string.upload_pos_error),
+                position);
     }
 
     public void uploadMessage(Chat chat, Message message) {
         Uri url = Uri.parse(BASE_URL + URL_MESSAGE);
-        makePostRequest(url, chat, message);
+        makePostRequest(url, null,
+                App.getStringFromRes(R.string.upload_mess_error),
+                chat,
+                message);
     }
 
     public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener){
@@ -463,11 +448,10 @@ public class DataManager {
         StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
         mStorage.putBytes(baos.toByteArray()).addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl()
                 .addOnSuccessListener(uri -> {
-                    LogManager.getInstance().printConsoleMessage("Il tuo profilo è stato aggiornato.");
                     user.setPhotosUrl(uri.toString());
                     updateUser(null);
                 }))
-                .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, "Il tuo profilo non è stato aggiornato."));
+                .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, App.getStringFromRes(R.string.upload_user_error)));
     }
 
     public void uploadFileOnTheServer(String url, Document document){

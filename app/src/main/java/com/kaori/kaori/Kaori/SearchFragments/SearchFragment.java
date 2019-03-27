@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Kaori.HomeFragments.MaterialFragment;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
-import com.kaori.kaori.Services.LogManager;
 
 import java.util.List;
 
@@ -52,8 +52,9 @@ public class SearchFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                LogManager.getInstance().printConsoleMessage("Query submitted");
-                DataManager.getInstance().queryMaterials(query, recyclerView, view);
+                ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_search);
+                App.setEmptyView(view.findViewById(R.id.empty_view));
+                DataManager.getInstance().queryMaterials(query, recyclerView);
                 hideKeyboard();
                 return false;
             }

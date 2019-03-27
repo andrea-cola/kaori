@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Kaori.HomeFragments.StarredAdapter;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Constants;
@@ -27,7 +29,10 @@ public class MyBooksFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new StarredAdapter(DataManager.getInstance().getStarredBooks(), Constants.BOOK));
 
-        DataManager.getInstance().downloadStarredBooks(recyclerView, view);
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_my_books);
+        App.setEmptyView(view.findViewById(R.id.empty_view));
+        DataManager.getInstance().downloadStarredBooks(recyclerView);
+
         return view;
     }
 

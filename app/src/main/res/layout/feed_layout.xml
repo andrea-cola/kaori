@@ -21,6 +21,4 @@
     <include layout="@layout/empty_view"
         android:visibility="gone"/>
 
-    <include layout="@layout/wait_layout" />
-
 </android.support.constraint.ConstraintLayout>

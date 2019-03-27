@@ -22,7 +22,6 @@ public class MyMaterialFragment extends Fragment {
     /**
      * Constants.
      */
-    private final String BACK_STATE_NAME = getClass().getName();
     private final String[] titles = { "docs", "books" };
 
     @Nullable

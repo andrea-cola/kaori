@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.Kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.Kaori.HomeFragments.HomeFragment;
@@ -69,6 +70,7 @@ public class KaoriApp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kaoriapp);
 
+        App.setWaitView(findViewById(R.id.wait_view));
         LogManager.initialize(findViewById(R.id.coordinator));
         DataManager.initialize();
 

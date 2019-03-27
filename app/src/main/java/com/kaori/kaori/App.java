@@ -30,8 +30,12 @@ public class App extends Application {
         return app.getApplicationContext().getString(resId);
     }
 
-    public static void setAuxiliarViews(View wait, View empty){
-        app.viewManager.setViews(wait, empty);
+    public static void setWaitView(View wait){
+        app.viewManager.setWaitView(wait);
+    }
+
+    public static void setEmptyView(View empty){
+        app.viewManager.setEmptyView(empty);
     }
 
     public static void setAuxiliarViewsStatus(int status) {

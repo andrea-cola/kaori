@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Constants;
@@ -37,14 +38,14 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
 
-        // view setup
         RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new RecyclerAdapter(DataManager.getInstance().getFeedElements()));
 
-        // load feed
-        DataManager.getInstance().downloadFeed(recyclerView, view);
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_feed);
+        App.setEmptyView(view.findViewById(R.id.empty_view));
+        DataManager.getInstance().downloadFeed(recyclerView);
 
         return view;
     }

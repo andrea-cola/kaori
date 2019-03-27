@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
@@ -35,10 +36,11 @@ public class ChatListFragment extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setHasFixedSize(true);
-
         mRecyclerView.setAdapter(new ChatAdapter(DataManager.getInstance().getAllChats()));
 
-        DataManager.getInstance().downloadMyChats(mRecyclerView, view);
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_chat);
+        App.setEmptyView(view.findViewById(R.id.empty_view));
+        DataManager.getInstance().downloadMyChats(mRecyclerView);
 
         return view;
     }

@@ -32,7 +32,7 @@ public class KaoriLogin extends AppCompatActivity {
         setContentView(R.layout.activity_kaorilogin);
 
         LogManager.initialize(findViewById(R.id.coordinator));
-        App.setAuxiliarViews(findViewById(R.id.wait_view), findViewById(R.id.empty_view));
+        App.setWaitView(findViewById(R.id.wait_view));
 
         entryPointFragmentCall(new LoginFragment());
     }
