@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kaori.kaori.App;
 import com.kaori.kaori.Chat.KaoriChat;
@@ -35,6 +36,7 @@ public class KaoriApp extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private ImageView toolbarImage;
+    private TextView fragmentTitle;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -43,18 +45,23 @@ public class KaoriApp extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
+                fragmentTitle.setText(R.string.title_feed);
                 entryPointFragmentCall(new HomeFragment());
                 return true;
             case R.id.navigation_search:
+                fragmentTitle.setText(R.string.title_search);
                 entryPointFragmentCall(new SearchFragment());
                 return true;
             case R.id.navigation_preferred:
+                fragmentTitle.setText(R.string.title_starred);
                 entryPointFragmentCall(new MyMaterialFragment());
                 return true;
             case R.id.navigation_share:
+                fragmentTitle.setText(R.string.title_finder);
                 entryPointFragmentCall(new FinderFragment());
                 return true;
             case R.id.navigation_my_profile:
+                fragmentTitle.setText(R.string.title_profile);
                 entryPointFragmentCall(new ProfileFragment());
                 return true;
         }
@@ -95,6 +102,8 @@ public class KaoriApp extends AppCompatActivity {
         toolbarImage = findViewById(R.id.toolbar_account_image);
         toolbarImage.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
+
+        fragmentTitle = findViewById(R.id.toolbar_title);
     }
 
     @Override
