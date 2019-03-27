@@ -38,6 +38,10 @@ public class App extends Application {
         app.viewManager.setEmptyView(empty);
     }
 
+    public static void addEmptyView(View empty) {
+        app.viewManager.addEmptyView(empty);
+    }
+
     public static void setAuxiliarViewsStatus(int status) {
         app.viewManager.setAuxiliarViewsStatus(status);
     }

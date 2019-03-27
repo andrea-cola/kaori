@@ -24,7 +24,7 @@ public class MyDocsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.my_recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new StarredAdapter(DataManager.getInstance().getStarredDocuments(), Constants.FILE));
@@ -32,6 +32,7 @@ public class MyDocsFragment extends Fragment {
         ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_my_docs);
         App.setEmptyView(view.findViewById(R.id.empty_view));
         DataManager.getInstance().downloadStarredDocs(recyclerView);
+
         return view;
     }
 

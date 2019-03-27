@@ -288,6 +288,7 @@ public class DataManager {
     }
 
     private void makeGetRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener){
+        App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(), listener, errorListener);
         request.setShouldCache(false);
         queue.add(request);
@@ -299,7 +300,6 @@ public class DataManager {
 
     public void downloadFeed(RecyclerView viewList) {
         String url = BASE_URL + URL_FEED;
-        LogManager.getInstance().printConsoleMessage(user.getExams().size() + "");
         if (user.getExams().size() > 0){
             url = url + "?exams=" + user.getExams().get(0);
             for (int i = 1; i < user.getExams().size(); i++)
@@ -335,16 +335,15 @@ public class DataManager {
     }
 
     public void downloadUserProfile(String uid, MainActivity mainActivity){
-        LogManager.getInstance().printConsoleMessage("downloadUserProfile");
         String url = urlGenerator(BASE_URL + URL_USER, uid);
+        LogManager.getInstance().printConsoleMessage("GET -> " + url);
         makeGetRequest(Uri.parse(url),
                 response -> {
                     this.user = gson.fromJson(response, new TypeToken<User>(){}.getType());
-                    LogManager.getInstance().printConsoleMessage(user.getExams().size() + "");
                     if(user != null) {
-                        //downloadAllExams();
-                        //downloadAllUniversities();
-                        //downloadAllCourses();
+                        downloadAllExams();
+                        downloadAllUniversities();
+                        downloadAllCourses();
                         mainActivity.startApp();
                     }
                     else

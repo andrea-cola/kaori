@@ -13,7 +13,7 @@
         android:layout_weight="1">
 
         <include layout="@layout/empty_view"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
