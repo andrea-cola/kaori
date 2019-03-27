@@ -116,7 +116,7 @@ public class MaterialFragment extends Fragment {
         downloadButton.setOnClickListener(v -> {
             String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
             File pdfFile = new File(path);
-            if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), Uri.parse(mMaterial.getUrl()), getActivity(), getContext()).download())
+            if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), Uri.parse(mMaterial.getUrl()), getActivity()).download())
                 show();
             else
                 show();

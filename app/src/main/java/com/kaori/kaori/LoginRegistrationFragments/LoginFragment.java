@@ -9,38 +9,34 @@ import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
 
+import com.facebook.login.widget.LoginButton;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Utils.LogManager;
 
 public class LoginFragment extends Fragment {
-
-    private View view;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.login, container, false);
-        Button mNative = view.findViewById(R.id.button);
-        //TODO: Button registration = view.findViewById(R.id.button2);
-        /*ImageView mFacebook = view.findViewById(R.id.button_fake_facebook);
-        ImageView mGoogle = view.findViewById(R.id.button_google);
-        EditText mUsername = view.findViewById(R.id.username);
+        View view = inflater.inflate(R.layout.login, container, false);
+        EditText mUsername = view.findViewById(R.id.mail);
         EditText mPassword = view.findViewById(R.id.password);
-
-        LoginButton buttonFacebookLogin = view.findViewById(R.id.button_facebook);
+        LoginButton buttonFacebookLogin = view.findViewById(R.id.btn_facebook_2);
         buttonFacebookLogin.setReadPermissions("email", "public_profile");
-        FacebookLogin.initialize(getContext(), buttonFacebookLogin);
 
-        GoogleLogin.initialize(getContext());
+        FacebookLogin.initialize(getActivity(), buttonFacebookLogin);
+        GoogleLogin.initialize(getActivity());
+        NativeLogin.initialize(getActivity());
 
-        NativeLogin.initialize(getContext());
-
-        //TODO: registration.setOnClickListener(v -> invokeNextFragment(new CreateAccountWithEmail()));
-        //mNative.setOnClickListener(v -> nativeLogin(mUsername.getText().toString(), mPassword.getText().toString()));
-        mFacebook.setOnClickListener(v -> facebookLogin());
-        mGoogle.setOnClickListener(v -> googleLogin());*/
+        view.findViewById(R.id.txt_registration)
+                .setOnClickListener(v -> invokeNextFragment(new CreateAccountWithEmail()));
+        view.findViewById(R.id.btn_login)
+                .setOnClickListener(v -> nativeLogin(mUsername.getText().toString(), mPassword.getText().toString()));
+        view.findViewById(R.id.btn_facebook)
+                .setOnClickListener(v -> FacebookLogin.getInstance().loginWithFacebook());
+        view.findViewById(R.id.btn_google)
+                .setOnClickListener(v -> GoogleLogin.getInstance().loginWithGoogle());
 
         return view;
     }
@@ -56,18 +52,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void nativeLogin(String mail, String password) {
-        LogManager.getInstance().showWaitView();
         NativeLogin.getInstance().validateProvider(mail, password);
-    }
-
-    private void facebookLogin() {
-        LogManager.getInstance().showWaitView();
-        FacebookLogin.getInstance().loginWithFacebook();
-    }
-
-    private void googleLogin() {
-        LogManager.getInstance().showWaitView();
-        GoogleLogin.getInstance().loginWithGoogle();
     }
 
 }

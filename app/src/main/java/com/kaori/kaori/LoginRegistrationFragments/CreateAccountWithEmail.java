@@ -38,10 +38,9 @@ public class CreateAccountWithEmail extends Fragment {
     /**
      * Variables.
      */
-    private boolean[] validFields = new boolean[3]; // validity state of the fields
-    private byte[] image;
-    private ImagePicker imagePicker;
-    private View view;
+    private byte[] image; // profile image in bytes stream
+    private ImagePicker imagePicker; // picks an image from the gallery
+    private View view; // reference to the main view
 
     @Nullable
     @Override
@@ -49,17 +48,11 @@ public class CreateAccountWithEmail extends Fragment {
         view = inflater.inflate(R.layout.registration, container, false);
         EditText mName = view.findViewById(R.id.name);
         EditText mPassword = view.findViewById(R.id.password);
-        EditText mMail = view.findViewById(R.id.username);
+        EditText mMail = view.findViewById(R.id.mail);
         Button button = view.findViewById(R.id.button);
 
-        // set to false all the field validity flags.
-        for (int i = 0; i < validFields.length; i++)
-            validFields[i] = false;
-
-        // instantiate the image picker.
         imagePicker = new ImagePicker(this);
 
-        // add the action to FAB and to button
         view.findViewById(R.id.floatingActionButton).setOnClickListener(view1 -> imagePicker.showChoicePopup());
         button.setOnClickListener(view12 -> validateFields(mName, mMail, mPassword));
 
@@ -78,7 +71,7 @@ public class CreateAccountWithEmail extends Fragment {
 
     private boolean nameValidation(final String name){
         if(!Pattern.compile(NAME_PATTERN).matcher(name).matches()){
-            LogManager.getInstance().showVisualMessage("Indirizzo mMail non valido.");
+            LogManager.getInstance().showVisualMessage(R.string.wrong_name);
             return false;
         }
         return true;
@@ -86,7 +79,7 @@ public class CreateAccountWithEmail extends Fragment {
 
     private boolean emailValidation(final String email){
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            LogManager.getInstance().showVisualMessage("Indirizzo mMail non valido.");
+            LogManager.getInstance().showVisualMessage(R.string.wrong_email);
             return false;
         }
         return true;
@@ -94,7 +87,7 @@ public class CreateAccountWithEmail extends Fragment {
 
     private boolean passwordValidation(final String password){
         if (!Pattern.compile(PASSWORD_PATTERN).matcher(password).matches()) {
-            LogManager.getInstance().showVisualMessage("Password non valido.");
+            LogManager.getInstance().showVisualMessage(R.string.wrong_password);
             return false;
         }
         return true;
@@ -102,14 +95,14 @@ public class CreateAccountWithEmail extends Fragment {
 
     private boolean imageValidation(final byte[] bitmap){
         if(bitmap == null) {
-            LogManager.getInstance().showVisualMessage("Nessuna immagine selezionata.");
+            LogManager.getInstance().showVisualMessage(R.string.no_image_selected);
             return false;
         }
         return true;
     }
 
     private void updateUserAndSignin(final String name, final String mail, final String password) {
-        LogManager.getInstance().showWaitView();
+        //TODO: LogManager.getInstance().showWaitView();
         User user = new User();
         user.setName(name);
         user.setEmail(mail);

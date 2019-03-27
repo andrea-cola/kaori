@@ -1,7 +1,6 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
@@ -15,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.kaori.kaori.App;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
@@ -25,14 +25,14 @@ import com.kaori.kaori.Utils.LogManager;
 public class GoogleLogin {
 
     private static GoogleLogin instance;
-    private Context context;
+    private Activity context;
     private GoogleSignInClient googleSignInClient;
 
-    private GoogleLogin(Context context) {
+    private GoogleLogin(Activity context) {
         this.context = context;
     }
 
-    /*package-private*/ static void initialize(Context c) {
+    /*package-private*/ static void initialize(Activity c) {
         instance = new GoogleLogin(c);
     }
 
@@ -43,12 +43,12 @@ public class GoogleLogin {
     /*package-private*/  void loginWithGoogle(){
         LogManager.getInstance().printConsoleMessage("Google login -> step 1");
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestIdToken(App.getStringFromRes(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         googleSignInClient = GoogleSignIn.getClient(context, gso);
         Intent signInIntent = googleSignInClient.getSignInIntent();
-        ((KaoriLogin)context).startActivityForResult(signInIntent, Constants.GOOGLE_LOGIN_REQUEST);
+        context.startActivityForResult(signInIntent, Constants.GOOGLE_LOGIN_REQUEST);
     }
 
     /*package-private*/  void validateProvider(final GoogleSignInAccount googleSignInAccount) {
@@ -70,7 +70,7 @@ public class GoogleLogin {
     private void firebaseAuthWithGoogle(AuthCredential credential) {
         LogManager.getInstance().printConsoleMessage("Google login -> step 3");
         FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener((Activity)context, task -> {
+                .addOnCompleteListener(context, task -> {
                     if (task.isSuccessful())
                         validateLogin(task.getResult().getUser());
                     else {
@@ -108,32 +108,29 @@ public class GoogleLogin {
         DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
     }
 
+    private void updateTokenID(String uid){
+        LogManager.getInstance().printConsoleMessage("Google login -> step 4.2");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful())
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, Constants.LOGIN_SUCCESS), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+            else
+                endLogin(true, Constants.LOGIN_SUCCESS);
+        });
+    }
+
     private void endLogin(boolean isSuccess, final String message){
+        App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
+        LogManager.getInstance().showVisualMessage(message);
         if (isSuccess)
             invokeActivity();
-        else {
-            if(message != null)
-                LogManager.getInstance().showVisualMessage(message);
-            LogManager.getInstance().hideWaitView();
-        }
     }
 
     private void invokeActivity(){
         LogManager.getInstance().showVisualMessage(Constants.LOGIN_SUCCESS);
         (new Handler()).postDelayed(() -> {
             context.startActivity(new Intent(context, Kaori.class));
-            ((Activity)context).finish();
-        }, 3000);
-    }
-
-    private void updateTokenID(String uid){
-        LogManager.getInstance().printConsoleMessage("Google login -> update token");
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (task.isSuccessful())
-                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
-            else
-                endLogin(true, null);
-        });
+            context.finish();
+        }, 1000);
     }
 
 }

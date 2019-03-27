@@ -12,7 +12,6 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.kaori.kaori.LoginRegistrationFragments.KaoriLogin;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
-import com.kaori.kaori.Utils.LogManager;
 
 /**
  * Splash screen activity.
@@ -34,16 +33,13 @@ public class Kaori extends AppCompatActivity {
      */
     private void setup(){
         FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setPersistenceEnabled(false)
-                .build();
+                .setPersistenceEnabled(false).build();
         FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
-        LogManager.getInstance();
-        DataManager.getInstance(this);
+        DataManager.initialize();
 
         new Handler().postDelayed(
                 () -> {
-                    LogManager.getInstance().printConsoleMessage("Kaori started.");
                     if(FirebaseAuth.getInstance().getCurrentUser() != null)
                         downloadUserProfile();
                     else

@@ -1,13 +1,13 @@
 package com.kaori.kaori.LoginRegistrationFragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.kaori.kaori.App;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.DataManager;
@@ -16,13 +16,13 @@ import com.kaori.kaori.Utils.LogManager;
 /*package-private*/ class NativeLogin {
 
     private static NativeLogin instance;
-    private Context context;
+    private Activity context;
 
-    private NativeLogin(Context context){
+    private NativeLogin(Activity context){
         this.context = context;
     }
 
-    /*package-private*/ static void initialize(Context context){
+    /*package-private*/ static void initialize(Activity context){
         instance = new NativeLogin(context);
     }
 
@@ -32,6 +32,8 @@ import com.kaori.kaori.Utils.LogManager;
 
     /*package-private*/ void validateProvider(String email, String password) {
         LogManager.getInstance().printConsoleMessage("Email login -> step 1");
+
+        App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         DataManager.getInstance().createValidationProviderRequest(
                 response -> {
                     if(Integer.parseInt(response) == 1)
@@ -58,6 +60,7 @@ import com.kaori.kaori.Utils.LogManager;
     }
 
     private void validateLogin(FirebaseUser firebaseUser){
+        LogManager.getInstance().printConsoleMessage("Email login -> step 3");
         DataManager.getInstance().checkIfTheUserAlreadyExists(
                 response -> {
                     if(Integer.parseInt(response) == Constants.USER_EXISTS)
@@ -72,33 +75,31 @@ import com.kaori.kaori.Utils.LogManager;
                 firebaseUser.getEmail());
     }
 
+    private void updateTokenID(String uid){
+        LogManager.getInstance().printConsoleMessage("Email login -> step 4");
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null)
+                DataManager.getInstance()
+                        .postToken(uid, task.getResult().getToken(),
+                                response -> endLogin(true, Constants.LOGIN_SUCCESS),
+                                error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+            else
+                endLogin(true, Constants.LOGIN_SUCCESS);
+        });
+    }
+
     private void endLogin(boolean isSuccess, final String message){
+        App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
+        LogManager.getInstance().showVisualMessage(message);
         if (isSuccess)
             invokeActivity();
-        else {
-            if(message != null)
-                LogManager.getInstance().showVisualMessage(message);
-            LogManager.getInstance().hideWaitView();
-        }
     }
 
     private void invokeActivity(){
-        LogManager.getInstance().showVisualMessage(Constants.LOGIN_SUCCESS);
-        (new Handler()).postDelayed(() -> {
+        new Handler().postDelayed(() -> {
             context.startActivity(new Intent(context, Kaori.class));
-            ((Activity)context).finish();
-        }, 3000);
-    }
-
-    private void updateTokenID(String uid){
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                LogManager.getInstance().printConsoleMessage("Native login -> update token");
-                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, null), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
-            }
-            else
-                endLogin(true, null);
-        });
+            context.finish();
+        }, 1000);
     }
 
 }

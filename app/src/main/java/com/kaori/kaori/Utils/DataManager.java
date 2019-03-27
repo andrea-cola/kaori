@@ -1,5 +1,6 @@
 package com.kaori.kaori.Utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -22,6 +23,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kaori.kaori.App;
 import com.kaori.kaori.Kaori;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Course;
@@ -63,6 +65,7 @@ public class DataManager {
     /**
      * Singleton instance.
      */
+    @SuppressLint("StaticFieldLeak")
     private static DataManager dataManager;
     private Gson gson = new Gson();
     private RequestQueue queue;
@@ -92,7 +95,7 @@ public class DataManager {
     /* SINGLETON CONSTRUCTORS ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
 
-    private DataManager(Context context) {
+    private DataManager() {
         user = new User();
         allExams = new ArrayList<>();
         allUniversities = new ArrayList<>();
@@ -107,27 +110,25 @@ public class DataManager {
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder_loading)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .error(R.drawable.placeholder);
+                .error(R.drawable.placeholder_loading);
 
         glideRequestOptionsCircle = new RequestOptions()
                 .centerCrop()
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder_loading)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .circleCrop()
-                .error(R.drawable.placeholder);
+                .error(R.drawable.placeholder_loading);
 
-        queue = Volley.newRequestQueue(context);
+        queue = Volley.newRequestQueue(App.getActiveContext());
+    }
+
+    public static void initialize() {
+        dataManager = new DataManager();
     }
 
     public static DataManager getInstance(){
-        return dataManager;
-    }
-
-    public static DataManager getInstance(Context context) {
-        if (dataManager == null)
-            dataManager = new DataManager(context);
         return dataManager;
     }
 
@@ -191,8 +192,8 @@ public class DataManager {
     /* GENERIC FUNCTIONS ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------------------------ */
 
-    public void clean(Context context) {
-        dataManager = new DataManager(context);
+    public void clean() {
+        dataManager = new DataManager();
     }
 
     private String urlGenerator(String url, String... params){
@@ -276,7 +277,7 @@ public class DataManager {
                     LogManager.getInstance().printConsoleMessage(response);
 
                     viewList.getAdapter().notifyDataSetChanged();
-                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                    view.findViewById(R.id.wait_view).setVisibility(View.GONE);
 
                     if (list.size() == 0) {
                         //TODO: personalizzare

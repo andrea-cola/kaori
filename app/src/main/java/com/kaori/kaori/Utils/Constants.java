@@ -11,6 +11,10 @@ import java.util.Locale;
  */
 public class Constants {
 
+    public static final int WAIT_VIEW_ACTIVE = -1;
+    public static final int EMPTY_VIEW_ACTIVE = 0;
+    public static final int NO_VIEW_ACTIVE = 1;
+
     /**
      * Log titles.
      */
@@ -67,6 +71,7 @@ public class Constants {
      */
     public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
     public static final long constantDate = 1000L;
+
     /**
      * Functions.
      */

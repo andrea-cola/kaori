@@ -70,7 +70,7 @@ public class ProfileFragment extends Fragment {
             }
 
             // flush data manager
-            DataManager.getInstance().clean(getActivity());
+            DataManager.getInstance().clean();
 
             if(getActivity() != null && isAdded()) {
                 startActivity(new Intent(getActivity(), Kaori.class));

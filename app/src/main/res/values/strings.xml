@@ -74,11 +74,13 @@
     <string name="my_exams">I miei corsi</string>
     <string name="my_uploads">I miei uploads</string>
 
-    <!-- Create Account With Email fragments strings -->
-    <string name="file_not_found">File non trovato. Riprovare.</string>
-    <string name="no_image_selected">Nessuna immagine selezionata.</string>
-
     <!-- Errors & Messages -->
+    <string name="wrong_name">Nome non valido.</string>
+    <string name="wrong_email">Indirizzo mail non valido.</string>
+    <string name="wrong_password">Password non valida.</string>
+    <string name="no_image_selected">Nessuna immagine selezionata.</string>
+    <string name="file_not_found">File non trovato. Riprovare.</string>
+
     <string name="signin_success">Registrazione effettuata.</string>
     <string name="login_success">Login effettuato.</string>
     <string name="generic_error">Verifica la tua connessione.</string>

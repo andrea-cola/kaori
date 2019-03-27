@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
+import com.kaori.kaori.App;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.Constants;
 import com.kaori.kaori.Utils.LogManager;
@@ -26,7 +27,9 @@ public class KaoriLogin extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kaorilogin);
-        LogManager.getInstance(findViewById(R.id.coordinator), findViewById(R.id.wait_layout));
+
+        LogManager.initialize(findViewById(R.id.coordinator));
+        App.setAuxiliarViews(findViewById(R.id.wait_view), findViewById(R.id.empty_view));
 
         entryPointFragmentCall(new LoginFragment());
     }

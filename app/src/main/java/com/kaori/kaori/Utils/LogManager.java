@@ -5,6 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
+import com.kaori.kaori.App;
 import com.kaori.kaori.R;
 
 /**
@@ -16,43 +17,27 @@ public class LogManager {
      * Variables.
      */
     private static LogManager logManager;
-    private static View view;
-    private static View waitView;
+    private View view;
+    private static final String EMPTY_MESSAGE = "No message specified";
 
     /**
      * Private constructor.
      */
-    private LogManager(){
+    private LogManager(View view){
         super();
+        this.view = view;
     }
 
-    /**
-     * Return the instance of the log manager.
-     */
-    public static LogManager getInstance(){
-        if(logManager == null)
-            logManager = new LogManager();
-        return logManager;
+    public static void initialize(View view) {
+        logManager = new LogManager(view);
     }
 
     /**
      * Return the instance of the log manager
      * and set the Coordinator view.
      */
-    public static LogManager getInstance(View v, View v2){
-        if(logManager == null)
-            logManager = new LogManager();
-        view = v;
-        waitView = v2;
+    public static LogManager getInstance(){
         return logManager;
-    }
-
-    public void showWaitView(){
-        waitView.setVisibility(View.VISIBLE);
-    }
-
-    public void hideWaitView(){
-        waitView.setVisibility(View.GONE);
     }
 
     /**
@@ -60,9 +45,7 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void printConsoleError(String message){
-        if(message == null)
-            message = "Alert! The message is empty!";
-        Log.e(Constants.TAG, message);
+        Log.e(Constants.TAG, message != null ? message : EMPTY_MESSAGE);
     }
 
     /**
@@ -70,9 +53,7 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void printConsoleMessage(String message){
-        if(message == null)
-            message = "Alert! The message is empty!";
-        Log.d(Constants.TAG, message);
+        Log.d(Constants.TAG, message != null ? message : EMPTY_MESSAGE);
     }
 
     /**
@@ -81,11 +62,8 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void showVisualError(Exception e, String message){
-        if(message == null)
-            message = "Alert! The message is empty!";
         Log.e(Constants.TAG, e == null ? message : message + " -> " + e.getMessage());
-
-        if(view != null) Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
     }
 
     /**
@@ -94,11 +72,42 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void showVisualMessage(String message){
-        if(message == null)
-            message = "Alert! The message is empty!";
         Log.d(Constants.TAG, message);
+        Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
+    }
 
-        if(view != null) Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
+    /**
+     * Print the error in the console.
+     */
+    @SuppressLint("LogNotTimber")
+    public void printConsoleError(int resId){
+        printConsoleError(App.getStringFromRes(resId));
+    }
+
+    /**
+     * Print a message in the console.
+     */
+    @SuppressLint("LogNotTimber")
+    public void printConsoleMessage(int resId){
+        printConsoleMessage(App.getStringFromRes(resId));
+    }
+
+    /**
+     * Show the error message and the exception visually
+     * and in the console.
+     */
+    @SuppressLint("LogNotTimber")
+    public void showVisualError(Exception e, int resId){
+        showVisualError(e, App.getStringFromRes(resId));
+    }
+
+    /**
+     * Show a message and the exception visually
+     * and in the console.
+     */
+    @SuppressLint("LogNotTimber")
+    public void showVisualMessage(int resId){
+        showVisualMessage(App.getStringFromRes(resId));
     }
 
 }

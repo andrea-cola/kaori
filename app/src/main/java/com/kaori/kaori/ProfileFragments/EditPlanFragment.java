@@ -162,7 +162,7 @@ public class EditPlanFragment extends Fragment {
             selectedCourses.add(e);
             addAutoCompleteTextView(e);
         }
-        view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+        view.findViewById(R.id.wait_view).setVisibility(View.GONE);
     }
 
     /**
