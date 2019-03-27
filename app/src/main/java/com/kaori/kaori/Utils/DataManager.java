@@ -247,13 +247,13 @@ public class DataManager {
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
                 response -> {
                     if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage("Aggiornamento effettuato.");
+                        LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_done));
                     else
-                        LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                        LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_failed));
                 },
                 error -> {
                     LogManager.getInstance().printConsoleError(error.networkResponse + "");
-                    LogManager.getInstance().showVisualMessage("Aggiornamento fallito, riprovare.");
+                    LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_failed));
                 }) {
             @Override
             protected Map<String, String> getParams() {
@@ -391,9 +391,9 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), list, view, allChats, new TypeToken<ArrayList<Chat>>(){}.getType());
     }
 
-    public void downloadCurrentActivePositions(RecyclerView list, View view) {
+    public void downloadCurrentActivePositions(Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
-        makeAdvancedGetRequest(Uri.parse(url), list, view, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
+        makeGetRequest(Uri.parse(url), listener, errorListener);
     }
 
     public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email){
@@ -441,11 +441,9 @@ public class DataManager {
     }
 
     public void deletePosition(){
-        if(this.getUser().isPositioned()) {
-            String url = BASE_URL + URL_POS_REMOVE;
-            makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, this.getUser().getUid());
-            this.getUser().setPositioned(false);
-        }
+        String url = BASE_URL + URL_POS_REMOVE;
+        makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, this.getUser().getUid());
+
     }
 
     /* ------------------------------------------------------------------------------------------------------ */

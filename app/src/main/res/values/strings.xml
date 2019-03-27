@@ -19,10 +19,6 @@
     <string name="title_register_google">Crea account con Google</string>
     <string name="title_register_email">Crea account con la mail</string>
 
-    <string name="profile_about_me">Su di me</string>
-    <string name="profile_my_courses">I miei corsi</string>
-    <string name="profile_save">Salva</string>
-
     <!-- Feed fragment -->
     <string name="feed_empty_view_text">Il tuo piano di studi è vuoto, modificalo per rimanare aggiornato.</string>
 
@@ -31,25 +27,36 @@
 
     <!-- Search fragment -->
     <string name="search_empty_view_text">La ricerca ti aiuta a trovare velocemente i materiali di cui hai bisogno.</string>
+    <string name="search_hint">Cerca qui</string>
+    <string name="search_image">Cerca</string>
+
+    <!-- Profile fragment-->
+    <string name="profile_about_me">Su di me</string>
+    <string name="profile_my_courses">I miei corsi</string>
+    <string name="profile_save">Salva</string>
+    <string name="my_exams">I miei corsi</string>
+    <string name="my_uploads">I miei uploads</string>
 
     <!-- Empty view text -->
     <string name="empty_view_text">Nessun risultato disponibile.</string>
 
+    <!-- APIs strings-->
     <string name="firebase_web_host" translatable="false">kaori-c5a43.firebaseapp.com</string>
     <string name="facebook_app_id" translatable="false">1537422876359009</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1537422876359009</string>
-
     <string name="mapbox_acces_token">pk.eyJ1IjoibWF0dGVvZGFjY28iLCJhIjoiY2pwMDVxbTBzMnNkMDNwbGtraHlpaG8zZCJ9.YfMp_jZ94UDom64UKGiVQA</string>
+
+    <!-- Mapbox strigs-->
     <string name="mapbox_location_permission_explanation">For a better service, allow permissions</string>
     <string name="mapbox_permission_not_granted">Permission not granted</string>
-    <string name="search_hint">Cerca qui</string>
-    <string name="search_image">Cerca</string>
 
+    <!-- Camera strings -->
     <string name="camera_popup_title">Scegli una opzione:</string>
     <string name="camera_popup_option1">Dalla camera</string>
     <string name="camera_popup_option2">Dalla galleria</string>
 
-    <string name="button_cancel">Cancel</string>
+    <!-- View elements strings -->
+    <string name="button_cancel">Annulla</string>
     <string name="button_add_course">Aggiungi corso</string>
     <string name="button_edit_courses">Modifica corsi</string>
     <string name="spinner_title_courses">I tuoi esami</string>
@@ -70,16 +77,13 @@
     <string name="upload_a_file_or_your_notes">Carica un file o le tue note</string>
     <string name="download">Download</string>
 
-    <!-- Profile fragments strings -->
-    <string name="my_exams">I miei corsi</string>
-    <string name="my_uploads">I miei uploads</string>
-
     <!-- Create Account With Email fragments strings -->
     <string name="file_not_found">File non trovato. Riprovare.</string>
     <string name="no_image_selected">Nessuna immagine selezionata.</string>
 
     <!-- Errors & Messages -->
     <string name="signin_success">Registrazione effettuata.</string>
+
     <string name="login_success">Login effettuato.</string>
     <string name="generic_error">Verifica la tua connessione.</string>
     <string name="google_error">Login con Google fallito. Riprova.</string>
@@ -92,9 +96,12 @@
     <string name="dialog_disable_position">I tuoi amici non ti vedranno più studiare. Continuare?</string>
     <string name="dialog_enable_position">Devi attivare il GPS per la posizione</string>
     <string name="position_not_active">Non hai attivo il sensore GPS</string>
-    <string name="finder_item_studying">Sto studiando</string>
+    <string name="finder_item_studying">Sto studiando: </string>
 
     <string name="error_upload_msg">Riempi i campi vuoti</string>
     <string name="error_link_upload_msg">Url inserito non valido.</string>
+    <string name="error_regostration_mail">Indirizzo Email non valido.</string>
+    <string name="update_done">Aggiornamento effettuato</string>
+    <string name="update_failed">Aggiornamento fallito, riprovare.</string>
 
 </resources>

@@ -78,7 +78,7 @@ public class CreateAccountWithEmail extends Fragment {
 
     private boolean nameValidation(final String name){
         if(!Pattern.compile(NAME_PATTERN).matcher(name).matches()){
-            LogManager.getInstance().showVisualMessage("Indirizzo mMail non valido.");
+            LogManager.getInstance().showVisualMessage(getString(R.string.error_regostration_mail));
             return false;
         }
         return true;
@@ -86,7 +86,7 @@ public class CreateAccountWithEmail extends Fragment {
 
     private boolean emailValidation(final String email){
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            LogManager.getInstance().showVisualMessage("Indirizzo mMail non valido.");
+            LogManager.getInstance().showVisualMessage("Indirizzo Email non valido.");
             return false;
         }
         return true;

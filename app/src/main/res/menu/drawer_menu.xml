@@ -2,8 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
-        android:icon="@drawable/ic_home_black_24dp"
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_person_black_24dp"
         android:title="Profile" />
-
+    <item
+        android:id="@+id/nav_uploads"
+        android:icon="@drawable/ic_file_upload_black_24dp"
+        android:title="Upload" />
+    <item
+        android:id="@+id/nav_esami"
+        android:icon="@drawable/ic_school_black_24dp"
+        android:title="Piano di studi" />
+    <item
+        android:id="@+id/nav_impostazioni"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Impostazioni" />
 </menu>

@@ -24,11 +24,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FinderFragment extends Fragment {
@@ -37,12 +41,13 @@ public class FinderFragment extends Fragment {
      * Constants
      */
     private final String BACK_STATE_NAME = getClass().getName();
+    private ArrayList<Position> currentActivePositions;
 
     private RecyclerView recyclerView;
-    private Context context;
+    private View view;
+
     private LocationManager lm;
     private TextView noLocalize;
-    private RecyclerAdapter adapter;
 
     @Override
     public void onStart() {
@@ -52,49 +57,43 @@ public class FinderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.finder_position_layout, container, false);
+        view = inflater.inflate(R.layout.finder_position_layout, container, false);
         lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        context = getContext();
-
+        currentActivePositions = new ArrayList<>();
         view.findViewById(R.id.positionFAB).setOnClickListener(v -> activateGPS());
         noLocalize = view.findViewById(R.id.nolocalize);
 
         recyclerView = view.findViewById(R.id.user_recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new RecyclerAdapter(DataManager.getInstance().getCurrentActivePositions());
+        RecyclerAdapter adapter = new RecyclerAdapter(currentActivePositions);
         recyclerView.setAdapter(adapter);
 
         ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.finder_empty_view_text);
 
-        DataManager.getInstance().downloadCurrentActivePositions(recyclerView, view);
-
-        deactivePosition();
+        downloadActivePositions();
 
         return view;
     }
 
     private void deactivePosition() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                        PackageManager.PERMISSION_GRANTED) {
-            if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER) &&
-                    DataManager.getInstance().getUser().isPositioned()) {
-                noLocalize.setVisibility(View.VISIBLE);
-                noLocalize.setOnClickListener(v -> new AlertDialog.Builder(getActivity())
-                        .setMessage(getString(R.string.dialog_disable_position))
-                        .setPositiveButton("OK", (d, which) -> {
-                            DataManager.getInstance().deletePosition();
-                            invokeFragment(new FinderFragment(), FinderFragment.class.getSimpleName());
-                            d.dismiss();
-                        })
-                        .setNegativeButton("NO", (d, which) -> d.dismiss())
-                        .show());
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED && isPositioned() &&
+                lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            noLocalize.setVisibility(View.VISIBLE);
+            noLocalize.setOnClickListener(v -> new AlertDialog.Builder(getActivity())
+                    .setMessage(getString(R.string.dialog_disable_position))
+                    .setPositiveButton("OK", (d, which) -> {
+                        DataManager.getInstance().deletePosition();
+                        d.dismiss();
+                        LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_done));
+                    })
+                    .setNegativeButton("NO", (d, which) -> d.dismiss())
+                    .show());
             } else
                 noLocalize.setVisibility(View.INVISIBLE);
-        } else
-            noLocalize.setVisibility(View.INVISIBLE);
     }
 
     private void activateGPS(){
@@ -118,6 +117,26 @@ public class FinderFragment extends Fragment {
         }
     }
 
+    private void downloadActivePositions(){
+        DataManager.getInstance().downloadCurrentActivePositions(
+                response -> {
+                    currentActivePositions.clear();
+                    currentActivePositions.addAll(new Gson().fromJson(response, new TypeToken<ArrayList<Position>>(){}.getType()));
+                    LogManager.getInstance().printConsoleMessage(response);
+
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    view.findViewById(R.id.wait_layout).setVisibility(View.GONE);
+                    if (currentActivePositions.size() == 0) {
+                        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.feed_empty_view_text);
+                        view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                    } else
+                        deactivePosition();
+                },
+                error -> {
+                    LogManager.getInstance().printConsoleError("Error.");
+                });
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -137,6 +156,14 @@ public class FinderFragment extends Fragment {
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
         }
+    }
+
+    private boolean isPositioned(){
+        if(currentActivePositions.size()>0)
+            for(Position pos : currentActivePositions)
+                if (pos.getId().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
+                    return true;
+        return false;
     }
 
     /**
@@ -167,9 +194,9 @@ public class FinderFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.user.setText(positions.get(i).getUser().getName());
-            holder.activity.setText(getString(R.string.finder_item_studying) + positions.get(i).getActivity());
+            holder.activity.setText(getString(R.string.finder_item_studying) + " " + positions.get(i).getActivity());
             holder.position.setText(positions.get(i).getPlaceName());
-            Glide.with(context).load(positions.get(i).getUser().getThumbnail())
+            Glide.with(getContext()).load(positions.get(i).getUser().getThumbnail())
                     .apply(RequestOptions.circleCropTransform()).into(holder.thumbnail);
         }
 

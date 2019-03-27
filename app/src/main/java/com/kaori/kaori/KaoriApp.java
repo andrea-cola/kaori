@@ -9,17 +9,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kaori.kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.HomeFragments.HomeFragment;
 import com.kaori.kaori.MyMaterialFragments.MyMaterialFragment;
+import com.kaori.kaori.ProfileFragments.EditPlanFragment;
+import com.kaori.kaori.ProfileFragments.EditProfileInfo;
 import com.kaori.kaori.ProfileFragments.ProfileFragment;
+import com.kaori.kaori.ProfileFragments.UploadFragments.UploadFragment;
 import com.kaori.kaori.SearchFragments.SearchFragment;
 import com.kaori.kaori.Utils.DataManager;
 import com.kaori.kaori.Utils.LogManager;
@@ -30,8 +35,7 @@ import com.kaori.kaori.Utils.LogManager;
  */
 public class KaoriApp extends AppCompatActivity {
 
-    private DrawerLayout drawerLayout;
-    private ImageView toolbarImage;
+    private Toolbar toolbar;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -50,9 +54,6 @@ public class KaoriApp extends AppCompatActivity {
                 return true;
             case R.id.navigation_share:
                 entryPointFragmentCall(new FinderFragment());
-                return true;
-            case R.id.navigation_my_profile:
-                entryPointFragmentCall(new ProfileFragment());
                 return true;
         }
         return false;
@@ -78,19 +79,50 @@ public class KaoriApp extends AppCompatActivity {
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         entryPointFragmentCall(new HomeFragment());
 
-        drawerLayout = findViewById(R.id.drawer_layout);
+        activateDrawer();
+
+    }
+
+    private void activateDrawer(){
+        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(
                 menuItem -> {
-                    menuItem.setChecked(true);
-                    return true;
+                    switch (menuItem.getItemId()){
+                        case R.id.nav_profile:
+                            entryPointFragmentCall(new ProfileFragment());
+                            drawerLayout.closeDrawers();
+                            return true;
+                        case R.id.nav_uploads:
+                            entryPointFragmentCall(new UploadFragment());
+                            drawerLayout.closeDrawers();
+                            return true;
+                        case R.id.nav_esami:
+                            entryPointFragmentCall(new EditPlanFragment());
+                            drawerLayout.closeDrawers();
+                            return true;
+                        case R.id.nav_impostazioni:
+                            entryPointFragmentCall(new EditProfileInfo());
+                            drawerLayout.closeDrawers();
+                            return true;
+                    }
+                    return false;
                 });
-        drawerLayout.closeDrawers();
 
-        toolbarImage = findViewById(R.id.toolbar_account_image);
+
+        ImageView toolbarImage = findViewById(R.id.toolbar_account_image);
         toolbarImage.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
+
+        View view = navigationView.inflateHeaderView(R.layout.navigation_header);
+        ImageView drawerImage = view.findViewById(R.id.nav_header_image);
+        ((TextView)view.findViewById(R.id.nav_header_username)).setText(DataManager.getInstance().getUser().getName());
+        ((TextView)view.findViewById(R.id.nav_header_mail)).setText(DataManager.getInstance().getUser().getEmail());
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
+        DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), drawerImage, this);
+        ((TextView) view.findViewById(R.id.uploads_cont)).setText(DataManager.getInstance().getMyFiles().size() + " uploads");
+        ((TextView) view.findViewById(R.id.starred_book_cont)).setText(DataManager.getInstance().getStarredBooks().size()+" books");
+        ((TextView) view.findViewById(R.id.starred_doc_count)).setText(DataManager.getInstance().getStarredDocuments().size()+" docs");
     }
 
     @Override
@@ -128,7 +160,7 @@ public class KaoriApp extends AppCompatActivity {
      * Setup the toolbar.
      */
     private void setupToolbar(){
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
     }

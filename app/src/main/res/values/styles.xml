@@ -5,7 +5,7 @@
         <item name="android:statusBarColor">@color/white</item>
 
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorPrimaryRed</item>
         <item name="colorControlActivated">@color/colorPrimaryRed</item>
         <item name="colorControlHighlight">@color/colorPrimaryRed</item>
         <item name="android:textColor">@color/defaultTextColor</item>

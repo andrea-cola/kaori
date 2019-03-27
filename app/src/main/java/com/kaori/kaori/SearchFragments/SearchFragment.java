@@ -33,15 +33,10 @@ public class SearchFragment extends Fragment {
      */
     private final String BACK_STATE_NAME = getClass().getName();
 
-    /**
-     * Views from layout
-     */
-    private View view;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.search_fragment_layout, container, false);
+        View view = inflater.inflate(R.layout.search_fragment_layout, container, false);
         view.findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
 
         RecyclerView recyclerView = view.findViewById(R.id.searchList);
@@ -54,7 +49,7 @@ public class SearchFragment extends Fragment {
             public boolean onQueryTextSubmit(String query) {
                 LogManager.getInstance().printConsoleMessage("Query submitted");
                 DataManager.getInstance().queryMaterials(query, recyclerView, view);
-                hideKeyboard();
+                hideKeyboard(view);
                 return false;
             }
 
@@ -68,7 +63,7 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-    private void hideKeyboard() {
+    private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
