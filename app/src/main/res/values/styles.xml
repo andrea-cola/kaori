@@ -61,6 +61,17 @@
         <item name="android:colorFocusedHighlight">@color/colorPrimaryRed</item>
     </style>
 
+    <style name="KaoriUpTextView" parent="@android:style/Widget.TextView">
+        <item name="android:textSize">@dimen/default_up_text_size</item>
+        <item name="android:layout_height">@dimen/default_height</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_marginStart">@dimen/default_margin</item>
+        <item name="android:layout_marginEnd">@dimen/default_margin</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textColor">@color/colorPrimaryRed</item>
+    </style>
+
+
     <!-- TextView Subtitle-->
     <style name="KaoriSubTitleTextView" parent="@android:style/Widget.TextView">
         <item name="android:textSize">@dimen/default_text_size</item>

@@ -38,63 +38,62 @@
             app:layout_constraintEnd_toEndOf="@+id/profile_image"
             app:srcCompat="@drawable/ic_photo_library_black_24dp" />
 
-        <TextView
-            android:id="@+id/textView11"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="Il tuo nome"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
         <TextView
             android:id="@+id/textView2"
+            style="@style/KaoriUpTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="La tua università"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_name" />
+            app:layout_constraintTop_toBottomOf="@+id/status_layout" />
 
         <TextView
             android:id="@+id/textView10"
+            style="@style/KaoriUpTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="Il tuo corso di laurea"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_university" />
 
-        <EditText
-            android:id="@+id/profile_name"
-            style="@style/KaoriTextView"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/status_layout"
+            style="@style/KaoriTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
+            android:hint="Il mio nome"
+            app:helperText="Il mio nome"
+            app:hintTextAppearance="@style/KaoriHintText"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+            app:layout_constraintTop_toBottomOf="@+id/profile_image">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/profile_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:singleLine="true"
+                android:textColor="@color/defaultTextColor" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <Spinner
             android:id="@+id/profile_university"
@@ -102,7 +101,7 @@
             android:layout_width="0dp"
             android:layout_height="52dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:spinnerMode="dialog"
             app:layout_constraintEnd_toEndOf="parent"
@@ -115,16 +114,18 @@
             android:layout_width="0dp"
             android:layout_height="52dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:spinnerMode="dialog"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView10" />
 
         <Button
             android:id="@+id/button"
             style="@style/KaoriButton"
+            android:layout_marginTop="8dp"
             android:text="@string/profile_save"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

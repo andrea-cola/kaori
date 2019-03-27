@@ -68,7 +68,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
         View view = inflater.inflate(R.layout.share_position, container, false);
-        activityEdit = view.findViewById(R.id.editText2);
+        activityEdit = view.findViewById(R.id.exam_layout);
 
         mapView = view.findViewById(R.id.shareMapView);
         mapView.onCreate(savedInstanceState);

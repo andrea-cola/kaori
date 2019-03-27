@@ -34,7 +34,7 @@
             android:layout_marginBottom="@dimen/default_margin"
             android:scaleType="center"
             android:tint="@color/white"
-            app:backgroundTint="@color/colorPrimary"
+            app:backgroundTint="@color/colorPrimaryRed"
             app:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

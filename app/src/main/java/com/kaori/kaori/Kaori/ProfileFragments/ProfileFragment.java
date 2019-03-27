@@ -39,7 +39,7 @@ public class ProfileFragment extends Fragment {
         Button logout = view.findViewById(R.id.profile_logout_button);
         ImageView profileImageView = view.findViewById(R.id.profile_image);
         ImageView backgroundImageView = view.findViewById(R.id.background_image);
-        TextView mName = view.findViewById(R.id.profile_name);
+        TextView mName = view.findViewById(R.id.status_layout);
         TextView mUniversity = view.findViewById(R.id.profile_university);
         TextView mCourseType = view.findViewById(R.id.profile_course_type);
         TextView mMail = view.findViewById(R.id.profile_mail);

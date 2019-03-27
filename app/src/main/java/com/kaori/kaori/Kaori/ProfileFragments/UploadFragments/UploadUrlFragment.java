@@ -39,7 +39,7 @@ public class UploadUrlFragment extends Fragment {
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
 
         title = view.findViewById(R.id.title);
-        note = view.findViewById(R.id.course);
+        note = view.findViewById(R.id.status);
         link = view.findViewById(R.id.url);
 
         exams = view.findViewById(R.id.exams);

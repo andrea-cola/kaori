@@ -80,10 +80,10 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
 
             <TextView
+                style="@style/KaoriUpTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Proprietario"
-                android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
             <TextView
@@ -110,13 +110,13 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
 
             <TextView
+                style="@style/KaoriUpTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Data di pubblicazione"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp" />
+                android:text="Data di pubblicazione" />
 
             <TextView
+                style="@style/KaoriTextView"
                 android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,6 +135,7 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
 
             <TextView
+                style="@style/KaoriUpTextView"
                 android:id="@+id/textView18"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,8 +143,6 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="16dp"
                 android:text="Corso"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
@@ -161,6 +160,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <TextView
+                style="@style/KaoriUpTextView"
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -168,13 +168,13 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="Corso di Laurea"
-                android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
 
             <TextView
+                style="@style/KaoriTextView"
                 android:id="@+id/course"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -187,6 +187,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
             <TextView
+                style="@style/KaoriUpTextView"
                 android:id="@+id/textView6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,11 +197,10 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:text="Note dell'autore"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
                 tools:layout_editor_absoluteY="266dp" />
 
             <TextView
+                style="@style/KaoriTextView"
                 android:id="@+id/note"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -219,8 +219,6 @@
         <Button
             android:id="@+id/button"
             style="@style/KaoriButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
@@ -266,6 +264,7 @@
             app:layout_constraintTop_toBottomOf="@+id/button" />
 
         <TextView
+            style="@style/KaoriUpTextView"
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -273,8 +272,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:text="Feedback degli utenti"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view2" />
@@ -292,6 +289,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <TextView
+            style="@style/KaoriUpTextView"
             android:id="@+id/empty_view_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -299,8 +297,6 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:text="Inserisci il tuo feedback"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/feedbackList"/>
@@ -318,8 +314,6 @@
         <Button
             android:id="@+id/feedbackButton"
             style="@style/KaoriButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:text="Pubblica feedback"

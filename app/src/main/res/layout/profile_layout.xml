@@ -12,6 +12,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            style="@style/KaoriUpTextView"
             android:id="@+id/textView13"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -19,14 +20,13 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:text="Le tue attività"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/profile_course_type" />
 
         <TextView
+            style="@style/KaoriUpTextView"
             android:id="@+id/textView12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -34,8 +34,6 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:text="Il tuo corso di laurea"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,12 +55,8 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/constraintLayout3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_width="384dp"
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/background_image"
@@ -102,7 +96,7 @@
                 app:srcCompat="@drawable/empty_image" />
 
             <TextView
-                android:id="@+id/profile_name"
+                android:id="@+id/status_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -132,19 +126,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profile_name" />
+                app:layout_constraintTop_toBottomOf="@+id/status_layout" />
         </android.support.constraint.ConstraintLayout>
 
         <TextView
             android:id="@+id/textView11"
+            style="@style/KaoriUpTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:text="La tua università"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />
@@ -187,7 +180,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView13">
 
             <ImageView
-                android:id="@+id/circleImageView2"
+                android:id="@+id/circleImageView3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
@@ -202,7 +195,7 @@
                 app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24dp" />
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/textView16"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -210,7 +203,7 @@
                 android:layout_marginBottom="4dp"
                 android:text="I miei esami"
                 app:layout_constraintBottom_toTopOf="@+id/view7"
-                app:layout_constraintEnd_toStartOf="@+id/circleImageView2"
+                app:layout_constraintEnd_toStartOf="@+id/circleImageView3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -237,7 +230,7 @@
             app:layout_constraintTop_toBottomOf="@+id/piano_di_studi">
 
             <ImageView
-                android:id="@+id/circleImageView2"
+                android:id="@+id/circleImageView3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="8dp"
@@ -252,7 +245,7 @@
                 app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24dp" />
 
             <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/textView16"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -260,7 +253,7 @@
                 android:layout_marginBottom="4dp"
                 android:text="I miei upload"
                 app:layout_constraintBottom_toTopOf="@+id/view7"
-                app:layout_constraintEnd_toStartOf="@+id/circleImageView2"
+                app:layout_constraintEnd_toStartOf="@+id/circleImageView3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
