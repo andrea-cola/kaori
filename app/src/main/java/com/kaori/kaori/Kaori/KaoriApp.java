@@ -79,7 +79,6 @@ public class KaoriApp extends AppCompatActivity {
 
         App.setWaitView(findViewById(R.id.wait_view));
         LogManager.initialize(findViewById(R.id.coordinator));
-        DataManager.initialize();
 
         setupToolbar();
 
