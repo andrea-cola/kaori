@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.view.View;
 
-import com.kaori.kaori.Utils.ViewManager;
+import com.kaori.kaori.Services.ViewManager;
 
 public class App extends Application {
 

@@ -1,7 +1,5 @@
 package com.kaori.kaori.Model;
 
-import com.google.firebase.Timestamp;
-
 import java.io.Serializable;
 
 public class Feedback implements Serializable {

@@ -1,7 +1,5 @@
 package com.kaori.kaori.Model;
 
-import com.google.firebase.Timestamp;
-
 import java.util.ArrayList;
 import java.util.List;
 
