@@ -58,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:background="@drawable/border_up"
             app:itemIconSize="30dp"
             app:itemIconTint="@drawable/bottom_bar_color"
             app:labelVisibilityMode="unlabeled"

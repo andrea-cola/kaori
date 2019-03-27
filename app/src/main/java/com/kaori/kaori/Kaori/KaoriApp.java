@@ -22,7 +22,6 @@ import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.Kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.Kaori.HomeFragments.HomeFragment;
 import com.kaori.kaori.Kaori.MyMaterialFragments.MyMaterialFragment;
-import com.kaori.kaori.Kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Kaori.SearchFragments.SearchFragment;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -35,7 +34,6 @@ import com.kaori.kaori.Services.LogManager;
 public class KaoriApp extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private ImageView toolbarImage;
     private TextView fragmentTitle;
 
     /**
@@ -59,10 +57,6 @@ public class KaoriApp extends AppCompatActivity {
             case R.id.navigation_share:
                 fragmentTitle.setText(R.string.title_finder);
                 entryPointFragmentCall(new FinderFragment());
-                return true;
-            case R.id.navigation_my_profile:
-                fragmentTitle.setText(R.string.title_profile);
-                entryPointFragmentCall(new ProfileFragment());
                 return true;
         }
         return false;
@@ -98,7 +92,7 @@ public class KaoriApp extends AppCompatActivity {
                 });
         drawerLayout.closeDrawers();
 
-        toolbarImage = findViewById(R.id.toolbar_account_image);
+        ImageView toolbarImage = findViewById(R.id.toolbar_account_image);
         toolbarImage.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
 

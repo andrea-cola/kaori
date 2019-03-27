@@ -21,9 +21,4 @@
         android:icon="@drawable/ic_person_pin_circle_black_24dp"
         android:title="" />
 
-    <item
-        android:id="@+id/navigation_my_profile"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="" />
-
 </menu>
