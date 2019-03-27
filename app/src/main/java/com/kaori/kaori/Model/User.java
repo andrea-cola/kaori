@@ -1,6 +1,6 @@
 package com.kaori.kaori.Model;
 
-import com.kaori.kaori.Utils.Constants;
+import com.kaori.kaori.Constants;
 
 import java.io.Serializable;
 import java.util.ArrayList;

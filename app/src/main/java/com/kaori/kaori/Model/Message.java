@@ -1,7 +1,5 @@
 package com.kaori.kaori.Model;
 
-import com.google.firebase.Timestamp;
-
 public class Message {
 
     private String chatID;
