@@ -2,17 +2,26 @@ package com.kaori.kaori.Services;
 
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ViewManager {
 
     private View waitView;
-    private View emptyView;
+    private List<View> emptyViews;
 
     public void setWaitView(View waitView) {
         this.waitView = waitView;
     }
 
     public void setEmptyView(View emptyView) {
-        this.emptyView = emptyView;
+        this.emptyViews = new ArrayList<>();
+        this.emptyViews.add(emptyView);
+    }
+
+    public void addEmptyView(View emptyView) {
+        if(!emptyViews.contains(emptyView))
+            this.emptyViews.add(emptyView);
     }
 
     public void setAuxiliarViewsStatus(int status) {
@@ -26,8 +35,9 @@ public class ViewManager {
 
         if(waitView != null)
             waitView.setVisibility(waitViewStatus);
-        if(emptyView != null)
-            emptyView.setVisibility(emptyViewStatus);
+        if(emptyViews != null && emptyViews.size() > 0)
+            for(View emptyView : emptyViews)
+                emptyView.setVisibility(emptyViewStatus);
     }
 
 }

@@ -338,10 +338,10 @@ public class DataManager {
 
     public void downloadUserProfile(String uid, MainActivity mainActivity){
         String url = urlGenerator(BASE_URL + URL_USER, uid);
+        LogManager.getInstance().printConsoleMessage("GET -> " + url);
         makeGetRequest(Uri.parse(url),
                 response -> {
                     this.user = gson.fromJson(response, new TypeToken<User>(){}.getType());
-                    LogManager.getInstance().printConsoleMessage(user.getExams().size() + "");
                     if(user != null) {
                         downloadAllExams();
                         downloadAllUniversities();
