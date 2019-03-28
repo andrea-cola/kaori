@@ -318,13 +318,7 @@ public class DataManager {
 
     public void downloadStarredDocs(){
         String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
-        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
-        Response.Listener<String> listener = response -> {
-            starredDocuments.clear();
-            starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-        };
-        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
-        makeGetRequest(Uri.parse(url), listener, errorListener);
+        makeSimpleGetRequest(Uri.parse(url), starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
     public void downloadStarredBooks(RecyclerView list){
@@ -333,14 +327,8 @@ public class DataManager {
     }
 
     public void downloadStarredBooks(){
-        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
-        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
-        Response.Listener<String> listener = response -> {
-            starredBooks.clear();
-            starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-        };
-        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
-        makeGetRequest(Uri.parse(url), listener, errorListener);
+        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "1");
+        makeSimpleGetRequest(Uri.parse(url), starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
     public void downloadAllExams(){
@@ -390,14 +378,8 @@ public class DataManager {
     }
 
     public void downloadMyFiles(){
-        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
-        LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
-        Response.Listener<String> listener = response -> {
-            myFiles.clear();
-            myFiles.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>(){}.getType()));
-        };
-        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
-        makeGetRequest(Uri.parse(url), listener, errorListener);
+        String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUid());
+        makeSimpleGetRequest(Uri.parse(url), myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
     }
 
     public void downloadMyChats(RecyclerView list) {

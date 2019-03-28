@@ -27,6 +27,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.kaori.kaori.App;
+import com.kaori.kaori.Constants;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -69,6 +70,8 @@ public class FinderFragment extends Fragment {
         RecyclerAdapter adapter = new RecyclerAdapter(currentActivePositions);
         recyclerView.setAdapter(adapter);
 
+        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_feed);
+        App.setEmptyView(view.findViewById(R.id.empty_view));
         downloadActivePositions();
 
         deactivePosition();
@@ -122,17 +125,12 @@ public class FinderFragment extends Fragment {
                 response -> {
                     currentActivePositions.clear();
                     currentActivePositions.addAll(new Gson().fromJson(response, new TypeToken<ArrayList<Position>>(){}.getType()));
-                    LogManager.getInstance().printConsoleMessage(response);
 
                     recyclerView.getAdapter().notifyDataSetChanged();
-                    if (currentActivePositions.size() == 0) {
-                        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_finder);
-                    } else
-                        deactivePosition();
+                    App.setAuxiliarViewsStatus(currentActivePositions.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
+                    deactivePosition();
                 },
-                error -> {
-                    LogManager.getInstance().printConsoleError("Error.");
-                });
+                error -> LogManager.getInstance().printConsoleError("ERROR -> downloadActivePositions || " + error.toString()));
     }
 
     @Override
