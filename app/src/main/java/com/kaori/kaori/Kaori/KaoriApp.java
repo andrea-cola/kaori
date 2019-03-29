@@ -37,6 +37,7 @@ import com.kaori.kaori.Services.LogManager;
 public class KaoriApp extends AppCompatActivity {
 
     private TextView fragmentTitle;
+    private DrawerLayout drawerLayout;
 
     /**
      * Listener used to handle selections in the bottom bar.
@@ -83,33 +84,29 @@ public class KaoriApp extends AppCompatActivity {
 
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         entryPointFragmentCall(new HomeFragment());
-
-        activateDrawer();
+        fragmentTitle = findViewById(R.id.toolbar_title);
+        activateNavigation();
 
     }
 
-    private void activateDrawer(){
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
+    private void activateNavigation(){
+        drawerLayout= findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(
                 menuItem -> {
                     switch (menuItem.getItemId()){
                         case R.id.nav_profile:
-                            entryPointFragmentCall(new ProfileFragment());
-                            drawerLayout.closeDrawers();
+                            entryPointFragmentCallDrawer(new ProfileFragment());
                             return true;
                         case R.id.nav_uploads:
-                            entryPointFragmentCall(new UploadFragment());
-                            drawerLayout.closeDrawers();
+                            entryPointFragmentCallDrawer(new UploadFragment());
                             return true;
                         case R.id.nav_esami:
-                            entryPointFragmentCall(new EditPlanFragment());
-                            drawerLayout.closeDrawers();
+                            entryPointFragmentCallDrawer(new EditPlanFragment());
                             return true;
                         case R.id.nav_impostazioni:
-                            entryPointFragmentCall(new EditProfileInfo());
-                            drawerLayout.closeDrawers();
+                            entryPointFragmentCallDrawer(new EditProfileInfo());
                             return true;
                     }
                     return false;
@@ -128,8 +125,9 @@ public class KaoriApp extends AppCompatActivity {
         ((TextView) view.findViewById(R.id.uploads_cont)).setText(DataManager.getInstance().getMyFiles().size() + " uploads");
         ((TextView) view.findViewById(R.id.starred_book_cont)).setText(DataManager.getInstance().getStarredBooks().size()+" books");
         ((TextView) view.findViewById(R.id.starred_doc_count)).setText(DataManager.getInstance().getStarredDocuments().size()+" docs");
-        fragmentTitle = findViewById(R.id.toolbar_title);
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -198,5 +196,15 @@ public class KaoriApp extends AppCompatActivity {
                 .replace(R.id.container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+    }
+
+    private void entryPointFragmentCallDrawer(Fragment fragment){
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        shouldDisplayHomeUp();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+        drawerLayout.closeDrawers();
     }
 }
