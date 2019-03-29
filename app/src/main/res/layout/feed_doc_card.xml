@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    card_view:cardPreventCornerOverlap="false"
+    card_view:cardBackgroundColor="@color/white"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="4dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            card_view:layout_constraintDimensionRatio="h,1:1"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:srcCompat="@drawable/document_icon" />
+
+        <TextView
+            android:id="@+id/user"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Matteo Daccordo"
+            android:textColor="@color/defaultTextColor"
+            android:textSize="20sp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/profileImage"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Oggi"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/profileImage"
+            card_view:layout_constraintTop_toBottomOf="@+id/user" />
+
+        <ImageView
+            android:id="@+id/background"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/date"
+            card_view:srcCompat="@drawable/document" />
+
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#AA000000"
+            card_view:layout_constraintBottom_toBottomOf="@+id/background"
+            card_view:layout_constraintEnd_toEndOf="@+id/background"
+            card_view:layout_constraintStart_toStartOf="@+id/background"
+            card_view:layout_constraintTop_toTopOf="@+id/background" />
+
+        <TextView
+            android:id="@+id/book"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_thin"
+            android:text="DOCUMENT"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            card_view:layout_constraintBottom_toBottomOf="@+id/background"
+            card_view:layout_constraintEnd_toEndOf="@+id/background"
+            card_view:layout_constraintStart_toStartOf="@+id/background"
+            card_view:layout_constraintTop_toTopOf="@+id/background" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Titolo del libro"
+            android:textColor="@color/colorPrimary"
+            android:textSize="24sp"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/overlay" />
+
+        <TextView
+            android:id="@+id/exams"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="Analisi 1 e algebra lineare"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/title" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/roboto_bold"
+            android:text="Nuovo"
+            android:textColor="@color/colorPrimaryRed"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/exams"
+            card_view:layout_constraintVertical_bias="1.0" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.card.MaterialCardView>

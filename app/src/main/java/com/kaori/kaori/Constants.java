@@ -50,7 +50,6 @@ public class Constants {
      * Sign in and login constants.
      */
     public static final int GOOGLE_LOGIN_REQUEST = 0;
-    public static final int GOOGLE_SIGNIN_REQUEST = 1;
     public static final int PICK_IMAGE = 2;
     public static final int FACEBOOK = 10;
     public static final int GOOGLE = 11;
@@ -76,12 +75,25 @@ public class Constants {
      * Functions.
      */
     public static String translateResponseCode(int code){
-        if(code == FACEBOOK)
-            return "Facebook";
-        else if(code == GOOGLE)
-            return "Google";
-        else
-            return "email e password";
+        switch (code) {
+            case FACEBOOK:
+                return "Facebook";
+            case GOOGLE:
+                return "Google";
+            default:
+                return "email e password";
+        }
+    }
+
+    public static String translateTypeCode(int code){
+        switch (code) {
+            case BOOK:
+                return "libro";
+            case FILE:
+                return "documento";
+            default:
+                return "link";
+        }
     }
 
 }

@@ -23,14 +23,8 @@ import com.kaori.kaori.Services.DataManager;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Feed fragment: first option in the bottom bar menu.
- */
 public class HomeFragment extends Fragment {
 
-    /**
-     * Constants.
-     */
     private final String BACK_STATE_NAME = getClass().getName();
 
     @Nullable
@@ -51,40 +45,44 @@ public class HomeFragment extends Fragment {
     }
 
     private void invokeNextFragment(Fragment fragment) {
-        if(getActivity() != null) {
+        if(getActivity() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
-        }
     }
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
-        List<Document> materials;
+        private final int MODIFIED = 4;
 
-        /*package-private*/ RecyclerAdapter(List<Document> materials){
+        private List<Document> materials;
+
+        RecyclerAdapter(List<Document> materials){
             this.materials = materials;
         }
 
         @NonNull
         @Override
-        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
-            return new Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card, parent, false));
+        public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            switch (viewType) {
+                case Constants.BOOK:
+                    return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_book_card, parent, false));
+                case Constants.FILE:
+                    return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_doc_card, parent, false));
+                case Constants.URL:
+                    return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_url_card, parent, false));
+                default:
+                    return new UpdateHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card_update, parent, false));
+            }
         }
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.title.setText(materials.get(i).getTitle());
             holder.author.setText(materials.get(i).getUser().getName());
-            holder.status.setText((materials.get(i).getModified() ? "Aggiornamento" : "Nuovo ").toUpperCase());
             holder.date.setText(Constants.dateFormat.format(new Date(materials.get(i).getTimestamp()*Constants.constantDate)));
-
-            String info = "";
-            for(String ex : materials.get(i).getExams())
-                info = info + ex + ", ";
-            holder.info.setText(info.substring(0, info.length()-2));
 
             DataManager.getInstance().loadImageIntoView(materials.get(i).getUser().getThumbnail(), holder.authorIcon, getContext());
 
@@ -93,6 +91,20 @@ public class HomeFragment extends Fragment {
                 materialFragment.setMaterial(materials.get(i));
                 invokeNextFragment(materialFragment);
             });
+
+            if(getItemViewType(i) != MODIFIED) {
+                String exams = "";
+                for (String ex : materials.get(i).getExams())
+                    exams = exams + ex + ", ";
+                holder.exams.setText(exams.substring(0, exams.length() - 2));
+
+                if(getItemViewType(i) == Constants.BOOK)
+                    ((BookHolder) holder).price.setText("€ " + String.format("%.2f", materials.get(i).getPrice()));
+            } else {
+                String details = materials.get(i).getUser().getName().split(" ")[0];
+                details = details + " ha aggiornato il suo " + Constants.translateTypeCode(materials.get(i).getSubtype()) + ":";
+                ((UpdateHolder)holder).details.setText(details);
+            }
         }
 
         @Override
@@ -100,24 +112,46 @@ public class HomeFragment extends Fragment {
             return materials.size();
         }
 
-        /*package-private*/ class Holder extends RecyclerView.ViewHolder {
-            TextView title, status, info, author, comments, date, type;
+        @Override
+        public int getItemViewType(int position) {
+            if(materials.get(position).getModified())
+                return MODIFIED;
+            return materials.get(position).getSubtype();
+        }
+
+        class Holder extends RecyclerView.ViewHolder {
+            TextView title, author, date, exams;
             MaterialCardView cardView;
-            ImageView authorIcon, materialIcon;
+            ImageView authorIcon;
 
             /*package-private*/ Holder (View view) {
                 super(view);
+                exams = view.findViewById(R.id.exams);
                 title = view.findViewById(R.id.title);
-                author = view.findViewById(R.id.author);
-                info = view.findViewById(R.id.info);
-                status = view.findViewById(R.id.course);
+                author = view.findViewById(R.id.user);
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
-                authorIcon = view.findViewById(R.id.authorImage);
-                comments = view.findViewById(R.id.comments);
-                type = view.findViewById(R.id.type);
-                materialIcon = view.findViewById(R.id.type_icon);
+                authorIcon = view.findViewById(R.id.profileImage);
             }
         }
+
+        class BookHolder extends Holder {
+            TextView price;
+
+            BookHolder (View view) {
+                super(view);
+                price = view.findViewById(R.id.price);
+            }
+        }
+
+        class UpdateHolder extends Holder {
+            TextView details;
+
+            UpdateHolder (View view) {
+                super(view);
+                details = view.findViewById(R.id.details);
+            }
+        }
+
     }
 }
