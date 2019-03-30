@@ -32,6 +32,7 @@ import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.FileManager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class MaterialFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.material_layout, container, false);
         FirebaseStorage.getInstance().getReferenceFromUrl(REMOTE_STORAGE_PATH);
+
         initializeView();
 
         ((KaoriApp)getActivity()).shouldDisplayHomeUp();
@@ -111,9 +113,13 @@ public class MaterialFragment extends Fragment {
      * Set file sub layout.
      */
     private void setFileLayout(){
-        Button downloadButton = view.findViewById(R.id.button);
         TextView editText = view.findViewById(R.id.feedbackEditText);
-        downloadButton.setOnClickListener(v -> {
+        recyclerView = view.findViewById(R.id.feedbackList);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
+        recyclerView.setAdapter(recyclerAdapter);
+        view.findViewById(R.id.button).setOnClickListener(v -> {
             String path = Constants.INTERNAL_STORAGE_PATH + mMaterial.getTitle() + PDF_EXT;
             File pdfFile = new File(path);
             if (!pdfFile.exists() && new FileManager(mMaterial.getTitle(), Uri.parse(mMaterial.getUrl()), getActivity()).download())
@@ -133,27 +139,23 @@ public class MaterialFragment extends Fragment {
             // TODO
             //DataManager.getInstance().postComment(mMaterial);
         });
-        recyclerView = view.findViewById(R.id.feedbackList);
-        if(!mMaterial.getFeedbacks().isEmpty()) {
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
-            recyclerView.setAdapter(recyclerAdapter);
-        }else{
-
-        }
 
     }
 
     private void setLinkLayout(){
         TextView editText = view.findViewById(R.id.feedbackEditText);
-
+        recyclerView = view.findViewById(R.id.feedbackList);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
+        recyclerView.setAdapter(recyclerAdapter);
         view.findViewById(R.id.button).setOnClickListener(view -> {
             Uri link = Uri.parse("http://" + mMaterial.getUrl());
             Intent intent = new Intent(Intent.ACTION_VIEW, link);
             startActivity(intent);
         });
 
-        view.findViewById(R.id.edittext_button).setOnClickListener(view -> {
+        view.findViewById(R.id.feedbackButton).setOnClickListener(view -> {
             Feedback feedback = new Feedback();
             feedback.setText(editText.getText().toString());
             feedback.setTimestamp(Timestamp.now().getSeconds());
@@ -164,11 +166,6 @@ public class MaterialFragment extends Fragment {
             //TODO
             //DataManager.getInstance().postComment(mMaterial);
         });
-
-        recyclerView = view.findViewById(R.id.feedbackList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        RecyclerAdapter recyclerAdapter = new RecyclerAdapter(mMaterial.getFeedbacks());
-        recyclerView.setAdapter(recyclerAdapter);
     }
 
     private void initializeSubView(){
