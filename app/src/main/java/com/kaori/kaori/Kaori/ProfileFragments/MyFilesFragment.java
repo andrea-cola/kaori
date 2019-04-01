@@ -75,7 +75,7 @@ public class MyFilesFragment extends Fragment {
         @NonNull
         @Override
         public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false));
+            return new ListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_exam_item, parent, false));
         }
 
         @Override
@@ -114,8 +114,8 @@ public class MyFilesFragment extends Fragment {
             /*package-private*/ ListViewHolder(View v) {
                 super(v);
                 view = v;
-                title = v.findViewById(R.id.chat_user);
-                date = v.findViewById(R.id.date);
+                title = v.findViewById(R.id.exam_title);
+                date = v.findViewById(R.id.doc_counter);
             }
         }
     }

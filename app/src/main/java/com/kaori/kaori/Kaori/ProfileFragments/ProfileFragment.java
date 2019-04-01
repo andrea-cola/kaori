@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,16 +35,19 @@ public class ProfileFragment extends Fragment {
         ((KaoriApp)getActivity()).hideBottomBar(false);
 
         // get views from layout.
-        Button logout = view.findViewById(R.id.profile_logout_button);
         ImageView profileImageView = view.findViewById(R.id.profile_image);
         ImageView backgroundImageView = view.findViewById(R.id.background_image);
-        TextView mName = view.findViewById(R.id.status_layout);
-        TextView mUniversity = view.findViewById(R.id.profile_university);
-        TextView mCourseType = view.findViewById(R.id.profile_course_type);
-        TextView mMail = view.findViewById(R.id.profile_mail);
+
 
         // get the instance of Datahub
         DataManager hub = DataManager.getInstance();
+        ((TextView) view.findViewById(R.id.status_layout)).setText(hub.getUser().getName());
+        ((TextView) view.findViewById(R.id.profile_university)).setText(hub.getUser().getUniversity());
+        ((TextView) view.findViewById(R.id.profile_course_type)).setText(hub.getUser().getCourse());
+        ((TextView) view.findViewById(R.id.profile_mail)).setText(hub.getUser().getEmail());
+        ((TextView) view.findViewById(R.id.file_counter)).setText(String.valueOf(hub.getMyFiles().size()));
+        ((TextView) view.findViewById(R.id.doc_counter)).setText(String.valueOf(hub.getStarredDocuments().size()));
+        ((TextView) view.findViewById(R.id.book_counter)).setText(String.valueOf(hub.getStarredBooks().size()));
 
         // load profile image
         if(getContext() != null) {
@@ -53,14 +55,9 @@ public class ProfileFragment extends Fragment {
             DataManager.getInstance().loadImageIntoBackgroundView(hub.getUser().getPhotosUrl(), backgroundImageView, getContext());
         }
 
-        // set the text in the text view.
-        mName.setText(hub.getUser().getName());
-        mMail.setText(hub.getUser().getEmail());
-        mUniversity.setText(hub.getUser().getUniversity());
-        mCourseType.setText(hub.getUser().getCourse());
 
         // add click listener to logout button
-        logout.setOnClickListener(view12 -> {
+        view.findViewById(R.id.profile_logout_button).setOnClickListener(view12 -> {
             FirebaseAuth.getInstance().signOut();
 
             // logout also from facebook
@@ -78,7 +75,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        view.findViewById(R.id.piano_di_studi).setOnClickListener(view1 -> invokeNextFragment(new EditPlanFragment()));
+        view.findViewById(R.id.piano_di_studi).setOnClickListener(view1 -> invokeNextFragment(new MyStudyPlanFragment()));
         view.findViewById(R.id.my_uploads).setOnClickListener(view1 -> invokeNextFragment(new MyFilesFragment()));
 
         return view;

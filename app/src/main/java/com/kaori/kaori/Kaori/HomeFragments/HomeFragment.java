@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
 
         private List<Document> materials;
 
-        RecyclerAdapter(List<Document> materials){
+        /*package-private*/ RecyclerAdapter(List<Document> materials){
             this.materials = materials;
         }
 
@@ -138,7 +138,7 @@ public class HomeFragment extends Fragment {
         class BookHolder extends Holder {
             TextView price;
 
-            BookHolder (View view) {
+            /*package-private*/ BookHolder (View view) {
                 super(view);
                 price = view.findViewById(R.id.price);
             }
@@ -147,7 +147,7 @@ public class HomeFragment extends Fragment {
         class UpdateHolder extends Holder {
             TextView details;
 
-            UpdateHolder (View view) {
+            /*package-private*/ UpdateHolder (View view) {
                 super(view);
                 details = view.findViewById(R.id.details);
             }

@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +54,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
      * Elements from view
      */
     private MapView mapView;
-    private EditText activityEdit;
+    private TextInputEditText activityEdit;
     private double latitude, longitude;
     private Location location;
 
@@ -68,7 +69,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
         View view = inflater.inflate(R.layout.share_position, container, false);
-        activityEdit = view.findViewById(R.id.exam_layout);
+        activityEdit = view.findViewById(R.id.share_editText);
 
         mapView = view.findViewById(R.id.shareMapView);
         mapView.onCreate(savedInstanceState);
