@@ -1,9 +1,10 @@
 package com.kaori.kaori.Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Document {
+public class Document implements Serializable {
 
     private String id; // id of the document
     private MiniUser user; // owner user of the document
@@ -18,7 +19,6 @@ public class Document {
     private List<Feedback> feedbacks; // list of users' feedbacks
     private int type; //book or document
     private int subtype; // book || file or url
-    private Boolean starred;
 
     //book fields
     private String author;
@@ -29,7 +29,7 @@ public class Document {
     public Document(){
         id = "";
         exams = new ArrayList<>();
-        starred = false;
+        feedbacks = new ArrayList<>();
     }
 
     public String getNote() {
@@ -101,13 +101,15 @@ public class Document {
     }
 
     public List<Feedback> getFeedbacks() {
-        if(feedbacks == null)
-            feedbacks = new ArrayList<>();
         return feedbacks;
     }
 
     public void setFeedbacks(List<Feedback> feedbacks) {
         this.feedbacks = feedbacks;
+    }
+
+    public void addFeedback(Feedback feedback){
+        this.feedbacks.add(feedback);
     }
 
     public String getId() {
@@ -164,14 +166,6 @@ public class Document {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
-    }
-
-    public Boolean getStarred() {
-        return starred;
-    }
-
-    public void setStarred(Boolean starred) {
-        this.starred = starred;
     }
 
     public int getSubtype() {

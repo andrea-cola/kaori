@@ -18,10 +18,12 @@ public class User implements Serializable {
     private List<String> tokenIDs;
     private int authMethod;
     private Position position;
+    private List<String> starred;
 
     public User(){
         exams = new ArrayList<>();
         tokenIDs = new ArrayList<>();
+        starred = new ArrayList<>();
         email = "";
         name = "";
         photosUrl = Constants.STORAGE_DEFAULT_PROFILE_IMAGE;
@@ -125,5 +127,27 @@ public class User implements Serializable {
 
     public Position getPosition() {
         return position;
+    }
+
+    public List<String> getStarred() {
+        return starred;
+    }
+
+    public void setStarred(List<String> starred) {
+        this.starred = starred;
+    }
+
+    public void addStarred(String s) {
+        if(!starred.contains(s))
+            starred.add(s);
+    }
+
+    public void removeStarred(String s){
+        if(starred.contains(s))
+            starred.remove(s);
+    }
+
+    public boolean containsStarred(String s){
+        return starred.contains(s);
     }
 }

@@ -1,7 +1,7 @@
 package com.kaori.kaori.Kaori.SearchFragments;
 
 import android.app.Activity;
-import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.kaori.kaori.App;
 import com.kaori.kaori.Constants;
-import com.kaori.kaori.Kaori.HomeFragments.MaterialFragment;
+import com.kaori.kaori.Kaori.HomeFragments.MaterialActivity;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -27,8 +27,6 @@ import com.kaori.kaori.Services.LogManager;
 import java.util.List;
 
 public class SearchFragment extends Fragment {
-
-    private final String BACK_STATE_NAME = getClass().getName();
 
     @Nullable
     @Override
@@ -72,16 +70,6 @@ public class SearchFragment extends Fragment {
                     .hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    private void invokeFragment(Fragment fragment) {
-        if(getActivity()!= null) {
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
-        }
-    }
-
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
         private List<Document> materials;
@@ -121,9 +109,9 @@ public class SearchFragment extends Fragment {
             }
 
             holder.view.setOnClickListener(view -> {
-                MaterialFragment materialFragment = new MaterialFragment();
-                materialFragment.setMaterial(materials.get(i));
-                invokeFragment(materialFragment);
+                Intent intent = new Intent(getActivity(), MaterialActivity.class);
+                intent.putExtra("document", materials.get(i));
+                startActivity(intent);
             });
         }
 

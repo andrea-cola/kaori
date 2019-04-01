@@ -65,23 +65,14 @@
         <item name="android:textSize">@dimen/default_up_text_size</item>
         <item name="android:layout_height">@dimen/default_height</item>
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_marginStart">@dimen/default_margin</item>
-        <item name="android:layout_marginEnd">@dimen/default_margin</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:textColor">@color/colorPrimaryRed</item>
     </style>
 
-
-    <!-- TextView Subtitle-->
     <style name="KaoriSubTitleTextView" parent="@android:style/Widget.TextView">
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_marginStart">@dimen/default_margin</item>
-        <item name="android:layout_marginEnd">@dimen/default_margin</item>
-        <item name="android:gravity">center_vertical</item>
         <item name="android:text">@string/app_name</item>
     </style>
 
@@ -95,6 +86,12 @@
 
     <style name="KaoriHintText" parent="TextAppearance.Design.Hint">
         <item name="android:textColor">@color/colorPrimaryRed</item>
+    </style>
+
+    <style name="MaterialStyle" parent="AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
 
 </resources>

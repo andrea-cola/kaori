@@ -79,9 +79,6 @@ public class EditPlanFragment extends Fragment {
         inflater.inflate(R.menu.empty_menu, menu);
     }
 
-    /**
-     * Add a auto complete text view.
-     */
     private void addAutoCompleteTextView(String e) {
         if (autoCompleteTextViewList.size() == 0 || !autoCompleteTextViewList.get(autoCompleteTextViewList.size() - 1).getText().toString().isEmpty()) {
             if (autoCompleteTextViewList.size() < DataManager.getInstance().getAllExams().size()) {
@@ -112,10 +109,6 @@ public class EditPlanFragment extends Fragment {
             LogManager.getInstance().showVisualMessage("Compila il campo vuoto.");
     }
 
-    /**
-     * Attach item click listener.
-     * Attach text changed listener.
-     */
     private void attachListeners(AutoCompleteTextView acw){
         acw.setOnItemClickListener((adapterView, view, i, l) -> {
 

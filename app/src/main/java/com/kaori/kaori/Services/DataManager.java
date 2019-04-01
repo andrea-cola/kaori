@@ -1,6 +1,7 @@
 package com.kaori.kaori.Services;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Course;
 import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.Model.Feedback;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.Model.Position;
@@ -185,6 +187,11 @@ public class DataManager {
     public ArrayList<Position> getCurrentActivePositions() {
         return currentActivePositions;
     }
+
+    public ArrayList<Chat> getAllChats() {
+        return allChats;
+    }
+
 
     /* ------------------------------------------------------------------------------------------------------ */
     /* GENERIC FUNCTIONS ------------------------------------------------------------------------------------ */
@@ -451,7 +458,19 @@ public class DataManager {
     public void deletePosition(){
         String url = BASE_URL + URL_POS_REMOVE;
         makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, this.getUser().getUid());
+    }
 
+    public void setStarredDocument(Document mMaterial, boolean isChecked) {
+        if(isChecked)
+            user.addStarred(mMaterial.getId());
+        else
+            user.removeStarred(mMaterial.getId());
+        this.uploadUser();
+    }
+
+    public void postComment(Document document, Feedback feedback){
+        document.addFeedback(feedback);
+        this.uploadDocument(document);
     }
 
     /* ------------------------------------------------------------------------------------------------------ */
@@ -484,7 +503,4 @@ public class DataManager {
         }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
-    public ArrayList<Chat> getAllChats() {
-        return allChats;
-    }
 }

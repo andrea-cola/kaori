@@ -1,6 +1,7 @@
 package com.kaori.kaori.Kaori.HomeFragments;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.kaori.kaori.App;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.Kaori.KaoriApp;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -31,6 +33,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
+
+        ((KaoriApp)getActivity()).showBars();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -87,9 +91,9 @@ public class HomeFragment extends Fragment {
             DataManager.getInstance().loadImageIntoView(materials.get(i).getUser().getThumbnail(), holder.authorIcon, getContext());
 
             holder.cardView.setOnClickListener(v -> {
-                MaterialFragment materialFragment = new MaterialFragment();
-                materialFragment.setMaterial(materials.get(i));
-                invokeNextFragment(materialFragment);
+                Intent intent = new Intent(getActivity(), MaterialActivity.class);
+                intent.putExtra("document", materials.get(i));
+                startActivity(intent);
             });
 
             if(getItemViewType(i) != MODIFIED) {
@@ -128,10 +132,10 @@ public class HomeFragment extends Fragment {
                 super(view);
                 exams = view.findViewById(R.id.exams);
                 title = view.findViewById(R.id.title);
-                author = view.findViewById(R.id.user);
+                author = view.findViewById(R.id.user_and_text);
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
-                authorIcon = view.findViewById(R.id.profileImage);
+                authorIcon = view.findViewById(R.id.profile_image);
             }
         }
 

@@ -16,14 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.kaori.kaori.App;
 import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.Kaori.FinderFragment.FinderFragment;
-import com.kaori.kaori.Kaori.ProfileFragments.*;
-import com.kaori.kaori.Kaori.ProfileFragments.UploadFragments.*;
 import com.kaori.kaori.Kaori.HomeFragments.HomeFragment;
 import com.kaori.kaori.Kaori.MyMaterialFragments.MyMaterialFragment;
+import com.kaori.kaori.Kaori.ProfileFragments.EditPlanFragment;
+import com.kaori.kaori.Kaori.ProfileFragments.EditProfileInfo;
 import com.kaori.kaori.Kaori.ProfileFragments.ProfileFragment;
+import com.kaori.kaori.Kaori.ProfileFragments.UploadFragments.UploadFragment;
 import com.kaori.kaori.Kaori.SearchFragments.SearchFragment;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -36,6 +38,8 @@ import com.kaori.kaori.Services.LogManager;
  */
 public class KaoriApp extends AppCompatActivity {
 
+    private Toolbar toolbar;
+    private BottomNavigationView bottomNavigationView;
     private TextView fragmentTitle;
     private DrawerLayout drawerLayout;
 
@@ -77,16 +81,16 @@ public class KaoriApp extends AppCompatActivity {
         App.setWaitView(findViewById(R.id.wait_view));
         LogManager.initialize(findViewById(R.id.coordinator));
 
+        toolbar = findViewById(R.id.toolbar);
         setupToolbar();
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         entryPointFragmentCall(new HomeFragment());
         fragmentTitle = findViewById(R.id.toolbar_title);
         activateNavigation();
-
     }
 
     private void activateNavigation(){
@@ -158,6 +162,16 @@ public class KaoriApp extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void hideBars() {
+        toolbar.setVisibility(View.GONE);
+        bottomNavigationView.setVisibility(View.GONE);
+    }
+
+    public void showBars() {
+        toolbar.setVisibility(View.VISIBLE);
+        bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     /**

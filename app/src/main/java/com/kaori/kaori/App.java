@@ -2,6 +2,7 @@ package com.kaori.kaori;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.kaori.kaori.Services.ViewManager;
@@ -28,6 +29,10 @@ public class App extends Application {
 
     public static String getStringFromRes(int resId) {
         return app.getApplicationContext().getString(resId);
+    }
+
+    public static Drawable getDrawableFromRes(int resId) {
+        return app.getApplicationContext().getDrawable(resId);
     }
 
     public static void setWaitView(View wait){
