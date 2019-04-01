@@ -36,12 +36,6 @@ public class KaoriChat extends AppCompatActivity {
                 .commit();
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-    }
-
     private void setupToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");

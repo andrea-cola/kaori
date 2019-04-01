@@ -216,4 +216,5 @@ public class KaoriApp extends AppCompatActivity {
                 .commit();
         drawerLayout.closeDrawers();
     }
+
 }

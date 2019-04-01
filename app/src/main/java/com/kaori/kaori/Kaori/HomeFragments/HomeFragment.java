@@ -1,6 +1,5 @@
 package com.kaori.kaori.Kaori.HomeFragments;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -46,15 +45,6 @@ public class HomeFragment extends Fragment {
         DataManager.getInstance().downloadFeed(recyclerView);
 
         return view;
-    }
-
-    private void invokeNextFragment(Fragment fragment) {
-        if(getActivity() != null)
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                    .addToBackStack(BACK_STATE_NAME)
-                    .commit();
     }
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
@@ -104,6 +94,14 @@ public class HomeFragment extends Fragment {
 
                 if(getItemViewType(i) == Constants.BOOK)
                     ((BookHolder) holder).price.setText("€ " + String.format("%.2f", materials.get(i).getPrice()));
+
+                if(getItemViewType(i) == Constants.BOOK)
+                    DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), holder.background, getContext());
+                else if(getItemViewType(i) == Constants.URL)
+                    DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_cloud), holder.background, getContext());
+                else
+                    DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_file), holder.background, getContext());
+
             } else {
                 String details = materials.get(i).getUser().getName().split(" ")[0];
                 details = details + " ha aggiornato il suo " + Constants.translateTypeCode(materials.get(i).getSubtype()) + ":";
@@ -126,7 +124,7 @@ public class HomeFragment extends Fragment {
         class Holder extends RecyclerView.ViewHolder {
             TextView title, author, date, exams;
             MaterialCardView cardView;
-            ImageView authorIcon;
+            ImageView authorIcon, background;
 
             /*package-private*/ Holder (View view) {
                 super(view);
@@ -136,6 +134,7 @@ public class HomeFragment extends Fragment {
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
                 authorIcon = view.findViewById(R.id.profile_image);
+                background = view.findViewById(R.id.background);
             }
         }
 

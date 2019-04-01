@@ -64,8 +64,7 @@
             android:scaleType="centerCrop"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/date"
-            card_view:srcCompat="@drawable/background_cloud" />
+            card_view:layout_constraintTop_toBottomOf="@+id/date" />
 
         <View
             android:id="@+id/overlay"

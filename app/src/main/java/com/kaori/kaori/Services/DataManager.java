@@ -1,9 +1,9 @@
 package com.kaori.kaori.Services;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
@@ -89,6 +89,7 @@ public class DataManager {
      * Request options for Glide.
      */
     private RequestOptions glideRequestOptionsCenter;
+    private RequestOptions glideRequestOptionsCenterFit;
     private RequestOptions glideRequestOptionsCircle;
 
     /* ------------------------------------------------------------------------------------------------------ */
@@ -111,6 +112,11 @@ public class DataManager {
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
                 .placeholder(R.drawable.placeholder_loading)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .error(R.drawable.placeholder_loading);
+
+        glideRequestOptionsCenterFit = new RequestOptions()
+                .fitCenter()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .error(R.drawable.placeholder_loading);
 
@@ -230,6 +236,14 @@ public class DataManager {
             Glide.with(context)
                     .load(uri)
                     .apply(glideRequestOptionsCenter)
+                    .into(imageView);
+    }
+
+    public void loadImageIntoBackgroundView(Drawable uri, ImageView imageView, Context context) {
+        if(context != null)
+            Glide.with(context)
+                    .load(uri)
+                    .apply(glideRequestOptionsCenterFit)
                     .into(imageView);
     }
 

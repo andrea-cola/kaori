@@ -49,6 +49,7 @@ public class MaterialActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         setTheme(R.style.MaterialStyle);
         setContentView(R.layout.material_layout);
         LogManager.initialize(findViewById(R.id.coordinator));
@@ -90,6 +91,7 @@ public class MaterialActivity extends AppCompatActivity {
     }
 
     private void setDocumentLayout(){
+        //DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_file), findViewById(R.id.background), this);
         fab.setImageDrawable(App.getDrawableFromRes(R.drawable.ic_file_download_black_24dp));
         fab.setOnClickListener(v -> {
             String path = Constants.INTERNAL_STORAGE_PATH + material.getTitle() + ".pdf";
@@ -103,7 +105,7 @@ public class MaterialActivity extends AppCompatActivity {
     }
 
     private void setUrlLayout(){
-        ((ImageView)findViewById(R.id.background)).setImageDrawable(App.getDrawableFromRes(R.drawable.background_cloud));
+        DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_cloud), findViewById(R.id.background), this);
         fab.setImageDrawable(App.getDrawableFromRes(R.drawable.ic_public_black_24dp));
         findViewById(R.id.button).setOnClickListener(view -> {
             Uri link = Uri.parse("http://" + material.getUrl());
@@ -114,7 +116,7 @@ public class MaterialActivity extends AppCompatActivity {
     }
 
     private void setBookLayout(){
-        ((ImageView)findViewById(R.id.background)).setImageDrawable(App.getDrawableFromRes(R.drawable.background_book));
+        DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), findViewById(R.id.background), this);
         findViewById(R.id.button).setVisibility(View.GONE);
         if(material.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
             findViewById(R.id.libro_file).setVisibility(View.VISIBLE);
