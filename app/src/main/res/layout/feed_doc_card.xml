@@ -56,7 +56,7 @@
             card_view:layout_constraintTop_toBottomOf="@+id/user_and_text" />
 
         <ImageView
-            android:id="@+id/background"
+            android:id="@+id/background_fake"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_marginTop="16dp"
@@ -71,10 +71,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="#AA000000"
-            card_view:layout_constraintBottom_toBottomOf="@+id/background"
-            card_view:layout_constraintEnd_toEndOf="@+id/background"
-            card_view:layout_constraintStart_toStartOf="@+id/background"
-            card_view:layout_constraintTop_toTopOf="@+id/background" />
+            card_view:layout_constraintBottom_toBottomOf="@+id/background_fake"
+            card_view:layout_constraintEnd_toEndOf="@+id/background_fake"
+            card_view:layout_constraintStart_toStartOf="@+id/background_fake"
+            card_view:layout_constraintTop_toTopOf="@+id/background_fake" />
 
         <TextView
             android:id="@+id/book"
@@ -86,10 +86,10 @@
             android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:textStyle="bold"
-            card_view:layout_constraintBottom_toBottomOf="@+id/background"
-            card_view:layout_constraintEnd_toEndOf="@+id/background"
-            card_view:layout_constraintStart_toStartOf="@+id/background"
-            card_view:layout_constraintTop_toTopOf="@+id/background" />
+            card_view:layout_constraintBottom_toBottomOf="@+id/background_fake"
+            card_view:layout_constraintEnd_toEndOf="@+id/background_fake"
+            card_view:layout_constraintStart_toStartOf="@+id/background_fake"
+            card_view:layout_constraintTop_toTopOf="@+id/background_fake" />
 
         <TextView
             android:id="@+id/title"

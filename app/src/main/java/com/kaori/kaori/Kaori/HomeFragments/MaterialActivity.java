@@ -91,7 +91,7 @@ public class MaterialActivity extends AppCompatActivity {
     }
 
     private void setDocumentLayout(){
-        //DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_file), findViewById(R.id.background), this);
+        DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_file), findViewById(R.id.background), this);
         fab.setImageDrawable(App.getDrawableFromRes(R.drawable.ic_file_download_black_24dp));
         fab.setOnClickListener(v -> {
             String path = Constants.INTERNAL_STORAGE_PATH + material.getTitle() + ".pdf";
