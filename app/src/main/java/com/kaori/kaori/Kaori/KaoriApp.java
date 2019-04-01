@@ -107,7 +107,7 @@ public class KaoriApp extends AppCompatActivity {
                             entryPointFragmentCallDrawer(new UploadFragment());
                             return true;
                         case R.id.nav_esami:
-                            entryPointFragmentCallDrawer(new EditPlanFragment());
+                            entryPointFragmentCallDrawer(new MyStudyPlanFragment());
                             return true;
                         case R.id.nav_impostazioni:
                             entryPointFragmentCallDrawer(new EditProfileInfo());
@@ -122,16 +122,10 @@ public class KaoriApp extends AppCompatActivity {
 
         View view = navigationView.inflateHeaderView(R.layout.navigation_header);
         ImageView drawerImage = view.findViewById(R.id.nav_header_image);
-        ((TextView)view.findViewById(R.id.nav_header_username)).setText(DataManager.getInstance().getUser().getName());
-        ((TextView)view.findViewById(R.id.nav_header_mail)).setText(DataManager.getInstance().getUser().getEmail());
+        ((TextView)view.findViewById(R.id.nav_header_username)).setText("Bentornato, " + DataManager.getInstance().getUser().getName());
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), drawerImage, this);
-        ((TextView) view.findViewById(R.id.uploads_cont)).setText(DataManager.getInstance().getMyFiles().size() + " uploads");
-        ((TextView) view.findViewById(R.id.starred_book_cont)).setText(DataManager.getInstance().getStarredBooks().size()+" books");
-        ((TextView) view.findViewById(R.id.starred_doc_count)).setText(DataManager.getInstance().getStarredDocuments().size()+" docs");
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -213,6 +207,7 @@ public class KaoriApp extends AppCompatActivity {
     }
 
     private void entryPointFragmentCallDrawer(Fragment fragment){
+        fragmentTitle.setText(R.string.title_profile);
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         shouldDisplayHomeUp();
         getSupportFragmentManager().beginTransaction()

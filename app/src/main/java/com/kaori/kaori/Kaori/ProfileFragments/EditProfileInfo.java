@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,7 +52,7 @@ public class EditProfileInfo extends Fragment {
         View view1 = inflater.inflate(R.layout.edit_profile_info_layout, container, false);
         setHasOptionsMenu(true);
 
-        EditText mName = view1.findViewById(R.id.profile_name);
+        TextInputEditText mName = view1.findViewById(R.id.profile_name);
         profileImageView = view1.findViewById(R.id.profile_image);
         mUniversity = view1.findViewById(R.id.profile_university);
         mCourse = view1.findViewById(R.id.profile_course);

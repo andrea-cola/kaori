@@ -296,6 +296,7 @@ public class DataManager {
         makeGetRequest(url, listener, errorListener);
     }
 
+    //  TODO: DataManager.postComment()
     private void makeGetRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener){
         App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(), listener, errorListener);

@@ -12,7 +12,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/exam_layout"
+        app:layout_constraintBottom_toTopOf="@+id/share_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,7 +21,7 @@
         mapbox:mapbox_cameraZoom="15" />
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/exam_layout"
+        android:id="@+id/share_layout"
         style="@style/KaoriTextInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toBottomOf="@+id/shareMapView">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/mail"
+            android:id="@+id/share_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"

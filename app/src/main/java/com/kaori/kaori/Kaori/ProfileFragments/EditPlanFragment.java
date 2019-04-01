@@ -176,11 +176,11 @@ public class EditPlanFragment extends Fragment {
     private void endProcess(boolean isSuccess){
         if (isSuccess && context != null) {
             LogManager.getInstance().printConsoleMessage("endProcess:success");
-            getFragmentManager().popBackStackImmediate();
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
         }
         else if(!isSuccess && context != null) {
             LogManager.getInstance().showVisualError(null, GENERIC_ERROR);
-            (new Handler()).postDelayed(() -> getFragmentManager().popBackStackImmediate(), 3000);
+            (new Handler()).postDelayed(() -> getActivity().getSupportFragmentManager().popBackStackImmediate(), 3000);
         }
     }
 

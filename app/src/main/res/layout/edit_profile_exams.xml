@@ -33,10 +33,10 @@
             <LinearLayout
                 android:id="@+id/adding_space"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/default_margin"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/default_margin"
                 android:layout_marginEnd="@dimen/default_margin"
-                android:orientation="vertical"/>
+                android:orientation="vertical" />
 
             <Button
                 android:id="@+id/button_add_field"

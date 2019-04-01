@@ -201,7 +201,6 @@ public class FinderFragment extends Fragment {
             return positions.size();
         }
 
-
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             private TextView user, position, activity;
             private ImageView thumbnail;
