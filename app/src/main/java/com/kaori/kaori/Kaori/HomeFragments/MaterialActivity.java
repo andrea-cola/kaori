@@ -49,7 +49,6 @@ public class MaterialActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         setTheme(R.style.MaterialStyle);
         setContentView(R.layout.material_layout);
         LogManager.initialize(findViewById(R.id.coordinator));

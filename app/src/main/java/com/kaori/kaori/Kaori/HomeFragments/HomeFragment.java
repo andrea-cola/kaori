@@ -92,12 +92,10 @@ public class HomeFragment extends Fragment {
                     exams = exams + ex + ", ";
                 holder.exams.setText(exams.substring(0, exams.length() - 2));
 
-                if(getItemViewType(i) == Constants.BOOK)
+                if(getItemViewType(i) == Constants.BOOK) {
                     ((BookHolder) holder).price.setText("€ " + String.format("%.2f", materials.get(i).getPrice()));
-
-                if(getItemViewType(i) == Constants.BOOK)
                     DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), holder.background, getContext());
-                else if(getItemViewType(i) == Constants.URL)
+                } else if(getItemViewType(i) == Constants.URL)
                     DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_cloud), holder.background, getContext());
                 else
                     DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_file), holder.background, getContext());
@@ -134,7 +132,7 @@ public class HomeFragment extends Fragment {
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
                 authorIcon = view.findViewById(R.id.profile_image);
-                background = view.findViewById(R.id.background_fake);
+                background = view.findViewById(R.id.background);
             }
         }
 

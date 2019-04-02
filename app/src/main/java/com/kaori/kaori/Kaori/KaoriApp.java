@@ -31,11 +31,6 @@ import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 
-
-/**
- * This is the main activity of the app.
- * Kaori App handles the flow to the fragments.
- */
 public class KaoriApp extends AppCompatActivity {
 
     private Toolbar toolbar;
@@ -43,10 +38,6 @@ public class KaoriApp extends AppCompatActivity {
     private TextView fragmentTitle;
     private DrawerLayout drawerLayout;
 
-    /**
-     * Listener used to handle selections in the bottom bar.
-     * Each branch of the switch handle the selection of one icon in the bar.
-     */
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
             case R.id.navigation_home:
@@ -69,10 +60,6 @@ public class KaoriApp extends AppCompatActivity {
         return false;
     };
 
-    /**
-     * On create method override.
-     * If the signInWithEmail is needed we handle the press on the two buttons by invoking the right fragment.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,45 +145,26 @@ public class KaoriApp extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void hideBars() {
-        toolbar.setVisibility(View.GONE);
-        bottomNavigationView.setVisibility(View.GONE);
-    }
-
     public void showBars() {
         toolbar.setVisibility(View.VISIBLE);
         bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * Setup the toolbar.
-     */
     private void setupToolbar(){
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
     }
 
-    /**
-     * Method used to hide the bottom bar when it is useless.
-     */
     public void hideBottomBar(boolean flag){
         findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
     }
 
-    /**
-     * Enable Up button only if there are entries in the back stack.
-     * I set the limit to 1 because we do not want to return to empty activity.
-     */
     public void shouldDisplayHomeUp(){
         if(getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
     }
 
-    /**
-     * This methods is called by the application when it is opened.
-     * It invokes the first fragment.
-     */
     private void entryPointFragmentCall(Fragment fragment){
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         shouldDisplayHomeUp();
