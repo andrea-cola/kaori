@@ -18,6 +18,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.kaori.kaori.App;
+import com.kaori.kaori.Constants;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -58,7 +60,6 @@ public class EditPlanFragment extends Fragment {
         addingSpace = view.findViewById(R.id.adding_space);
         view.findViewById(R.id.button_add_field).setOnClickListener(view -> addAutoCompleteTextView(null));
         buttonOk = view.findViewById(R.id.button);
-
         buttonOk.setOnClickListener(view -> saveData());
 
         autoCompleteTextViewList = new ArrayList<>();
@@ -155,7 +156,6 @@ public class EditPlanFragment extends Fragment {
             selectedCourses.add(e);
             addAutoCompleteTextView(e);
         }
-        view.findViewById(R.id.wait_view).setVisibility(View.GONE);
     }
 
     /**
@@ -174,7 +174,8 @@ public class EditPlanFragment extends Fragment {
      * Return to the previous fragment.
      */
     private void endProcess(boolean isSuccess){
-        if (isSuccess && context != null) {
+        App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
+        if (isSuccess && context != null && getActivity() != null) {
             LogManager.getInstance().printConsoleMessage("endProcess:success");
             getActivity().getSupportFragmentManager().popBackStackImmediate();
         }

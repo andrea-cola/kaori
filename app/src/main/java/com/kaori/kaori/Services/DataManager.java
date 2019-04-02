@@ -266,15 +266,14 @@ public class DataManager {
         LogManager.getInstance().printConsoleMessage("POST -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
                 response -> {
+                    LogManager.getInstance().printConsoleMessage(response);
                     if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_done));
+                        LogManager.getInstance().showVisualMessage(message);
                     else
-                        LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_failed));
+                        LogManager.getInstance().showVisualMessage(errorMessage);
+                    LogManager.getInstance().printConsoleMessage("eccoci223423");
                 },
-                error -> {
-                    LogManager.getInstance().printConsoleError(error.networkResponse + "");
-                    LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_failed));
-                }) {
+                error -> LogManager.getInstance().showVisualMessage(errorMessage)) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String>  params = new HashMap<>();
@@ -310,7 +309,6 @@ public class DataManager {
         makeGetRequest(url, listener, errorListener);
     }
 
-    //  TODO: DataManager.postComment()
     private void makeGetRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener){
         App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(), listener, errorListener);

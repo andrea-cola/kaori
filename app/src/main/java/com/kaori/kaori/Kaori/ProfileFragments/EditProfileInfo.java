@@ -19,12 +19,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.kaori.kaori.R;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.ImagePicker;
 import com.kaori.kaori.Services.LogManager;
@@ -41,9 +40,11 @@ public class EditProfileInfo extends Fragment {
 
     private ImageView profileImageView;
     private Bitmap profileImageViewBitmap;
+    private TextInputEditText mName;
     private Spinner mUniversity, mCourse;
     private ImagePicker imagePicker;
     private String university, course;
+    private String oldUniversity, oldCourse;
     private ArrayList<String> universities, courses;
 
     @Nullable
@@ -52,7 +53,7 @@ public class EditProfileInfo extends Fragment {
         View view1 = inflater.inflate(R.layout.edit_profile_info_layout, container, false);
         setHasOptionsMenu(true);
 
-        TextInputEditText mName = view1.findViewById(R.id.profile_name);
+        mName = view1.findViewById(R.id.profile_name);
         profileImageView = view1.findViewById(R.id.profile_image);
         mUniversity = view1.findViewById(R.id.profile_university);
         mCourse = view1.findViewById(R.id.profile_course);
@@ -64,8 +65,12 @@ public class EditProfileInfo extends Fragment {
         // set the current data of user
         mName.setText(DataManager.getInstance().getUser().getName());
 
+        oldUniversity = DataManager.getInstance().getUser().getUniversity();
         university = DataManager.getInstance().getUser().getUniversity();
+
+        oldCourse = DataManager.getInstance().getUser().getCourse();
         course = DataManager.getInstance().getUser().getCourse();
+
         universities = DataManager.getInstance().getAllUniversities();
         courses = DataManager.getInstance().getAllCourses(university);
 
@@ -132,9 +137,13 @@ public class EditProfileInfo extends Fragment {
      * Save data into database.
      */
     private void saveData() {
+        DataManager.getInstance().getUser().setName(String.valueOf(mName.getText()));
         DataManager.getInstance().getUser().setUniversity(university);
         DataManager.getInstance().getUser().setCourse(course);
-        DataManager.getInstance().getUser().setExams(new ArrayList<>());
+
+        if(!oldCourse.equalsIgnoreCase(course) || !oldUniversity.equalsIgnoreCase(university))
+            DataManager.getInstance().getUser().setExams(new ArrayList<>());
+
         DataManager.getInstance().updateUser(profileImageViewBitmap);
         if(getActivity() != null)
             getActivity().getSupportFragmentManager().popBackStackImmediate();
