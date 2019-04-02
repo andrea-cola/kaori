@@ -101,15 +101,19 @@ public class KaoriApp extends AppCompatActivity {
                 menuItem -> {
                     switch (menuItem.getItemId()){
                         case R.id.nav_profile:
+                            fragmentTitle.setText(R.string.title_profile);
                             entryPointFragmentCallDrawer(new ProfileFragment());
                             return true;
                         case R.id.nav_uploads:
+                            fragmentTitle.setText(R.string.title_uploads);
                             entryPointFragmentCallDrawer(new UploadFragment());
                             return true;
                         case R.id.nav_esami:
+                            fragmentTitle.setText(R.string.title_study_plan);
                             entryPointFragmentCallDrawer(new MyStudyPlanFragment());
                             return true;
                         case R.id.nav_impostazioni:
+                            fragmentTitle.setText(R.string.title_profile);
                             entryPointFragmentCallDrawer(new EditProfileInfo());
                             return true;
                     }
@@ -207,7 +211,6 @@ public class KaoriApp extends AppCompatActivity {
     }
 
     private void entryPointFragmentCallDrawer(Fragment fragment){
-        fragmentTitle.setText(R.string.title_profile);
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         shouldDisplayHomeUp();
         getSupportFragmentManager().beginTransaction()
