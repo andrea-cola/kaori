@@ -81,7 +81,7 @@ public class KaoriApp extends AppCompatActivity {
     }
 
     private void activateNavigation(){
-        drawerLayout= findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = findViewById(R.id.navigation_view);
         navigationView.setNavigationItemSelectedListener(
@@ -92,11 +92,11 @@ public class KaoriApp extends AppCompatActivity {
                             entryPointFragmentCallDrawer(new ProfileFragment());
                             return true;
                         case R.id.nav_uploads:
-                            fragmentTitle.setText(R.string.title_uploads);
+                            //fragmentTitle.setText(R.string.title_uploads);
                             entryPointFragmentCallDrawer(new UploadFragment());
                             return true;
                         case R.id.nav_esami:
-                            fragmentTitle.setText(R.string.title_study_plan);
+                            //fragmentTitle.setText(R.string.title_study_plan);
                             entryPointFragmentCallDrawer(new MyStudyPlanFragment());
                             return true;
                         case R.id.nav_impostazioni:
@@ -113,7 +113,7 @@ public class KaoriApp extends AppCompatActivity {
 
         View view = navigationView.inflateHeaderView(R.layout.navigation_header);
         ImageView drawerImage = view.findViewById(R.id.nav_header_image);
-        ((TextView)view.findViewById(R.id.nav_header_username)).setText("Bentornato, " + DataManager.getInstance().getUser().getName());
+        ((TextView)view.findViewById(R.id.nav_header_username)).setText(DataManager.getInstance().getUser().getName());
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), drawerImage, this);
     }
