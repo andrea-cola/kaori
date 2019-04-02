@@ -5,14 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:selectableItemBackground"
+    android:stateListAnimator="@animator/lift_on_touch"
     card_view:cardPreventCornerOverlap="false"
     card_view:cardBackgroundColor="@color/white"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp">
+    card_view:cardElevation="4dp"
+    card_view:cardUseCompatPadding="true">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="?android:selectableItemBackground">
 
         <TextView
             android:id="@+id/exam_title"

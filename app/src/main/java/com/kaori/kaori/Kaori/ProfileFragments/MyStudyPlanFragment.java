@@ -1,6 +1,9 @@
 package com.kaori.kaori.Kaori.ProfileFragments;
 
+import android.animation.AnimatorInflater;
+import android.animation.StateListAnimator;
 import android.app.FragmentTransaction;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
