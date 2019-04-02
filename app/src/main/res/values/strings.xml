@@ -129,5 +129,7 @@
     <string name="error_regostration_mail">Indirizzo Email non valido.</string>
     <string name="update_done">Aggiornamento effettuato</string>
     <string name="update_failed">Aggiornamento fallito, riprovare.</string>
+    <string name="title_study_plan">Il mio piano di studi</string>
+    <string name="title_uploads">I miei uploads</string>
 
 </resources>
