@@ -65,10 +65,8 @@ public class FinderFragment extends Fragment {
         noLocalize = view.findViewById(R.id.nolocalize);
 
         recyclerView = view.findViewById(R.id.user_recycler_view);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        RecyclerAdapter adapter = new RecyclerAdapter(currentActivePositions);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new RecyclerAdapter(currentActivePositions));
 
         ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_feed);
         App.setEmptyView(view.findViewById(R.id.empty_view));
@@ -141,9 +139,6 @@ public class FinderFragment extends Fragment {
             LogManager.getInstance().showVisualMessage(getString(R.string.position_not_active));
     }
 
-    /**
-     * This method invokes the share position fragment when the floating action button is clicked
-     */
     private void invokeFragment(Fragment mapFragment, String tag) {
         if(getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -162,9 +157,6 @@ public class FinderFragment extends Fragment {
         return false;
     }
 
-    /**
-     * Private Adapter for RecyclerView
-     */
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
 
         private List<Position> positions;

@@ -118,7 +118,11 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                     .zoom(13)
                     .build();
             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
-            mapboxMap.addMarker(new MarkerOptions().setSnippet("Sono qui").position(new LatLng(latitude, longitude)));
+
+            if(mapboxMap.getMarkers() != null && mapboxMap.getMarkers().size() == 1)
+                mapboxMap.getMarkers().get(0).setPosition(new LatLng(latitude, longitude));
+            else
+                mapboxMap.addMarker(new MarkerOptions().setSnippet("Sono qui").position(new LatLng(latitude, longitude)));
         } catch (Exception e){
             LogManager.getInstance().showVisualMessage("Non riesco a trovare la posizione GPS.");
         }
