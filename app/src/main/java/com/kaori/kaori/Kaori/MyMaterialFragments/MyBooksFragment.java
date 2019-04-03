@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.kaori.kaori.App;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.Kaori.HomeFragments.StarredAdapter;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -27,11 +25,10 @@ public class MyBooksFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new StarredAdapter(DataManager.getInstance().getStarredBooks(), Constants.BOOK));
+        recyclerView.setAdapter(new StarredAdapter(DataManager.getInstance().getStarredBooks(), getActivity()));
 
         ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_my_books);
-        App.addEmptyView(view.findViewById(R.id.empty_view));
-        DataManager.getInstance().downloadStarredBooks(recyclerView);
+        DataManager.getInstance().downloadStarredBooks(recyclerView, view.findViewById(R.id.empty_view));
 
         return view;
     }

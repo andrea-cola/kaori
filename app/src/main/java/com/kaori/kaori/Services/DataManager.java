@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
@@ -80,10 +81,10 @@ public class DataManager {
     private ArrayList<Course> allCourses; // all courses.
     private ArrayList<Document> searchElements; // list used in search fragment to update quickly the listview
     private ArrayList<Document> myFiles; // list of all my materials.
-    private ArrayList<Document> starredDocuments;
-    private ArrayList<Document> starredBooks;
     private ArrayList<Position> currentActivePositions; // list of all current active positions.
     private ArrayList<Chat> allChats; // list of all my chats.
+    private ArrayList<Document> starredBooks; // starred books.
+    private ArrayList<Document> starredDocuments; // starred docs.
 
     /**
      * Request options for Glide.
@@ -104,10 +105,10 @@ public class DataManager {
         feedElements = new ArrayList<>();
         searchElements = new ArrayList<>();
         myFiles = new ArrayList<>();
-        starredDocuments = new ArrayList<>();
-        starredBooks = new ArrayList<>();
         currentActivePositions = new ArrayList<>();
         allChats = new ArrayList<>();
+        starredBooks = new ArrayList<>();
+        starredDocuments = new ArrayList<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -182,22 +183,17 @@ public class DataManager {
         return myFiles;
     }
 
-    public ArrayList<Document> getStarredDocuments() {
-        return starredDocuments;
-    }
-
     public ArrayList<Document> getStarredBooks() {
         return starredBooks;
     }
 
-    public ArrayList<Position> getCurrentActivePositions() {
-        return currentActivePositions;
+    public ArrayList<Document> getStarredDocuments() {
+        return starredDocuments;
     }
 
     public ArrayList<Chat> getAllChats() {
         return allChats;
     }
-
 
     /* ------------------------------------------------------------------------------------------------------ */
     /* GENERIC FUNCTIONS ------------------------------------------------------------------------------------ */
@@ -271,7 +267,6 @@ public class DataManager {
                         LogManager.getInstance().showVisualMessage(message);
                     else
                         LogManager.getInstance().showVisualMessage(errorMessage);
-                    LogManager.getInstance().printConsoleMessage("eccoci223423");
                 },
                 error -> LogManager.getInstance().showVisualMessage(errorMessage)) {
             @Override
@@ -331,26 +326,6 @@ public class DataManager {
         makeAdvancedGetRequest(Uri.parse(url), viewList, feedElements, new TypeToken<ArrayList<Document>>() {}.getType());
     }
 
-    public void downloadStarredDocs(RecyclerView list){
-        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
-        makeAdvancedGetRequest(Uri.parse(url), list, starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
-    }
-
-    public void downloadStarredDocs(){
-        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "2");
-        makeSimpleGetRequest(Uri.parse(url), starredDocuments, new TypeToken<ArrayList<Document>>(){}.getType());
-    }
-
-    public void downloadStarredBooks(RecyclerView list){
-        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "1");
-        makeAdvancedGetRequest(Uri.parse(url), list, starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
-    }
-
-    public void downloadStarredBooks(){
-        String url = urlGenerator(BASE_URL + URL_STARRED, user.getUid(), "1");
-        makeSimpleGetRequest(Uri.parse(url), starredBooks, new TypeToken<ArrayList<Document>>(){}.getType());
-    }
-
     public void downloadAllExams(){
         String url = urlGenerator(BASE_URL + URL_EXAMS, user.getUniversity(), user.getCourse());
         makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>(){}.getType());
@@ -376,8 +351,6 @@ public class DataManager {
                         downloadAllExams();
                         downloadAllUniversities();
                         downloadAllCourses();
-                        downloadStarredBooks();
-                        downloadStarredDocs();
                         downloadMyFiles();
                         mainActivity.startApp();
                     }
@@ -420,6 +393,56 @@ public class DataManager {
     public void createValidationProviderRequest(Response.Listener<String> listener, Response.ErrorListener errorListener, String email, int method){
         String url = urlGenerator(BASE_URL + URL_PROVIDER_VALIDATION, email, String.valueOf(method));
         makeGetRequest(Uri.parse(url), listener, errorListener);
+    }
+
+    public void downloadStarredBooks(RecyclerView list, View emptyView) {
+        String url = BASE_URL + URL_STARRED;
+        if (user.getBookStarred().size() > 0){
+            url = url + "?type=" + Constants.BOOK;
+            for (int i = 0; i < user.getBookStarred().size(); i++)
+                url = url + "&starred=" + user.getBookStarred().get(i);
+        }
+
+        String finalUrl = url;
+        makeGetRequest(Uri.parse(url),
+                response -> {
+                    starredBooks.clear();
+                    starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>() {}.getType()));
+                    list.getAdapter().notifyDataSetChanged();
+
+                    App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
+                    if(starredDocuments.size() > 0)
+                        emptyView.setVisibility(View.GONE);
+                    else
+                        emptyView.setVisibility(View.VISIBLE);
+                },
+                error -> LogManager.getInstance().printConsoleError("ERROR -> " + finalUrl + " || " + error.toString())
+        );
+    }
+
+    public void downloadStarredDocs(RecyclerView list, View emptyView) {
+        String url = BASE_URL + URL_STARRED;
+        if (user.getDocStarred().size() > 0){
+            url = url + "?type=" + Constants.FILE;
+            for (int i = 0; i < user.getDocStarred().size(); i++)
+                url = url + "&starred=" + user.getDocStarred().get(i);
+        }
+
+        String finalUrl = url;
+        makeGetRequest(Uri.parse(url),
+                response -> {
+                    starredDocuments.clear();
+                    starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>() {}.getType()));
+                    list.getAdapter().notifyDataSetChanged();
+
+                    App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
+                    if(starredDocuments.size() > 0)
+                        emptyView.setVisibility(View.GONE);
+                    else
+                        emptyView.setVisibility(View.VISIBLE);
+                },
+                error -> LogManager.getInstance().printConsoleError("ERROR -> " + finalUrl + " || " + error.toString())
+        );
     }
 
     /* ------------------------------------------------------------------------------------------------------ */
@@ -475,9 +498,9 @@ public class DataManager {
 
     public void setStarredDocument(Document mMaterial, boolean isChecked) {
         if(isChecked)
-            user.addStarred(mMaterial.getId());
+            user.addStarred(mMaterial.getId(), mMaterial.getSubtype());
         else
-            user.removeStarred(mMaterial.getId());
+            user.removeStarred(mMaterial.getId(), mMaterial.getSubtype());
         this.uploadUser();
     }
 

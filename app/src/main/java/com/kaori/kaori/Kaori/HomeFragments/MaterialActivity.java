@@ -73,7 +73,7 @@ public class MaterialActivity extends AppCompatActivity {
     private void setCommonInfo(){
         ((TextView)findViewById(R.id.type)).setText(Constants.translateTypeCode(material.getSubtype()).toUpperCase());
         ((TextView)findViewById(R.id.title)).setText(material.getTitle());
-        ((TextView)findViewById(R.id.course)).setText(material.getCourse());
+        ((TextView)findViewById(R.id.note)).setText(material.getCourse());
         ((TextView)findViewById(R.id.author)).setText("di " + material.getUser().getName());
         ((TextView)findViewById(R.id.note)).setText(material.getNote());
         ((TextView)findViewById(R.id.date)).setText(Constants.dateFormat.format(new Date(material.getTimestamp() * Constants.constantDate)));
@@ -84,7 +84,7 @@ public class MaterialActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.exams)).setText(exams.substring(0, exams.length() - 2));
 
         CheckBox star = findViewById(R.id.starred);
-        if(DataManager.getInstance().getUser().containsStarred(material.getId()))
+        if(DataManager.getInstance().getUser().containsStarred(material.getId(), material.getSubtype()))
             star.setChecked(true);
         star.setOnCheckedChangeListener((buttonView, isChecked) -> DataManager.getInstance().setStarredDocument(material, isChecked));
     }

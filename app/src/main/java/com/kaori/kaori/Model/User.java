@@ -18,12 +18,14 @@ public class User implements Serializable {
     private List<String> tokenIDs;
     private int authMethod;
     private Position position;
-    private List<String> starred;
+    private List<String> docStarred;
+    private List<String> bookStarred;
 
     public User(){
         exams = new ArrayList<>();
         tokenIDs = new ArrayList<>();
-        starred = new ArrayList<>();
+        docStarred = new ArrayList<>();
+        bookStarred = new ArrayList<>();
         email = "";
         name = "";
         photosUrl = Constants.STORAGE_DEFAULT_PROFILE_IMAGE;
@@ -101,14 +103,6 @@ public class User implements Serializable {
         this.uid = uid;
     }
 
-    public List<String> getTokenIDs() {
-        return tokenIDs;
-    }
-
-    public void setTokenIDs(List<String> tokenIDs) {
-        this.tokenIDs = tokenIDs;
-    }
-
     public void addTokenID(String tokenID) {
         tokenIDs.add(tokenID);
     }
@@ -129,25 +123,33 @@ public class User implements Serializable {
         return position;
     }
 
-    public List<String> getStarred() {
-        return starred;
+    public List<String> getDocStarred() {
+        return docStarred;
     }
 
-    public void setStarred(List<String> starred) {
-        this.starred = starred;
+    public List<String> getBookStarred() {
+        return bookStarred;
     }
 
-    public void addStarred(String s) {
-        if(!starred.contains(s))
-            starred.add(s);
+    public void addStarred(String starred, int type) {
+        if(type == Constants.BOOK)
+            this.bookStarred.add(starred);
+        else
+            this.docStarred.add(starred);
     }
 
-    public void removeStarred(String s){
-        if(starred.contains(s))
-            starred.remove(s);
+    public void removeStarred(String starred, int type){
+        if(type == Constants.BOOK)
+            this.bookStarred.remove(starred);
+        else
+            this.docStarred.remove(starred);
     }
 
-    public boolean containsStarred(String s){
-        return starred.contains(s);
+    public boolean containsStarred(String starred, int type){
+        if(type == Constants.BOOK)
+            return this.bookStarred.contains(starred);
+        else
+            return this.docStarred.contains(starred);
     }
+
 }

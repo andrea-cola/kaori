@@ -90,7 +90,7 @@ public class SearchFragment extends Fragment {
             holder.author.setText(materials.get(i).getUser().getName());
 
             String s = materials.get(i).getExams().get(0);
-            for(int j = 1; j < materials.size(); j++)
+            for(int j = 1; j < materials.get(i).getExams().size(); j++)
                 s = s + ", " + materials.get(i).getExams().get(j);
             holder.exams.setText(s);
 
@@ -135,7 +135,6 @@ public class SearchFragment extends Fragment {
                 linkIcon = view.findViewById(R.id.label_url);
                 bookIcon = view.findViewById(R.id.label_book);
             }
-
         }
     }
 
