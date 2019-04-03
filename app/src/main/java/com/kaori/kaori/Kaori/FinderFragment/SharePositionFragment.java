@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
@@ -45,23 +44,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * This class represent the layout to share the user position
- */
 public class SharePositionFragment extends Fragment implements OnMapReadyCallback, LocationListener {
 
-    /**
-     * Elements from view
-     */
-    private MapView mapView;
-    private TextInputEditText activityEdit;
     private double latitude, longitude;
-    private Location location;
-
-    /**
-     * Variables
-     */
+    private MapView mapView;
     private MapboxMap mapboxMap;
+    private TextInputEditText activityEdit;
+    private Location location;
 
     @SuppressLint("MissingPermission")
     @Nullable
@@ -78,9 +67,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         view.findViewById(R.id.shareButton).setOnClickListener(v -> findPlace());
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                2000,
-                10, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, this);
 
         return view;
     }
@@ -88,7 +75,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onMapReady(MapboxMap m) {
         this.mapboxMap = m;
-        onLocationChanged(location);
+
+        if(location != null)
+            onLocationChanged(location);
     }
 
     private void findPlace(){
@@ -121,15 +110,18 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         locationComponent.setCameraMode(CameraMode.TRACKING);
         locationComponent.setRenderMode(RenderMode.COMPASS);
 
-        latitude = locationComponent.getLastKnownLocation().getLatitude();
-        longitude = locationComponent.getLastKnownLocation().getLongitude();
-
-        CameraPosition newCameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(latitude, longitude))
-                        .zoom(13)
-                        .build();
-        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
-        mapboxMap.addMarker(new MarkerOptions().setSnippet("Sono qui").position(new LatLng(latitude, longitude)));
+        try {
+            latitude = locationComponent.getLastKnownLocation().getLatitude();
+            longitude = locationComponent.getLastKnownLocation().getLongitude();
+            CameraPosition newCameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(latitude, longitude))
+                    .zoom(13)
+                    .build();
+            mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
+            mapboxMap.addMarker(new MarkerOptions().setSnippet("Sono qui").position(new LatLng(latitude, longitude)));
+        } catch (Exception e){
+            LogManager.getInstance().showVisualMessage("Non riesco a trovare la posizione GPS.");
+        }
     }
 
     /**
@@ -138,7 +130,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private void sharePosition(String placeName, GeoPoint geoPoint, String activity){
         DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
         DataManager.getInstance().getUser().setPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
-        getFragmentManager().popBackStackImmediate();
+        getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 
     @Override
