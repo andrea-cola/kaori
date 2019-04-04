@@ -61,26 +61,31 @@ public class EditPlanFragment extends Fragment {
     private void showPopup(){
         AlertDialog alertDialog;
         List<String> list = getAvailableExams();
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.edit_plan_popup, null);
+        if(list.size() > 0) {
+            LayoutInflater inflater = this.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.edit_plan_popup, null);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
-        Spinner sp = dialogView.findViewById(R.id.exams);
-        adapter.setNotifyOnChange(true);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        sp.setAdapter(adapter);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
+            Spinner sp = dialogView.findViewById(R.id.exams);
+            adapter.setNotifyOnChange(true);
+            adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+            sp.setAdapter(adapter);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(dialogView);
-        alertDialog = builder.create();
-        alertDialog.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(dialogView);
+            alertDialog = builder.create();
+            alertDialog.show();
 
-        dialogView.findViewById(R.id.confirm).setOnClickListener(v -> {
-            String ex = list.get(sp.getSelectedItemPosition());
-            selectedCourses.add(ex);
-            recyclerView.getAdapter().notifyDataSetChanged();
-            alertDialog.dismiss();
-        });
+            dialogView.findViewById(R.id.confirm).setOnClickListener(v -> {
+                String ex = list.get(sp.getSelectedItemPosition());
+                selectedCourses.add(ex);
+                recyclerView.getAdapter().notifyDataSetChanged();
+                alertDialog.dismiss();
+            });
+        } else {
+            LogManager.getInstance().showVisualMessage("Non puoi aggiungere altri esami.");
+        }
+
     }
 
     private List<String> getAvailableExams(){
