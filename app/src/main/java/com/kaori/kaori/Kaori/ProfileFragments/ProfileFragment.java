@@ -69,7 +69,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        view.findViewById(R.id.profileMaterialCardButton).setOnClickListener(v -> invokeNextFragment(new StudyPlanFragment()));
+        view.findViewById(R.id.addExamButton).setOnClickListener(v -> invokeNextFragment(new StudyPlanFragment()));
         view.findViewById(R.id.uploadMaterialCardButton).setOnClickListener(v -> invokeNextFragment(new MyFilesFragment()));
         view.findViewById(R.id.starredMaterialCardButton).setOnClickListener(v -> invokeNextFragment(new MyMaterialFragment()));
 

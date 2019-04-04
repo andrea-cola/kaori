@@ -34,7 +34,7 @@ public class StudyPlanFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             recyclerView.setAdapter(new RecyclerAdapter(DataManager.getInstance().getUser().getExams()));
         } else {
-            ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_feed);
+            ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_my_study_plan);
             App.setEmptyView(view.findViewById(R.id.empty_view));
             App.setAuxiliarViewsStatus(Constants.EMPTY_VIEW_ACTIVE);
         }
@@ -84,13 +84,11 @@ public class StudyPlanFragment extends Fragment {
 
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             private TextView examTitle, examCounter;
-            private View view;
 
-            /*package-private*/ Holder(View itemView) {
-                super(itemView);
-                view = itemView;
-                examTitle = itemView.findViewById(R.id.exam_title);
-                examCounter = itemView.findViewById(R.id.doc_counter);
+            /*package-private*/ Holder(View v) {
+                super(v);
+                examTitle = v.findViewById(R.id.exam_title);
+                examCounter = v.findViewById(R.id.doc_counter);
             }
         }
 

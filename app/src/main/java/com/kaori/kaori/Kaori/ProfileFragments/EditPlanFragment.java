@@ -1,22 +1,22 @@
 package com.kaori.kaori.Kaori.ProfileFragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.kaori.kaori.App;
 import com.kaori.kaori.Constants;
@@ -28,48 +28,26 @@ import com.kaori.kaori.Services.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Fragment that allows to edit the attended exams.
- */
 public class EditPlanFragment extends Fragment {
 
-    /**
-     * Constants.
-     */
-    private final String ALREADY_SELECTED_ERROR = "Esame già selezionato";
-    private final String GENERIC_ERROR = "Impossibile contattare il server";
-
-    /**
-     * Variables.
-     */
-    private Context context;
-    private View view;
-    private Button buttonOk;
     private List<String> selectedCourses;
-    private LayoutInflater i;
-    private ArrayAdapter standardAdapter;
-    private LinearLayout addingSpace;
-    private List<AutoCompleteTextView> autoCompleteTextViewList;
-    private List<View> fieldsList;
+    private List<String> allExams;
+    private RecyclerView recyclerView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.edit_profile_exams, container, false);
+        View view = inflater.inflate(R.layout.edit_profile_exams, container, false);
         setHasOptionsMenu(true);
-        addingSpace = view.findViewById(R.id.adding_space);
-        view.findViewById(R.id.button_add_field).setOnClickListener(view -> addAutoCompleteTextView(null));
-        buttonOk = view.findViewById(R.id.button);
-        buttonOk.setOnClickListener(view -> saveData());
+        view.findViewById(R.id.button).setOnClickListener(v -> saveData());
+        view.findViewById(R.id.addExamButton).setOnClickListener(v -> showPopup());
 
-        autoCompleteTextViewList = new ArrayList<>();
-        fieldsList = new ArrayList<>();
-        selectedCourses = new ArrayList<>();
-        context = getContext();
-        i = inflater;
+        selectedCourses = DataManager.getInstance().getUser().getExams();
+        allExams = DataManager.getInstance().getAllExams();
 
-        standardAdapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, DataManager.getInstance().getAllExams());
-        updateList();
+        recyclerView = view.findViewById(R.id.examList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new RecyclerAdapter(selectedCourses));
 
         return view;
     }
@@ -80,82 +58,37 @@ public class EditPlanFragment extends Fragment {
         inflater.inflate(R.menu.empty_menu, menu);
     }
 
-    private void addAutoCompleteTextView(String e) {
-        if (autoCompleteTextViewList.size() == 0 || !autoCompleteTextViewList.get(autoCompleteTextViewList.size() - 1).getText().toString().isEmpty()) {
-            if (autoCompleteTextViewList.size() < DataManager.getInstance().getAllExams().size()) {
-                View acwLayout = i.inflate(R.layout.autocompletetextview, null, false);
-                AutoCompleteTextView acw = acwLayout.findViewById(R.id.autocompleteview);
-                acw.setAdapter(standardAdapter);
+    private void showPopup(){
+        AlertDialog alertDialog;
+        List<String> list = getAvailableExams();
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.edit_plan_popup, null);
 
-                // delete button on click listener.
-                acwLayout.findViewById(R.id.delete).setOnClickListener(view -> {
-                    if (selectedCourses.size() > fieldsList.indexOf(acwLayout))
-                        selectedCourses.remove(fieldsList.indexOf(acwLayout));
-                    addingSpace.removeView(acwLayout);
-                    fieldsList.remove(acwLayout);
-                    autoCompleteTextViewList.remove(acw);
-                });
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, list);
+        Spinner sp = dialogView.findViewById(R.id.exams);
+        adapter.setNotifyOnChange(true);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
+        sp.setAdapter(adapter);
 
-                addingSpace.addView(acwLayout);
-                fieldsList.add(acwLayout);
-                autoCompleteTextViewList.add(acw);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(dialogView);
+        alertDialog = builder.create();
+        alertDialog.show();
 
-                if (e != null)
-                    acw.setText(e);
-
-                attachListeners(acw);
-            } else
-                LogManager.getInstance().showVisualMessage("Non è possible aggiungere altri esami.");
-        } else
-            LogManager.getInstance().showVisualMessage("Compila il campo vuoto.");
-    }
-
-    private void attachListeners(AutoCompleteTextView acw){
-        acw.setOnItemClickListener((adapterView, view, i, l) -> {
-
-            if(selectedCourses.contains(String.valueOf(adapterView.getItemAtPosition(i)))) {
-                int indexInSelectedCourses = selectedCourses.indexOf(String.valueOf(adapterView.getItemAtPosition(i)));
-                int indexInAutoCompleteTextView = autoCompleteTextViewList.indexOf(acw);
-                if(indexInAutoCompleteTextView != indexInSelectedCourses) {
-                    acw.setError(ALREADY_SELECTED_ERROR);
-                    acw.setText("");
-                    changeViewState(buttonOk, false);
-                } else {
-                    changeViewState(buttonOk, true);
-                }
-            } else {
-                addExamsToList(acw, String.valueOf(adapterView.getItemAtPosition(i)));
-                changeViewState(buttonOk, true);
-            }
-        });
-
-        acw.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(buttonOk.isEnabled())
-                    changeViewState(buttonOk, false);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+        dialogView.findViewById(R.id.confirm).setOnClickListener(v -> {
+            String ex = list.get(sp.getSelectedItemPosition());
+            selectedCourses.add(ex);
+            recyclerView.getAdapter().notifyDataSetChanged();
+            alertDialog.dismiss();
         });
     }
 
-    /**
-     * Add fields as the exams already set in the database.
-     */
-    private void updateList(){
-        for(String e : DataManager.getInstance().getUser().getExams()) {
-            selectedCourses.add(e);
-            addAutoCompleteTextView(e);
-        }
+    private List<String> getAvailableExams(){
+        List<String> exams = new ArrayList<>();
+        for(String exam : allExams)
+            if(!selectedCourses.contains(exam))
+                exams.add(exam);
+        return exams;
     }
 
     /**
@@ -169,40 +102,62 @@ public class EditPlanFragment extends Fragment {
         endProcess(true);
     }
 
+    private void removeExams(int i){
+        selectedCourses.remove(i);
+        recyclerView.getAdapter().notifyDataSetChanged();
+    }
+
     /**
      * This method is called whenever the process is terminated.
      * Return to the previous fragment.
      */
     private void endProcess(boolean isSuccess){
         App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
-        if (isSuccess && context != null && getActivity() != null) {
+        if (isSuccess && getActivity() != null) {
             LogManager.getInstance().printConsoleMessage("endProcess:success");
             getActivity().getSupportFragmentManager().popBackStackImmediate();
         }
-        else if(!isSuccess && context != null) {
-            LogManager.getInstance().showVisualError(null, GENERIC_ERROR);
+        else if(!isSuccess && getActivity() != null) {
             (new Handler()).postDelayed(() -> getActivity().getSupportFragmentManager().popBackStackImmediate(), 3000);
         }
     }
 
-    /**
-     * Enable or disable a view.
-     */
-    private void changeViewState(View v, boolean isEnabled){
-        v.setAlpha((isEnabled) ? 1f : 0.5f);
-        v.setEnabled(isEnabled);
-    }
+    private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder>{
 
-    /**
-     * Add an element to a list if the list is empty.
-     * If the list is that position is already set overwrite the
-     * list cell.
-     */
-    private void addExamsToList(AutoCompleteTextView acw, String s){
-        if(autoCompleteTextViewList.indexOf(acw) < selectedCourses.size())
-            selectedCourses.add(autoCompleteTextViewList.indexOf(acw), s);
-        else
-            selectedCourses.add(s);
+        private List<String> exams;
+
+        /*package-private*/ RecyclerAdapter(List<String> exams){
+            this.exams = exams;
+        }
+
+        @NonNull
+        @Override
+        public RecyclerAdapter.Holder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+            return new RecyclerAdapter.Holder(LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_exam_item_editable, parent, false));
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerAdapter.Holder holder, int i) {
+            holder.examTitle.setText(exams.get(i));
+            holder.delete.setOnClickListener(v -> removeExams(i));
+        }
+
+        @Override
+        public int getItemCount() {
+            return exams.size();
+        }
+
+        /*package-private*/ class Holder extends RecyclerView.ViewHolder {
+            private TextView examTitle;
+            private ImageButton delete;
+
+            /*package-private*/ Holder(View v) {
+                super(v);
+                examTitle = v.findViewById(R.id.exam_title);
+                delete = v.findViewById(R.id.delete);
+            }
+        }
+
     }
 
 }

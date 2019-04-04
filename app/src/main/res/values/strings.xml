@@ -20,6 +20,7 @@
     <string name="empty_text_my_files">Ops, sembra che tu non abbia caricato nessun documento.</string>
     <string name="empty_text_my_books">Ops, sembra che tu non abbia nessun libro preferito.</string>
     <string name="empty_text_my_docs">Ops, sembra che tu non abbia nessun documento preferito.</string>
+    <string name="empty_text_my_study_plan">Ops, sembra che tu non abbia alcun esame nel tuo piano di studi.</string>
 
     <string name="upload_user_message">Utente aggiornato.</string>
     <string name="upload_user_error">Utente non aggiornato. Riprova.</string>
