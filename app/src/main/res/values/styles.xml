@@ -7,7 +7,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorControlNormal">@color/colorPrimaryRed</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
         <item name="colorControlActivated">@color/colorPrimaryRed</item>
 
         <item name="android:fontFamily">@font/roboto_regular</item>
@@ -103,6 +103,13 @@
         <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
         <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
         <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+
+    <style name="MaterialSpinner" parent="Widget.AppCompat.Spinner.Underlined">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
 
 </resources>

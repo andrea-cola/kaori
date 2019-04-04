@@ -53,12 +53,12 @@ public class EditProfileInfo extends Fragment {
         View view1 = inflater.inflate(R.layout.edit_profile_info_layout, container, false);
         setHasOptionsMenu(true);
 
-        mName = view1.findViewById(R.id.profile_name);
-        profileImageView = view1.findViewById(R.id.profile_image);
+        mName = view1.findViewById(R.id.name);
+        profileImageView = view1.findViewById(R.id.profileImage);
         mUniversity = view1.findViewById(R.id.university);
-        mCourse = view1.findViewById(R.id.profile_course);
+        mCourse = view1.findViewById(R.id.course);
         Button mButtonOk = view1.findViewById(R.id.button);
-        FloatingActionButton floatingActionButton = view1.findViewById(R.id.floatingActionButton);
+        FloatingActionButton floatingActionButton = view1.findViewById(R.id.imagePicker);
 
         // load profile image
         DataManager.getInstance().loadImageIntoView(Uri.parse(DataManager.getInstance().getUser().getPhotosUrl()), profileImageView, getContext());
@@ -137,16 +137,20 @@ public class EditProfileInfo extends Fragment {
      * Save data into database.
      */
     private void saveData() {
-        DataManager.getInstance().getUser().setName(String.valueOf(mName.getText()));
-        DataManager.getInstance().getUser().setUniversity(university);
-        DataManager.getInstance().getUser().setCourse(course);
+        if(mName.getText() != null && mName.getText().toString().length() > 1 && mName.getText().toString().split(" ").length > 1) {
+            DataManager.getInstance().getUser().setName(String.valueOf(mName.getText()));
+            DataManager.getInstance().getUser().setUniversity(university);
+            DataManager.getInstance().getUser().setCourse(course);
 
-        if(!oldCourse.equalsIgnoreCase(course) || !oldUniversity.equalsIgnoreCase(university))
-            DataManager.getInstance().getUser().setExams(new ArrayList<>());
+            if (!oldCourse.equalsIgnoreCase(course) || !oldUniversity.equalsIgnoreCase(university))
+                DataManager.getInstance().getUser().setExams(new ArrayList<>());
 
-        DataManager.getInstance().updateUser(profileImageViewBitmap);
-        if(getActivity() != null)
-            getActivity().getSupportFragmentManager().popBackStackImmediate();
+            DataManager.getInstance().updateUser(profileImageViewBitmap);
+            if (getActivity() != null)
+                getActivity().getSupportFragmentManager().popBackStackImmediate();
+        } else {
+            LogManager.getInstance().showVisualMessage("Nome e cogonome non validi.");
+        }
     }
 
     /**

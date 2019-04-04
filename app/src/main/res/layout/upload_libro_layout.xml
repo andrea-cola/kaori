@@ -90,7 +90,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/status_layout"
+            android:id="@+id/nameLayout"
             style="@style/KaoriTextInputLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -165,7 +165,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/status_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
 
         <Button
             android:id="@+id/button_exams"

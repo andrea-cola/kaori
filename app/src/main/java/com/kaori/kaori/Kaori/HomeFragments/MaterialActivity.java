@@ -210,7 +210,7 @@ public class MaterialActivity extends AppCompatActivity {
                 super(v);
                 content = v.findViewById(R.id.user_and_text);
                 timestamp = v.findViewById(R.id.date);
-                userImage = v.findViewById(R.id.profile_image);
+                userImage = v.findViewById(R.id.profileImage);
             }
         }
     }

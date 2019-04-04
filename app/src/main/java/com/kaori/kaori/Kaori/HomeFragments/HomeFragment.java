@@ -126,7 +126,7 @@ public class HomeFragment extends Fragment {
                 author = view.findViewById(R.id.user_and_text);
                 date = view.findViewById(R.id.date);
                 cardView = view.findViewById(R.id.card_view);
-                authorIcon = view.findViewById(R.id.profile_image);
+                authorIcon = view.findViewById(R.id.profileImage);
                 background = view.findViewById(R.id.background);
             }
         }

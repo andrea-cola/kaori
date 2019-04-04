@@ -1,138 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:layout_weight="1">
 
-    <include
-        layout="@layout/wait_layout"
-        android:visibility="gone"/>
-
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="150dp"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
 
-        <ImageView
-            android:id="@+id/profile_image"
-            android:layout_width="150dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="@dimen/default_margin"
-            android:layout_marginTop="@dimen/default_top_bottom_parent_margin"
-            android:layout_marginEnd="@dimen/default_margin"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/avatars" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/imagePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/profileImage"
+        app:layout_constraintEnd_toEndOf="@+id/profileImage"
+        app:srcCompat="@drawable/ic_photo_library_black_24dp" />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingActionButton"
-            android:layout_width="wrap_content"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/nameLayout"
+        style="@style/KaoriTextInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="Il mio nome"
+        app:helperText="Inserisci nome e cognome. Es. Mario Rossi"
+        app:hintTextAppearance="@style/KaoriHintText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileImage">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:backgroundTint="@color/colorPrimary"
-            app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-            app:layout_constraintEnd_toEndOf="@+id/profile_image"
-            app:srcCompat="@drawable/ic_photo_library_black_24dp" />
+            android:inputType="text"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:singleLine="true"
+            android:textColor="@color/defaultTextColor" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <TextView
+        android:id="@+id/labelUniversity"
+        style="@style/KaoriUpTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="La tua università"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameLayout" />
+
+    <Spinner
+        android:id="@+id/university"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelUniversity" />
+
+    <TextView
+        android:id="@+id/labelCourse"
+        style="@style/KaoriUpTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Il tuo corso di laurea"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/university" />
+
+    <Spinner
+        android:id="@+id/course"
+        style="@android:style/Widget.Material.Light.Spinner.Underlined"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:spinnerMode="dialog"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/labelCourse" />
+
+    <Button
+        android:id="@+id/button"
+        style="@style/KaoriButton"
+        android:layout_marginTop="8dp"
+        android:text="@string/profile_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/course" />
 
 
-        <TextView
-            android:id="@+id/textView2"
-            style="@style/KaoriUpTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="La tua università"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/status_layout" />
-
-        <TextView
-            android:id="@+id/textView10"
-            style="@style/KaoriUpTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:text="Il tuo corso di laurea"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/university" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/status_layout"
-            style="@style/KaoriTextInputLayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:hint="Il mio nome"
-            app:helperText="Il mio nome"
-            app:hintTextAppearance="@style/KaoriHintText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_image">
-
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/profile_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:singleLine="true"
-                android:textColor="@color/defaultTextColor" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <Spinner
-            android:id="@+id/university"
-            style="@android:style/Widget.Material.Light.Spinner.Underlined"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:spinnerMode="dialog"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
-        <Spinner
-            android:id="@+id/profile_course"
-            style="@android:style/Widget.Material.Light.Spinner.Underlined"
-            android:layout_width="0dp"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            android:spinnerMode="dialog"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-        <Button
-            android:id="@+id/button"
-            style="@style/KaoriButton"
-            android:layout_marginTop="8dp"
-            android:text="@string/profile_save"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profile_course" />
-
-
-    </android.support.constraint.ConstraintLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
