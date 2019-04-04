@@ -23,7 +23,7 @@ import com.kaori.kaori.Kaori.FinderFragment.FinderFragment;
 import com.kaori.kaori.Kaori.HomeFragments.HomeFragment;
 import com.kaori.kaori.Kaori.MyMaterialFragments.MyMaterialFragment;
 import com.kaori.kaori.Kaori.ProfileFragments.EditProfileInfo;
-import com.kaori.kaori.Kaori.ProfileFragments.MyStudyPlanFragment;
+import com.kaori.kaori.Kaori.ProfileFragments.StudyPlanFragment;
 import com.kaori.kaori.Kaori.ProfileFragments.ProfileFragment;
 import com.kaori.kaori.Kaori.ProfileFragments.UploadFragments.UploadFragment;
 import com.kaori.kaori.Kaori.SearchFragments.SearchFragment;
@@ -71,7 +71,7 @@ public class KaoriApp extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setupToolbar();
 
-        bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -92,12 +92,12 @@ public class KaoriApp extends AppCompatActivity {
                             entryPointFragmentCallDrawer(new ProfileFragment());
                             return true;
                         case R.id.nav_uploads:
-                            //fragmentTitle.setText(R.string.title_uploads);
+                            fragmentTitle.setText(R.string.title_upload);
                             entryPointFragmentCallDrawer(new UploadFragment());
                             return true;
                         case R.id.nav_esami:
-                            //fragmentTitle.setText(R.string.title_study_plan);
-                            entryPointFragmentCallDrawer(new MyStudyPlanFragment());
+                            fragmentTitle.setText(R.string.title_study_plan);
+                            entryPointFragmentCallDrawer(new StudyPlanFragment());
                             return true;
                         case R.id.nav_impostazioni:
                             fragmentTitle.setText(R.string.title_profile);
@@ -141,17 +141,11 @@ public class KaoriApp extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        shouldDisplayHomeUp();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    public void showBars() {
-        toolbar.setVisibility(View.VISIBLE);
-        bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     private void setupToolbar(){
@@ -160,18 +154,8 @@ public class KaoriApp extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    public void hideBottomBar(boolean flag){
-        findViewById(R.id.navigation).setVisibility(flag ? View.GONE : View.VISIBLE);
-    }
-
-    public void shouldDisplayHomeUp(){
-        if(getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 0);
-    }
-
     private void entryPointFragmentCall(Fragment fragment){
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        shouldDisplayHomeUp();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -180,7 +164,6 @@ public class KaoriApp extends AppCompatActivity {
 
     private void entryPointFragmentCallDrawer(Fragment fragment){
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        shouldDisplayHomeUp();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

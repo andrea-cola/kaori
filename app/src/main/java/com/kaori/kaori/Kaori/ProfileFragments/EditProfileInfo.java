@@ -55,7 +55,7 @@ public class EditProfileInfo extends Fragment {
 
         mName = view1.findViewById(R.id.profile_name);
         profileImageView = view1.findViewById(R.id.profile_image);
-        mUniversity = view1.findViewById(R.id.profile_university);
+        mUniversity = view1.findViewById(R.id.university);
         mCourse = view1.findViewById(R.id.profile_course);
         Button mButtonOk = view1.findViewById(R.id.button);
         FloatingActionButton floatingActionButton = view1.findViewById(R.id.floatingActionButton);

@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.kaori.kaori.App;
 import com.kaori.kaori.Constants;
-import com.kaori.kaori.Kaori.KaoriApp;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
@@ -26,14 +25,10 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private final String BACK_STATE_NAME = getClass().getName();
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.feed_layout, container, false);
-
-        ((KaoriApp)getActivity()).showBars();
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);

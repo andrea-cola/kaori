@@ -20,7 +20,7 @@ import com.kaori.kaori.Services.DataManager;
 
 import java.util.List;
 
-public class MyStudyPlanFragment extends Fragment {
+public class StudyPlanFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
 

@@ -10,7 +10,8 @@
     <string name="title_starred">Starred</string>
     <string name="title_finder">Finder</string>
     <string name="title_profile">Profile</string>
-    <string name="title_welcome">La tua università ha un nuovo amico</string>
+    <string name="title_upload">Upload</string>
+    <string name="title_study_plan">Piano di studi</string>
 
     <string name="empty_text_chat">Nessuna chat attiva.</string>
     <string name="empty_text_feed">Ops, sembra che non ci siano novità. Prova ad aggiungere nuovi corsi al tuo piano di studi.</string>
@@ -129,7 +130,5 @@
     <string name="error_regostration_mail">Indirizzo Email non valido.</string>
     <string name="update_done">Aggiornamento effettuato</string>
     <string name="update_failed">Aggiornamento fallito, riprovare.</string>
-    <string name="title_study_plan">Il mio piano di studi</string>
-    <string name="title_uploads">I miei uploads</string>
 
 </resources>
