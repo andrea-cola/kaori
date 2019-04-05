@@ -24,7 +24,6 @@ public class Document implements Serializable {
     private String author;
     private String editor;
     private float price;
-    private String thumbnail; // TODO
 
     public Document(){
         id = "";
@@ -158,14 +157,6 @@ public class Document implements Serializable {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getThumbnail() {
-        return thumbnail;
-    }
-
-    public void setThumbnail(String thumbnail) {
-        this.thumbnail = thumbnail;
     }
 
     public int getSubtype() {

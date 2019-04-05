@@ -12,11 +12,10 @@
         android:id="@+id/tablayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/border_bottom"
+        android:background="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabIndicatorGravity="bottom">
+        app:layout_constraintTop_toTopOf="parent">
 
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
@@ -29,7 +28,6 @@
             android:text="Tuesday" />
 
         <android.support.design.widget.TabItem
-            android:id="@+id/tabItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Monday" />
@@ -40,6 +38,7 @@
         android:id="@+id/viewpager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

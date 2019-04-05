@@ -33,8 +33,9 @@ public class UploadDocumentFragment extends Fragment {
     private final int PICK_PDF_CODE = 4564;
     private Document oldDocument, document;
     private TextInputEditText title, note;
-    private TextView exams;
+    private TextView exams, file;
     private List<String> examsList;
+    private String path;
 
     @Nullable
     @Override
@@ -42,10 +43,12 @@ public class UploadDocumentFragment extends Fragment {
         View view = inflater.inflate(R.layout.upload_file_layout, null);
         view.findViewById(R.id.button).setOnClickListener(v -> createDocument());
         view.findViewById(R.id.button_exams).setOnClickListener(v -> selectExams());
+        view.findViewById(R.id.button_file).setOnClickListener(v -> selectFile());
 
         exams = view.findViewById(R.id.exams);
         title = view.findViewById(R.id.title);
         note = view.findViewById(R.id.note);
+        file = view.findViewById(R.id.file);
 
         examsList = new ArrayList<>();
         if(oldDocument != null)
@@ -54,11 +57,11 @@ public class UploadDocumentFragment extends Fragment {
         return view;
     }
 
-    public void setOldDocument(Document document){
+    public void setOldDocument(Document document) {
         this.oldDocument = document;
     }
 
-    private void preset(){
+    private void preset() {
         title.setText(oldDocument.getTitle());
         note.setText(oldDocument.getNote());
 
@@ -69,13 +72,15 @@ public class UploadDocumentFragment extends Fragment {
         examsList = oldDocument.getExams();
     }
 
-    private boolean checkDocParameters(){
-        return title.getText().length() > 0 && note.getText().length() > 0;
+    private boolean checkDocParameters() {
+        return title.getText().length() > 0 && note.getText().length() > 0 && !path.isEmpty() && examsList.size() > 0;
     }
 
     private void createDocument(){
+        LogManager.getInstance().printConsoleMessage("pressed");
         if (document == null)
             document = new Document();
+
         if (!checkDocParameters())
             LogManager.getInstance().showVisualMessage(getString(R.string.error_upload_msg));
         else {
@@ -90,36 +95,33 @@ public class UploadDocumentFragment extends Fragment {
             document.setModified(false);
             document.setTimestamp(Timestamp.now().getSeconds());
 
-            getFile();
+            DataManager.getInstance().uploadFileOnTheServer(path, document);
+            endProcess();
         }
     }
 
-    /**
-     * This method start the activity to get the pdf file
-     */
-    private void getFile() {
+    private void selectFile() {
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Seleziona il tuo file"), PICK_PDF_CODE);
     }
 
-    /**
-     * This method is called when the intent is returned for getting the pdf file
-     */
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            DataManager.getInstance().uploadFileOnTheServer(data.getData().toString(), document);
-            endProcess();
+            file.setText(extractName(data.getData().getPath()));
+            path = data.getData().toString();
         }
         else
             LogManager.getInstance().showVisualMessage("Non hai selezionato nessun file.");
     }
 
-    /**
-     * Return to profile
-     */
+    private String extractName(String p) {
+        String[] parts = p.split("/");
+        return parts[parts.length - 1];
+    }
+
     private void endProcess() {
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null) {
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -129,9 +131,6 @@ public class UploadDocumentFragment extends Fragment {
         }
     }
 
-    /**
-     * Create the popup to choose the exams.
-     */
     private void selectExams(){
         AlertDialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

@@ -40,7 +40,7 @@ public class UploadFragment extends Fragment {
 
         private int numOfTabs;
 
-        /*package-private*/ ViewPageAdapter(FragmentManager fm, int numOfTabs) {
+        ViewPageAdapter(FragmentManager fm, int numOfTabs) {
             super(fm);
             this.numOfTabs = numOfTabs;
         }

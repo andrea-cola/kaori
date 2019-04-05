@@ -24,9 +24,6 @@ import com.kaori.kaori.Services.LogManager;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Fragment used to upload new books.
- */
 public class UploadBookFragment extends Fragment {
 
     private TextView exams, title, author, editor, price, note;
@@ -59,9 +56,6 @@ public class UploadBookFragment extends Fragment {
         this.oldBook = document;
     }
 
-    /**
-     * Create the popup to choose the exams.
-     */
     private void selectExams(){
         AlertDialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -119,16 +113,13 @@ public class UploadBookFragment extends Fragment {
                 price.getText().length()>0 && note.getText().length()>0;
     }
 
-    /**
-     * This method create the new material with book type
-     */
     private void createNewBook() {
         Document book;
-        if(oldBook != null)
+        if (oldBook != null)
             book = oldBook;
         else
             book = new Document();
-        if(!checkBookParameters())
+        if (!checkBookParameters())
             LogManager.getInstance().showVisualMessage(getString(R.string.error_upload_msg));
         else {
             book.setTimestamp(Timestamp.now().getSeconds());
@@ -148,13 +139,8 @@ public class UploadBookFragment extends Fragment {
             DataManager.getInstance().uploadDocument(book); // upload on server
             endProcess();
         }
-
-        // TODO: aggiungere immagine di copertina
     }
 
-    /**
-     * Return to profile
-     */
     private void endProcess() {
         if(getActivity() != null && getActivity().getSupportFragmentManager() != null) {
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);

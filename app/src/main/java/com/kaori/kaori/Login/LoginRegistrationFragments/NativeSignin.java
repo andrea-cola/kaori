@@ -105,7 +105,6 @@ class NativeSignin {
         else {
             if(message != null)
                 LogManager.getInstance().showVisualMessage(message);
-            //TODO:LogManager.getInstance().hideWaitView();
         }
     }
 

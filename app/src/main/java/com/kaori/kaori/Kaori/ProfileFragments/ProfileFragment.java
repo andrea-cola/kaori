@@ -36,7 +36,7 @@ public class ProfileFragment extends Fragment {
         setHasOptionsMenu(true);
 
         hub = DataManager.getInstance();
-        ((TextView) view.findViewById(R.id.nameLayout)).setText(hub.getUser().getName());
+        ((TextView) view.findViewById(R.id.status_layout)).setText(hub.getUser().getName());
         ((TextView) view.findViewById(R.id.university)).setText(hub.getUser().getUniversity());
         ((TextView) view.findViewById(R.id.course)).setText(hub.getUser().getCourse());
         ((TextView) view.findViewById(R.id.profile_mail)).setText(hub.getUser().getEmail());
@@ -56,7 +56,7 @@ public class ProfileFragment extends Fragment {
 
             // logout also from facebook
             if(hub.getUser().getAuthMethod() == Constants.FACEBOOK) {
-                LogManager.getInstance().printConsoleMessage("Facebook logout");
+                LogManager.getInstance().printConsoleMessage("Facebook logout.");
                 LoginManager.getInstance().logOut();
             }
 
