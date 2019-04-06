@@ -33,7 +33,6 @@ import com.kaori.kaori.Services.LogManager;
 
 public class KaoriApp extends AppCompatActivity {
 
-    private Toolbar toolbar;
     private BottomNavigationView bottomNavigationView;
     private TextView fragmentTitle;
     private DrawerLayout drawerLayout;
@@ -68,7 +67,6 @@ public class KaoriApp extends AppCompatActivity {
         App.setWaitView(findViewById(R.id.wait_view));
         LogManager.initialize(findViewById(R.id.coordinator));
 
-        toolbar = findViewById(R.id.toolbar);
         setupToolbar();
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);

@@ -13,16 +13,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
+import com.kaori.kaori.App;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 import com.mapbox.api.geocoding.v5.GeocodingCriteria;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
-import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -38,8 +40,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -51,20 +51,29 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private MapboxMap mapboxMap;
     private TextInputEditText activityEdit;
     private Location location;
+    private TextView overlay;
+    private Button shareButton;
 
     @SuppressLint("MissingPermission")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Mapbox.getInstance(getContext(), getString(R.string.mapbox_acces_token));
+        Mapbox.getInstance(App.getActiveContext(), getString(R.string.mapbox_acces_token));
         View view = inflater.inflate(R.layout.share_position, container, false);
         activityEdit = view.findViewById(R.id.share_editText);
+        shareButton = view.findViewById(R.id.shareButton);
+        overlay = view.findViewById(R.id.overlay);
 
         mapView = view.findViewById(R.id.shareMapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        view.findViewById(R.id.shareButton).setOnClickListener(v -> findPlace());
+        shareButton.setOnClickListener(v -> {
+            if(activityEdit.getText().length() > 0)
+                findPlace();
+            else
+                LogManager.getInstance().showVisualMessage("Specifica cosa stai studiando.");
+        });
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, this);
@@ -89,16 +98,18 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
 
         geocoding.enqueueCall(new Callback<GeocodingResponse>() {
             @Override
-            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-                if(response.isSuccessful()){
-                    List<CarmenFeature> features = response.body().features();
-                    if(features.size()>0) {
-                        sharePosition(features.get(0).placeName().substring(0, features.get(0).placeName().indexOf(",")), new GeoPoint(latitude, longitude), String.valueOf(activityEdit.getText()));
-                    }
-                }
+            public void onResponse(@NonNull Call<GeocodingResponse> call, @NonNull Response<GeocodingResponse> response) {
+                if(response.isSuccessful() && response.body().features().size() > 0)
+                        sharePosition(response.body().features().get(0).placeName().substring(0, response.body().features().get(0).placeName().indexOf(",")),
+                                new GeoPoint(latitude, longitude), String.valueOf(activityEdit.getText()));
+                else
+                    LogManager.getInstance().showVisualMessage("Problemi durante la localizzazione.");
             }
             @Override
-            public void onFailure(Call<GeocodingResponse> call, Throwable t) { }
+            public void onFailure(@NonNull Call<GeocodingResponse> call, @NonNull Throwable t) {
+                LogManager.getInstance().printConsoleError(call.toString() + " " + t.getMessage());
+                LogManager.getInstance().showVisualMessage("Non è possibile condividere la posizione.");
+            }
         });
     }
 
@@ -111,6 +122,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         locationComponent.setRenderMode(RenderMode.COMPASS);
 
         try {
+            overlay.setVisibility(View.GONE);
+            shareButton.setAlpha(1f);
+            shareButton.setEnabled(true);
             latitude = locationComponent.getLastKnownLocation().getLatitude();
             longitude = locationComponent.getLastKnownLocation().getLongitude();
             CameraPosition newCameraPosition = new CameraPosition.Builder()
@@ -119,18 +133,15 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                     .build();
             mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
 
-            if(mapboxMap.getMarkers() != null && mapboxMap.getMarkers().size() == 1)
+            if(mapboxMap.getMarkers().size() == 1)
                 mapboxMap.getMarkers().get(0).setPosition(new LatLng(latitude, longitude));
             else
-                mapboxMap.addMarker(new MarkerOptions().setSnippet("Sono qui").position(new LatLng(latitude, longitude)));
+                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
         } catch (Exception e){
             LogManager.getInstance().showVisualMessage("Non riesco a trovare la posizione GPS.");
         }
     }
 
-    /**
-     * Save the position in database and return to the previous fragment.
-     */
     private void sharePosition(String placeName, GeoPoint geoPoint, String activity){
         DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
         DataManager.getInstance().getUser().setPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));

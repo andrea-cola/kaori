@@ -15,7 +15,8 @@
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
         android:id="@+id/chat_user"
@@ -24,15 +25,15 @@
         android:layout_marginStart="@dimen/default_margin"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginEnd="8dp"
-        android:fontFamily="@font/roboto_bold"
+        android:fontFamily="@font/roboto_medium"
         android:gravity="center_vertical"
         android:lines="1"
         android:maxLines="1"
         android:minLines="1"
         android:singleLine="true"
         android:text="Andrea Cola"
-        android:textSize="22sp"
-        app:layout_constraintEnd_toStartOf="@+id/circleImageView"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/textView11"
         app:layout_constraintStart_toEndOf="@+id/image"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -42,14 +43,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
         android:lines="1"
         android:maxLines="1"
         android:minLines="1"
         android:singleLine="true"
         android:text="Come stai?"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/circleImageView"
+        app:layout_constraintEnd_toEndOf="@+id/chat_user"
         app:layout_constraintStart_toEndOf="@+id/image"
         app:layout_constraintTop_toBottomOf="@+id/chat_user" />
 
@@ -57,26 +57,24 @@
         android:id="@+id/separator"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/colorPrimary"
+        android:background="#BBB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/date"
         app:layout_constraintTop_toBottomOf="@+id/date" />
 
-    <ImageView
-        android:id="@+id/circleImageView"
+    <TextView
+        android:id="@+id/textView11"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/round_chat_button"
-        app:layout_constraintBottom_toTopOf="@+id/separator"
+        android:gravity="center_vertical|end"
+        android:text="10/07/95"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/chat_user"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24dp" />
+        app:layout_constraintTop_toTopOf="@+id/chat_user" />
 
 </android.support.constraint.ConstraintLayout>

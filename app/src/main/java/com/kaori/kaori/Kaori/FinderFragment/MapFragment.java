@@ -96,7 +96,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .target(new LatLng(mLatitude, mLongitude))
                 .zoom(14)
                 .build();
-        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 4000);
+        mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(newCameraPosition), 500);
     }
 
     @Override

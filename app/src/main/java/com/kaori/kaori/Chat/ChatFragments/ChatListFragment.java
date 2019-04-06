@@ -25,16 +25,14 @@ import java.util.List;
 public class ChatListFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
-    private RecyclerView mRecyclerView;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_list_layout, container, false);
-        mRecyclerView = view.findViewById(R.id.chat_list);
 
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        RecyclerView mRecyclerView = view.findViewById(R.id.chatList);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(new ChatAdapter(DataManager.getInstance().getAllChats()));
 

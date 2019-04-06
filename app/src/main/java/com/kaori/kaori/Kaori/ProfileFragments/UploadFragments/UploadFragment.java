@@ -16,9 +16,6 @@ import com.kaori.kaori.R;
 
 public class UploadFragment extends Fragment {
 
-    /**
-     * Constants
-     */
     private final String[] titles = { "book", "document", "url" };
 
     @Nullable

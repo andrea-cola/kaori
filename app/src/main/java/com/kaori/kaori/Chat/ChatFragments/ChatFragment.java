@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,11 +18,11 @@ import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.kaori.kaori.Constants;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.Services.DataManager;
 
 import java.text.SimpleDateFormat;
@@ -36,7 +35,6 @@ public class ChatFragment extends Fragment {
 
     private Chat chat;
     private MiniUser myUser, otherUser;
-    private ImageButton mSendMessage;
     private EditText editText;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -47,39 +45,41 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_layout, container, false);
-        editText = view.findViewById(R.id.feedbackEdittext);
-        mSendMessage = view.findViewById(R.id.send_button);
-        mRecyclerView = view.findViewById(R.id.chat_list);
+        editText = view.findViewById(R.id.feedbackEditText);
 
         myUser = DataManager.getInstance().getMiniUser();
-
         messages = new LinkedList<>();
         dates = new LinkedList<>();
+
+        // set title
+        ((TextView)view.findViewById(R.id.user_profile_name)).setText(otherUser.getName());
+        // set image
+        DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(),
+                view.findViewById(R.id.user_profile_image), getContext());
+
+        mRecyclerView = view.findViewById(R.id.chatList);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new MyAdapter(messages);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
-        ImageView userImage = view.findViewById(R.id.user_profile_image);
-        TextView userName = view.findViewById(R.id.user_profile_name);
-
-        userName.setText(otherUser.getName());
-
-        DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), userImage, getContext());
 
         downloadChat(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
 
-        addOnClickListener();
+        addOnClickListener(view);
 
         return view;
+    }
+
+    public void setParams(MiniUser receiverUser){
+        otherUser = receiverUser;
     }
 
     public void downloadChat(String chatID){
         if(chat == null)
             FirebaseFirestore.getInstance()
                     .collection("chats")
-                    .document(chatID)
-                    .get()
+                    .document(chatID).get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             DocumentSnapshot document = task.getResult();
@@ -92,15 +92,11 @@ public class ChatFragment extends Fragment {
                             }
                             readMessages();
                         } else {
-                            // TODO: tornare alle chat.
+                            getActivity().getSupportFragmentManager().popBackStackImmediate();
                         }
                     });
         else
             readMessages();
-    }
-
-    public void setParams(MiniUser receiverUser){
-        otherUser = receiverUser;
     }
 
     private void sendMessage(Message message) {
@@ -108,8 +104,8 @@ public class ChatFragment extends Fragment {
         DataManager.getInstance().uploadMessage(chat, message);
     }
 
-    private void addOnClickListener(){
-        mSendMessage.setOnClickListener(view -> {
+    private void addOnClickListener(View view){
+        view.findViewById(R.id.sendButton).setOnClickListener(v -> {
             if(editText.getText().length() > 0) {
                 Message message = new Message();
                 message.setChatID(chat.getChatID());

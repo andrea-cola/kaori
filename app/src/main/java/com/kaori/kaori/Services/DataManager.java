@@ -135,7 +135,7 @@ public class DataManager {
         dataManager = new DataManager();
     }
 
-    public static DataManager getInstance(){
+    public static DataManager getInstance() {
         return dataManager;
     }
 
@@ -173,8 +173,8 @@ public class DataManager {
 
     public ArrayList<String> getAllCourses(String university) {
         ArrayList<String> courses = new ArrayList<>();
-        for(Course c : allCourses)
-            if(c.getUniversity().equalsIgnoreCase(university))
+        for (Course c : allCourses)
+            if (c.getUniversity().equalsIgnoreCase(university))
                 courses.add(c.getName());
         return courses;
     }
@@ -195,6 +195,10 @@ public class DataManager {
         return allChats;
     }
 
+    public ArrayList<Position> getCurrentActivePositions() {
+        return currentActivePositions;
+    }
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* GENERIC FUNCTIONS ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------------------------ */
@@ -203,8 +207,8 @@ public class DataManager {
         dataManager = new DataManager();
     }
 
-    private String urlGenerator(String url, String... params){
-        if(params != null && params.length > 0){
+    private String urlGenerator(String url, String... params) {
+        if (params != null && params.length > 0) {
             url = url + "?p0=" + params[0];
             for (int i = 1; i < params.length; i++)
                 url = url + "&p" + i + "=" + params[i];
@@ -213,14 +217,14 @@ public class DataManager {
     }
 
     public void updateUser(Bitmap bitmap) {
-        if(bitmap != null)
+        if (bitmap != null)
             uploadProfileImageOnServer(bitmap);
         else
             uploadUser();
     }
 
     public void loadImageIntoView(Object uri, ImageView imageView, Context context) {
-        if(context != null)
+        if (context != null)
             Glide.with(context)
                     .load(uri)
                     .apply(glideRequestOptionsCircle)
@@ -228,7 +232,7 @@ public class DataManager {
     }
 
     public void loadImageIntoBackgroundView(Object uri, ImageView imageView, Context context) {
-        if(context != null)
+        if (context != null)
             Glide.with(context)
                     .load(uri)
                     .apply(glideRequestOptionsCenter)
@@ -236,20 +240,20 @@ public class DataManager {
     }
 
     public void loadImageIntoBackgroundView(Drawable uri, ImageView imageView, Context context) {
-        if(context != null)
+        if (context != null)
             Glide.with(context)
                     .load(uri)
                     .apply(glideRequestOptionsCenterFit)
                     .into(imageView);
     }
 
-    private void makeCustomPostRequest(final Uri url, final Response.Listener<String> listener, final Response.ErrorListener errorListener, Object... params){
+    private void makeCustomPostRequest(final Uri url, final Response.Listener<String> listener, final Response.ErrorListener errorListener, Object... params) {
         LogManager.getInstance().printConsoleMessage("POST -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(), listener, errorListener) {
             @Override
             protected Map<String, String> getParams() {
                 HashMap<String, String> p = new HashMap<>();
-                for(int i = 0; i < params.length; i++)
+                for (int i = 0; i < params.length; i++)
                     p.put("p" + i, gson.toJson(params[i]));
                 return p;
             }
@@ -261,18 +265,12 @@ public class DataManager {
     private void makePostRequest(final Uri url, final String message, final String errorMessage, final Object... objects) {
         LogManager.getInstance().printConsoleMessage("POST -> " + url.toString());
         StringRequest request = new StringRequest(Request.Method.POST, url.toString(),
-                response -> {
-                    LogManager.getInstance().printConsoleMessage(response);
-                    if(response.equalsIgnoreCase("1"))
-                        LogManager.getInstance().showVisualMessage(message);
-                    else
-                        LogManager.getInstance().showVisualMessage(errorMessage);
-                },
+                response -> LogManager.getInstance().showVisualMessage(response.equalsIgnoreCase("1") ? message : errorMessage),
                 error -> LogManager.getInstance().showVisualMessage(errorMessage)) {
             @Override
             protected Map<String, String> getParams() {
-                Map<String, String>  params = new HashMap<>();
-                for(int i = 0; i < objects.length; i++)
+                Map<String, String> params = new HashMap<>();
+                for (int i = 0; i < objects.length; i++)
                     params.put("p" + i, gson.toJson(objects[i]));
                 return params;
             }
@@ -284,12 +282,12 @@ public class DataManager {
     private void makeAdvancedGetRequest(final Uri url, final RecyclerView viewList, ArrayList list, Type type) {
         LogManager.getInstance().printConsoleMessage("GET -> " + url.toString());
         Response.Listener<String> listener = response -> {
-                    list.clear();
-                    list.addAll(gson.fromJson(response, type));
-                    viewList.getAdapter().notifyDataSetChanged();
+            list.clear();
+            list.addAll(gson.fromJson(response, type));
+            viewList.getAdapter().notifyDataSetChanged();
 
-                    App.setAuxiliarViewsStatus(list.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
-                };
+            App.setAuxiliarViewsStatus(list.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
+        };
         Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
         makeGetRequest(url, listener, errorListener);
     }
@@ -304,7 +302,7 @@ public class DataManager {
         makeGetRequest(url, listener, errorListener);
     }
 
-    private void makeGetRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    private void makeGetRequest(final Uri url, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(), listener, errorListener);
         request.setShouldCache(false);
@@ -317,87 +315,95 @@ public class DataManager {
 
     public void downloadFeed(RecyclerView viewList) {
         String url = BASE_URL + URL_FEED;
-        if (user.getExams().size() > 0){
+        if (user.getExams().size() > 0) {
             url = url + "?exams=" + user.getExams().get(0);
             for (int i = 1; i < user.getExams().size(); i++)
                 url = url + "&exams=" + user.getExams().get(i);
         }
 
-        makeAdvancedGetRequest(Uri.parse(url), viewList, feedElements, new TypeToken<ArrayList<Document>>() {}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), viewList, feedElements, new TypeToken<ArrayList<Document>>() {
+        }.getType());
     }
 
-    public void downloadAllExams(){
+    public void downloadAllExams() {
         String url = urlGenerator(BASE_URL + URL_EXAMS, user.getUniversity(), user.getCourse());
-        makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>(){}.getType());
+        makeSimpleGetRequest(Uri.parse(url), allExams, new TypeToken<ArrayList<String>>() {
+        }.getType());
     }
 
-    private void downloadAllUniversities(){
+    private void downloadAllUniversities() {
         String url = urlGenerator(BASE_URL + URL_UNIVERSITIES);
-        makeSimpleGetRequest(Uri.parse(url), allUniversities, new TypeToken<ArrayList<String>>(){}.getType());
+        makeSimpleGetRequest(Uri.parse(url), allUniversities, new TypeToken<ArrayList<String>>() {
+        }.getType());
     }
 
-    private void downloadAllCourses(){
+    private void downloadAllCourses() {
         String url = urlGenerator(BASE_URL + URL_COURSES);
-        makeSimpleGetRequest(Uri.parse(url), allCourses, new TypeToken<ArrayList<Course>>(){}.getType());
+        makeSimpleGetRequest(Uri.parse(url), allCourses, new TypeToken<ArrayList<Course>>() {
+        }.getType());
     }
 
-    public void downloadUserProfile(String uid, MainActivity mainActivity){
+    public void downloadUserProfile(String uid, MainActivity mainActivity) {
         String url = urlGenerator(BASE_URL + URL_USER, uid);
         LogManager.getInstance().printConsoleMessage("GET -> " + url);
         makeGetRequest(Uri.parse(url),
                 response -> {
-                    this.user = gson.fromJson(response, new TypeToken<User>(){}.getType());
-                    if(user != null) {
+                    this.user = gson.fromJson(response, new TypeToken<User>() {
+                    }.getType());
+                    if (user != null) {
                         downloadAllExams();
                         downloadAllUniversities();
                         downloadAllCourses();
                         downloadMyFiles();
                         mainActivity.startApp();
-                    }
-                    else
+                    } else
                         mainActivity.startLogin();
                 },
                 error -> mainActivity.recreate());
     }
 
-    public void queryMaterials(String query, RecyclerView list){
+    public void queryMaterials(String query, RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUniversity(), query);
-        makeAdvancedGetRequest(Uri.parse(url), list, searchElements, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, searchElements, new TypeToken<ArrayList<Document>>() {
+        }.getType());
     }
 
     public void downloadMyFiles(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUid());
-        makeAdvancedGetRequest(Uri.parse(url), list, myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, myFiles, new TypeToken<ArrayList<Document>>() {
+        }.getType());
     }
 
-    public void downloadMyFiles(){
+    public void downloadMyFiles() {
         String url = urlGenerator(BASE_URL + URL_SEARCH, user.getUid());
-        makeSimpleGetRequest(Uri.parse(url), myFiles, new TypeToken<ArrayList<Document>>(){}.getType());
+        makeSimpleGetRequest(Uri.parse(url), myFiles, new TypeToken<ArrayList<Document>>() {
+        }.getType());
     }
 
     public void downloadMyChats(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_CHATS, user.getUid());
-        makeAdvancedGetRequest(Uri.parse(url), list, allChats, new TypeToken<ArrayList<Chat>>(){}.getType());
+        makeAdvancedGetRequest(Uri.parse(url), list, allChats, new TypeToken<ArrayList<Chat>>() {
+        }.getType());
     }
 
-    public void downloadCurrentActivePositions(Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    public void downloadCurrentActivePositions(RecyclerView list) {
         String url = urlGenerator(BASE_URL + URL_POSITION, user.getUid());
-        makeGetRequest(Uri.parse(url), listener, errorListener);
+        makeAdvancedGetRequest(Uri.parse(url), list, currentActivePositions, new TypeToken<ArrayList<Position>>(){}.getType());
     }
 
-    public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email){
+    public void checkIfTheUserAlreadyExists(Response.Listener<String> listener, Response.ErrorListener errorListener, String email) {
         String url = urlGenerator(BASE_URL + URL_CHECK, email);
         makeGetRequest(Uri.parse(url), listener, errorListener);
     }
 
-    public void createValidationProviderRequest(Response.Listener<String> listener, Response.ErrorListener errorListener, String email, int method){
+    public void createValidationProviderRequest(Response.Listener<String> listener, Response.ErrorListener errorListener, String email, int method) {
         String url = urlGenerator(BASE_URL + URL_PROVIDER_VALIDATION, email, String.valueOf(method));
         makeGetRequest(Uri.parse(url), listener, errorListener);
     }
 
     public void downloadStarredBooks(RecyclerView list, View emptyView) {
         String url = BASE_URL + URL_STARRED;
-        if (user.getBookStarred().size() > 0){
+        if (user.getBookStarred().size() > 0) {
             url = url + "?type=" + Constants.BOOK;
             for (int i = 0; i < user.getBookStarred().size(); i++)
                 url = url + "&starred=" + user.getBookStarred().get(i);
@@ -407,11 +413,12 @@ public class DataManager {
         makeGetRequest(Uri.parse(url),
                 response -> {
                     starredBooks.clear();
-                    starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>() {}.getType()));
+                    starredBooks.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>() {
+                    }.getType()));
                     list.getAdapter().notifyDataSetChanged();
 
                     App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
-                    if(starredDocuments.size() > 0)
+                    if (starredDocuments.size() > 0)
                         emptyView.setVisibility(View.GONE);
                     else
                         emptyView.setVisibility(View.VISIBLE);
@@ -422,7 +429,7 @@ public class DataManager {
 
     public void downloadStarredDocs(RecyclerView list, View emptyView) {
         String url = BASE_URL + URL_STARRED;
-        if (user.getDocStarred().size() > 0){
+        if (user.getDocStarred().size() > 0) {
             url = url + "?type=" + Constants.FILE;
             for (int i = 0; i < user.getDocStarred().size(); i++)
                 url = url + "&starred=" + user.getDocStarred().get(i);
@@ -432,11 +439,12 @@ public class DataManager {
         makeGetRequest(Uri.parse(url),
                 response -> {
                     starredDocuments.clear();
-                    starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>() {}.getType()));
+                    starredDocuments.addAll(gson.fromJson(response, new TypeToken<ArrayList<Document>>() {
+                    }.getType()));
                     list.getAdapter().notifyDataSetChanged();
 
                     App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
-                    if(starredDocuments.size() > 0)
+                    if (starredDocuments.size() > 0)
                         emptyView.setVisibility(View.GONE);
                     else
                         emptyView.setVisibility(View.VISIBLE);
@@ -449,7 +457,7 @@ public class DataManager {
     /* POST FUNCTIONS --------------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
 
-    private void uploadUser(){
+    private void uploadUser() {
         Uri url = Uri.parse(BASE_URL + URL_USER);
         makePostRequest(url,
                 App.getStringFromRes(R.string.upload_user_message),
@@ -457,7 +465,7 @@ public class DataManager {
                 user);
     }
 
-    public void uploadDocument(final Document document){
+    public void uploadDocument(final Document document) {
         Uri url = Uri.parse(BASE_URL + URL_DOC);
         makePostRequest(url,
                 App.getStringFromRes(!document.getModified() ? R.string.upload_doc_message : R.string.upload_doc_message2),
@@ -465,7 +473,7 @@ public class DataManager {
                 document);
     }
 
-    public void uploadPosition(Position position){
+    public void uploadPosition(Position position) {
         Uri url = Uri.parse(BASE_URL + URL_POSITION);
         makePostRequest(url,
                 App.getStringFromRes(R.string.upload_pos_message),
@@ -481,30 +489,32 @@ public class DataManager {
                 message);
     }
 
-    public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + URL_USER;
         makeCustomPostRequest(Uri.parse(url), listener, errorListener, user);
     }
 
-    public void postToken(final String uid, final String token, Response.Listener<String> listener, Response.ErrorListener errorListener){
+    public void postToken(final String uid, final String token, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         String url = BASE_URL + URL_TOKEN;
         makeCustomPostRequest(Uri.parse(url), listener, errorListener, uid, token);
     }
 
-    public void deletePosition(){
+    public void deletePosition() {
         String url = BASE_URL + URL_POS_REMOVE;
+        currentActivePositions.remove(user.getPosition());
+        user.setPosition(null);
         makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, this.getUser().getUid());
     }
 
     public void setStarredDocument(Document mMaterial, boolean isChecked) {
-        if(isChecked)
+        if (isChecked)
             user.addStarred(mMaterial.getId(), mMaterial.getSubtype());
         else
             user.removeStarred(mMaterial.getId(), mMaterial.getSubtype());
         this.uploadUser();
     }
 
-    public void postComment(Document document, Feedback feedback){
+    public void postComment(Document document, Feedback feedback) {
         document.addFeedback(feedback);
         this.uploadDocument(document);
     }
@@ -528,7 +538,7 @@ public class DataManager {
                 .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, App.getStringFromRes(R.string.upload_user_error)));
     }
 
-    public void uploadFileOnTheServer(String url, Document document){
+    public void uploadFileOnTheServer(String url, Document document) {
         LogManager.getInstance().printConsoleMessage("Upload -> file");
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));

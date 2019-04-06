@@ -24,31 +24,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.kaori.kaori.App;
-import com.kaori.kaori.Constants;
 import com.kaori.kaori.Model.Position;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FinderFragment extends Fragment {
 
-    /**
-     * Constants
-     */
     private final String BACK_STATE_NAME = getClass().getName();
-    private ArrayList<Position> currentActivePositions;
-
     private RecyclerView recyclerView;
-    private View view;
-
     private LocationManager lm;
-    private TextView noLocalize;
+    private View view;
 
     @Override
     public void onStart() {
@@ -60,41 +49,40 @@ public class FinderFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.finder_position_layout, container, false);
         lm = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        currentActivePositions = new ArrayList<>();
         view.findViewById(R.id.positionFAB).setOnClickListener(v -> activateGPS());
-        noLocalize = view.findViewById(R.id.nolocalize);
+        view.findViewById(R.id.nolocalize).setOnClickListener(v -> deactivePosition());
 
         recyclerView = view.findViewById(R.id.user_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new RecyclerAdapter(currentActivePositions));
+        recyclerView.setAdapter(new RecyclerAdapter(DataManager.getInstance().getCurrentActivePositions()));
 
-        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_feed);
+        DataManager.getInstance().downloadCurrentActivePositions(recyclerView);
+
+        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_finder);
         App.setEmptyView(view.findViewById(R.id.empty_view));
-        downloadActivePositions();
 
-        deactivePosition();
+        setDeactivePositionButton();
 
         return view;
     }
 
+    private void setDeactivePositionButton(){
+        view.findViewById(R.id.nolocalize)
+                .setVisibility(DataManager.getInstance().getUser().getPosition() != null ? View.VISIBLE : View.GONE);
+    }
+
     private void deactivePosition() {
-        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED && isPositioned() &&
-                lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            noLocalize.setVisibility(View.VISIBLE);
-            noLocalize.setOnClickListener(v -> new AlertDialog.Builder(getActivity())
-                    .setMessage(getString(R.string.dialog_disable_position))
-                    .setPositiveButton("OK", (d, which) -> {
-                        DataManager.getInstance().deletePosition();
-                        d.dismiss();
-                        LogManager.getInstance().showVisualMessage(String.valueOf(R.string.update_done));
-                    })
-                    .setNegativeButton("NO", (d, which) -> d.dismiss())
-                    .show());
-            } else
-                noLocalize.setVisibility(View.INVISIBLE);
+        new AlertDialog.Builder(getActivity(), R.style.KaoriDialog)
+            .setMessage(getString(R.string.dialog_disable_position))
+            .setPositiveButton("OK", (d, which) -> {
+                DataManager.getInstance().deletePosition();
+                recyclerView.getAdapter().notifyDataSetChanged();
+                setDeactivePositionButton();
+                LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.update_done));
+                d.dismiss();
+            })
+            .setNegativeButton("NO", (d, which) -> d.dismiss())
+            .show();
     }
 
     private void activateGPS(){
@@ -118,19 +106,6 @@ public class FinderFragment extends Fragment {
         }
     }
 
-    private void downloadActivePositions(){
-        DataManager.getInstance().downloadCurrentActivePositions(
-                response -> {
-                    currentActivePositions.clear();
-                    currentActivePositions.addAll(new Gson().fromJson(response, new TypeToken<ArrayList<Position>>(){}.getType()));
-
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                    App.setAuxiliarViewsStatus(currentActivePositions.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
-                    deactivePosition();
-                },
-                error -> LogManager.getInstance().printConsoleError("ERROR -> downloadActivePositions || " + error.toString()));
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
@@ -147,14 +122,6 @@ public class FinderFragment extends Fragment {
                     .addToBackStack(BACK_STATE_NAME)
                     .commit();
         }
-    }
-
-    private boolean isPositioned(){
-        if(currentActivePositions.size()>0)
-            for(Position pos : currentActivePositions)
-                if (pos.getId().equalsIgnoreCase(DataManager.getInstance().getUser().getUid()))
-                    return true;
-        return false;
     }
 
     private class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Holder> {
@@ -181,6 +148,11 @@ public class FinderFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
+            if (positions.get(i).getId().equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
+                DataManager.getInstance().getUser().setPosition(positions.get(i));
+                setDeactivePositionButton();
+            }
+
             holder.user.setText(positions.get(i).getUser().getName());
             holder.activity.setText(getString(R.string.finder_item_studying) + " " + positions.get(i).getActivity());
             holder.position.setText(positions.get(i).getPlaceName());

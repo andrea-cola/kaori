@@ -121,7 +121,7 @@
     <string name="user_location_permission_explanation">User placeName permission</string>
     <string name="user_location_permission_not_granted">Location permission not granted</string>
 
-    <string name="dialog_disable_position">I tuoi amici non ti vedranno più studiare. Continuare?</string>
+    <string name="dialog_disable_position">Vuoi interrompere la condivisione della posizione?</string>
     <string name="dialog_enable_position">Devi attivare il GPS per la posizione</string>
     <string name="position_not_active">Non hai attivo il sensore GPS</string>
     <string name="finder_item_studying">Sto studiando:</string>
@@ -129,7 +129,7 @@
     <string name="error_upload_msg">Riempi i campi vuoti</string>
     <string name="error_link_upload_msg">Url inserito non valido.</string>
     <string name="error_regostration_mail">Indirizzo Email non valido.</string>
-    <string name="update_done">Aggiornamento effettuato</string>
+    <string name="update_done">Aggiornamento effettuato.</string>
     <string name="update_failed">Aggiornamento fallito, riprovare.</string>
 
 </resources>
