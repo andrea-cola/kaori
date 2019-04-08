@@ -78,6 +78,10 @@ public class KaoriApp extends AppCompatActivity {
         activateNavigation();
     }
 
+    public void callStarredFragment(){
+        bottomNavigationView.setSelectedItemId(R.id.navigation_preferred);
+    }
+
     private void activateNavigation(){
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -111,6 +115,7 @@ public class KaoriApp extends AppCompatActivity {
 
         View view = navigationView.inflateHeaderView(R.layout.navigation_header);
         ImageView drawerImage = view.findViewById(R.id.nav_header_image);
+        ((TextView)view.findViewById(R.id.mail)).setText(DataManager.getInstance().getUser().getEmail());
         ((TextView)view.findViewById(R.id.nav_header_username)).setText(DataManager.getInstance().getUser().getName());
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
         DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), drawerImage, this);
@@ -138,7 +143,11 @@ public class KaoriApp extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+            drawerLayout.closeDrawers();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

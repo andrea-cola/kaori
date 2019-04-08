@@ -8,6 +8,8 @@ public class Chat implements Serializable {
 
     private String chatID;
     private long lastMessageSent;
+    private String lastMessageText;
+    private String lastMessageUserID;
     private List<MiniUser> users;
 
     public Chat(){ }
@@ -58,5 +60,21 @@ public class Chat implements Serializable {
 
     public void setUsers(List<MiniUser> users) {
         this.users = users;
+    }
+
+    public String getLastMessageText() {
+        return lastMessageText;
+    }
+
+    public void setLastMessageText(String lastMessageText) {
+        this.lastMessageText = lastMessageText;
+    }
+
+    public String getLastMessageUserID() {
+        return lastMessageUserID;
+    }
+
+    public void setLastMessageUserID(String lastMessageUserID) {
+        this.lastMessageUserID = lastMessageUserID;
     }
 }

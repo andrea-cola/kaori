@@ -4,6 +4,8 @@ import android.os.Environment;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 /**
@@ -68,8 +70,39 @@ public class Constants {
     /**
      * Finder fragments constants.
      */
-    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
+    public static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.ITALY);
+    public static final SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm", Locale.ITALY);
     public static final long constantDate = 1000L;
+
+    public static String getDate(long timestamp){
+        return dateFormat.format(new Date(timestamp * constantDate));
+    }
+
+    public static String getFormattedDate(long timestamp){
+        Calendar today = Calendar.getInstance(Locale.ITALIAN);
+        today.set(Calendar.HOUR_OF_DAY, 0);
+        today.set(Calendar.MINUTE, 0);
+        today.set(Calendar.SECOND, 0);
+        today.set(Calendar.MILLISECOND, 0);
+
+        Calendar yesterday = Calendar.getInstance();
+        yesterday.set(Calendar.HOUR_OF_DAY, 0);
+        yesterday.set(Calendar.MINUTE, 0);
+        yesterday.set(Calendar.SECOND, 0);
+        yesterday.set(Calendar.MILLISECOND, 0);
+        yesterday.add(Calendar.DAY_OF_MONTH, -1);
+
+        Date myDate = new Date(timestamp * constantDate);
+        if(today.getTime().before(myDate))
+            return "Oggi, " + hourFormat.format(myDate);
+        else if(yesterday.getTime().before(myDate))
+            return "Ieri, " + hourFormat.format(myDate);
+        return dateFormat.format(myDate);
+    }
+
+    public static String getHour(long timestamp){
+        return hourFormat.format(new Date(timestamp * constantDate));
+    }
 
     /**
      * Functions.

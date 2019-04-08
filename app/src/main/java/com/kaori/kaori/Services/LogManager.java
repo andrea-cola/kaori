@@ -73,16 +73,10 @@ public class LogManager {
      */
     @SuppressLint("LogNotTimber")
     public void showVisualMessage(String message){
-        Log.d(Constants.TAG, message);
-        Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
-    }
-
-    /**
-     * Print the error in the console.
-     */
-    @SuppressLint("LogNotTimber")
-    public void printConsoleError(int resId){
-        printConsoleError(App.getStringFromRes(resId));
+        if(message != null) {
+            Log.d(Constants.TAG, message);
+            Snackbar.make(view.findViewById(R.id.coordinator), message, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     /**
@@ -91,15 +85,6 @@ public class LogManager {
     @SuppressLint("LogNotTimber")
     public void printConsoleMessage(int resId){
         printConsoleMessage(App.getStringFromRes(resId));
-    }
-
-    /**
-     * Show the error message and the exception visually
-     * and in the console.
-     */
-    @SuppressLint("LogNotTimber")
-    public void showVisualError(Exception e, int resId){
-        showVisualError(e, App.getStringFromRes(resId));
     }
 
     /**

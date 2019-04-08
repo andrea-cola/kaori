@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.kaori.kaori.Constants;
-import com.kaori.kaori.Kaori.MyMaterialFragments.MyMaterialFragment;
+import com.kaori.kaori.Kaori.KaoriApp;
 import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
@@ -71,7 +71,7 @@ public class ProfileFragment extends Fragment {
 
         view.findViewById(R.id.addExamButton).setOnClickListener(v -> invokeNextFragment(new StudyPlanFragment()));
         view.findViewById(R.id.uploadMaterialCardButton).setOnClickListener(v -> invokeNextFragment(new MyFilesFragment()));
-        view.findViewById(R.id.starredMaterialCardButton).setOnClickListener(v -> invokeNextFragment(new MyMaterialFragment()));
+        view.findViewById(R.id.starredMaterialCardButton).setOnClickListener(v -> ((KaoriApp)getActivity()).callStarredFragment());
 
         return view;
     }

@@ -20,7 +20,6 @@ import com.kaori.kaori.Model.Document;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 
-import java.util.Date;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
@@ -71,7 +70,7 @@ public class HomeFragment extends Fragment {
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
             holder.title.setText(materials.get(i).getTitle());
             holder.author.setText(materials.get(i).getUser().getName());
-            holder.date.setText(Constants.dateFormat.format(new Date(materials.get(i).getTimestamp()*Constants.constantDate)));
+            holder.date.setText(Constants.getFormattedDate(materials.get(i).getTimestamp()));
 
             DataManager.getInstance().loadImageIntoView(materials.get(i).getUser().getThumbnail(), holder.authorIcon, getContext());
 

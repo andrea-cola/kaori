@@ -19,7 +19,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <TextView
-        android:id="@+id/chat_user"
+        android:id="@+id/user"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/default_margin"
@@ -32,13 +32,14 @@
         android:minLines="1"
         android:singleLine="true"
         android:text="Andrea Cola"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toStartOf="@+id/textView11"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/date"
         app:layout_constraintStart_toEndOf="@+id/image"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -48,10 +49,10 @@
         android:minLines="1"
         android:singleLine="true"
         android:text="Come stai?"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="@+id/chat_user"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="@+id/user"
         app:layout_constraintStart_toEndOf="@+id/image"
-        app:layout_constraintTop_toBottomOf="@+id/chat_user" />
+        app:layout_constraintTop_toBottomOf="@+id/user" />
 
     <View
         android:id="@+id/separator"
@@ -62,19 +63,19 @@
         android:background="#BBB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/date"
-        app:layout_constraintTop_toBottomOf="@+id/date" />
+        app:layout_constraintStart_toStartOf="@+id/message"
+        app:layout_constraintTop_toBottomOf="@+id/message" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="16dp"
         android:gravity="center_vertical|end"
         android:text="10/07/95"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/chat_user"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/user"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/chat_user" />
+        app:layout_constraintTop_toTopOf="@+id/user" />
 
 </android.support.constraint.ConstraintLayout>

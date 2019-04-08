@@ -37,7 +37,6 @@ import com.kaori.kaori.Services.FileManager;
 import com.kaori.kaori.Services.LogManager;
 
 import java.io.File;
-import java.util.Date;
 import java.util.List;
 
 public class MaterialActivity extends AppCompatActivity {
@@ -76,7 +75,7 @@ public class MaterialActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.note)).setText(material.getCourse());
         ((TextView)findViewById(R.id.author)).setText("di " + material.getUser().getName());
         ((TextView)findViewById(R.id.note)).setText(material.getNote());
-        ((TextView)findViewById(R.id.date)).setText(Constants.dateFormat.format(new Date(material.getTimestamp() * Constants.constantDate)));
+        ((TextView)findViewById(R.id.date)).setText(Constants.getDate(material.getTimestamp()));
         findViewById(R.id.back_button).setOnClickListener(view -> super.onBackPressed());
         String exams = "";
         for(String e : material.getExams())

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kaori.kaori.App;
+import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
@@ -31,20 +32,22 @@ public class ChatListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_list_layout, container, false);
 
+        ((KaoriChat) getActivity()).getSupportActionBar().show();
+
         RecyclerView mRecyclerView = view.findViewById(R.id.chatList);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(new ChatAdapter(DataManager.getInstance().getAllChats()));
 
-        ((TextView)view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_chat);
+        ((TextView) view.findViewById(R.id.empty_view_text)).setText(R.string.empty_text_chat);
         App.setEmptyView(view.findViewById(R.id.empty_view));
         DataManager.getInstance().downloadMyChats(mRecyclerView);
 
         return view;
     }
 
-    private void invokeNextFragment(Fragment fragment){
-        if(getActivity() != null)
+    private void invokeNextFragment(Fragment fragment) {
+        if (getActivity() != null)
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -62,20 +65,29 @@ public class ChatListFragment extends Fragment {
 
         @Override
         public ChatAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_item, parent, false));
+            return new MyViewHolder(LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.chat_list_item, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            MiniUser otherUser = mDataset.get(position).getTheOtherUserByUid(DataManager.getInstance().getUser().getUid());
+            MiniUser otherUser = mDataset.get(position)
+                    .getTheOtherUserByUid(DataManager.getInstance().getUser().getUid());
             holder.chatUser.setText(otherUser.getName());
-            holder.chatDate.setText(Constants.dateFormat.format(mDataset.get(position).getLastMessageSent()));
-            DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());
+            holder.chatDate.setText(
+                    Constants.getHour(mDataset.get(position).getLastMessageSent()));
+            holder.chatMessage.setText((!mDataset.get(position).getLastMessageUserID()
+                    .equalsIgnoreCase(otherUser.getUid()) ? "Tu: " : "") + mDataset.get(position)
+                    .getLastMessageText());
+            DataManager.getInstance()
+                    .loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());
             holder.view.setOnClickListener(view -> {
                 ChatFragment chatFragment = new ChatFragment();
                 chatFragment.setParams(otherUser);
                 invokeNextFragment(chatFragment);
             });
+
+            DataManager.getInstance().addListener(mDataset.get(position).getChatID());
         }
 
         @Override
@@ -84,16 +96,17 @@ public class ChatListFragment extends Fragment {
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView chatUser, chatDate;
+            TextView chatUser, chatDate, chatMessage;
             ImageView chatImage;
             View view;
 
             MyViewHolder(View v) {
                 super(v);
                 view = v;
-                chatUser = v.findViewById(R.id.chat_user);
+                chatUser = v.findViewById(R.id.user);
                 chatImage = v.findViewById(R.id.image);
                 chatDate = v.findViewById(R.id.date);
+                chatMessage = v.findViewById(R.id.message);
             }
         }
     }

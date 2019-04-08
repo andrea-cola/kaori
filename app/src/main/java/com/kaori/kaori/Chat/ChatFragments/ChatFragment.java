@@ -10,15 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.kaori.kaori.Constants;
+import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Message;
 import com.kaori.kaori.Model.MiniUser;
@@ -28,7 +25,6 @@ import com.kaori.kaori.Services.DataManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 public class ChatFragment extends Fragment {
@@ -38,8 +34,6 @@ public class ChatFragment extends Fragment {
     private EditText editText;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private List<Object> messages;
-    private List<String> dates;
 
     @Nullable
     @Override
@@ -47,9 +41,9 @@ public class ChatFragment extends Fragment {
         View view = inflater.inflate(R.layout.chat_layout, container, false);
         editText = view.findViewById(R.id.feedbackEditText);
 
+        ((KaoriChat)getActivity()).getSupportActionBar().hide();
+
         myUser = DataManager.getInstance().getMiniUser();
-        messages = new LinkedList<>();
-        dates = new LinkedList<>();
 
         // set title
         ((TextView)view.findViewById(R.id.user_profile_name)).setText(otherUser.getName());
@@ -58,15 +52,14 @@ public class ChatFragment extends Fragment {
                 view.findViewById(R.id.user_profile_image), getContext());
 
         mRecyclerView = view.findViewById(R.id.chatList);
-        mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mAdapter = new MyAdapter(messages);
-        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
 
         downloadChat(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
 
         addOnClickListener(view);
+
+        view.findViewById(R.id.back).setOnClickListener(v -> getActivity().getSupportFragmentManager().popBackStackImmediate());
 
         return view;
     }
@@ -101,6 +94,8 @@ public class ChatFragment extends Fragment {
 
     private void sendMessage(Message message) {
         chat.setLastMessageSent(Timestamp.now().getSeconds());
+        chat.setLastMessageText(message.getMessage());
+        chat.setLastMessageUserID(message.getSender().getUid());
         DataManager.getInstance().uploadMessage(chat, message);
     }
 
@@ -121,27 +116,10 @@ public class ChatFragment extends Fragment {
     }
 
     private void readMessages(){
-        FirebaseFirestore.getInstance()
-                .collection("chats")
-                .document(chat.getChatID())
-                .collection("messages")
-                .orderBy("timestamp", Query.Direction.ASCENDING)
-                .addSnapshotListener((value, e) -> {
-                    if(value != null)
-                        for (DocumentChange doc : value.getDocumentChanges()) {
-                            if (doc.getType().equals(DocumentChange.Type.ADDED)) {
-                                Message m = doc.getDocument().toObject(Message.class);
-                                Date date = new Date(m.getTimestamp()*1000L);
-                                if(!dates.contains(Constants.dateFormat.format(date))) {
-                                    dates.add(Constants.dateFormat.format(date));
-                                    messages.add(Constants.dateFormat.format(date));
-                                }
-                                messages.add(m);
-                                mAdapter.notifyDataSetChanged();
-                                mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-                            }
-                        }
-                });
+        mAdapter = new MyAdapter(DataManager.getInstance().getMessages(chat.getChatID()));
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+        DataManager.getInstance().addAdapter(mRecyclerView, chat.getChatID());
     }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
@@ -159,14 +137,12 @@ public class ChatFragment extends Fragment {
         }
 
         class MyViewHolderMessage extends MyViewHolder {
-            ImageView userImage;
             TextView content, timestamp;
 
             MyViewHolderMessage(View v) {
                 super(v);
                 content = v.findViewById(R.id.message_content);
                 timestamp = v.findViewById(R.id.message_time);
-                userImage = v.findViewById(R.id.user_profile_image);
             }
         }
 
@@ -197,16 +173,10 @@ public class ChatFragment extends Fragment {
         public void onBindViewHolder(MyAdapter.MyViewHolder holder, int position) {
             if(getItemViewType(position) == MY_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
-
-                DataManager.getInstance().loadImageIntoView(myUser.getThumbnail(), ((MyViewHolderMessage) holder).userImage, getContext());
-
                 ((MyViewHolderMessage) holder).content.setText(m.getMessage());
                 ((MyViewHolderMessage) holder).timestamp.setText(convert(m.getTimestamp()));
             } else if (getItemViewType(position) == OTHER_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
-
-                DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(), ((MyViewHolderMessage) holder).userImage, getContext());
-
                 ((MyViewHolderMessage) holder).content.setText(m.getMessage());
                 ((MyViewHolderMessage) holder).timestamp.setText(convert(m.getTimestamp()));
             } else
@@ -220,8 +190,8 @@ public class ChatFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            if(messages.get(position) instanceof Message) {
-                if (((Message)messages.get(position)).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
+            if(mDataset.get(position) instanceof Message) {
+                if (((Message)mDataset.get(position)).getSender().getUid().equalsIgnoreCase(myUser.getUid()))
                     return MY_MESSAGE;
                 return OTHER_MESSAGE;
             }

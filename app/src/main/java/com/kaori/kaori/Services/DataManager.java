@@ -17,6 +17,9 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -39,6 +42,7 @@ import java.io.ByteArrayOutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DataManager {
@@ -85,6 +89,9 @@ public class DataManager {
     private ArrayList<Chat> allChats; // list of all my chats.
     private ArrayList<Document> starredBooks; // starred books.
     private ArrayList<Document> starredDocuments; // starred docs.
+    private HashMap<String, List<Object>> allChatsMessages;
+    private HashMap<String, RecyclerView> chatLists;
+    private HashMap<String, List<String>> allChatsDates;
 
     /**
      * Request options for Glide.
@@ -109,6 +116,9 @@ public class DataManager {
         allChats = new ArrayList<>();
         starredBooks = new ArrayList<>();
         starredDocuments = new ArrayList<>();
+        allChatsMessages = new HashMap<>();
+        chatLists = new HashMap<>();
+        allChatsDates = new HashMap<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -307,6 +317,49 @@ public class DataManager {
         StringRequest request = new StringRequest(Request.Method.GET, url.toString(), listener, errorListener);
         request.setShouldCache(false);
         queue.add(request);
+    }
+
+    public void addListener(String id){
+        if(!allChatsMessages.containsKey(id)) {
+            allChatsMessages.put(id, new ArrayList<>());
+            if (!allChatsDates.containsKey(id))
+                allChatsDates.put(id, new ArrayList<>());
+
+            List<String> dates = allChatsDates.get(id);
+            List<Object> messages = allChatsMessages.get(id);
+
+            FirebaseFirestore.getInstance().collection("chats").document(id)
+                    .collection("messages").orderBy("timestamp", Query.Direction.ASCENDING)
+                    .addSnapshotListener((value, e) -> {
+                        if (value != null)
+                            for (DocumentChange doc : value.getDocumentChanges()) {
+                                if (doc.getType().equals(DocumentChange.Type.ADDED)) {
+                                    Message m = doc.getDocument().toObject(Message.class);
+                                    String date = Constants.getDate(m.getTimestamp());
+                                    if (!dates.contains(date)) {
+                                        dates.add(date);
+                                        messages.add(date);
+                                    }
+                                    messages.add(m);
+                                    if (chatLists.containsKey(id))
+                                        try {
+                                            chatLists.get(id).getAdapter().notifyDataSetChanged();
+                                            chatLists.get(id).scrollToPosition(chatLists.get(id).getAdapter().getItemCount() - 1);
+                                        } catch (NullPointerException ex) {
+                                            chatLists.remove(id);
+                                        }
+                                }
+                            }
+                    });
+        }
+    }
+
+    public void addAdapter(RecyclerView recyclerView, String id){
+        this.chatLists.put(id, recyclerView);
+    }
+
+    public List<Object> getMessages(String id){
+        return allChatsMessages.get(id);
     }
 
     /* ------------------------------------------------------------------------------------------------------ */
