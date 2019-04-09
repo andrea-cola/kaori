@@ -146,7 +146,11 @@ public class EditProfileInfo extends Fragment {
             if (!oldCourse.equalsIgnoreCase(course) || !oldUniversity.equalsIgnoreCase(university))
                 DataManager.getInstance().getUser().setExams(new ArrayList<>());
 
-            DataManager.getInstance().uploadImageWithImage(profileImageViewBitmap, (KaoriApp) getActivity());
+            if(profileImageViewBitmap != null)
+                DataManager.getInstance().uploadImageWithImage(profileImageViewBitmap, (KaoriApp) getActivity());
+            else
+                DataManager.getInstance().updateUser();
+
             if (getActivity() != null)
                 getActivity().getSupportFragmentManager().popBackStackImmediate();
         } else {

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.kaori.kaori.Configuration.ConfigActivity;
 import com.kaori.kaori.Kaori.KaoriApp;
 import com.kaori.kaori.Login.KaoriLogin;
 import com.kaori.kaori.Services.DataManager;
@@ -63,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
      */
     public void startApp(){
         startActivity(new Intent(this, KaoriApp.class));
+        finish();
+    }
+
+    /**
+     * Start the config activity.
+     */
+    public void startConfig(){
+        startActivity(new Intent(this, ConfigActivity.class));
         finish();
     }
 

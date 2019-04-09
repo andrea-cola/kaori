@@ -146,7 +146,8 @@ public class DataManager {
     }
 
     public static void initialize() {
-        dataManager = new DataManager();
+        if(dataManager == null)
+            dataManager = new DataManager();
     }
 
     public static DataManager getInstance() {
@@ -413,7 +414,10 @@ public class DataManager {
                         downloadAllUniversities();
                         downloadAllCourses();
                         downloadMyFiles();
-                        mainActivity.startApp();
+                        if(user.getUniversity().isEmpty())
+                            mainActivity.startConfig();
+                        else
+                            mainActivity.startApp();
                     } else
                         mainActivity.startLogin();
                 },
