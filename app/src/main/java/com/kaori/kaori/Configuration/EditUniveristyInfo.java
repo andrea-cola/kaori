@@ -33,7 +33,7 @@ public class EditUniveristyInfo extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view1 = inflater.inflate(R.layout.edit_profile_info_layout_limited, container, false);
+        View view1 = inflater.inflate(R.layout.config_layout_edit_profile_info, container, false);
         setHasOptionsMenu(true);
 
         TextView mName = view1.findViewById(R.id.name);
