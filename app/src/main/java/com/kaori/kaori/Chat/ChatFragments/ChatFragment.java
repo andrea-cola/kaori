@@ -38,11 +38,11 @@ public class ChatFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.chat_layout, container, false);
         editText = view.findViewById(R.id.feedbackEditText);
-        ((KaoriChat)getActivity()).getSupportActionBar().hide();
+        ((KaoriChat) getActivity()).getSupportActionBar().hide();
 
         myUser = DataManager.getInstance().getMiniUser();
 
-        ((TextView)view.findViewById(R.id.user_profile_name)).setText(otherUser.getName());
+        ((TextView) view.findViewById(R.id.user_profile_name)).setText(otherUser.getName());
         DataManager.getInstance().loadImageIntoView(otherUser.getThumbnail(),
                 view.findViewById(R.id.user_profile_image), getContext());
 
@@ -50,14 +50,16 @@ public class ChatFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecyclerView.scrollToPosition(View.FOCUS_DOWN);
 
-        if(chat == null)
+        if (chat == null) {
+            DataManager.getInstance().addListener(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
             downloadChat(Chat.createChatID(myUser.getUid(), otherUser.getUid()));
-        else
+        } else
             readMessages();
 
         addOnClickListener(view);
 
-        view.findViewById(R.id.back).setOnClickListener(v -> getActivity().getSupportFragmentManager().popBackStackImmediate());
+        view.findViewById(R.id.back).setOnClickListener(
+                v -> getActivity().getSupportFragmentManager().popBackStackImmediate());
 
         return view;
     }
@@ -70,35 +72,37 @@ public class ChatFragment extends Fragment {
                 this.otherUser = u;
     }
 
-    public void setParams(MiniUser receiverUser){
+    public void setParams(MiniUser receiverUser) {
         this.otherUser = receiverUser;
     }
 
     private void downloadChat(String chatID) {
         FirebaseFirestore.getInstance().collection("chats")
-            .document(chatID).get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                    chat = task.getResult().toObject(Chat.class);
-                } else {
-                    chat = new Chat();
-                    chat.addUsers(myUser, otherUser);
-                    chat.setChatID(chatID);
-                }
-                readMessages();
-            });
+                .document(chatID).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null && task.getResult()
+                            .exists()) {
+                        chat = task.getResult().toObject(Chat.class);
+                    } else {
+                        chat = new Chat();
+                        chat.addUsers(myUser, otherUser);
+                        chat.setChatID(chatID);
+                    }
+                    readMessages();
+                });
     }
 
     private void sendMessage(Message message) {
         chat.setLastMessageSent(Timestamp.now().getSeconds());
         chat.setLastMessageText(message.getMessage());
         chat.setLastMessageUserID(myUser.getUid());
-        DataManager.getInstance().uploadMessage(chat, message, myUser.getName(), myUser.getThumbnail());
+        DataManager.getInstance()
+                .uploadMessage(chat, message, myUser.getName(), myUser.getThumbnail());
     }
 
-    private void addOnClickListener(View view){
+    private void addOnClickListener(View view) {
         view.findViewById(R.id.sendButton).setOnClickListener(v -> {
-            if(editText.getText().length() > 0) {
+            if (editText.getText().length() > 0) {
                 Message message = new Message();
                 message.setChatID(chat.getChatID());
                 message.setMessage(String.valueOf(editText.getText()));
@@ -112,7 +116,7 @@ public class ChatFragment extends Fragment {
         });
     }
 
-    private void readMessages(){
+    private void readMessages() {
         RecyclerView.Adapter mAdapter = new MyAdapter(
                 DataManager.getInstance().getMessages(chat.getChatID()));
         mRecyclerView.setAdapter(mAdapter);
@@ -159,26 +163,31 @@ public class ChatFragment extends Fragment {
 
         @Override
         public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if(viewType == MY_MESSAGE)
-                return new MyViewHolderMessage(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_right, parent, false));
-            else if(viewType == OTHER_MESSAGE)
-                return new MyViewHolderMessage(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_left, parent, false));
+            if (viewType == MY_MESSAGE)
+                return new MyViewHolderMessage(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.chat_message_right, parent, false));
+            else if (viewType == OTHER_MESSAGE)
+                return new MyViewHolderMessage(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.chat_message_left, parent, false));
             else
-                return new MyViewHolderDate(LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_message_date, parent, false));
+                return new MyViewHolderDate(LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.chat_message_date, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
-            if(getItemViewType(position) == MY_MESSAGE) {
+            if (getItemViewType(position) == MY_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
                 ((MyViewHolderMessage) holder).content.setText(m.getMessage());
-                ((MyViewHolderMessage) holder).timestamp.setText(Constants.getHour(m.getTimestamp()));
+                ((MyViewHolderMessage) holder).timestamp
+                        .setText(Constants.getHour(m.getTimestamp()));
             } else if (getItemViewType(position) == OTHER_MESSAGE) {
                 Message m = (Message) mDataset.get(position);
                 ((MyViewHolderMessage) holder).content.setText(m.getMessage());
-                ((MyViewHolderMessage) holder).timestamp.setText(Constants.getHour(m.getTimestamp()));
+                ((MyViewHolderMessage) holder).timestamp
+                        .setText(Constants.getHour(m.getTimestamp()));
             } else
-                ((MyViewHolderDate)holder).date.setText(mDataset.get(position).toString());
+                ((MyViewHolderDate) holder).date.setText(mDataset.get(position).toString());
         }
 
         @Override
@@ -188,8 +197,9 @@ public class ChatFragment extends Fragment {
 
         @Override
         public int getItemViewType(int position) {
-            if(mDataset.get(position) instanceof Message) {
-                if (((Message)mDataset.get(position)).getSender().equalsIgnoreCase(myUser.getUid()))
+            if (mDataset.get(position) instanceof Message) {
+                if (((Message) mDataset.get(position)).getSender()
+                        .equalsIgnoreCase(myUser.getUid()))
                     return MY_MESSAGE;
                 return OTHER_MESSAGE;
             }

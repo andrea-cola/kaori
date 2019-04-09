@@ -102,8 +102,6 @@ public class DataManager {
     private RequestOptions glideRequestOptionsCenterFit;
     private RequestOptions glideRequestOptionsCircle;
 
-    private boolean newUserImage;
-
     /* ------------------------------------------------------------------------------------------------------ */
     /* SINGLETON CONSTRUCTORS ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
@@ -123,7 +121,6 @@ public class DataManager {
         allChatsMessages = new HashMap<>();
         chatLists = new HashMap<>();
         allChatsDates = new HashMap<>();
-        newUserImage = false;
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
