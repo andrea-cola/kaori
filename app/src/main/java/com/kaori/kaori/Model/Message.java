@@ -4,8 +4,8 @@ public class Message {
 
     private String chatID;
     private String message;
-    private MiniUser sender;
-    private MiniUser receiver;
+    private String sender;
+    private String receiver;
     private long timestamp;
 
     public Message() { }
@@ -34,19 +34,19 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public MiniUser getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(MiniUser receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
-    public MiniUser getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(MiniUser sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 }

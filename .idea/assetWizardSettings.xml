@@ -73,7 +73,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="101" />
+                                                <entry key="scalingPercent" value="64" />
                                                 <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
@@ -96,11 +96,11 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="000000" />
+                                      <entry key="backgroundColor" value="c72c41" />
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="$PROJECT_DIR$/../../../../logo_clem.png" />
+                                      <entry key="foregroundImage" value="$PROJECT_DIR$/../../../../logo+completo.png" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="ic_icon_clem" />
+                                      <entry key="outputName" value="ic_icon_with_image" />
                                     </map>
                                   </option>
                                 </PersistentState>

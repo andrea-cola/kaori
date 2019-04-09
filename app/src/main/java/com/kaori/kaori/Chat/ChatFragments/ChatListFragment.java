@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.kaori.kaori.App;
 import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.Model.Chat;
@@ -20,6 +21,7 @@ import com.kaori.kaori.Model.MiniUser;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.Services.DataManager;
+import com.kaori.kaori.Services.LogManager;
 
 import java.util.List;
 
@@ -82,8 +84,9 @@ public class ChatListFragment extends Fragment {
             DataManager.getInstance()
                     .loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());
             holder.view.setOnClickListener(view -> {
+                LogManager.getInstance().printConsoleMessage(new Gson().toJson(mDataset.get(position)));
                 ChatFragment chatFragment = new ChatFragment();
-                chatFragment.setParams(otherUser);
+                chatFragment.setChat(mDataset.get(position));
                 invokeNextFragment(chatFragment);
             });
 

@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.Kaori.KaoriApp;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.ImagePicker;
@@ -145,7 +146,7 @@ public class EditProfileInfo extends Fragment {
             if (!oldCourse.equalsIgnoreCase(course) || !oldUniversity.equalsIgnoreCase(university))
                 DataManager.getInstance().getUser().setExams(new ArrayList<>());
 
-            DataManager.getInstance().updateUser(profileImageViewBitmap);
+            DataManager.getInstance().uploadImageWithImage(profileImageViewBitmap, (KaoriApp) getActivity());
             if (getActivity() != null)
                 getActivity().getSupportFragmentManager().popBackStackImmediate();
         } else {

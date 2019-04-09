@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kaori.kaori.App;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.Kaori.KaoriApp;
 import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Model.Chat;
 import com.kaori.kaori.Model.Course;
@@ -66,6 +67,7 @@ public class DataManager {
     private final static String URL_MESSAGE = "message/";
     private final static String URL_CHATS = "chats/";
     private final static String URL_POS_REMOVE = "positionDelete/";
+    private final static String URL_REFRESH = "refreshImage/";
 
     /**
      * Singleton instance.
@@ -100,6 +102,8 @@ public class DataManager {
     private RequestOptions glideRequestOptionsCenterFit;
     private RequestOptions glideRequestOptionsCircle;
 
+    private boolean newUserImage;
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* SINGLETON CONSTRUCTORS ------------------------------------------------------------------------------- */
     /* ------------------------------------------------------------------------------------------------------ */
@@ -119,6 +123,7 @@ public class DataManager {
         allChatsMessages = new HashMap<>();
         chatLists = new HashMap<>();
         allChatsDates = new HashMap<>();
+        newUserImage = false;
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -226,11 +231,12 @@ public class DataManager {
         return url;
     }
 
-    public void updateUser(Bitmap bitmap) {
-        if (bitmap != null)
-            uploadProfileImageOnServer(bitmap);
-        else
-            uploadUser();
+    public void uploadImageWithImage(Bitmap bitmap, KaoriApp activity){
+        uploadProfileImageOnServer(bitmap, activity);
+    }
+
+    public void updateUser() {
+        uploadUser();
     }
 
     public void loadImageIntoView(Object uri, ImageView imageView, Context context) {
@@ -534,12 +540,14 @@ public class DataManager {
                 position);
     }
 
-    public void uploadMessage(Chat chat, Message message) {
+    public void uploadMessage(Chat chat, Message message, String name, String photosUrl) {
         Uri url = Uri.parse(BASE_URL + URL_MESSAGE);
         makePostRequest(url, null,
                 App.getStringFromRes(R.string.upload_mess_error),
                 chat,
-                message);
+                message,
+                name,
+                photosUrl);
     }
 
     public void createNewUser(final User user, Response.Listener<String> listener, Response.ErrorListener errorListener) {
@@ -572,11 +580,16 @@ public class DataManager {
         this.uploadDocument(document);
     }
 
+    public void refereshImages(String photoURL){
+        String url = BASE_URL + URL_REFRESH;
+        makePostRequest(Uri.parse(url), null, null, photoURL, DataManager.getInstance().getUser().getUid());
+    }
+
     /* ------------------------------------------------------------------------------------------------------ */
     /* STORAGE FUNCTIONS ------------------------------------------------------------------------------------ */
     /* ------------------------------------------------------------------------------------------------------ */
 
-    private void uploadProfileImageOnServer(Bitmap bitmap) {
+    private void uploadProfileImageOnServer(Bitmap bitmap, KaoriApp activity) {
         LogManager.getInstance().printConsoleMessage("Upload -> image");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -585,8 +598,11 @@ public class DataManager {
         StorageReference mStorage = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_PROFILE_IMAGES + user.getUid());
         mStorage.putBytes(baos.toByteArray()).addOnSuccessListener(taskSnapshot -> mStorage.getDownloadUrl()
                 .addOnSuccessListener(uri -> {
+                    LogManager.getInstance().printConsoleMessage("Upload image ended.");
                     user.setPhotosUrl(uri.toString());
-                    updateUser(null);
+                    refereshImages(uri.toString());
+                    uploadUser();
+                    activity.callProfileFragment();
                 }))
                 .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, App.getStringFromRes(R.string.upload_user_error)));
     }

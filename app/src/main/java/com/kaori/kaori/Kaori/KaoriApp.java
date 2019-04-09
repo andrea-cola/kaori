@@ -36,6 +36,7 @@ public class KaoriApp extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private TextView fragmentTitle;
     private DrawerLayout drawerLayout;
+    private ImageView toolbarImage, headerImage;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = item -> {
         switch (item.getItemId()) {
@@ -82,6 +83,11 @@ public class KaoriApp extends AppCompatActivity {
         bottomNavigationView.setSelectedItemId(R.id.navigation_preferred);
     }
 
+    public void callProfileFragment(){
+        setDrawerImages();
+        entryPointFragmentCall(new ProfileFragment());
+    }
+
     private void activateNavigation(){
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -110,15 +116,19 @@ public class KaoriApp extends AppCompatActivity {
                 });
 
 
-        ImageView toolbarImage = findViewById(R.id.toolbar_account_image);
+        toolbarImage = findViewById(R.id.toolbar_account_image);
         toolbarImage.setOnClickListener(view -> drawerLayout.openDrawer(GravityCompat.START));
 
         View view = navigationView.inflateHeaderView(R.layout.navigation_header);
-        ImageView drawerImage = view.findViewById(R.id.nav_header_image);
+        headerImage = view.findViewById(R.id.nav_header_image);
         ((TextView)view.findViewById(R.id.mail)).setText(DataManager.getInstance().getUser().getEmail());
         ((TextView)view.findViewById(R.id.nav_header_username)).setText(DataManager.getInstance().getUser().getName());
-        DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), toolbarImage, this);
-        DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), drawerImage, this);
+        setDrawerImages();
+    }
+
+    public void setDrawerImages(){
+        DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(),toolbarImage , this);
+        DataManager.getInstance().loadImageIntoView(DataManager.getInstance().getUser().getPhotosUrl(), headerImage, this);
     }
 
     @Override
