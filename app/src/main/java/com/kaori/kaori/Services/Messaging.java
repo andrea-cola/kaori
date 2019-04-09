@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.kaori.kaori.App;
 import com.kaori.kaori.Chat.KaoriChat;
 import com.kaori.kaori.R;
 
@@ -23,16 +26,8 @@ import java.net.URL;
 public class Messaging extends FirebaseMessagingService {
 
     @Override
-    public void onNewToken(String token) {
-        /*if(DataManager.getInstance().getUser() != null)
-            FirebaseFirestore.getInstance()
-                    .collection(Constants.DB_COLL_USERS)
-                    .document(DataManager.getInstance().getUser().getUid())
-                    .update(Constants.FIELD_TOKEN, token);*/
-    }
-
-    @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        Log.d("FirebaseMex", "Message received");
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         int notifyId = 1;
 
@@ -41,7 +36,6 @@ public class Messaging extends FirebaseMessagingService {
         PendingIntent mPendingIntent = PendingIntent.getActivity(this, notifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification mNotification;
-        Bitmap bmp = getBitmap(remoteMessage.getNotification().getIcon());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String id = "id";
@@ -54,26 +48,45 @@ public class Messaging extends FirebaseMessagingService {
             mNotificationManager.createNotificationChannel(mChannel);
 
             mNotification = new Notification.Builder(getApplicationContext(), id)
-                    .setContentTitle(remoteMessage.getNotification().getTitle())
-                    .setContentText(remoteMessage.getNotification().getBody())
-                    .setLargeIcon(bmp)
+                    .setContentTitle(remoteMessage.getData().get("title"))
+                    .setContentText(remoteMessage.getData().get("body"))
+                    .setLargeIcon(getIcon(remoteMessage.getData().get("icon")))
                     .setContentIntent(mPendingIntent)
                     .setColor(getResources().getColor(R.color.colorPrimary))
                     .setSmallIcon(R.drawable.ic_notification)
+                    .setAutoCancel(true)
                     .build();
         } else
-            mNotification = createOldNotification(remoteMessage, mPendingIntent, bmp);
+            mNotification = createOldNotification(remoteMessage, mPendingIntent, getIcon(remoteMessage.getData().get("icon")));
 
         mNotificationManager.notify(notifyId, mNotification);
     }
 
-    private Bitmap getBitmap(String url){
-        try {
-            InputStream in = new URL(url).openStream();
-            return BitmapFactory.decodeStream(in);
-        } catch (IOException e) {
-            return BitmapFactory.decodeResource(getResources(), R.drawable.logo);
+    private Bitmap getIcon(String url){
+        if(DataManager.getInstance() != null) {
+            if(DataManager.getInstance().getNotificationsIcons().containsKey(url))
+                return DataManager.getInstance().getNotificationsIcons().get(url);
+            else {
+                loadImage(url);
+            }
         }
+        return BitmapFactory.decodeResource(App.getActiveContext().getResources(), R.drawable.logo_completo_black);
+    }
+
+    private void loadImage(String url){
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    InputStream in = new URL(url).openStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+                    DataManager.getInstance().getNotificationsIcons().put(url, bitmap);
+                } catch (IOException e) {
+
+                }
+                return null;
+            }
+        }.execute();
     }
 
     private Notification createOldNotification(RemoteMessage remoteMessage, PendingIntent pendingIntent, Bitmap icon){

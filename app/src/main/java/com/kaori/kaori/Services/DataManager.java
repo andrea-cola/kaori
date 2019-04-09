@@ -94,6 +94,7 @@ public class DataManager {
     private HashMap<String, List<Object>> allChatsMessages;
     private HashMap<String, RecyclerView> chatLists;
     private HashMap<String, List<String>> allChatsDates;
+    private HashMap<String, Bitmap> notificationsIcons;
 
     /**
      * Request options for Glide.
@@ -121,6 +122,7 @@ public class DataManager {
         allChatsMessages = new HashMap<>();
         chatLists = new HashMap<>();
         allChatsDates = new HashMap<>();
+        notificationsIcons = new HashMap<>();
 
         glideRequestOptionsCenter = new RequestOptions()
                 .centerCrop()
@@ -615,4 +617,7 @@ public class DataManager {
         }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
+    public HashMap<String, Bitmap> getNotificationsIcons() {
+        return notificationsIcons;
+    }
 }
