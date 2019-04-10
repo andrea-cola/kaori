@@ -69,7 +69,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
         mapView.getMapAsync(this);
 
         shareButton.setOnClickListener(v -> {
-            if(activityEdit.getText().length() > 0)
+            if(activityEdit.getText() != null && activityEdit.getText().length() > 0)
                 findPlace();
             else
                 LogManager.getInstance().showVisualMessage("Specifica cosa stai studiando.");
@@ -145,7 +145,9 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     private void sharePosition(String placeName, GeoPoint geoPoint, String activity){
         DataManager.getInstance().uploadPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
         DataManager.getInstance().getUser().setPosition(new Position(DataManager.getInstance().getMiniUser(), geoPoint, activity, Timestamp.now().getSeconds(), placeName));
-        getActivity().getSupportFragmentManager().popBackStackImmediate();
+
+        if(getActivity() != null)
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 
     @Override
@@ -186,7 +188,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
@@ -195,7 +197,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     public void onLocationChanged(Location location) {
         this.location = location;
         if(mapboxMap != null)
-            mapboxMap.setStyle(Style.OUTDOORS, style -> enableLocationComponent(style));
+            mapboxMap.setStyle(Style.OUTDOORS, this::enableLocationComponent);
     }
 
     @Override
@@ -211,6 +213,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
     @Override
     public void onProviderDisabled(String s) {
         LogManager.getInstance().showVisualMessage("Hai disabilitato il GPS.");
-        getActivity().getSupportFragmentManager().popBackStackImmediate();
+        if(getActivity() != null)
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
     }
 }
