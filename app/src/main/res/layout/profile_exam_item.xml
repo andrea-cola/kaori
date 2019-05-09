@@ -7,13 +7,14 @@
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="8dp"
+    android:layout_marginTop="8dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:selectableItemBackground"
     android:stateListAnimator="@animator/lift_on_touch"
     card_view:cardBackgroundColor="@color/white"
     card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="1dp"
+    card_view:cardElevation="2dp"
     card_view:cardPreventCornerOverlap="true">
 
     <android.support.constraint.ConstraintLayout

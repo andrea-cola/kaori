@@ -9,9 +9,12 @@
         android:id="@+id/tablayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/border_bottom_tablayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="@color/colorPrimaryRed"
+        app:tabIndicatorGravity="bottom">
 
     </android.support.design.widget.TabLayout>
 

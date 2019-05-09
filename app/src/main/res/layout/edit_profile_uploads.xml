@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:animateLayoutChanges="true"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:background="@color/white">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
