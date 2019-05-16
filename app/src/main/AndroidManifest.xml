@@ -18,6 +18,7 @@
         android:icon="@mipmap/ic_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_icon_with_image_round"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme"
         android:supportsRtl="true">
 
