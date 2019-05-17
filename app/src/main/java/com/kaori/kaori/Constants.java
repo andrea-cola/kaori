@@ -37,7 +37,7 @@ public class Constants {
     /**
      * Storage constants.
      */
-    public static final String INTERNAL_STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + File.separator;
+    public static final String INTERNAL_STORAGE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + File.separator;
     public static final String STORAGE_PATH_PROFILE_IMAGES = "profile_images/";
     public static final String STORAGE_PATH_UPLOADS = "uploads/";
     public static final String STORAGE_DEFAULT_PROFILE_IMAGE = "https://firebasestorage.googleapis.com/v0/b/kaori-c5a43.appspot.com/o/profile_images%2Fdefault.png?alt=media&token=643f78ef-1681-43ae-bf52-e98d173849b4";

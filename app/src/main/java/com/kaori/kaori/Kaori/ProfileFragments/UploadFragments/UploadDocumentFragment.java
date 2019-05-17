@@ -31,7 +31,7 @@ import static android.app.Activity.RESULT_OK;
 public class UploadDocumentFragment extends Fragment {
 
     private final int PICK_PDF_CODE = 4564;
-    private Document oldDocument, document;
+    private Document oldDocument;
     private TextInputEditText title, note;
     private TextView exams, file;
     private List<String> examsList;
@@ -51,7 +51,7 @@ public class UploadDocumentFragment extends Fragment {
         file = view.findViewById(R.id.file);
 
         examsList = new ArrayList<>();
-        if(oldDocument != null)
+        if (oldDocument != null)
             preset();
 
         return view;
@@ -66,7 +66,7 @@ public class UploadDocumentFragment extends Fragment {
         note.setText(oldDocument.getNote());
 
         String tmp = oldDocument.getExams().get(0);
-        for(int i = 1; i < oldDocument.getExams().size(); i++)
+        for (int i = 1; i < oldDocument.getExams().size(); i++)
             tmp = tmp + ", " + oldDocument.getExams().get(i);
         exams.setText(tmp);
         examsList = oldDocument.getExams();
@@ -76,10 +76,15 @@ public class UploadDocumentFragment extends Fragment {
         return title.getText().length() > 0 && note.getText().length() > 0 && !path.isEmpty() && examsList.size() > 0;
     }
 
-    private void createDocument(){
-        LogManager.getInstance().printConsoleMessage("pressed");
-        if (document == null)
+    private void createDocument() {
+        Document document;
+        if (oldDocument != null) {
+            document = oldDocument;
+            document.setModified(true);
+        } else {
             document = new Document();
+            document.setModified(false);
+        }
 
         if (!checkDocParameters())
             LogManager.getInstance().showVisualMessage(getString(R.string.error_upload_msg));
@@ -92,7 +97,6 @@ public class UploadDocumentFragment extends Fragment {
             document.setExams(examsList);
             document.setType(Constants.FILE);
             document.setSubtype(Constants.FILE);
-            document.setModified(false);
             document.setTimestamp(Timestamp.now().getSeconds());
 
             DataManager.getInstance().uploadFileOnTheServer(path, document);
@@ -112,8 +116,7 @@ public class UploadDocumentFragment extends Fragment {
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             file.setText(extractName(data.getData().getPath()));
             path = data.getData().toString();
-        }
-        else
+        } else
             LogManager.getInstance().showVisualMessage("Non hai selezionato nessun file.");
     }
 
@@ -123,7 +126,7 @@ public class UploadDocumentFragment extends Fragment {
     }
 
     private void endProcess() {
-        if(getActivity() != null && getActivity().getSupportFragmentManager() != null) {
+        if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
             getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, new MyFilesFragment())
@@ -131,18 +134,18 @@ public class UploadDocumentFragment extends Fragment {
         }
     }
 
-    private void selectExams(){
+    private void selectExams() {
         AlertDialog dialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.popup_exams, null);
         LinearLayout checkboxSpace = dialogView.findViewById(R.id.checkboxSpace);
         List<CheckBox> checkBoxes = new ArrayList<>();
 
-        for(int i = 0; i < DataManager.getInstance().getAllExams().size(); i++){
+        for (int i = 0; i < DataManager.getInstance().getAllExams().size(); i++) {
             CheckBox c = new CheckBox(getContext());
             c.setText(DataManager.getInstance().getAllExams().get(i));
             checkBoxes.add(c);
-            checkboxSpace.addView(checkBoxes.get(checkBoxes.size()-1));
+            checkboxSpace.addView(checkBoxes.get(checkBoxes.size() - 1));
         }
 
         builder.setView(dialogView);
@@ -152,13 +155,12 @@ public class UploadDocumentFragment extends Fragment {
             exams.setText("Nessun esame selezionato");
             examsList.clear();
             boolean flag = true;
-            for(int i = 0; i < checkBoxes.size(); i++){
-                if(checkBoxes.get(i).isChecked()) {
-                    if(flag) {
+            for (int i = 0; i < checkBoxes.size(); i++) {
+                if (checkBoxes.get(i).isChecked()) {
+                    if (flag) {
                         flag = false;
                         exams.setText(DataManager.getInstance().getAllExams().get(i));
-                    }
-                    else
+                    } else
                         exams.setText(exams.getText() + ", " + DataManager.getInstance().getAllExams().get(i));
                     examsList.add(DataManager.getInstance().getAllExams().get(i));
                 }

@@ -615,9 +615,14 @@ public class DataManager {
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));
 
-        task.addOnSuccessListener(taskSnapshot -> {
-            document.setUrl(taskSnapshot.getUploadSessionUri().toString());
-            uploadDocument(document);
+        task.continueWithTask(task1 -> {
+            return reference.getDownloadUrl();
+        }).addOnCompleteListener(taskSnapshot -> {
+            if(taskSnapshot.isSuccessful()) {
+                Uri taskResult = taskSnapshot.getResult();
+                document.setUrl(taskResult.toString());
+                uploadDocument(document);
+            }
         }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }
 
