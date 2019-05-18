@@ -33,10 +33,10 @@
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryRed</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor">@color/colorPrimaryRed</item>
     </style>
 
     <style name="LoginTheme" parent="Theme.MaterialComponents.Light.NoActionBar">

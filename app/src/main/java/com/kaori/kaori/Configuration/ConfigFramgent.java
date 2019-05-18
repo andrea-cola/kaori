@@ -14,6 +14,8 @@ import com.kaori.kaori.R;
 
 public class ConfigFramgent extends Fragment {
 
+    private final String BACK_STATE_NAME = getClass().getName();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class ConfigFramgent extends Fragment {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, new EditUniveristyInfo())
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
                     .commit();
         });
 

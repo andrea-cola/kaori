@@ -128,7 +128,7 @@ public class FacebookLogin {
                     else {
                         LoginManager.getInstance().logOut();
                         FirebaseAuth.getInstance().signOut();
-                        endLogin(false, Constants.GENERIC_ERROR);
+                        endLogin(false, Constants.WRONG_AUTH_METHOD);
                     }
                 });
     }

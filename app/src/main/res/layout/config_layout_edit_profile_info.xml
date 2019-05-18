@@ -93,6 +93,7 @@
     <Button
         android:id="@+id/button"
         style="@style/KaoriButton"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="64dp"
         android:text="@string/profile_save"

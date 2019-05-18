@@ -58,6 +58,7 @@ public class Constants {
     public static final int USER_NOT_EXISTS = 0;
     public static final int USER_EXISTS= 1;
     public static final String WRONG_PROVIDER = "Login fallito. L'ultima volta hai usato ";
+    public static final String WRONG_AUTH_METHOD = "Metodo di autenticazione diverso da quello utilizzato per registrarsi.";
     public static final String GENERIC_ERROR = "Impossibile contattare il server";
     public static final String WRONG_CREDENTIALS = "Le tue credenziali sono errate";
     public static final String USER_NOT_EXISTS_ERROR = "Non sei registrato";

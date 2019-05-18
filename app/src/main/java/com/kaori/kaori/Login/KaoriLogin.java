@@ -43,7 +43,6 @@ public class KaoriLogin extends AppCompatActivity {
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        LogManager.getInstance().printConsoleMessage("Flag " + FacebookLogin.getInstance().getFacebookFlag());
         if (requestCode == Constants.GOOGLE_LOGIN_REQUEST)
             try {
                 GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(data).getResult(ApiException.class);

@@ -2,6 +2,7 @@
 <android.support.design.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,55 +19,20 @@
         android:layout_height="wrap_content"
         android:background="?android:selectableItemBackground">
 
-        <ImageView
-            android:id="@+id/profileImage"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:adjustViewBounds="true"
-            card_view:layout_constraintDimensionRatio="h,1:1"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:srcCompat="@drawable/empty_image" />
-
-        <TextView
-            android:id="@+id/user_and_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/roboto_medium"
-            android:lines="1"
-            android:text="Nome Cognome"
-            android:textColor="@color/defaultTextColor"
-            android:textSize="20sp"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/profileImage"
-            card_view:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="00/00/0000"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/profileImage"
-            card_view:layout_constraintTop_toBottomOf="@+id/user_and_text" />
+        <include
+            android:id="@+id/header_block"
+            layout="@layout/feed_header" />
 
         <ImageView
             android:id="@+id/background"
             android:layout_width="0dp"
             android:layout_height="120dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/date" />
+            card_view:layout_constraintTop_toBottomOf="@+id/header_block" />
 
         <View
             android:id="@+id/overlay"
@@ -113,8 +79,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:text="Analisi 1 e algebra lineare"
+            android:textSize="16sp"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/title" />
@@ -123,11 +91,10 @@
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="4dp"
-            android:background="@color/colorPrimaryRed"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/rounded_edge"
             android:fontFamily="@font/roboto_medium"
             android:padding="8dp"
             android:text="€ 00,00"
@@ -135,26 +102,7 @@
             android:textColor="@color/white"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintHorizontal_bias="1.0"
-            card_view:layout_constraintStart_toEndOf="@+id/status"
             card_view:layout_constraintTop_toBottomOf="@id/exams"
-            card_view:layout_constraintVertical_bias="1.0" />
-
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp"
-            android:fontFamily="@font/roboto_bold"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="Nuovo"
-            android:textColor="@color/colorPrimaryRed"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/exams"
             card_view:layout_constraintVertical_bias="1.0" />
 
     </android.support.constraint.ConstraintLayout>
