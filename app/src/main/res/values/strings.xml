@@ -131,5 +131,11 @@
     <string name="error_regostration_mail">Indirizzo Email non valido.</string>
     <string name="update_done">Aggiornamento effettuato.</string>
     <string name="update_failed">Aggiornamento fallito, riprovare.</string>
+    <string name="notification_title">Download document</string>
+    <string name="notification_text">Download in progress</string>
+    <string name="notification_text_ok">Download completed</string>
+    <string name="notification_text_no">Download unsuccessful </string>
+    <string name="channel_name">Download</string>
+    <string name="channel_description">Download document</string>
 
 </resources>

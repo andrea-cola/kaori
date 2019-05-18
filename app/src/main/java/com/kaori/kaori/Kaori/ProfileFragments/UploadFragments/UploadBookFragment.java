@@ -115,10 +115,13 @@ public class UploadBookFragment extends Fragment {
 
     private void createNewBook() {
         Document book;
-        if (oldBook != null)
+        if (oldBook != null) {
             book = oldBook;
-        else
+            book.setModified(true);
+        }else {
             book = new Document();
+            book.setModified(false);
+        }
         if (!checkBookParameters())
             LogManager.getInstance().showVisualMessage(getString(R.string.error_upload_msg));
         else {
@@ -131,7 +134,6 @@ public class UploadBookFragment extends Fragment {
             book.setUser(DataManager.getInstance().getMiniUser());
             book.setExams(examsList);
             book.setCourse(DataManager.getInstance().getUser().getCourse());
-            book.setModified(false);
             book.setUniversity(DataManager.getInstance().getUser().getUniversity());
             book.setType(Constants.BOOK);
             book.setSubtype(Constants.BOOK);

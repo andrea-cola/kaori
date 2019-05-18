@@ -139,7 +139,7 @@ public class FinderFragment extends Fragment {
 
             view.setOnClickListener(view1 -> {
                 MapFragment mapFragment = new MapFragment();
-                mapFragment.setParameters(positions, recyclerView.getChildLayoutPosition(view));
+                mapFragment.setParameters(positions.get(recyclerView.getChildLayoutPosition(view)));
                 invokeFragment(mapFragment, "tag");
             });
 

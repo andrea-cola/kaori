@@ -118,10 +118,13 @@ public class UploadUrlFragment extends Fragment {
      */
     private void createNewLink(){
         Document document;
-        if(oldDocument != null)
+        if(oldDocument != null) {
             document = oldDocument;
-        else
+            document.setModified(false);
+        }else {
             document = new Document();
+            document.setModified(true);
+        }
         if (!Patterns.WEB_URL.matcher(link.getText()).matches())
             LogManager.getInstance().showVisualMessage(getString(R.string.error_link_upload_msg));
         else if (!checkUrlParameters())
@@ -136,7 +139,6 @@ public class UploadUrlFragment extends Fragment {
             document.setExams(examsList);
             document.setType(Constants.FILE);
             document.setSubtype(Constants.URL);
-            document.setModified(false);
             document.setTimestamp(Timestamp.now().getSeconds());
             DataManager.getInstance().uploadDocument(document);
             endProcess();
