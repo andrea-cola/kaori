@@ -6,8 +6,10 @@ import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -16,11 +18,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 
 import com.bumptech.glide.Priority;
 import com.kaori.kaori.App;
+import com.kaori.kaori.BuildConfig;
 import com.kaori.kaori.Constants;
 import com.kaori.kaori.R;
+
+import java.io.File;
 
 /**
  * This class is create for managing the download request, with the specific intents
@@ -71,13 +77,21 @@ public class FileManager {
         if (downloadManager != null && activity != null)
             if (ContextCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 downloadManager.enqueue(request);
-                builder.setContentText(App.getStringFromRes(R.string.notification_text_ok));
+                File pdfFile = new File(Constants.INTERNAL_STORAGE_PATH + title + ".pdf");
+                Uri path = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".fileprovider", pdfFile);
+                Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
+                pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                pdfIntent.setDataAndType(path, "application/pdf");
+                PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, pdfIntent, 0);
+                builder.setContentText(App.getStringFromRes(R.string.notification_text_ok))
+                        .setContentIntent(pendingIntent);
                 flag = true;
             } else {
                 ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 3);
                 builder.setContentText(App.getStringFromRes(R.string.notification_text_no));
             }
-        builder.setProgress(0, 0, false);
+        builder.setProgress(0, 0, false)
+                .setAutoCancel(true);
         notificationManager.notify(notifyId, builder.build());
         return flag;
     }

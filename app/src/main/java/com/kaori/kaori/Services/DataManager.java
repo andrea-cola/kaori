@@ -546,7 +546,7 @@ public class DataManager {
     public void uploadMessage(Chat chat, Message message, String name, String photosUrl) {
         Uri url = Uri.parse(BASE_URL + URL_MESSAGE);
         makePostRequest(url, null,
-                App.getStringFromRes(R.string.upload_mess_error),
+                null,
                 chat,
                 message,
                 name,
