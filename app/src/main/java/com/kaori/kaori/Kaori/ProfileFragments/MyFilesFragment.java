@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.kaori.kaori.App;
@@ -29,6 +30,7 @@ import java.util.List;
 public class MyFilesFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
+    private List<Document> materials;
 
     @Nullable
     @Override
@@ -66,8 +68,6 @@ public class MyFilesFragment extends Fragment {
 
     private class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
 
-        private List<Document> materials;
-
         /*package-private*/ ListAdapter() {
             materials = DataManager.getInstance().getMyFiles();
         }
@@ -75,13 +75,14 @@ public class MyFilesFragment extends Fragment {
         @NonNull
         @Override
         public ListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return new ListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_exam_item, parent, false));
+            return new ListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.profile_exam_item_editable, parent, false));
         }
 
         @Override
         public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
             holder.title.setText(materials.get(position).getTitle());
             holder.date.setText(materials.get(position).getNote());
+            holder.delete.setOnClickListener(v -> removeFile(position));
             holder.view.setOnClickListener(view -> {
                 if(materials.get(position).getType() == Constants.BOOK) {
                     UploadBookFragment f = new UploadBookFragment();
@@ -110,13 +111,21 @@ public class MyFilesFragment extends Fragment {
             TextView title;
             TextView date;
             View view;
+            ImageButton delete;
 
             /*package-private*/ ListViewHolder(View v) {
                 super(v);
                 view = v;
                 title = v.findViewById(R.id.exam_title);
                 date = v.findViewById(R.id.doc_counter);
+                delete = v.findViewById(R.id.delete);
             }
+        }
+
+        private void removeFile(int i) {
+            DataManager.getInstance().deleteFile(materials.get(i).getId());
+            materials.remove(i);
+            this.notifyDataSetChanged();
         }
     }
 }

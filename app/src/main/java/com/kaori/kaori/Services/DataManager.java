@@ -67,6 +67,7 @@ public class DataManager {
     private final static String URL_MESSAGE = "message/";
     private final static String URL_CHATS = "chats/";
     private final static String URL_POS_REMOVE = "positionDelete/";
+    private final static String URL_FILE_REMOVE = "fileDelete/";
     private final static String URL_REFRESH = "refreshImage/";
 
     /**
@@ -568,6 +569,12 @@ public class DataManager {
         currentActivePositions.remove(user.getPosition());
         user.setPosition(null);
         makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, this.getUser().getUid());
+    }
+
+    public void deleteFile(String id){
+        LogManager.getInstance().printConsoleMessage("deleteFile: " + id);
+        String url = BASE_URL + URL_FILE_REMOVE;
+        makeCustomPostRequest(Uri.parse(url), response -> {}, error -> {}, id);
     }
 
     public void setStarredDocument(Document mMaterial, boolean isChecked) {
