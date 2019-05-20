@@ -16,55 +16,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/profileImage"
-            android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:adjustViewBounds="true"
-            card_view:layout_constraintDimensionRatio="h,1:1"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:srcCompat="@drawable/document_icon" />
-
-        <TextView
-            android:id="@+id/user_and_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/roboto_medium"
-            android:text="Matteo Daccordo"
-            android:textColor="@color/defaultTextColor"
-            android:textSize="20sp"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/profileImage"
-            card_view:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="Oggi"
-            android:textSize="16sp"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/profileImage"
-            card_view:layout_constraintTop_toBottomOf="@+id/user_and_text" />
+        <include
+            android:id="@+id/header_block"
+            layout="@layout/feed_header" />
 
         <ImageView
             android:id="@+id/background"
             android:layout_width="0dp"
             android:layout_height="120dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/profileImage" />
+            card_view:layout_constraintTop_toBottomOf="@+id/header_block" />
 
         <View
             android:id="@+id/overlay"
@@ -91,35 +56,14 @@
             card_view:layout_constraintStart_toStartOf="@+id/background"
             card_view:layout_constraintTop_toTopOf="@+id/background" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
+        <include
+            layout="@layout/feed_info_block"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/roboto_bold"
-            android:text="Titolo del libro"
-            android:textColor="@color/colorPrimary"
-            android:textSize="24sp"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/overlay" />
-
-        <TextView
-            android:id="@+id/exams"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="Analisi 1 e algebra lineare"
-            android:textSize="16sp"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/title" />
+            card_view:layout_constraintTop_toBottomOf="@+id/overlay" />
 
     </android.support.constraint.ConstraintLayout>
 

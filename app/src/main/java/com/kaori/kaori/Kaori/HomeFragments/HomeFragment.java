@@ -58,9 +58,9 @@ public class HomeFragment extends Fragment {
                 case Constants.BOOK:
                     return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_book_card, parent, false));
                 case Constants.FILE:
-                    return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_doc_card, parent, false));
+                    return new DocumentHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_doc_card, parent, false));
                 case Constants.URL:
-                    return new BookHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_url_card, parent, false));
+                    return new DocumentHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_url_card, parent, false));
                 default:
                     return new UpdateHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_card_update, parent, false));
             }
@@ -89,10 +89,18 @@ public class HomeFragment extends Fragment {
                 if(getItemViewType(i) == Constants.BOOK) {
                     ((BookHolder) holder).price.setText("€ " + String.format("%.2f", materials.get(i).getPrice()));
                     DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), holder.background, getContext());
-                } else if(getItemViewType(i) == Constants.URL)
-                    DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_cloud), holder.background, getContext());
-                else
-                    DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_file), holder.background, getContext());
+                } else if(getItemViewType(i) == Constants.URL) {
+                    DataManager.getInstance().loadImageIntoBackgroundView(
+                            App.getDrawableFromRes(R.drawable.background_cloud), holder.background,
+                            getContext());
+                    ((DocumentHolder) holder).comments.setText(materials.get(i).getFeedbacks().size() + " feedback");
+                }
+                else {
+                    DataManager.getInstance().loadImageIntoBackgroundView(
+                            App.getDrawableFromRes(R.drawable.background_file), holder.background,
+                            getContext());
+                    ((DocumentHolder) holder).comments.setText(materials.get(i).getFeedbacks().size() + " feedback");
+                }
 
             } else {
                 String details = materials.get(i).getUser().getName().split(" ")[0];
@@ -136,6 +144,15 @@ public class HomeFragment extends Fragment {
             /*package-private*/ BookHolder (View view) {
                 super(view);
                 price = view.findViewById(R.id.price);
+            }
+        }
+
+        class DocumentHolder extends Holder {
+            TextView comments;
+
+            DocumentHolder (View view) {
+                super(view);
+                comments = view.findViewById(R.id.comments);
             }
         }
 

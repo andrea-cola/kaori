@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -21,15 +22,20 @@
     <TextView
         android:id="@+id/user_and_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/roboto_medium"
         android:lines="1"
+        android:singleLine="true"
         android:text="Nome Cognome"
         android:textColor="@color/defaultTextColor"
-        android:textSize="20sp"
+        app:autoSizeMaxTextSize="50sp"
+        app:autoSizeMinTextSize="10sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/date"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profileImage"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,9 +47,9 @@
         android:layout_marginStart="12dp"
         android:layout_marginEnd="16dp"
         android:text="00/00/0000"
-        android:textSize="14sp"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/profileImage"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/profileImage"
-        app:layout_constraintTop_toBottomOf="@+id/user_and_text" />
+        app:layout_constraintStart_toEndOf="@+id/profileImage" />
 
 </android.support.constraint.ConstraintLayout>
