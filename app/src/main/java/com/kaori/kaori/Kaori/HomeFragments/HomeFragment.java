@@ -1,6 +1,8 @@
 package com.kaori.kaori.Kaori.HomeFragments;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +10,11 @@ import android.support.design.card.MaterialCardView;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,44 +75,24 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final Holder holder, int i) {
-            holder.title.setText(materials.get(i).getTitle());
-            holder.author.setText(materials.get(i).getUser().getName());
-            holder.date.setText(Constants.getFormattedDate(materials.get(i).getTimestamp()));
-
-            DataManager.getInstance().loadImageIntoView(materials.get(i).getUser().getThumbnail(), holder.authorIcon, getContext());
-
-            holder.cardView.setOnClickListener(v -> {
-                Intent intent = new Intent(getActivity(), MaterialActivity.class);
-                intent.putExtra("document", materials.get(i));
-                startActivity(intent);
-            });
-
             if(getItemViewType(i) != MODIFIED) {
-                String exams = "";
-                for (String ex : materials.get(i).getExams())
-                    exams = exams + ex + ", ";
-                holder.exams.setText(exams.substring(0, exams.length() - 2));
-
-                if(getItemViewType(i) == Constants.BOOK) {
-                    ((BookHolder) holder).price.setText("€ " + String.format("%.2f", materials.get(i).getPrice()));
-                    DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), holder.background, getContext());
-                } else if(getItemViewType(i) == Constants.URL) {
-                    DataManager.getInstance().loadImageIntoBackgroundView(
-                            App.getDrawableFromRes(R.drawable.background_cloud), holder.background,
-                            getContext());
-                    ((DocumentHolder) holder).comments.setText(materials.get(i).getFeedbacks().size() + " feedback");
-                }
-                else {
-                    DataManager.getInstance().loadImageIntoBackgroundView(
-                            App.getDrawableFromRes(R.drawable.background_file), holder.background,
-                            getContext());
-                    ((DocumentHolder) holder).comments.setText(materials.get(i).getFeedbacks().size() + " feedback");
-                }
-
+                if(getItemViewType(i) == Constants.BOOK)
+                    setBookHolderView(holder, materials.get(i));
+                else if(getItemViewType(i) == Constants.URL)
+                    setUrlHolderView(holder, materials.get(i));
+                else
+                    setDocumentHolderView(holder, materials.get(i));
             } else {
+                holder.author.setText(materials.get(i).getUser().getName());
+                holder.date.setText(Constants.getFormattedDate(materials.get(i).getTimestamp()));
                 String details = materials.get(i).getUser().getName().split(" ")[0];
-                details = details + " ha aggiornato il suo " + Constants.translateTypeCode(materials.get(i).getSubtype()) + ":";
-                ((UpdateHolder)holder).details.setText(details);
+
+                SpannableStringBuilder t1 = new SpannableStringBuilder(details + " has updated the " + Constants.translateTypeCode(materials.get(i).getSubtype()) + " ");
+                SpannableStringBuilder t2 = new SpannableStringBuilder(materials.get(i).getTitle());
+                t2.setSpan(new ForegroundColorSpan(Color.BLACK), 0, t2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                t2.setSpan(new StyleSpan(Typeface.BOLD), 0, t2.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+                ((UpdateHolder)holder).details.setText(TextUtils.concat(t1, t2), TextView.BufferType.SPANNABLE);
             }
         }
 
@@ -119,6 +106,75 @@ public class HomeFragment extends Fragment {
             if(materials.get(position).getModified())
                 return MODIFIED;
             return materials.get(position).getSubtype();
+        }
+
+        private void setBookHolderView(Holder holder, Document item){
+            holder.title.setText(item.getTitle());
+            holder.author.setText(item.getUser().getName());
+            holder.date.setText(Constants.getFormattedDate(item.getTimestamp()));
+
+            DataManager.getInstance().loadImageIntoView(item.getUser().getThumbnail(), holder.authorIcon, getContext());
+
+            holder.cardView.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), MaterialActivity.class);
+                intent.putExtra("document", item);
+                startActivity(intent);
+            });
+
+            holder.exams.setText(buildExamsString(item.getExams()));
+
+            ((BookHolder) holder).price.setText("€ " + String.format("%.2f", item.getPrice()));
+            DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), holder.background, getContext());
+        }
+
+        private void setUrlHolderView(Holder holder, Document item){
+            holder.title.setText(item.getTitle());
+            holder.author.setText(item.getUser().getName());
+            holder.date.setText(Constants.getFormattedDate(item.getTimestamp()));
+
+            DataManager.getInstance().loadImageIntoView(item.getUser().getThumbnail(), holder.authorIcon, getContext());
+
+            holder.cardView.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), MaterialActivity.class);
+                intent.putExtra("document", item);
+                startActivity(intent);
+            });
+
+            holder.exams.setText(buildExamsString(item.getExams()));
+
+            DataManager.getInstance().loadImageIntoBackgroundView(
+                    App.getDrawableFromRes(R.drawable.background_cloud), holder.background,
+                    getContext());
+            ((DocumentHolder) holder).comments.setText(item.getFeedbacks().size() + " feedback");
+        }
+
+        private void setDocumentHolderView(Holder holder, Document item){
+            holder.title.setText(item.getTitle());
+            holder.author.setText(item.getUser().getName());
+            holder.date.setText(Constants.getFormattedDate(item.getTimestamp()));
+
+            DataManager.getInstance().loadImageIntoView(item.getUser().getThumbnail(), holder.authorIcon, getContext());
+
+            holder.cardView.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), MaterialActivity.class);
+                intent.putExtra("document", item);
+                startActivity(intent);
+            });
+
+            holder.exams.setText(buildExamsString(item.getExams()));
+
+            DataManager.getInstance().loadImageIntoBackgroundView(
+                    App.getDrawableFromRes(R.drawable.background_file), holder.background,
+                    getContext());
+            ((DocumentHolder) holder).comments.setText(item.getFeedbacks().size() + " feedback");
+        }
+
+        private String buildExamsString(List<String> exams){
+            String s = exams.get(0);
+
+            for (int i = 1; i < exams.size(); i++)
+                s +=  ", " + exams.get(i);
+            return s;
         }
 
         class Holder extends RecyclerView.ViewHolder {

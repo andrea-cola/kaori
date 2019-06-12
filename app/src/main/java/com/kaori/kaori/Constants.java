@@ -97,7 +97,7 @@ public class Constants {
             return "Oggi, " + hourFormat.format(myDate);
         else if(yesterday.getTime().before(myDate))
             return "Ieri, " + hourFormat.format(myDate);
-        return dateFormat.format(myDate);
+        return dateFormat.format(myDate) + " at " + hourFormat.format(myDate);
     }
 
     public static String getHour(long timestamp){
@@ -114,18 +114,18 @@ public class Constants {
             case GOOGLE:
                 return "Google";
             default:
-                return "email e password";
+                return "email and password";
         }
     }
 
     public static String translateTypeCode(int code){
         switch (code) {
             case BOOK:
-                return "libro";
+                return "book";
             case FILE:
-                return "documento";
+                return "document";
             default:
-                return "link";
+                return "repository";
         }
     }
 
