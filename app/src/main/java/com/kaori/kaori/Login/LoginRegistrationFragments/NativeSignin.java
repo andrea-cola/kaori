@@ -10,9 +10,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.kaori.kaori.App;
 import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 
@@ -38,11 +40,11 @@ class NativeSignin {
         DataManager.getInstance().checkIfTheUserAlreadyExists(
                 response -> {
                     if(Integer.parseInt(response) == Constants.USER_EXISTS)
-                        endSignIn(false, Constants.USER_ALREADY_EXISTS);
+                        endSignIn(false, App.getStringFromRes(R.string.login_user_already_exists));
                     else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
                         signInWithEmail(user, password, bitmap);
                 },
-                error -> endSignIn(false, Constants.GENERIC_ERROR),
+                error -> endSignIn(false, App.getStringFromRes(R.string.generic_error)),
                 user.getEmail());
     }
 
@@ -63,7 +65,7 @@ class NativeSignin {
                     uploadNewUser(user, profileImageBitmap);
                 } else {
                     FirebaseAuth.getInstance().signOut();
-                    endSignIn(false, Constants.GENERIC_ERROR);
+                    endSignIn(false, App.getStringFromRes(R.string.generic_error));
                 }
             });
     }
@@ -78,7 +80,7 @@ class NativeSignin {
                 }))
                 .addOnFailureListener(e -> {
                     FirebaseAuth.getInstance().signOut();
-                    endSignIn(false, Constants.GENERIC_ERROR);
+                    endSignIn(false, App.getStringFromRes(R.string.generic_error));
                 });
     }
     private void createNewUser(User user) {
@@ -92,10 +94,10 @@ class NativeSignin {
                 updateTokenID(user.getUid());
             else {
                 FirebaseAuth.getInstance().signOut();
-                endSignIn(false, Constants.GENERIC_ERROR);
+                endSignIn(false, App.getStringFromRes(R.string.generic_error));
             }
         };
-        Response.ErrorListener errorListener = error -> endSignIn(false, Constants.NEW_USER_CREATION_ERROR);
+        Response.ErrorListener errorListener = error -> endSignIn(false, App.getStringFromRes(R.string.login_creation_error));
         DataManager.getInstance().createNewUser(user, listener, errorListener);
     }
 
@@ -109,7 +111,7 @@ class NativeSignin {
     }
 
     private void invokeActivity(){
-        LogManager.getInstance().showVisualMessage(Constants.LOGIN_SUCCESS);
+        LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.login_success));
         (new Handler()).postDelayed(() -> {
             context.startActivity(new Intent(context, MainActivity.class));
             ((Activity)context).finish();
@@ -120,7 +122,7 @@ class NativeSignin {
         LogManager.getInstance().printConsoleMessage("Google login -> update token");
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
             if (task.isSuccessful())
-                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endSignIn(true, null), error -> endSignIn(false, Constants.NEW_USER_CREATION_ERROR));
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endSignIn(true, null), error -> endSignIn(false, App.getStringFromRes(R.string.login_creation_error)));
             else
                 endSignIn(true, null);
         });

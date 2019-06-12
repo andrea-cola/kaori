@@ -60,10 +60,10 @@ public class GoogleLogin {
                         firebaseAuthWithGoogle(GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null));
                     else{
                         googleSignInClient.signOut();
-                        endLogin(false, Constants.WRONG_PROVIDER + Constants.translateResponseCode(Integer.parseInt(response)));
+                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + Constants.translateResponseCode(Integer.parseInt(response)));
                     }
                 },
-                error -> endLogin(false, Constants.GENERIC_ERROR),
+                error -> endLogin(false, App.getStringFromRes(R.string.generic_error)),
                 googleSignInAccount.getEmail(),
                 Constants.GOOGLE);
     }
@@ -77,7 +77,7 @@ public class GoogleLogin {
                     else {
                         FirebaseAuth.getInstance().signOut();
                         googleSignInClient.signOut();
-                        endLogin(false, Constants.GENERIC_ERROR);
+                        endLogin(false, App.getStringFromRes(R.string.generic_error));
                     }
                 });
     }
@@ -91,13 +91,13 @@ public class GoogleLogin {
             else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
                 registerNewUser(firebaseUser, Constants.GOOGLE);
             else
-                endLogin(false, Constants.GENERIC_ERROR);
+                endLogin(false, App.getStringFromRes(R.string.generic_error));
         };
 
         Response.ErrorListener errorListener = error -> {
             googleSignInClient.signOut();
             FirebaseAuth.getInstance().signOut();
-            endLogin(false, Constants.GENERIC_ERROR);
+            endLogin(false, App.getStringFromRes(R.string.generic_error));
         };
 
         DataManager.getInstance().checkIfTheUserAlreadyExists(listener, errorListener, firebaseUser.getEmail());
@@ -106,16 +106,16 @@ public class GoogleLogin {
     private void registerNewUser(FirebaseUser firebaseUser, int method) {
         LogManager.getInstance().printConsoleMessage("Google login -> step 4.1");
         User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), firebaseUser.getPhotoUrl().toString(), method);
-        DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+        DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, App.getStringFromRes(R.string.login_creation_error)));
     }
 
     private void updateTokenID(String uid){
         LogManager.getInstance().printConsoleMessage("Google login -> step 4.2");
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(task -> {
             if (task.isSuccessful())
-                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, Constants.LOGIN_SUCCESS), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+                DataManager.getInstance().postToken(uid, task.getResult().getToken(), response -> endLogin(true, App.getStringFromRes(R.string.login_success)), error -> endLogin(false, App.getStringFromRes(R.string.login_creation_error)));
             else
-                endLogin(true, Constants.LOGIN_SUCCESS);
+                endLogin(true, App.getStringFromRes(R.string.login_success));
         });
     }
 
@@ -127,7 +127,7 @@ public class GoogleLogin {
     }
 
     private void invokeActivity(){
-        LogManager.getInstance().showVisualMessage(Constants.LOGIN_SUCCESS);
+        LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.login_success));
         (new Handler()).postDelayed(() -> {
             context.startActivity(new Intent(context, MainActivity.class));
             context.finish();

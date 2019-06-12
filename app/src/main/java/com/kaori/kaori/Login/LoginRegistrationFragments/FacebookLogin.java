@@ -22,6 +22,7 @@ import com.kaori.kaori.App;
 import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Model.User;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 
@@ -76,7 +77,7 @@ public class FacebookLogin {
 
             @Override
             public void onError(FacebookException error) {
-                endLogin(false, Constants.FACEBOOK_ERROR);
+                endLogin(false, App.getStringFromRes(R.string.facebook_error));
             }
         });
         loginButton.performClick();
@@ -90,7 +91,7 @@ public class FacebookLogin {
                     try {
                         validateProvider(object.getString("email"), loginResult.getAccessToken());
                     } catch (JSONException e) {
-                        endLogin(false, Constants.GENERIC_ERROR);
+                        endLogin(false, App.getStringFromRes(R.string.generic_error));
                     }
                 });
         Bundle params = new Bundle();
@@ -108,12 +109,12 @@ public class FacebookLogin {
                         firebaseAuthWithFacebook(token);
                     else {
                         LoginManager.getInstance().logOut();
-                        endLogin(false, Constants.WRONG_PROVIDER + Constants.translateResponseCode(Integer.parseInt(response)));
+                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + Constants.translateResponseCode(Integer.parseInt(response)));
                     }
                 },
                 error -> {
                     LoginManager.getInstance().logOut();
-                    endLogin(false, Constants.GENERIC_ERROR);
+                    endLogin(false, App.getStringFromRes(R.string.generic_error));
                 },
                 email,
                 Constants.FACEBOOK);
@@ -128,7 +129,7 @@ public class FacebookLogin {
                     else {
                         LoginManager.getInstance().logOut();
                         FirebaseAuth.getInstance().signOut();
-                        endLogin(false, Constants.WRONG_AUTH_METHOD);
+                        endLogin(false, App.getStringFromRes(R.string.login_auth_different_method));
                     }
                 });
     }
@@ -141,13 +142,13 @@ public class FacebookLogin {
             else if(Integer.parseInt(response) == Constants.USER_NOT_EXISTS)
                 registerNewUser(firebaseUser, Constants.GOOGLE);
             else
-                endLogin(false, Constants.GENERIC_ERROR);
+                endLogin(false, App.getStringFromRes(R.string.generic_error));
         };
 
         Response.ErrorListener errorListener = error -> {
             LoginManager.getInstance().logOut();
             FirebaseAuth.getInstance().signOut();
-            endLogin(false, Constants.GENERIC_ERROR);
+            endLogin(false, App.getStringFromRes(R.string.generic_error));
         };
 
         DataManager.getInstance().checkIfTheUserAlreadyExists(listener, errorListener, firebaseUser.getEmail());
@@ -157,7 +158,7 @@ public class FacebookLogin {
         LogManager.getInstance().printConsoleMessage("Facebook login -> step 5.1");
         User user = new User(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(),
                 firebaseUser.getPhotoUrl().toString() + "?height=500", method);
-        DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+        DataManager.getInstance().createNewUser(user, response -> updateTokenID(user.getUid()), error -> endLogin(false, App.getStringFromRes(R.string.login_creation_error)));
     }
 
     private void updateTokenID(String uid){
@@ -166,10 +167,10 @@ public class FacebookLogin {
             if (task.isSuccessful() && task.getResult() != null)
                 DataManager.getInstance()
                         .postToken(uid, task.getResult().getToken(),
-                                response -> endLogin(true, Constants.LOGIN_SUCCESS),
-                                error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+                                response -> endLogin(true, App.getStringFromRes(R.string.login_success)),
+                                error -> endLogin(false, App.getStringFromRes(R.string.login_creation_error)));
             else
-                endLogin(true, Constants.LOGIN_SUCCESS);
+                endLogin(true, App.getStringFromRes(R.string.login_success));
         });
     }
 

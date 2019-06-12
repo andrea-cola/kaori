@@ -11,59 +11,58 @@
     <string name="title_finder">Finder</string>
     <string name="title_profile">Profile</string>
     <string name="title_upload">Upload</string>
-    <string name="title_study_plan">Piano di studi</string>
+    <string name="title_study_plan">Study Plan</string>
 
-    <string name="empty_text_chat">Nessuna chat attiva.</string>
-    <string name="empty_text_feed">Ops, sembra che non ci siano novità. Prova ad aggiungere nuovi corsi al tuo piano di studi.</string>
-    <string name="empty_text_search">Ops, sembra non ci siano risultati per la tua ricerca.</string>
-    <string name="empty_text_finder">Ops, sembra che nessuno stia studiando in questo momento.</string>
-    <string name="empty_text_my_files">Ops, sembra che tu non abbia caricato nessun documento.</string>
-    <string name="empty_text_my_books">Ops, sembra che tu non abbia nessun libro preferito.</string>
-    <string name="empty_text_my_docs">Ops, sembra che tu non abbia nessun documento preferito.</string>
-    <string name="empty_text_my_study_plan">Ops, sembra che tu non abbia alcun esame nel tuo piano di studi.</string>
+    <string name="empty_text_chat">No chat found.</string>
+    <string name="empty_text_feed">Ops, there is no news. Try to add exams to your study plan.</string>
+    <string name="empty_text_search">Ops, no results from the search.</string>
+    <string name="empty_text_finder">Ops, no one is studying at the moment.</string>
+    <string name="empty_text_my_files">It seems you have no uploads.</string>
+    <string name="empty_text_my_books">No starred books.</string>
+    <string name="empty_text_my_docs">No starred documents or repository.</string>
+    <string name="empty_text_my_study_plan">Your study plan is empty.</string>
 
-    <string name="upload_user_message">Utente aggiornato.</string>
-    <string name="upload_user_error">Utente non aggiornato. Riprova.</string>
-    <string name="upload_doc_message2">Documento aggiornato.</string>
-    <string name="upload_doc_error2">Documento non aggiornato. Riprova.</string>
-    <string name="upload_doc_message">Documento caricato.</string>
-    <string name="upload_doc_error">Documento non caricato. Riprova.</string>
-    <string name="upload_pos_message">Posizione aggiornata.</string>
-    <string name="upload_pos_error">Posizione non aggiornata. Riprova.</string>
-    <string name="upload_mess_message">Utente aggiornato.</string>
-    <string name="upload_mess_error">Messaggio non inviato. Riprova.</string>
+    <string name="upload_user_message">User updated.</string>
+    <string name="upload_user_error">Update failed. Try again.</string>
+    <string name="upload_doc_message2">Document updated.</string>
+    <string name="upload_doc_error2">Document not updated. Try again.</string>
+    <string name="upload_doc_message">Document uploaded.</string>
+    <string name="upload_doc_error">Document upload failed. Try again.</string>
+    <string name="upload_pos_message">Position updated..</string>
+    <string name="upload_pos_error">Position update failed. Try again..</string>
+    <string name="upload_mess_error">Message not send. Try again.</string>
 
     <!-- subtitles -->
-    <string name="subtitle_exams_list">I tuoi corsi</string>
+    <string name="subtitle_exams_list">Your courses</string>
 
-    <string name="title_login">Ho già un account</string>
-    <string name="title_register">Sono un nuovo utente</string>
-    <string name="title_logout">Esci dall\'account</string>
-    <string name="title_confirm">Conferma</string>
-    <string name="title_registration">Registrati</string>
-    <string name="title_register_facebook">Crea account con Facebook</string>
-    <string name="title_register_google">Crea account con Google</string>
-    <string name="title_register_email">Crea account con la mail</string>
+    <string name="title_login">I have already an account.</string>
+    <string name="title_register">I am a new user</string>
+    <string name="title_logout">Logout</string>
+    <string name="title_confirm">Confirm</string>
+    <string name="title_registration">Sign in</string>
+    <string name="title_register_facebook">Create an account with Facebook</string>
+    <string name="title_register_google">Create account with Google</string>
+    <string name="title_register_email">Create account using your email</string>
 
     <!-- Feed fragment -->
-    <string name="feed_empty_view_text">Il tuo piano di studi è vuoto, modificalo per rimanare aggiornato.</string>
+    <string name="feed_empty_view_text">Your study plan is empty, edit it to see news about courses.</string>
 
     <!-- Finder fragment -->
-    <string name="finder_empty_view_text">Spiacenti, nessun utente attivo!</string>
+    <string name="finder_empty_view_text">Sorry, no user active!</string>
 
     <!-- Search fragment -->
-    <string name="search_empty_view_text">La ricerca ti aiuta a trovare velocemente i materiali di cui hai bisogno.</string>
-    <string name="search_hint">Cerca qui</string>
-    <string name="search_image">Cerca</string>
+    <string name="search_empty_view_text">Search helps you to find materials and books.</string>
+    <string name="search_hint">Type here your query...</string>
+    <string name="search_image">Search</string>
 
     <!-- Profile fragment-->
-    <string name="profile_about_me">Su di me</string>
-    <string name="profile_my_courses">I miei corsi</string>
-    <string name="profile_save">Salva</string>
-    <string name="my_uploads">I miei uploads</string>
+    <string name="profile_about_me">About me</string>
+    <string name="profile_my_courses">Your courses</string>
+    <string name="profile_save">Save</string>
+    <string name="my_uploads">My uploads</string>
 
     <!-- Empty view text -->
-    <string name="empty_view_text">Nessun risultato disponibile.</string>
+    <string name="empty_view_text">No results available.</string>
 
     <!-- APIs strings-->
     <string name="firebase_web_host" translatable="false">kaori-c5a43.firebaseapp.com</string>
@@ -75,66 +74,67 @@
     <string name="mapbox_location_permission_explanation">For a better service, allow permissions</string>
     <string name="mapbox_permission_not_granted">Permission not granted</string>
 
-    <!-- Camera strings -->
-    <string name="camera_popup_title">Scegli una opzione:</string>
-    <string name="camera_popup_option1">Dalla camera</string>
-    <string name="camera_popup_option2">Dalla galleria</string>
-
     <!-- View elements strings -->
-    <string name="button_cancel">Annulla</string>
-    <string name="button_add_course">Aggiungi corso</string>
-    <string name="button_edit_courses">Modifica corsi</string>
-    <string name="spinner_title_courses">I tuoi esami</string>
-    <string name="spinner_title_course_type">Il tuo corso di studi</string>
-    <string name="spinner_title_uni">La tua università</string>
-    <string name="spinner_title_new_exam">Aggiungi esami</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_add_course">Add course</string>
+    <string name="button_edit_courses">Edit courses</string>
+    <string name="spinner_title_courses">Your exams</string>
+    <string name="spinner_title_course_type">Your degree course</string>
+    <string name="spinner_title_uni">Your university</string>
+    <string name="spinner_title_new_exam">Add exams</string>
 
     <string name="preferences_master_login">master_login</string>
     <string name="preferences_master_login_uid">master_login_uid</string>
     <string name="preferences_master_login_username">master_login_username</string>
 
-    <string name="share_button">Condividi</string>
+    <string name="share_button">Share</string>
     <string name="upload_button">Upload</string>
-    <string name="upload_your_pdf">Carica il tuo pdf</string>
-    <string name="write_the_title">Scrivi il titolo</string>
-    <string name="no_results">Nessun risultato</string>
-    <string name="upload_a_link">Carica un link</string>
-    <string name="upload_a_file_or_your_notes">Carica un file o le tue note</string>
+    <string name="upload_your_pdf">Upload your .PDF</string>
+    <string name="write_the_title">Write the title</string>
+    <string name="no_results">No results</string>
+    <string name="upload_a_link">Share a repository</string>
+    <string name="upload_a_file_or_your_notes">Upload a file</string>
     <string name="download">Download</string>
 
     <!-- Errors & Messages -->
-    <string name="wrong_name">Nome non valido.</string>
-    <string name="wrong_email">Indirizzo mail non valido.</string>
-    <string name="wrong_password">Password non valida.</string>
+    <string name="wrong_name">Name not valid.</string>
+    <string name="wrong_email">Mail address not valid.</string>
+    <string name="wrong_password">Password not valid.</string>
 
-    <string name="no_image_selected">Nessuna immagine selezionata.</string>
-    <string name="file_not_found">File non trovato. Riprovare.</string>
+    <string name="wrong_credentials">Wrong credentials.</string>
+    <string name="login_not_registered">You are not registered in.</string>
 
-    <string name="signin_success">Registrazione effettuata.</string>
+    <string name="no_image_selected">No image selected.</string>
+    <string name="file_not_found">File not found. Retry.</string>
 
-    <string name="login_success">Login effettuato.</string>
-    <string name="generic_error">Verifica la tua connessione.</string>
-    <string name="google_error">Login con Google fallito. Riprova.</string>
-    <string name="native_error">Login fallito. Riprova.</string>
-    <string name="facebook_error">Login con Facebook fallito. Riprova.</string>
-    <string name="firebase_error">Login con Firebase fallito. Riprova.</string>
+    <string name="signin_success">Registration done.</string>
+
+    <string name="login_success">Login done.</string>
+    <string name="generic_error">Check your connection.</string>
+    <string name="google_error">Login with Google failed. Retry.</string>
+    <string name="native_error">Login failed. Retry.</string>
+    <string name="facebook_error">Login with Facebook failed. Retry.</string>
     <string name="user_location_permission_explanation">User placeName permission</string>
     <string name="user_location_permission_not_granted">Location permission not granted</string>
+    <string name="login_wrong_provider">Login failed. Last time you used </string>
+    <string name="login_auth_different_method">Authentication method different from the one used for registration.</string>
+    <string name="login_creation_error">Error while creating the user.</string>
+    <string name="login_user_already_exists">The user already exists.</string>
 
-    <string name="dialog_disable_position">Vuoi interrompere la condivisione della posizione?</string>
-    <string name="dialog_enable_position">Devi attivare il GPS per la posizione</string>
-    <string name="position_not_active">Non hai attivo il sensore GPS</string>
-    <string name="finder_item_studying">Sto studiando:</string>
+    <string name="dialog_disable_position">Do you want to stop sharing the position?</string>
+    <string name="dialog_enable_position">You need to enable GPS sensor.</string>
+    <string name="position_not_active">GPS sensor not enabled.</string>
+    <string name="finder_item_studying">I\'m studying:</string>
 
-    <string name="error_upload_msg">Riempi i campi vuoti</string>
-    <string name="error_link_upload_msg">Url inserito non valido.</string>
-    <string name="error_regostration_mail">Indirizzo Email non valido.</string>
-    <string name="update_done">Aggiornamento effettuato.</string>
-    <string name="update_failed">Aggiornamento fallito, riprovare.</string>
+    <string name="error_upload_msg">Some fields are not filled.</string>
+    <string name="error_link_upload_msg">Link not valid.</string>
+    <string name="error_regostration_mail">Email address not valid.</string>
+    <string name="update_done">Update done.</string>
+    <string name="update_failed">Update failed, retry.</string>
     <string name="notification_title">Download document</string>
     <string name="notification_text">Download in progress</string>
     <string name="notification_text_ok">Download completed</string>
-    <string name="notification_text_no">Download unsuccessful </string>
+    <string name="notification_text_no">Download failed</string>
     <string name="channel_name">Download</string>
     <string name="channel_description">Download document</string>
 

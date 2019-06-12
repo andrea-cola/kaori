@@ -10,6 +10,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.kaori.kaori.App;
 import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 
@@ -39,9 +40,9 @@ import com.kaori.kaori.Services.LogManager;
                     if(Integer.parseInt(response) == 1)
                         loginWithEmail(email, password);
                     else
-                        endLogin(false, Constants.WRONG_PROVIDER + Constants.translateResponseCode(Integer.parseInt(response)));
+                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + Constants.translateResponseCode(Integer.parseInt(response)));
                 },
-                error -> endLogin(false, Constants.GENERIC_ERROR),
+                error -> endLogin(false, App.getStringFromRes(R.string.generic_error)),
                 email,
                 Constants.NATIVE);
     }
@@ -54,7 +55,7 @@ import com.kaori.kaori.Services.LogManager;
                         validateLogin(task.getResult().getUser());
                     } else {
                         FirebaseAuth.getInstance().signOut();
-                        endLogin(false, Constants.WRONG_CREDENTIALS);
+                        endLogin(false, App.getStringFromRes(R.string.wrong_credentials));
                     }
                 });
     }
@@ -66,11 +67,11 @@ import com.kaori.kaori.Services.LogManager;
                     if(Integer.parseInt(response) == Constants.USER_EXISTS)
                         updateTokenID(firebaseUser.getUid());
                     else
-                        endLogin(false, Constants.USER_NOT_EXISTS_ERROR);
+                        endLogin(false, App.getStringFromRes(R.string.login_not_registered));
                 },
                 error -> {
                     FirebaseAuth.getInstance().signOut();
-                    endLogin(false, Constants.GENERIC_ERROR);
+                    endLogin(false, App.getStringFromRes(R.string.generic_error));
                 },
                 firebaseUser.getEmail());
     }
@@ -81,10 +82,10 @@ import com.kaori.kaori.Services.LogManager;
             if (task.isSuccessful() && task.getResult() != null)
                 DataManager.getInstance()
                         .postToken(uid, task.getResult().getToken(),
-                                response -> endLogin(true, Constants.LOGIN_SUCCESS),
-                                error -> endLogin(false, Constants.NEW_USER_CREATION_ERROR));
+                                response -> endLogin(true, App.getStringFromRes(R.string.login_success)),
+                                error -> endLogin(false, App.getStringFromRes(R.string.login_creation_error)));
             else
-                endLogin(true, Constants.LOGIN_SUCCESS);
+                endLogin(true, App.getStringFromRes(R.string.login_success));
         });
     }
 
