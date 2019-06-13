@@ -3,11 +3,9 @@ package com.kaori.kaori.Services;
 import android.Manifest;
 import android.app.Activity;
 import android.app.DownloadManager;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,7 +18,6 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 
-import com.bumptech.glide.Priority;
 import com.kaori.kaori.App;
 import com.kaori.kaori.BuildConfig;
 import com.kaori.kaori.Constants;
@@ -42,7 +39,7 @@ public class FileManager {
     private DownloadManager downloadManager;
 
     /**
-     * Contructor
+     * Constructor
      */
     public FileManager(String title, Uri downloadUrl, Activity activity) {
         this.title = title;

@@ -47,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto_thin"
-            android:text="URL"
+            android:text="REPOSITORY"
             android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textSize="24sp"

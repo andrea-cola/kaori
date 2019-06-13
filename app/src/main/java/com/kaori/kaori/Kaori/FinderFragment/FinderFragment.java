@@ -91,7 +91,7 @@ public class FinderFragment extends Fragment {
                 ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
                         PackageManager.PERMISSION_GRANTED) {
             if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                new AlertDialog.Builder(getActivity())
+                new AlertDialog.Builder(getActivity(), R.style.KaoriDialog)
                         .setMessage(getString(R.string.dialog_enable_position))
                         .setPositiveButton("OK", (d, which)-> {
                             startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS),1);
