@@ -2,6 +2,8 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
+    android:maxLines="1"
     android:gravity="center_vertical"
+    android:ellipsize="end"
     android:text="ciaone"
-    android:textColor="#000" />
+    android:textColor="@color/colorPrimary" />
