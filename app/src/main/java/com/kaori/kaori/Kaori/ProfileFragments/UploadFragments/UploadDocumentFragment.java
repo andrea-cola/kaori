@@ -108,7 +108,7 @@ public class UploadDocumentFragment extends Fragment {
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Seleziona il tuo file"), PICK_PDF_CODE);
+        startActivityForResult(Intent.createChooser(intent, "Select the file"), PICK_PDF_CODE);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -117,7 +117,7 @@ public class UploadDocumentFragment extends Fragment {
             file.setText(extractName(data.getData().getPath()));
             path = data.getData().toString();
         } else
-            LogManager.getInstance().showVisualMessage("Non hai selezionato nessun file.");
+            LogManager.getInstance().showVisualMessage("No file has been selected.");
     }
 
     private String extractName(String p) {
@@ -152,7 +152,7 @@ public class UploadDocumentFragment extends Fragment {
         dialog = builder.create();
 
         dialogView.findViewById(R.id.button).setOnClickListener(v -> {
-            exams.setText("Nessun esame selezionato");
+            exams.setText("No exam selected");
             examsList.clear();
             boolean flag = true;
             for (int i = 0; i < checkBoxes.size(); i++) {

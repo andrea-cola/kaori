@@ -305,7 +305,10 @@ public class DataManager {
 
             App.setAuxiliarViewsStatus(list.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
         };
-        Response.ErrorListener errorListener = error -> LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
+        Response.ErrorListener errorListener = error -> {
+            LogManager.getInstance().printConsoleError("ERROR -> " + url.toString() + " || " + error.toString());
+            App.setAuxiliarViewsStatus(list.size() > 0 ? Constants.NO_VIEW_ACTIVE : Constants.EMPTY_VIEW_ACTIVE);
+        };
         makeGetRequest(url, listener, errorListener);
     }
 

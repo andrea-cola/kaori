@@ -16,7 +16,7 @@ import com.kaori.kaori.R;
 
 public class UploadFragment extends Fragment {
 
-    private final String[] titles = { "book", "document", "url" };
+    private final String[] titles = { "book", "document", "repository" };
 
     @Nullable
     @Override

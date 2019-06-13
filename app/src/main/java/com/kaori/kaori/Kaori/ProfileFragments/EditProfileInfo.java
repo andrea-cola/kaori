@@ -158,7 +158,7 @@ public class EditProfileInfo extends Fragment {
             if (getActivity() != null)
                 getActivity().getSupportFragmentManager().popBackStackImmediate();
         } else {
-            LogManager.getInstance().showVisualMessage("Nome e cogonome non validi.");
+            LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.error_name_and_surname_not_valid));
         }
     }
 
@@ -172,7 +172,7 @@ public class EditProfileInfo extends Fragment {
                 profileImageViewBitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(data.getData()));
                 DataManager.getInstance().loadImageIntoView(profileImageViewBitmap, profileImageView, getContext());
             } catch (FileNotFoundException e) {
-                LogManager.getInstance().showVisualMessage("Il file non è stato trovato.");
+                LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.file_not_found));
             }
         }
         else
@@ -189,7 +189,7 @@ public class EditProfileInfo extends Fragment {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 imagePicker.showChoicePopup();
             else
-                LogManager.getInstance().showVisualMessage("Non hai concetto i permessi.");
+                LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.mapbox_permission_not_granted));
     }
 
 }

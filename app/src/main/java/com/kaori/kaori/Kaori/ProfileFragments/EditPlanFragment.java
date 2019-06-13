@@ -83,7 +83,7 @@ public class EditPlanFragment extends Fragment {
                 alertDialog.dismiss();
             });
         } else {
-            LogManager.getInstance().showVisualMessage("Non puoi aggiungere altri esami.");
+            LogManager.getInstance().showVisualMessage(App.getStringFromRes(R.string.cannot_add));
         }
 
     }

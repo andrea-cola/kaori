@@ -78,9 +78,9 @@
     <string name="button_cancel">Cancel</string>
     <string name="button_add_course">Add course</string>
     <string name="button_edit_courses">Edit courses</string>
-    <string name="spinner_title_courses">Your exams</string>
-    <string name="spinner_title_course_type">Your degree course</string>
-    <string name="spinner_title_uni">Your university</string>
+    <string name="my_courses">My exams</string>
+    <string name="my_degree">My degree course</string>
+    <string name="my_uni">My university</string>
     <string name="spinner_title_new_exam">Add exams</string>
 
     <string name="preferences_master_login">master_login</string>
@@ -129,6 +129,7 @@
     <string name="error_upload_msg">Some fields are not filled.</string>
     <string name="error_link_upload_msg">Link not valid.</string>
     <string name="error_regostration_mail">Email address not valid.</string>
+    <string name="error_name_and_surname_not_valid">Name and surname not valid.</string>
     <string name="update_done">Update done.</string>
     <string name="update_failed">Update failed, retry.</string>
     <string name="notification_title">Download document</string>
@@ -137,5 +138,9 @@
     <string name="notification_text_no">Download failed</string>
     <string name="channel_name">Download</string>
     <string name="channel_description">Download document</string>
+
+    <string name="add_exam">Add</string>
+    <string name="cannot_add">You cannot add other exams.</string>
+    <string name="my_name">My name</string>
 
 </resources>

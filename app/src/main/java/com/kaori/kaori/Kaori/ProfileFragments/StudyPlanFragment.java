@@ -74,7 +74,7 @@ public class StudyPlanFragment extends Fragment {
             for (Document doc : DataManager.getInstance().getMyFiles())
                 if (doc.getExams().contains(exams.get(i)))
                     counter++;
-            holder.examCounter.setText(counter + " documenti collegati");
+            holder.examCounter.setText(counter + " linked documents");
         }
 
         @Override

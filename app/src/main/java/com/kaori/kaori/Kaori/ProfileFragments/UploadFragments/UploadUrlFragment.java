@@ -88,7 +88,7 @@ public class UploadUrlFragment extends Fragment {
         dialog = builder.create();
 
         dialogView.findViewById(R.id.button).setOnClickListener(v -> {
-            exams.setText("Nessun esame selezionato");
+            exams.setText("No exam selected");
             examsList.clear();
             boolean flag = true;
             for(int i = 0; i < checkBoxes.size(); i++){
