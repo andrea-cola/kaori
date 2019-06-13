@@ -145,6 +145,7 @@ public class EditPlanFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerAdapter.Holder holder, int i) {
             holder.examTitle.setText(exams.get(i));
             holder.delete.setOnClickListener(v -> removeExams(i));
+            holder.counter.setVisibility(View.GONE);
         }
 
         @Override
@@ -155,11 +156,13 @@ public class EditPlanFragment extends Fragment {
         /*package-private*/ class Holder extends RecyclerView.ViewHolder {
             private TextView examTitle;
             private ImageButton delete;
+            private TextView counter;
 
             /*package-private*/ Holder(View v) {
                 super(v);
                 examTitle = v.findViewById(R.id.exam_title);
                 delete = v.findViewById(R.id.delete);
+                counter = v.findViewById(R.id.doc_counter);
             }
         }
 
