@@ -30,24 +30,10 @@
             android:fontFamily="@font/roboto_medium"
             android:text="Titolo dell'esame"
             android:textColor="#000"
-            card_view:layout_constraintEnd_toStartOf="@+id/delete"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/doc_counter"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:fontFamily="@font/roboto_italic"
-            android:text="12 documenti collegati"
-            android:textSize="14sp"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toStartOf="@+id/delete"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/exam_title"
-            card_view:layout_constraintVertical_bias="0.0" />
+            card_view:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/delete"
