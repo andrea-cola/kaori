@@ -37,7 +37,7 @@
             android:paddingEnd="10dp"
             android:paddingBottom="5dp"
             android:singleLine="true"
-            android:text="Via Mottola Levati 12"
+            tools:text="Piazza Leonardo da Vinci 32"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="14sp"
@@ -62,7 +62,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@drawable/empty_image" />
 
-
         <TextView
             android:id="@+id/itemUser"
             android:layout_width="0dp"
@@ -70,7 +69,7 @@
             android:layout_marginStart="16dp"
             android:fontFamily="@font/roboto_bold"
             android:singleLine="true"
-            android:text="Lorenzo Bernaschina"
+            tools:text="Lorenzo Bernaschina"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -83,7 +82,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="6dp"
-            android:text="Temi d'esame che tanto non vengono."
+            tools:text="Temi d'esame che tanto non vengono."
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/itemImage"

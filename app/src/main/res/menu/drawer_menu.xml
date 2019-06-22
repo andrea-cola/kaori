@@ -8,13 +8,13 @@
     <item
         android:id="@+id/nav_uploads"
         android:icon="@drawable/ic_file_upload_black_24dp"
-        android:title="Upload" />
+        android:title="New upload" />
     <item
         android:id="@+id/nav_esami"
         android:icon="@drawable/ic_school_black_24dp"
-        android:title="Piano di studi" />
+        android:title="My Study plan" />
     <item
         android:id="@+id/nav_impostazioni"
         android:icon="@drawable/ic_settings_black_24dp"
-        android:title="Impostazioni" />
+        android:title="Settings" />
 </menu>
