@@ -72,7 +72,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
             if(activityEdit.getText() != null && activityEdit.getText().length() > 0)
                 findPlace();
             else
-                LogManager.getInstance().showVisualMessage("Specifica cosa stai studiando.");
+                LogManager.getInstance().showVisualMessage("Specify what you are studying");
         });
 
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -103,12 +103,12 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
                         sharePosition(response.body().features().get(0).placeName().substring(0, response.body().features().get(0).placeName().indexOf(",")),
                                 new GeoPoint(latitude, longitude), String.valueOf(activityEdit.getText()));
                 else
-                    LogManager.getInstance().showVisualMessage("Problemi durante la localizzazione.");
+                    LogManager.getInstance().showVisualMessage("Problems during localization.");
             }
             @Override
             public void onFailure(@NonNull Call<GeocodingResponse> call, @NonNull Throwable t) {
                 LogManager.getInstance().printConsoleError(call.toString() + " " + t.getMessage());
-                LogManager.getInstance().showVisualMessage("Non è possibile condividere la posizione.");
+                LogManager.getInstance().showVisualMessage("It is not possible share your position.");
             }
         });
     }
@@ -138,7 +138,7 @@ public class SharePositionFragment extends Fragment implements OnMapReadyCallbac
             else
                 mapboxMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
         } catch (Exception e){
-            LogManager.getInstance().showVisualMessage("Non riesco a trovare la posizione GPS.");
+            LogManager.getInstance().showVisualMessage("I cannot find your GPS position.");
         }
     }
 

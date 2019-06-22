@@ -79,7 +79,7 @@ public class ChatListFragment extends Fragment {
             holder.chatDate.setText(
                     Constants.getHour(mDataset.get(position).getLastMessageSent()));
             holder.chatMessage.setText((!mDataset.get(position).getLastMessageUserID()
-                    .equalsIgnoreCase(otherUser.getUid()) ? "Tu: " : "") + mDataset.get(position)
+                    .equalsIgnoreCase(otherUser.getUid()) ? "You: " : "") + mDataset.get(position)
                     .getLastMessageText());
             DataManager.getInstance()
                     .loadImageIntoView(otherUser.getThumbnail(), holder.chatImage, getContext());

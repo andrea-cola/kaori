@@ -128,7 +128,7 @@
 
     <string name="error_upload_msg">Some fields are not filled.</string>
     <string name="error_link_upload_msg">Link not valid.</string>
-    <string name="error_regostration_mail">Email address not valid.</string>
+    <string name="error_registration_mail">Email address not valid.</string>
     <string name="error_name_and_surname_not_valid">Name and surname not valid.</string>
     <string name="update_done">Update done.</string>
     <string name="update_failed">Update failed, retry.</string>

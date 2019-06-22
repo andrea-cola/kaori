@@ -133,10 +133,10 @@ public class MaterialActivity extends AppCompatActivity {
         Group group = findViewById(R.id.feedback_group);
         showHide.setOnClickListener(view -> {
             if(feedbacks){
-                showHide.setText("Mostra feedbacks");
+                showHide.setText("Show feedbacks");
                 group.setVisibility(View.GONE);
             } else {
-                showHide.setText("Nascondi feedbacks");
+                showHide.setText("Hide feedbacks");
                 group.setVisibility(View.VISIBLE);
             }
             feedbacks = !feedbacks;

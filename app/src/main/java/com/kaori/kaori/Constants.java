@@ -78,9 +78,9 @@ public class Constants {
 
         Date myDate = new Date(timestamp * constantDate);
         if(today.getTime().before(myDate))
-            return "Oggi, " + hourFormat.format(myDate);
+            return "Today, " + hourFormat.format(myDate);
         else if(yesterday.getTime().before(myDate))
-            return "Ieri, " + hourFormat.format(myDate);
+            return "Yesterday, " + hourFormat.format(myDate);
         return dateFormat.format(myDate) + " at " + hourFormat.format(myDate);
     }
 
