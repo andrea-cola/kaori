@@ -102,12 +102,10 @@ class NativeSignin {
     }
 
     private void endSignIn(boolean isSuccess, final String message) {
+        App.setAuxiliarViewsStatus(Constants.NO_VIEW_ACTIVE);
+        LogManager.getInstance().showVisualMessage(message);
         if (isSuccess)
             invokeActivity();
-        else {
-            if(message != null)
-                LogManager.getInstance().showVisualMessage(message);
-        }
     }
 
     private void invokeActivity(){
