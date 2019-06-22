@@ -100,7 +100,7 @@ import com.kaori.kaori.Services.LogManager;
         new Handler().postDelayed(() -> {
             context.startActivity(new Intent(context, MainActivity.class));
             context.finish();
-        }, 1000);
+        }, 0);
     }
 
 }
