@@ -16,6 +16,8 @@ import com.kaori.kaori.R;
 
 public class LoginFragment extends Fragment {
 
+    private final String BACK_STATE_NAME = getClass().getName();
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class LoginFragment extends Fragment {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .addToBackStack(BACK_STATE_NAME)
                     .commit();
         }
     }
