@@ -70,7 +70,7 @@
             android:layout_marginTop="@dimen/default_margin"
             android:layout_marginEnd="32dp"
             android:fontFamily="@font/roboto_bold"
-            android:text="Inserisci le parole chiave nella barra di ricerca."
+            android:text="Insert the key words in the search bar."
             android:textAlignment="center"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
