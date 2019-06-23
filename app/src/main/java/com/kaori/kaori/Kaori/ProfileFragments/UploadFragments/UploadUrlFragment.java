@@ -93,15 +93,16 @@ public class UploadUrlFragment extends Fragment {
             boolean flag = true;
             for(int i = 0; i < checkBoxes.size(); i++){
                 if(checkBoxes.get(i).isChecked()) {
-                    if(flag)
-                        exams.setText(DataManager.getInstance().getAllExams().get(i));
-                    else {
+                    if(flag) {
                         flag = false;
+                        exams.setText(DataManager.getInstance().getAllExams().get(i));
+                    } else {
                         exams.setText(exams.getText() + ", " + DataManager.getInstance().getAllExams().get(i));
                     }
                     examsList.add(DataManager.getInstance().getAllExams().get(i));
                 }
             }
+
             dialog.dismiss();
         });
 
