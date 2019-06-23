@@ -96,7 +96,8 @@ public class ChatListFragment extends Fragment {
                 invokeNextFragment(chatFragment);
             });
 
-            if(otherUser.getName().equalsIgnoreCase(name)){
+            if(name != null && otherUser.getName().equalsIgnoreCase(name)){
+                name = null;
                 LogManager.getInstance().printConsoleMessage(new Gson().toJson(mDataset.get(position)));
                 ChatFragment chatFragment = new ChatFragment();
                 chatFragment.setChat(mDataset.get(position));
