@@ -142,6 +142,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="true"
         android:fitsSystemWindows="true"
+        android:background="@color/white"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.constraint.ConstraintLayout
