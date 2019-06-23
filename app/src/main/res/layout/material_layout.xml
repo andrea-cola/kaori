@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,41 +21,31 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/background_fake"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:cropToPadding="false"
-                    android:scaleType="fitCenter"
-                    android:visibility="invisible"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/background_placeholder" />
+                android:layout_height="wrap_content"
+                android:minHeight="250dp">
 
                 <ImageView
                     android:id="@+id/background"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:adjustViewBounds="true"
                     android:cropToPadding="false"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:srcCompat="@drawable/background_book" />
 
                 <View
                     android:id="@+id/overlay"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="#AA000000"
-                    app:layout_constraintBottom_toBottomOf="@+id/background_fake"
-                    app:layout_constraintEnd_toEndOf="@+id/background_fake"
-                    app:layout_constraintStart_toStartOf="@+id/background_fake"
-                    app:layout_constraintTop_toTopOf="@+id/background_fake" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/title"
@@ -73,9 +64,9 @@
                     android:textSize="36sp"
                     app:autoSizeTextType="uniform"
                     app:layout_constraintBottom_toTopOf="@+id/author"
-                    app:layout_constraintEnd_toEndOf="@+id/background_fake"
-                    app:layout_constraintStart_toStartOf="@+id/background_fake"
-                    app:layout_constraintTop_toTopOf="@+id/background_fake"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/type"
                     app:layout_constraintVertical_bias="1.0" />
 
                 <TextView
@@ -87,15 +78,15 @@
                     android:layout_marginBottom="16dp"
                     android:text="di Andrea Cola"
                     android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="@id/background_fake"
-                    app:layout_constraintEnd_toEndOf="@+id/background_fake"
-                    app:layout_constraintStart_toStartOf="@id/background_fake" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
                     android:id="@+id/type"
                     android:layout_width="0dp"
                     android:layout_height="?attr/actionBarSize"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="40dp"
                     android:gravity="center"
                     android:text="DOCUMENT"
                     android:textColor="@color/white"
@@ -109,7 +100,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="40dp"
                 app:title="">
 
                 <ImageView

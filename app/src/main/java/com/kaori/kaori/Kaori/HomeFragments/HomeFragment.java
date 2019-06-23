@@ -93,6 +93,12 @@ public class HomeFragment extends Fragment {
                 t2.setSpan(new StyleSpan(Typeface.BOLD), 0, t2.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
 
                 ((UpdateHolder)holder).details.setText(TextUtils.concat(t1, t2), TextView.BufferType.SPANNABLE);
+
+                holder.cardView.setOnClickListener(v -> {
+                    Intent intent = new Intent(getActivity(), MaterialActivity.class);
+                    intent.putExtra("document", materials.get(i));
+                    startActivity(intent);
+                });
             }
         }
 

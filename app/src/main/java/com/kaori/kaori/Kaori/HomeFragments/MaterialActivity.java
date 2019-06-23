@@ -50,6 +50,7 @@ public class MaterialActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setTheme(R.style.MaterialStyle);
         setContentView(R.layout.material_layout);
+
         LogManager.initialize(findViewById(R.id.coordinator));
         material = (Document) getIntent().getSerializableExtra("document");
 
