@@ -81,15 +81,14 @@ public class MyFilesFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
             holder.title.setText(materials.get(position).getTitle());
-            holder.date.setText(materials.get(position).getNote());
             holder.delete.setOnClickListener(v -> removeFile(position));
             holder.view.setOnClickListener(view -> {
-                if(materials.get(position).getType() == Constants.BOOK) {
+                if(materials.get(position).getSubtype() == Constants.BOOK) {
                     UploadBookFragment f = new UploadBookFragment();
                     f.setOldBook(materials.get(position));
                     invokeNextFragment(f);
                 }
-                else if(materials.get(position).getType() == Constants.URL) {
+                else if(materials.get(position).getSubtype() == Constants.URL) {
                     UploadUrlFragment f = new UploadUrlFragment();
                     f.setOldDocument(materials.get(position));
                     invokeNextFragment(f);
@@ -109,7 +108,6 @@ public class MyFilesFragment extends Fragment {
 
         /*package-private*/ class ListViewHolder extends RecyclerView.ViewHolder {
             TextView title;
-            TextView date;
             View view;
             ImageButton delete;
 
@@ -117,7 +115,6 @@ public class MyFilesFragment extends Fragment {
                 super(v);
                 view = v;
                 title = v.findViewById(R.id.exam_title);
-                date = v.findViewById(R.id.doc_counter);
                 delete = v.findViewById(R.id.delete);
             }
         }

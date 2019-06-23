@@ -14,10 +14,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.Timestamp;
-import com.kaori.kaori.Model.Document;
-import com.kaori.kaori.Kaori.ProfileFragments.MyFilesFragment;
-import com.kaori.kaori.R;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.Kaori.ProfileFragments.MyFilesFragment;
+import com.kaori.kaori.Model.Document;
+import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
 
@@ -118,7 +118,7 @@ public class UploadBookFragment extends Fragment {
         if (oldBook != null) {
             book = oldBook;
             book.setModified(true);
-        }else {
+        } else {
             book = new Document();
             book.setModified(false);
         }
@@ -138,8 +138,14 @@ public class UploadBookFragment extends Fragment {
             book.setType(Constants.BOOK);
             book.setSubtype(Constants.BOOK);
 
-            DataManager.getInstance().uploadDocument(book); // upload on server
-            endProcess();
+            DataManager.getInstance().uploadDocument(book,
+                    response -> {
+                        LogManager.getInstance().printConsoleMessage("Document uploaded.");
+                        endProcess();
+                    },
+                    error -> {
+                        LogManager.getInstance().printConsoleMessage("Upload failed. Retry.");
+                    });
         }
     }
 

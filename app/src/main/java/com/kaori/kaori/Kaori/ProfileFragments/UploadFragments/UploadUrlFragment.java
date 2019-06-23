@@ -120,10 +120,10 @@ public class UploadUrlFragment extends Fragment {
         Document document;
         if(oldDocument != null) {
             document = oldDocument;
-            document.setModified(false);
+            document.setModified(true);
         }else {
             document = new Document();
-            document.setModified(true);
+            document.setModified(false);
         }
         if (!Patterns.WEB_URL.matcher(link.getText()).matches())
             LogManager.getInstance().showVisualMessage(getString(R.string.error_link_upload_msg));
@@ -140,8 +140,14 @@ public class UploadUrlFragment extends Fragment {
             document.setType(Constants.FILE);
             document.setSubtype(Constants.URL);
             document.setTimestamp(Timestamp.now().getSeconds());
-            DataManager.getInstance().uploadDocument(document);
-            endProcess();
+            DataManager.getInstance().uploadDocument(document,
+                    response -> {
+                        LogManager.getInstance().printConsoleMessage("Document uploaded.");
+                        endProcess();
+                    },
+                    error -> {
+                        LogManager.getInstance().printConsoleMessage("Upload failed. Retry.");
+                    });
         }
     }
 

@@ -99,8 +99,14 @@ public class UploadDocumentFragment extends Fragment {
             document.setSubtype(Constants.FILE);
             document.setTimestamp(Timestamp.now().getSeconds());
 
-            DataManager.getInstance().uploadFileOnTheServer(path, document);
-            endProcess();
+            DataManager.getInstance().uploadFileOnTheServer(path, document,
+                    response -> {
+                        LogManager.getInstance().printConsoleMessage("Document uploaded.");
+                        endProcess();
+                    },
+                    error -> {
+                        LogManager.getInstance().printConsoleMessage("Upload failed. Retry.");
+                    });
         }
     }
 

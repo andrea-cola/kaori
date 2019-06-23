@@ -531,11 +531,18 @@ public class DataManager {
                 user);
     }
 
+    public void uploadDocument(final Document document, final Response.Listener<String> listener, final Response.ErrorListener error) {
+        Uri url = Uri.parse(BASE_URL + URL_DOC);
+        makeCustomPostRequest(url, listener, error, document);
+    }
+
     public void uploadDocument(final Document document) {
         Uri url = Uri.parse(BASE_URL + URL_DOC);
         makePostRequest(url,
-                App.getStringFromRes(!document.getModified() ? R.string.upload_doc_message : R.string.upload_doc_message2),
-                App.getStringFromRes(!document.getModified() ? R.string.upload_doc_error : R.string.upload_doc_error2),
+                App.getStringFromRes(!document
+                        .getModified() ? R.string.upload_doc_message : R.string.upload_doc_message2),
+                App.getStringFromRes(!document
+                        .getModified() ? R.string.upload_doc_error : R.string.upload_doc_error2),
                 document);
     }
 
@@ -590,6 +597,9 @@ public class DataManager {
 
     public void postComment(Document document, Feedback feedback) {
         document.addFeedback(feedback);
+        for(Document d : feedElements)
+            if(d.getId().equalsIgnoreCase(document.getId()))
+                d.addFeedback(feedback);
         this.uploadDocument(document);
     }
 
@@ -620,18 +630,16 @@ public class DataManager {
                 .addOnFailureListener(e -> LogManager.getInstance().showVisualError(e, App.getStringFromRes(R.string.upload_user_error)));
     }
 
-    public void uploadFileOnTheServer(String url, Document document) {
+    public void uploadFileOnTheServer(String url, Document document, Response.Listener<String> listener, Response.ErrorListener error) {
         LogManager.getInstance().printConsoleMessage("Upload -> file");
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));
 
-        task.continueWithTask(task1 -> {
-            return reference.getDownloadUrl();
-        }).addOnCompleteListener(taskSnapshot -> {
+        task.continueWithTask(task1 -> reference.getDownloadUrl()).addOnCompleteListener(taskSnapshot -> {
             if(taskSnapshot.isSuccessful()) {
                 Uri taskResult = taskSnapshot.getResult();
                 document.setUrl(taskResult.toString());
-                uploadDocument(document);
+                uploadDocument(document, listener, error);
             }
         }).addOnFailureListener(e -> LogManager.getInstance().printConsoleMessage(e.toString()));
     }

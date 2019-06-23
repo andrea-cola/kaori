@@ -117,7 +117,7 @@ public class MaterialActivity extends AppCompatActivity {
     private void setBookLayout(){
         DataManager.getInstance().loadImageIntoBackgroundView(App.getDrawableFromRes(R.drawable.background_book), findViewById(R.id.background), this);
         findViewById(R.id.button).setVisibility(View.GONE);
-        if(material.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
+        if(!material.getUser().getUid().equalsIgnoreCase(DataManager.getInstance().getUser().getUid())) {
             findViewById(R.id.libro_file).setVisibility(View.VISIBLE);
             findViewById(R.id.owner_button).setOnClickListener(view -> {
                 Intent intent = new Intent(this, KaoriChat.class);
@@ -156,6 +156,8 @@ public class MaterialActivity extends AppCompatActivity {
             feedback.setUser(DataManager.getInstance().getMiniUser());
             recyclerView.getAdapter().notifyDataSetChanged();
 
+            feedbackEditText.setText("");
+
             DataManager.getInstance().postComment(material, feedback);
         });
     }
@@ -191,7 +193,7 @@ public class MaterialActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull final RecyclerAdapter.Holder holder, int i) {
             DataManager.getInstance().loadImageIntoView(feedbackList.get(i).getUser().getThumbnail(), holder.userImage, activity);
-            holder.timestamp.setText(Constants.dateFormat.format(feedbackList.get(i).getTimestamp()));
+            holder.timestamp.setText(Constants.getFormattedDate(feedbackList.get(i).getTimestamp()));
             holder.content.setText(Html.fromHtml(
                     "<b>" + feedbackList.get(i).getUser().getName() + "</b> "
                             + feedbackList.get(i).getText()));

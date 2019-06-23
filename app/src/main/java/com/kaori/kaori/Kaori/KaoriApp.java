@@ -80,7 +80,12 @@ public class KaoriApp extends AppCompatActivity {
     }
 
     public void callStarredFragment(){
-        bottomNavigationView.setSelectedItemId(R.id.navigation_preferred);
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, new MyMaterialFragment())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .addToBackStack("PROFILE")
+                .commit();
     }
 
     public void callProfileFragment(){

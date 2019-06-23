@@ -29,6 +29,8 @@ public class ChatListFragment extends Fragment {
 
     private final String BACK_STATE_NAME = getClass().getName();
 
+    private String name;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -46,6 +48,10 @@ public class ChatListFragment extends Fragment {
         DataManager.getInstance().downloadMyChats(mRecyclerView);
 
         return view;
+    }
+
+    public void setName(String name){
+        this.name = name;
     }
 
     private void invokeNextFragment(Fragment fragment) {
@@ -89,6 +95,13 @@ public class ChatListFragment extends Fragment {
                 chatFragment.setChat(mDataset.get(position));
                 invokeNextFragment(chatFragment);
             });
+
+            if(otherUser.getName().equalsIgnoreCase(name)){
+                LogManager.getInstance().printConsoleMessage(new Gson().toJson(mDataset.get(position)));
+                ChatFragment chatFragment = new ChatFragment();
+                chatFragment.setChat(mDataset.get(position));
+                invokeNextFragment(chatFragment);
+            }
 
             DataManager.getInstance().addListener(mDataset.get(position).getChatID());
         }

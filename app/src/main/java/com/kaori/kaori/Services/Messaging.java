@@ -27,12 +27,13 @@ public class Messaging extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d("FirebaseMex", "Message received");
+        Log.d("FirebaseMex", "Message received" + remoteMessage.getData());
         NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         int notifyId = 1;
 
         Intent intent = new Intent(this, KaoriChat.class);
         intent.putExtra("notification", 1);
+        intent.putExtra("name", remoteMessage.getData().get("title"));
         PendingIntent mPendingIntent = PendingIntent.getActivity(this, notifyId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification mNotification;

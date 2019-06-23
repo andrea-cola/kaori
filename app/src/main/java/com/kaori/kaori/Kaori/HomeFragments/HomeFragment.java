@@ -87,6 +87,8 @@ public class HomeFragment extends Fragment {
                 holder.date.setText(Constants.getFormattedDate(materials.get(i).getTimestamp()));
                 String details = materials.get(i).getUser().getName().split(" ")[0];
 
+                DataManager.getInstance().loadImageIntoView(materials.get(i).getUser().getThumbnail(), holder.authorIcon, getContext());
+
                 SpannableStringBuilder t1 = new SpannableStringBuilder(details + " has updated the " + Constants.translateTypeCode(materials.get(i).getSubtype()) + " ");
                 SpannableStringBuilder t2 = new SpannableStringBuilder(materials.get(i).getTitle());
                 t2.setSpan(new ForegroundColorSpan(Color.BLACK), 0, t2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
