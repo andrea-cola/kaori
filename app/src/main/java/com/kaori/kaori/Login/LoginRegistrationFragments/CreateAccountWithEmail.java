@@ -1,5 +1,7 @@
 package com.kaori.kaori.Login.LoginRegistrationFragments;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -61,6 +64,7 @@ public class CreateAccountWithEmail extends Fragment {
     }
 
     private void validateFields(EditText mName, EditText mMail, EditText mPassword) {
+        hideKeyboardFrom(getContext(), view);
         String name, mail, password;
         name = mName.getText().toString();
         mail = mMail.getText().toString();
@@ -136,6 +140,11 @@ public class CreateAccountWithEmail extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == MY_CAMERA_PERMISSION_CODE)
             imagePicker.showChoicePopup();
+    }
+
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 }

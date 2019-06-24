@@ -631,6 +631,8 @@ public class DataManager {
     }
 
     public void uploadFileOnTheServer(String url, Document document, Response.Listener<String> listener, Response.ErrorListener error) {
+        App.setAuxiliarViewsStatus(Constants.WAIT_VIEW_ACTIVE);
+
         LogManager.getInstance().printConsoleMessage("Upload -> file");
         StorageReference reference = FirebaseStorage.getInstance().getReference().child(Constants.STORAGE_PATH_UPLOADS + DataManager.getInstance().getMiniUser().getName() + "_" + document.getTitle().toLowerCase() + ".pdf");
         UploadTask task = reference.putFile(Uri.parse(url));

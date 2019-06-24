@@ -109,7 +109,7 @@ public class FacebookLogin {
                         firebaseAuthWithFacebook(token);
                     else {
                         LoginManager.getInstance().logOut();
-                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + Constants.translateResponseCode(Integer.parseInt(response)));
+                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + " " + Constants.translateResponseCode(Integer.parseInt(response)) + ".");
                     }
                 },
                 error -> {

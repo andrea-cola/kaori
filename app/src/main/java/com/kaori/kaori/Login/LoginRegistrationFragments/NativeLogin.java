@@ -8,8 +8,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kaori.kaori.App;
-import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.Constants;
+import com.kaori.kaori.MainActivity;
 import com.kaori.kaori.R;
 import com.kaori.kaori.Services.DataManager;
 import com.kaori.kaori.Services.LogManager;
@@ -40,7 +40,7 @@ import com.kaori.kaori.Services.LogManager;
                     if(Integer.parseInt(response) == 1)
                         loginWithEmail(email, password);
                     else
-                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + Constants.translateResponseCode(Integer.parseInt(response)));
+                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + " " + Constants.translateResponseCode(Integer.parseInt(response)) + ".");
                 },
                 error -> endLogin(false, App.getStringFromRes(R.string.generic_error)),
                 email,

@@ -226,9 +226,9 @@
         <Button
             android:id="@+id/button"
             style="@style/KaoriButton"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:text="Publish"
             app:layout_constraintBottom_toBottomOf="parent"

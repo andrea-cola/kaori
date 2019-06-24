@@ -120,7 +120,7 @@ public class UploadDocumentFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            file.setText(extractName(data.getData().getPath()));
+            file.setText(extractName("PDF selected and ready for upload."));
             path = data.getData().toString();
         } else
             LogManager.getInstance().showVisualMessage("No file has been selected.");

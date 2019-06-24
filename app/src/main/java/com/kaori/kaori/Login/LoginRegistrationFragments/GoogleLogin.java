@@ -60,7 +60,7 @@ public class GoogleLogin {
                         firebaseAuthWithGoogle(GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null));
                     else{
                         googleSignInClient.signOut();
-                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + Constants.translateResponseCode(Integer.parseInt(response)));
+                        endLogin(false, App.getStringFromRes(R.string.login_wrong_provider) + " " + Constants.translateResponseCode(Integer.parseInt(response)) + ".");
                     }
                 },
                 error -> endLogin(false, App.getStringFromRes(R.string.generic_error)),
